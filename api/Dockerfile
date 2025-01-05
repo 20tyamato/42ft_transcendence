@@ -3,20 +3,26 @@ FROM python:3.11.1
 WORKDIR /code
 
 ENV PYTHONUNBUFFERED 1
+ENV PATH="/root/.local/bin:$PATH"
+
+# poetryのインストールと設定
+RUN curl -sSL https://install.python-poetry.org | python3 - && \
+    poetry config virtualenvs.create false
 
 # 必要なパッケージをインストール
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev gcc && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# 必要なPythonパッケージをインストール
-COPY ./requirements.txt /code/
-RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
+# pyproject.tomlとpoetry.lockをコピー
+COPY pyproject.toml poetry.lock* ./
 
+# 依存関係のインストール
+RUN poetry install --no-interaction --no-ansi
 
 # アプリコードを追加
-COPY . /code/
+COPY . .
 
 # サーバー起動
-# CMD ["python", "main.py", "runserver", "0.0.0.0:8000"]
+CMD ["poetry", "run", "python", "manage.py", "runserver", "0.0.0.0:8000"]
 
