@@ -26,6 +26,9 @@ db.sqlite3
 db.sqlite3-journal
 media/
 
+# Frontend
+node_modules/
+
 # Docker
 db/data/
 
