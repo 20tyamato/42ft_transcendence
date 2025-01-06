@@ -1,5 +1,6 @@
 import * as path from "path";
 import * as fs from "fs/promises";
+import { readHTMLfile } from "../utils/file";
 
 interface PageProps {
   htmlPath: string;
@@ -22,14 +23,8 @@ export class Page {
    * HTMLファイルを読み込む
    * @returns HTMLファイルの内容
    */
-  async render() {
-    const absolutePath = path.join(__dirname, "..", this._htmlPath);
-    try {
-      return await fs.readFile(absolutePath, "utf-8");
-    } catch (error) {
-      console.error(`HTMLファイルの読み込みに失敗しました: ${error}`);
-      return "<div>エラーが発生しました</div>";
-    }
+  async render(): Promise<string> {
+    return await readHTMLfile(this._htmlPath);
   }
 
   /**
