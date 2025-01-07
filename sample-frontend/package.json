@@ -5,12 +5,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
-    "serve": "node server.js"
+    "dev": "node server.js",
+    "build": "tsc"
   },
   "devDependencies": {
-    "typescript": "^5.0.0",
-    "live-server": "^1.2.2"
+    "typescript": "^5.0.0"
   }
 }
