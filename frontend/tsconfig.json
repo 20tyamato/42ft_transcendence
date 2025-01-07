@@ -5,8 +5,12 @@
     "moduleResolution": "node",
     "esModuleInterop": true,
     "strict": true,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
-  "include": ["**/*.ts"],
+  "include": ["**/*.ts", "public/main.js"],
   "exclude": ["node_modules"]
 }

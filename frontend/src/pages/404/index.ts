@@ -1,4 +1,4 @@
-import { Page } from "../../core/Page";
+import { Page } from "@/core/Page";
 
 const NotFoundPage = new Page({
   htmlPath: "pages/404/index.html",

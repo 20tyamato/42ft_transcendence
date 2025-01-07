@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
-    "dev": "ts-node server.ts",
-    "dev:watch": "nodemon --watch 'src/**/*' -e ts,html --exec 'ts-node server.ts'",
+    "dev": "ts-node -r tsconfig-paths/register server.ts",
+    "dev:watch": "nodemon --watch './**/*' -e ts,html --exec 'ts-node -r tsconfig-paths/register server.ts'",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -14,6 +14,7 @@
     "@types/node": "^22.10.5",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.2"
   }
 }
