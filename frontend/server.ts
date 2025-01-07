@@ -1,23 +1,25 @@
 import { createServer, IncomingMessage, ServerResponse } from "http";
-import HomePage from "./src/pages/Home";
 import { readHTMLfile } from "./src/utils/file";
+import { routes } from "./route";
+import NotFoundPage from "./src/pages/404";
 
 const PORT: number = 3000;
 
 const server = createServer(
   async (req: IncomingMessage, res: ServerResponse) => {
-    res.writeHead(200, { "Content-Type": "text/html" });
-
     const indexHTML = await readHTMLfile("../public/index.html");
-    const html = await HomePage.render();
-    console.log("html", html);
+    const url = req.url ?? "";
+
+    const page = routes[url] ? routes[url] : NotFoundPage;
+    const html = await page.render();
+
     const result = indexHTML.replace(
       '<div id="root"></div>',
-      "<div id='root'>" + html + "</div>"
+      `<div id="root">${html}</div>`
     );
-    console.log("indexHTML", indexHTML);
-    console.log("result", result);
-    res.end(html);
+
+    res.writeHead(200, { "Content-Type": "text/html" });
+    res.end(result);
   }
 );
 
