@@ -4,7 +4,7 @@ type Route = {
 };
 
 const routes: Route[] = [
-  { path: "/", template: "<h1>ホームページ</h1><p>ようこそ！</p>" },
+  { path: "/", template: "<h1>ホームページaaaa</h1><p>ようこそ！</p>" },
   {
     path: "/about",
     template: "<h1>アバウトページ</h1><p>私たちについて。</p>",
