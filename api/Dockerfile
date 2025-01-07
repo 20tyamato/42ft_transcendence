@@ -2,10 +2,11 @@ FROM python:3.11.1
 
 WORKDIR /code
 
+# 環境変数の設定
 ENV PYTHONUNBUFFERED 1
 ENV PATH="/root/.local/bin:$PATH"
 
-# poetryのインストールと設定
+# Poetryのインストールと設定
 RUN curl -sSL https://install.python-poetry.org | python3 - && \
     poetry config virtualenvs.create false
 
@@ -17,9 +18,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # プロジェクト全体をコピー
 COPY . .
 
+# psycopgライブラリを事前インストール
+RUN poetry add psycopg
+
 # 依存関係のインストール
 RUN poetry install --no-interaction --no-ansi --no-root
 
 # サーバー起動
 CMD ["poetry", "run", "python", "manage.py", "runserver", "0.0.0.0:8000"]
-
