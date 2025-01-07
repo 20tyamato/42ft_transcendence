@@ -3,9 +3,7 @@ name = "api"
 version = "0.1.0"
 description = "Django API project"
 authors = ["Your Name <your.email@example.com>"]
-packages = [
-    { include = "core" }
-]
+packages = []
 
 [tool.poetry.dependencies]
 python = "^3.11.1"
