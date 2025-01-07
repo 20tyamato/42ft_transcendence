@@ -14,14 +14,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev gcc && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# pyproject.tomlとpoetry.lockをコピー
-COPY pyproject.toml poetry.lock* ./
+# プロジェクト全体をコピー
+COPY . .
 
 # 依存関係のインストール
-RUN poetry install --no-interaction --no-ansi
-
-# アプリコードを追加
-COPY . .
+RUN poetry install --no-interaction --no-ansi --no-root
 
 # サーバー起動
 CMD ["poetry", "run", "python", "manage.py", "runserver", "0.0.0.0:8000"]
