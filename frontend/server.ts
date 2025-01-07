@@ -17,7 +17,7 @@ const server = createServer(
     );
     console.log("indexHTML", indexHTML);
     console.log("result", result);
-    res.end(indexHTML);
+    res.end(html);
   }
 );
 
