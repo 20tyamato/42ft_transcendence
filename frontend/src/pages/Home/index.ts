@@ -1,7 +1,7 @@
 import { Page } from "@/core/Page";
 
 const HomePage = new Page({
-  htmlPath: "/src/pages/Home/index.html",
+  name: "Home",
 });
 
 export default HomePage;
