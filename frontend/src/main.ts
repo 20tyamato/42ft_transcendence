@@ -1,12 +1,12 @@
-import { Page } from "./core/Page";
-import HomePage from "@/pages/Home/index";
-import NotFoundPage from "./pages/404/index";
+import { Page } from './core/Page';
+import HomePage from '@/pages/Home/index';
+import NotFoundPage from './pages/404/index';
 
 const routes: Record<string, Page> = {
-  "/": HomePage,
+  '/': HomePage,
 };
 
-const appDiv = document.getElementById("app");
+const appDiv = document.getElementById('app');
 
 async function router(path: string) {
   if (!appDiv) return;
@@ -15,7 +15,11 @@ async function router(path: string) {
   const content = await targetPage.render();
 
   appDiv.innerHTML = content;
-  window.history.pushState({}, "", path);
+  window.history.pushState({}, '', path);
+
+  if (targetPage.mounted) {
+    await targetPage.mounted();
+  }
 }
 
 /** ブラウザの戻るボタンを押下時 */
@@ -25,6 +29,6 @@ window.onpopstate = () => {
 };
 
 /** ページ読み込み時 */
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
   router(window.location.pathname);
 });

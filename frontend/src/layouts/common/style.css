@@ -1,3 +1,11 @@
-h1 {
-  color: red;
+.header {
+  background-color: #f0f0f0;
+}
+
+.footer {
+  background-color: #f0f0f0;
+}
+
+.content {
+  padding: 100px;
 }

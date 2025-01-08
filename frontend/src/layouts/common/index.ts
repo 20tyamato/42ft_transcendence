@@ -1,7 +1,7 @@
-import { Layout } from "@/core/Layout";
+import { Layout } from '@/core/Layout';
 
 const CommonLayout = new Layout({
-  name: "common",
+  name: 'common',
 });
 
 export default CommonLayout;
