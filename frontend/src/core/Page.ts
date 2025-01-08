@@ -3,7 +3,7 @@ type PageProps = {
 };
 
 export class Page {
-  private readonly htmlPath: string;
+  readonly htmlPath: string;
 
   constructor(props: PageProps) {
     this.htmlPath = props.htmlPath;

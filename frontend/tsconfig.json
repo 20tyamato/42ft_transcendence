@@ -8,7 +8,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
-    }
+    },
+    "types": ["vite/client"]
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "src/**/*.ts", "src/types.d.ts"]
 }

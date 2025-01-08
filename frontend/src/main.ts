@@ -1,5 +1,6 @@
 import { Page } from "./core/Page";
 import HomePage from "@/pages/Home/index";
+import NotFoundPage from "./pages/404/index";
 
 type Route = {
   path: string;
@@ -24,15 +25,16 @@ const pages: Record<string, Page> = {
 
 const appDiv = document.getElementById("app");
 
-function router(path: string) {
-  const route = routes.find((r) => r.path === path);
-  if (!route || !appDiv) return;
+async function router(path: string) {
+  if (!appDiv) return;
 
-  // console.log("kamite test", HomePage);
+  const targetPage = pages[path] ?? NotFoundPage;
+  console.log("kamite test", targetPage);
 
-  // console.log("kamite test", pages[path]);
+  const response = await fetch(targetPage.htmlPath);
+  const content = await response.text();
 
-  appDiv.innerHTML = route.template;
+  appDiv.innerHTML = content;
   window.history.pushState({}, "", path);
 }
 
