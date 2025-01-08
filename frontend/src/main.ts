@@ -12,7 +12,6 @@ async function router(path: string) {
   if (!appDiv) return;
 
   const targetPage = routes[path] ?? NotFoundPage;
-
   const content = await targetPage.render();
 
   appDiv.innerHTML = content;
