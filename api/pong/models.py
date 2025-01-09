@@ -6,6 +6,21 @@ class User(AbstractUser):
     avatar = models.ImageField(upload_to="avatars/", null=True, blank=True, default="default_avatar.png")
     level = models.IntegerField(default=1)
 
+    groups = models.ManyToManyField(
+        "auth.Group",
+        related_name="custom_user_groups",
+        blank=True,
+        help_text="The groups this user belongs to.",
+        verbose_name="groups",
+    )
+    user_permissions = models.ManyToManyField(
+        "auth.Permission",
+        related_name="custom_user_permissions",
+        blank=True,
+        help_text="Specific permissions for this user.",
+        verbose_name="user permissions",
+    )
+
     def __str__(self):
         return self.display_name
 
