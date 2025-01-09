@@ -17,6 +17,9 @@ fbuild:
 test:
 	docker exec -it ft_transcendence-api-1 python manage.py test pong
 
+makemigrations:
+	docker exec -it ft_transcendence-api-1 python manage.py makemigrations
+
 migrate:
 	docker exec -it ft_transcendence-api-1 python manage.py migrate
 
