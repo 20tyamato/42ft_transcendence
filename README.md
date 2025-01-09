@@ -19,28 +19,27 @@
 ## GitHub運用
 
 - main : 常に動く。どこのステップかが明確
-  - develop：動かないこともある
-    - yamato
-    - fukuhara
-    - akamite
-    - tatashir
-    - hrinka
+  - yamato
+  - fukuhara
+  - akamite
+  - tatashir
+  - hrinka
 
 ### GitHub具体的な方法
 
 - Main
   - GitHub上でIssueを作成
-    - タイトル：`[<your_name>]Add 〇〇 Feature`
+    - タイトル：`Add 〇〇 Feature`
+    - アサイン：メンバーの誰か
+    - ラベル：適切なのを選択
   - ローカルのアップデート：`git checkout develop; git pull origin develop`
   - ローカル環境でブランチを切る：`git checkout -b <your_name>/add-feature#issue_id`
   - 作業
   - コミット：`git commit -am "Add 〇〇 Feature #issue_id"`
   - プッシュ：`git push origin <your_name>/add-feature#issue_id`
   - Issueとコミットがリンクされているのを確認後、プルリクエストを作成
-  - 相方のレビュー
+  - 誰かのレビュー
   - OKだったら、GitHub上でMerge
-- 最終処理
-  - developをmainにマージ：`git checkout develop; git pull origin develop; git checkout main; git merge develop; git push origin main`
 - 参考サイト
   - [参考サイト①：Issueの使い方](https://qiita.com/tkmd35/items/9612c03dc60b1c516969)
   - [参考サイト②：GitHubワークフロー](https://www.atlassian.com/ja/git/tutorials/comparing-workflows/gitflow-workflow)
@@ -77,6 +76,29 @@
 
 - [42Eval](https://42evals.me/Cursus/)
 
+## 基本コマンド
+
+- `make up` : コンテナを立ち上げる
+  - `make fbuild` : コンテナをキャッシュなしで立ち上げる
+- `make down` : コンテナを落とす
+  - `make clean` : コンテナを落として、ボリュームも削除する
+- `make re` : コンテナを再起動する
+- `make test` : APIのテストを実行する
+- `make migrate` : マイグレーションを実行する
+
+## 便利コマンド
+
+- 前提：別ターミナルで`make up`を実行しておく
+- `make api_in` : APIコンテナに入る
+  - `make api_logs` : APIコンテナのログを見る
+- `make front_in` : フロントコンテナに入る
+  - `make front_logs` : フロントコンテナのログを見る
+- `make db_in` : DBコンテナに入る
+  - `make db_logs` : DBコンテナのログを見る
+
 ## Formatter
+
+- Frontend: `make lint`
+- Backend: `make ruff`
 
 ## 参考資料
