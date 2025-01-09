@@ -1,38 +1,49 @@
-import * as path from "path";
-import * as fs from "fs/promises";
-import { readHTMLfile } from "../utils/file";
+import CommonLayout from '@/layouts/common/index';
+import { Layout } from './Layout';
 
-interface PageProps {
-  htmlPath: string;
+type PageConfig = {
+  html: string;
+  css: string;
+  layout: Layout;
+};
+
+type PageProps = {
+  name: string;
+  config?: Partial<PageConfig>;
   mounted?: () => Promise<void>;
-}
+};
 
-/**
- * Pageを管理するクラス
- */
+const getDefaultConfig = (name: string, config?: Partial<PageConfig>): PageConfig => {
+  return {
+    html: `/src/pages/${name}/index.html`,
+    css: `/src/pages/${name}/style.css`,
+    layout: CommonLayout,
+    ...config,
+  };
+};
+
 export class Page {
-  private _htmlPath: string;
-  private _mounted?: () => Promise<void>;
+  readonly config: PageConfig;
+  mounted?: () => Promise<void>;
 
-  constructor({ htmlPath, mounted }: PageProps) {
-    this._htmlPath = htmlPath;
-    this._mounted = mounted;
+  constructor(props: PageProps) {
+    this.config = getDefaultConfig(props.name, props.config);
+    this.mounted = props.mounted;
   }
 
-  /**
-   * HTMLファイルを読み込む
-   * @returns HTMLファイルの内容
-   */
-  async render(): Promise<string> {
-    return await readHTMLfile(this._htmlPath);
-  }
+  async render() {
+    const response = await fetch(this.config.html);
+    const content = await response.text();
 
-  /**
-   * マウント処理を実行する
-   */
-  async mounted() {
-    if (!this._mounted) return;
+    if (this.config.css) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = this.config.css;
+      document.head.appendChild(link);
+    }
 
-    await this._mounted();
+    const layout = await this.config.layout.render();
+    const contentWithLayout = layout.replace('<children />', content);
+    return contentWithLayout;
   }
 }
