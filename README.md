@@ -47,7 +47,7 @@
   
 ## Basic Rules
 
-- One PR per issue
+- **One PR per issue**
 - TODOリストはissueに記入
 - PRにはテンプレートに従い、必要事項を記入
 - PRには`WIP`かそれ以外か
@@ -84,6 +84,7 @@
   - `make clean` : コンテナを落として、ボリュームも削除する
 - `make re` : コンテナを再起動する
 - `make test` : APIのテストを実行する
+- `make makemigrations` : マイグレーションファイルを作成する
 - `make migrate` : マイグレーションを実行する
 
 ## 便利コマンド
