@@ -14,6 +14,9 @@ clean: down
 fbuild:
 	docker compose up --build --no-cache
 
+test:
+	docker exec -it ft_transcendence-api-1 python manage.py test pong
+
 ruff:
 	docker exec -it ft_transcendence-api-1 poetry run ruff check .
 
