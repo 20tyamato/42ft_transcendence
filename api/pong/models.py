@@ -9,7 +9,7 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.display_name
-    
+
 class Game(models.Model):
     player1 = models.ForeignKey(User, related_name="games_as_player1", on_delete=models.CASCADE)
     player2 = models.ForeignKey(User, related_name="games_as_player2", on_delete=models.CASCADE)
