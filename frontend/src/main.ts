@@ -1,9 +1,12 @@
-import { Page } from './core/Page';
 import HomePage from '@/pages/Home/index';
+import RegisterPage from '@/pages/Register/index';
+import { Page } from './core/Page';
 import NotFoundPage from './pages/404/index';
 
 const routes: Record<string, Page> = {
   '/': HomePage,
+  '/404': NotFoundPage,
+  '/register': RegisterPage,
 };
 
 const appDiv = document.getElementById('app');

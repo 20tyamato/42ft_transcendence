@@ -9,7 +9,6 @@ class UserSerializer(serializers.ModelSerializer):
             'username',
             'email',
             'display_name',
-            'avatar',
             'level',
         ]
 
