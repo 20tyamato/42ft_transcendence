@@ -21,7 +21,6 @@ const RegisterPage = new Page({
         username: formData.get('username'),
         email: formData.get('email'),
         display_name: formData.get('display_name'),
-        level: formData.get('level') ? Number(formData.get('level')) : 1,
       };
 
       try {

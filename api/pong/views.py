@@ -3,11 +3,12 @@ from rest_framework.permissions import IsAuthenticated
 from .models import User, Game
 from .serializers import UserSerializer, GameSerializer
 from .permissions import IsOwnerOfUserProfile, IsPlayerOrReadOnly
+from rest_framework.permissions import AllowAny
 
 class UserListCreateView(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
