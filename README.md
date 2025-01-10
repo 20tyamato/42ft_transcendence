@@ -102,4 +102,9 @@
 - Frontend: `make lint`
 - Backend: `make ruff`
 
+## Access Links
+
+- [API](http://localhost:3001)
+- [Frontend](http://127.0.0.1:8000/)
+
 ## 参考資料
