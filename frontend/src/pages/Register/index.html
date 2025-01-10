@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./style.css">
+  <title>User Registration</title>
+</head>
+<body>
+  <div class="register-container">
+    <h1>Register</h1>
+    <form id="register-form">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" required />
+
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required />
+
+      <label for="display_name">Display Name</label>
+      <input type="text" id="display_name" name="display_name" />
+
+      <label for="avatar">Avatar URL</label>
+      <input type="url" id="avatar" name="avatar" />
+
+      <label for="level">Level</label>
+      <input type="number" id="level" name="level" min="1" />
+
+      <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+    <div id="response-message"></div>
+  </div>
+  <script type="module" src="./index.ts"></script>
+</body>
+</html>
