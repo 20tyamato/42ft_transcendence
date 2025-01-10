@@ -25,7 +25,7 @@ const RegisterPage = new Page({
       };
 
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/users', {
+        const response = await fetch('http://127.0.0.1:8000/api/users/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -39,10 +39,11 @@ const RegisterPage = new Page({
           responseMessage!.style.color = 'green';
         } else {
           const error = await response.json();
-          responseMessage!.textContent = `Error: ${error.message}`;
+          responseMessage!.textContent = `Error: ${error.message || 'Something went wrong'}`;
           responseMessage!.style.color = 'red';
         }
       } catch (error) {
+        console.error(error);
         responseMessage!.textContent = 'An unexpected error occurred.';
         responseMessage!.style.color = 'red';
       }

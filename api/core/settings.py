@@ -133,7 +133,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS設定
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # フロントエンドのURL
+    "http://localhost:3001",
+    "http://127.0.0.1:3001",
 ]
 
 # REST Framework設定
