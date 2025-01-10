@@ -107,4 +107,17 @@
 - [API](http://localhost:3001)
 - [Frontend](http://127.0.0.1:8000/)
 
+## HTTPS
+
+- `GET /users/`
+- `POST /users/`
+- `GET /users/<pk>/`
+- `PUT/PATCH /users/<pk>/`
+- `DELETE /users/<pk>/`
+- `GET /games/`
+- `POST /games/`
+- `GET /games/<pk>/`
+- `PUT/PATCH /games/<pk>/`
+- `DELETE /games/<pk>/`
+
 ## 参考資料

@@ -1,9 +1,15 @@
 from django.urls import path
-from . import views
+from .views import (
+    UserListCreateView, UserRetrieveUpdateDestroyView,
+    GameListCreateView, GameRetrieveUpdateDestroyView
+)
 
 urlpatterns = [
-    path('users/', views.UserListCreateView.as_view(), name='user-list-create'),
-    path('users/<int:pk>/', views.UserRetrieveUpdateDestroyView.as_view(), name='user-detail'),
-    path('games/', views.GameListCreateView.as_view(), name='game-list-create'),
-    path('games/<int:pk>/', views.GameRetrieveUpdateDestroyView.as_view(), name='game-detail'),
+    # User
+    path('users/', UserListCreateView.as_view(), name='user-list-create'),
+    path('users/<int:pk>/', UserRetrieveUpdateDestroyView.as_view(), name='user-detail'),
+
+    # Game
+    path('games/', GameListCreateView.as_view(), name='game-list-create'),
+    path('games/<int:pk>/', GameRetrieveUpdateDestroyView.as_view(), name='game-detail'),
 ]
