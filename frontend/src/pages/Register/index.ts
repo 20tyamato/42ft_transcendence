@@ -36,6 +36,7 @@ const RegisterPage = new Page({
           const result = await response.json();
           responseMessage!.textContent = 'Registration successful!';
           responseMessage!.style.color = 'green';
+          console.log(result);
         } else {
           const error = await response.json();
           responseMessage!.textContent = `Error: ${error.message || 'Something went wrong'}`;
