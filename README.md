@@ -109,6 +109,7 @@
   - `http://127.0.0.1:8000/api/users/`
   - `http://127.0.0.1:8000/api/games/`
 - [Frontend](http://127.0.0.1:8000/)
+  - `http://localhost:3001/register`
 
 ## HTTPS
 
