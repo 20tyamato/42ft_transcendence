@@ -68,5 +68,11 @@ help:
 	@echo "  api_logs       - show api logs"
 	@echo "  front_logs     - show frontend logs"
 	@echo "  db_logs        - show db logs"
+	@echo ""
+	@echo "Before Submission"
+	@echo "  make migrate"
+	@echo "  make lint"
+	@echo "  make ruff"
+	@echo "  make test"
 
 .PHONY: all up down re clean fbuild test makemigrations migrate ruff lint api_in front_in db_in api_logs front_logs db_logs
