@@ -36,8 +36,7 @@ const LoginPage = new Page({
           responseMessage!.textContent = 'Login successful!';
           responseMessage!.style.color = 'green';
           console.log(result);
-          // ログイン後にリダイレクトする例:
-          // window.location.href = '/dashboard';
+          window.location.href = '/sample';
         } else {
           const error = await response.json();
           responseMessage!.textContent = `Error: ${error.message || 'Invalid credentials'}`;
