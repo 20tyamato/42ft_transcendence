@@ -1,15 +1,9 @@
 from django.urls import path
-
 from . import views
 
-app_name = "pong"
 urlpatterns = [
-    # ex: /pong/
-    path("", views.IndexView.as_view(), name="index"),
-    # ex: /pong/5/
-    path("<int:pk>/", views.DetailView.as_view(), name="detail"),
-    # ex: /pong/5/results/
-    path("<int:pk>/results/", views.ResultsView.as_view(), name="results"),
-    # ex: /pong/5/vote/
-    path("<int:question_id>/vote/", views.vote, name="vote"),
+    path('users/', views.UserListCreateView.as_view(), name='user-list-create'),
+    path('users/<int:pk>/', views.UserRetrieveUpdateDestroyView.as_view(), name='user-detail'),
+    path('games/', views.GameListCreateView.as_view(), name='game-list-create'),
+    path('games/<int:pk>/', views.GameRetrieveUpdateDestroyView.as_view(), name='game-detail'),
 ]
