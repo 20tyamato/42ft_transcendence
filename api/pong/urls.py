@@ -4,6 +4,7 @@ from .views import (
     GameListCreateView, GameRetrieveUpdateDestroyView
 )
 
+app_name = "pong"
 urlpatterns = [
     # User
     path('users/', UserListCreateView.as_view(), name='user-list-create'),

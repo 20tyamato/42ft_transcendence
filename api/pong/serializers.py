@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import User, Game
 
-class UserSimpleSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
@@ -15,9 +15,9 @@ class UserSimpleSerializer(serializers.ModelSerializer):
 
 
 class GameSerializer(serializers.ModelSerializer):
-    player1 = UserSimpleSerializer(read_only=True)
-    player2 = UserSimpleSerializer(read_only=True)
-    winner = UserSimpleSerializer(read_only=True)
+    player1 = UserSerializer(read_only=True)
+    player2 = UserSerializer(read_only=True)
+    winner = UserSerializer(read_only=True)
 
     class Meta:
         model = Game

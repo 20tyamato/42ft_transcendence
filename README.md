@@ -104,7 +104,10 @@
 
 ## Access Links
 
-- [API](http://localhost:3001)
+- [API](http://127.0.0.1:3001)
+  - `http://127.0.0.1:8000/admin/`
+  - `http://127.0.0.1:8000/api/users/`
+  - `http://127.0.0.1:8000/api/games/`
 - [Frontend](http://127.0.0.1:8000/)
 
 ## HTTPS
