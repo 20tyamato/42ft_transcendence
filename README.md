@@ -102,4 +102,29 @@
 - Frontend: `make lint`
 - Backend: `make ruff`
 
+## Access Links
+
+- [API](http://127.0.0.1:3001)
+  - `http://127.0.0.1:8000/admin/`
+  - `http://127.0.0.1:8000/api/users/`
+  - `http://127.0.0.1:8000/api/games/`
+- [Frontend](http://127.0.0.1:8000/)
+  - `http://localhost:3001/`
+  - `http://localhost:3001/register`
+  - `http://localhost:3001/login`
+  - `http://localhost:3001/sample`
+
+## HTTPS
+
+- `GET /users/`
+- `POST /users/`
+- `GET /users/<pk>/`
+- `PUT/PATCH /users/<pk>/`
+- `DELETE /users/<pk>/`
+- `GET /games/`
+- `POST /games/`
+- `GET /games/<pk>/`
+- `PUT/PATCH /games/<pk>/`
+- `DELETE /games/<pk>/`
+
 ## 参考資料

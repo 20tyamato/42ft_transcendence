@@ -7,13 +7,19 @@ const HomePage = new Page({
     layout: CommonLayout,
   },
   mounted: async () => {
-    const button = document.getElementById('click-button');
-    const count = document.getElementById('click-count');
+    const loginButton = document.querySelector('a[href="/login"]');
+    const registerButton = document.querySelector('a[href="/register"]');
 
-    let clickCount = 0;
-    button?.addEventListener('click', () => {
-      clickCount++;
-      count!.textContent = clickCount.toString();
+    loginButton?.addEventListener('click', (event) => {
+      event.preventDefault();
+      alert('Login button clicked! Navigating to the login page...');
+      window.location.href = '/login';
+    });
+
+    registerButton?.addEventListener('click', (event) => {
+      event.preventDefault();
+      alert('Register button clicked! Navigating to the register page...');
+      window.location.href = '/register';
     });
   },
 });

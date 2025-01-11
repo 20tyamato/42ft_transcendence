@@ -3,21 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sample Page</title>
   <link rel="stylesheet" href="./style.css">
-  <title>Home</title>
 </head>
 <body>
-  <div class="home-container">
+  <div class="container">
     <header>
-      <h1>42Tokyo ft_transcendence</h1>
+      <h1>Sample Page</h1>
+      <p>Click the button to see a random message.</p>
     </header>
     <main>
-      <p>Please login or register to continue</p>
-      <a href="/login" class="btn btn-primary">Login</a>
-      <a href="/register" class="btn btn-secondary">Register</a>
+      <p id="random-message">Your random message will appear here.</p>
+      <button id="random-message-button" class="btn">Click Me</button>
     </main>
     <footer>
-      <p>© 2025 42Tokyo</p>
+      <p>© 2025 Sample Company</p>
     </footer>
   </div>
   <script type="module" src="./index.ts"></script>
