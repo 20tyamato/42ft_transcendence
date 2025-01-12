@@ -46,7 +46,7 @@ class Tournament(models.Model):
 
     def __str__(self):
         return self.name
-    
+
 class BlockchainScore(models.Model):
     tournament = models.OneToOneField(Tournament, on_delete=models.CASCADE, related_name="blockchain_score")
     transaction_id = models.CharField(max_length=256)
