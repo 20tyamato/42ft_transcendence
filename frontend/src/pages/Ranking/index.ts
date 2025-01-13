@@ -36,7 +36,7 @@ const RankingPage = new Page({
     });
 
     backBtn?.addEventListener('click', () => {
-      window.location.href = '/opening';
+      window.location.href = '/';
     });
   },
 });

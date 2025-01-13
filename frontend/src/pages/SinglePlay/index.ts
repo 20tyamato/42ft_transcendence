@@ -28,7 +28,7 @@ const SinglePlayPage = new Page({
     });
 
     exitBtn?.addEventListener('click', () => {
-      window.location.href = '/opening'; // オープニングへ戻る
+      window.location.href = '/';
     });
   },
 });

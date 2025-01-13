@@ -7,13 +7,27 @@ const HomePage = new Page({
     layout: CommonLayout,
   },
   mounted: async () => {
-    const loginButton = document.querySelector('a[href="/login"]');
+    const quickStartBtn = document.querySelector('a[href="/quickstart"]');
+    const singlePlayBtn = document.querySelector('a[href="/singleplay"]');
+    const multiPlayBtn = document.querySelector('a[href="/multiplay"]');
     const registerButton = document.querySelector('a[href="/register"]');
 
-    loginButton?.addEventListener('click', (event) => {
+    quickStartBtn?.addEventListener('click', (event) => {
       event.preventDefault();
-      alert('Login button clicked! Navigating to the login page...');
-      window.location.href = '/login';
+      alert('Quick Start clicked!');
+      window.location.href = '/quickstart';
+    });
+
+    singlePlayBtn?.addEventListener('click', (event) => {
+      event.preventDefault();
+      alert('Single Play clicked!');
+      window.location.href = '/singleplay';
+    });
+
+    multiPlayBtn?.addEventListener('click', (event) => {
+      event.preventDefault();
+      alert('Multi Play clicked!');
+      window.location.href = '/multiplay';
     });
 
     registerButton?.addEventListener('click', (event) => {

@@ -11,8 +11,8 @@ body {
   
   .ranking-container {
     background: #fff;
-    width: 90%;
-    max-width: 500px;
+    width: 100%;
+    max-width: 1000px;
     border-radius: 15px;
     text-align: center;
     padding: 20px;

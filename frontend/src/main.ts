@@ -2,7 +2,6 @@ import NotFoundPage from '@/pages/404/index';
 import HomePage from '@/pages/Home/index';
 import LoginPage from '@/pages/Login/index';
 import MultiPlayPage from '@/pages/MultiPlay/index';
-import OpeningPage from '@/pages/Opening/index';
 import QuickStartPage from '@/pages/QuickStart/index';
 import RankingPage from '@/pages/Ranking/index';
 import RegisterPage from '@/pages/Register/index';
@@ -30,12 +29,11 @@ const appDiv = document.getElementById('app');
 // }
 
 const routes: Record<string, Page> = {
-  '/': HomePage,
   '/404': NotFoundPage,
   '/register': RegisterPage,
   '/login': LoginPage,
   '/sample': SamplePage,
-  '/opening': OpeningPage,
+  '/': HomePage,
   '/quickstart': QuickStartPage,
   // FIXME: ちゃんと実装する
   // '/singleplay': requireAuth(SinglePlayPage),

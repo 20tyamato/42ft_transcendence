@@ -26,7 +26,7 @@ const QuickStartPage = new Page({
 
     exitBtn?.addEventListener('click', () => {
       alert('Exit Quick Start Game...');
-      window.location.href = '/opening'; // Opening画面へ戻る
+      window.location.href = '/';
     });
   },
 });
