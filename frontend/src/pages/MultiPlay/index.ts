@@ -30,7 +30,7 @@ const MultiPlayPage = new Page({
 
     noBtn?.addEventListener('click', () => {
       alert('Please register users first.');
-      window.location.href = '/register'; 
+      window.location.href = '/register';
     });
 
     setPlayerCountBtn?.addEventListener('click', () => {

@@ -47,6 +47,16 @@ front_logs:
 db_logs:
 	docker logs -f ft_transcendence-db-1
 
+submit:
+	@echo "=============================="
+	make migrate
+	@echo "=============================="
+	make lint
+	@echo "=============================="
+	make ruff
+	@echo "=============================="
+	make test
+
 help:
 	@echo "Usage: make [target]"
 	@echo ""

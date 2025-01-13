@@ -38,12 +38,12 @@ const UserProfilePage = new Page({
     // 画面に反映
     usernameEl.textContent = username;
     rankingEl.textContent = ranking.toString();
-    tournamentHistory.forEach(item => {
+    tournamentHistory.forEach((item) => {
       const li = document.createElement('li');
       li.textContent = `${item.date} - ${item.result}`;
       tournamentHistoryEl?.appendChild(li);
     });
-    blockchainScores.forEach(item => {
+    blockchainScores.forEach((item) => {
       const li = document.createElement('li');
       li.textContent = `TxHash: ${item.txHash} | Score: ${item.score}`;
       scoreListEl?.appendChild(li);
