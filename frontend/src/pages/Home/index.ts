@@ -38,6 +38,24 @@ const HomePage = new Page({
       alert('Register clicked!');
       window.location.href = '/register';
     });
+
+    loginBtn?.addEventListener('click', (event) => {
+      event.preventDefault();
+      alert('Login clicked!');
+      window.location.href = '/login';
+    });
+
+    rankingBtn?.addEventListener('click', (event) => {
+      event.preventDefault();
+      alert('Ranking clicked!');
+      window.location.href = '/ranking';
+    });
+
+    profileBtn?.addEventListener('click', (event) => {
+      event.preventDefault();
+      alert('User Profile clicked!');
+      window.location.href = '/userprofile';
+    });
   },
 });
 
