@@ -11,6 +11,9 @@ const HomePage = new Page({
     const singlePlayBtn = document.querySelector('a[href="/singleplay"]');
     const multiPlayBtn = document.querySelector('a[href="/multiplay"]');
     const registerBtn = document.querySelector('a[href="/register"]');
+    const loginBtn = document.querySelector('a[href="/login"]');
+    const rankingBtn = document.querySelector('a[href="/ranking"]');
+    const profileBtn = document.querySelector('a[href="/userprofile"]');
 
     quickStartBtn?.addEventListener('click', (event) => {
       event.preventDefault();
