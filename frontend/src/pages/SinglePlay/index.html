@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Single Play</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="singleplay-container">
+    <header>
+      <h1>Single Play</h1>
+    </header>
+    <main>
+      <p>Select AI level to start the game.</p>
+      <select id="aiLevelSelect" class="select-box">
+        <option value="1">Easy</option>
+        <option value="2">Normal</option>
+        <option value="3">Hard</option>
+        <option value="secret">鬼</option>
+      </select>
+      <button id="startGameBtn" class="btn btn-primary">Start Game</button>
+
+      <div id="gameResult" class="hidden">
+        <p>Game Finished! Your level might have changed.</p>
+        <button id="retryBtn" class="btn btn-secondary">Retry</button>
+        <button id="exitBtn" class="btn btn-tertiary">Exit</button>
+      </div>
+    </main>
+    <footer>
+      <p>© 2025 42Tokyo</p>
+    </footer>
+  </div>
+  <script type="module" src="./index.ts"></script>
+</body>
+</html>

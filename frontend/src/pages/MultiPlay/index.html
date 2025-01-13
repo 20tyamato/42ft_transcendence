@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Multi Play</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="multiplay-container">
+    <header>
+      <h1>Multi Play</h1>
+    </header>
+    <main>
+      <div id="step1">
+        <p>Has everyone registered?</p>
+        <button id="yesBtn" class="btn btn-primary">Yes</button>
+        <button id="noBtn" class="btn btn-secondary">No</button>
+      </div>
+
+      <div id="step2" class="hidden">
+        <p>Select number of players (3-8)</p>
+        <input id="playerCount" type="number" min="3" max="8" value="3" />
+        <button id="setPlayerCountBtn" class="btn btn-primary">OK</button>
+      </div>
+
+      <div id="step3" class="hidden">
+        <p>Players login one by one...</p>
+        <!-- ログインフォームを繰り返し表示するなど、本来はロジックを追加 -->
+        <button id="loginCompleteBtn" class="btn btn-primary">All Logged In</button>
+      </div>
+
+      <div id="step4" class="hidden">
+        <p>Tournament Bracket generated!</p>
+        <button id="startTournamentBtn" class="btn btn-primary">Start Tournament</button>
+      </div>
+
+      <div id="matchArea" class="hidden">
+        <p>Match is in progress...</p>
+        <!-- 各試合の進行をシミュレートする想定 -->
+        <button id="finishTournamentBtn" class="btn btn-secondary">Finish All Matches</button>
+      </div>
+
+      <div id="resultArea" class="hidden">
+        <p>All matches finished! Ranking updated, trophies awarded.</p>
+        <button id="retryBtn" class="btn btn-secondary">Retry</button>
+        <button id="exitBtn" class="btn btn-tertiary">Exit</button>
+      </div>
+    </main>
+    <footer>
+      <p>© 2025 42Tokyo</p>
+    </footer>
+  </div>
+  <script type="module" src="./index.ts"></script>
+</body>
+</html>
