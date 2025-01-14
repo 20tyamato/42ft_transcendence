@@ -15,37 +15,37 @@ fbuild:
 	docker compose up --build --no-cache
 
 test:
-	docker exec -it ft_transcendence-api-1 python manage.py test pong
+	docker exec -it 42ft_transcendence-api-1 python manage.py test pong
 
 makemigrations:
-	docker exec -it ft_transcendence-api-1 python manage.py makemigrations
+	docker exec -it 42ft_transcendence-api-1 python manage.py makemigrations
 
 migrate:
-	docker exec -it ft_transcendence-api-1 python manage.py migrate
+	docker exec -it 42ft_transcendence-api-1 python manage.py migrate
 
 ruff:
-	docker exec -it ft_transcendence-api-1 poetry run ruff check .
+	docker exec -it 42ft_transcendence-api-1 poetry run ruff check .
 
 lint:
 	cd frontend && npm run lint
 
 api_in:
-	docker exec -it ft_transcendence-api-1 bash
+	docker exec -it 42ft_transcendence-api-1 bash
 
 front_in:
-	docker exec -it ft_transcendence-frontend-1 bash
+	docker exec -it 42ft_transcendence-frontend-1 bash
 
 db_in:
-	docker exec -it ft_transcendence-db-1 bash
+	docker exec -it 42ft_transcendence-db-1 bash
 
 api_logs:
-	docker logs -f ft_transcendence-api-1
+	docker logs -f 42ft_transcendence-api-1
 
 front_logs:
-	docker logs -f ft_transcendence-frontend-1
+	docker logs -f 42ft_transcendence-frontend-1
 
 db_logs:
-	docker logs -f ft_transcendence-db-1
+	docker logs -f 42ft_transcendence-db-1
 
 submit:
 	@echo "=============================="
