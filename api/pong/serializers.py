@@ -3,8 +3,8 @@ from .models import User, Game, Tournament, BlockchainScore
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 
-# TODO: ここ追加する
 class UserSerializer(serializers.ModelSerializer):
+    # パスワードはUserモデル内で管理しない
     password = serializers.CharField(write_only=True, required=True)
     password2 = serializers.CharField(write_only=True, required=True)
     
@@ -18,16 +18,19 @@ class UserSerializer(serializers.ModelSerializer):
             'password',
             'password2'
         ]
+        extra_kwargs = {
+            'username': {'required': True},
+            'email': {'required': True},
+            'display_name': {'required': True},
+        }
+
     def validate(self, attrs):
-        if attrs['password'] != attrs['password2']:
-            raise serializers.ValidationError({"password": "Passwords do not match."})
-        
-        try:
-            validate_password(attrs['password'])
-        except ValidationError as e:
-            raise serializers.ValidationError({"password": list(e.messages)})
-        
-        return attrs
+        # 空文字列のチェック
+        for field in ['username', 'email', 'display_name']:
+            if field in attrs and not attrs[field].strip():
+                raise serializers.ValidationError({field: "This field may not be blank."})
+
+        return super().validate(attrs)
 
     def create(self, validated_data):
         # Remove password2 as we don't need it for user creation
@@ -37,7 +40,7 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create(
             username=validated_data['username'],
             email=validated_data.get('email', ''),
-            display_name=validate_data['display_name']
+            display_name=validated_data['display_name']
         )
 
         # Set password (this handles the hashing)
