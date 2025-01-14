@@ -19,7 +19,7 @@ class UserViewsTest(APITestCase):
     def test_create_user_success(self):
         """正常なユーザー登録のテスト"""
         response = self.client.post(self.register_url, self.valid_data, format='json')
-        
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(User.objects.count(), 1)
         self.assertEqual(User.objects.get().username, 'testuser')
@@ -31,19 +31,19 @@ class UserViewsTest(APITestCase):
         """ユーザー一覧取得のテスト"""
         # まずユーザーを作成
         self.client.post(self.register_url, self.valid_data, format='json')
-        
+
         # 一覧を取得
         response = self.client.get(self.register_url)
-        
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['username'], 'testuser')
-        
+
     # データ検証のテスト
     def test_create_user_missing_fields(self):
         """必須フィールドが欠落している場合のテスト"""
         required_fields = ['username', 'email', 'display_name', 'password', 'password2']
-        
+
         for field in required_fields:
             invalid_data = self.valid_data.copy()
             invalid_data.pop(field)
@@ -54,7 +54,7 @@ class UserViewsTest(APITestCase):
     def test_create_user_with_empty_fields(self):
         """空の値を持つフィールドでの登録テスト"""
         fields = ['username', 'email', 'display_name']
-        
+
         for field in fields:
             invalid_data = self.valid_data.copy()
             invalid_data[field] = ''
@@ -67,7 +67,7 @@ class UserViewsTest(APITestCase):
         """重複するユーザーデータでの登録テスト"""
         # 最初のユーザーを作成
         self.client.post(self.register_url, self.valid_data, format='json')
-        
+
         # 同じデータで2回目の登録を試みる
         response = self.client.post(self.register_url, self.valid_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -78,7 +78,7 @@ class UserViewsTest(APITestCase):
         whitespace_data = self.valid_data.copy()
         whitespace_data['username'] = '   testuser   '
         whitespace_data['display_name'] = '   Test User   '
-        
+
         response = self.client.post(self.register_url, whitespace_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         # 空白が適切に処理されているか確認
@@ -88,7 +88,7 @@ class UserViewsTest(APITestCase):
         """特殊文字を含むデータでの登録テスト"""
         special_chars_data = self.valid_data.copy()
         special_chars_data['display_name'] = 'Test@User#123'
-        
+
         response = self.client.post(self.register_url, special_chars_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -97,7 +97,7 @@ class UserViewsTest(APITestCase):
         long_data = self.valid_data.copy()
         long_data['username'] = 'a' * 150  # Djangoのデフォルト最大長
         long_data['display_name'] = 'b' * 50  # モデルで定義した最大長
-        
+
         response = self.client.post(self.register_url, long_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -114,11 +114,11 @@ class UserViewsTest(APITestCase):
         """レスポンスの構造が正しいことを確認するテスト"""
         response = self.client.post(self.register_url, self.valid_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        
+
         # 必要なフィールドが含まれているか確認
         self.assertIn('user', response.data)
         self.assertIn('message', response.data)
-        
+
         # ユーザーオブジェクトに必要なフィールドが含まれているか確認
         user_data = response.data['user']
         expected_fields = ['id', 'username', 'email', 'display_name']

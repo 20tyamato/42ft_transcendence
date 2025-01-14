@@ -1,5 +1,4 @@
 from pong.models import User
-from django.core.exceptions import ValidationError
 from rest_framework.test import APITestCase
 from pong.serializers import UserSerializer
 
@@ -123,7 +122,7 @@ class UserSerializerTests(APITestCase):
         user_data = self.valid_data.copy()
         user_data.pop('password2')
         User.objects.create_user(**user_data)
-        
+
         # Try to create another user with same username but different case
         data = self.valid_data.copy()
         data['username'] = data['username'].upper()

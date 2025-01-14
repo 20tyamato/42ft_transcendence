@@ -1,13 +1,11 @@
 from rest_framework import serializers
 from .models import User, Game, Tournament, BlockchainScore
-from django.contrib.auth.password_validation import validate_password
-from django.core.exceptions import ValidationError
 
 class UserSerializer(serializers.ModelSerializer):
     # パスワードはUserモデル内で管理しない
     password = serializers.CharField(write_only=True, required=True)
     password2 = serializers.CharField(write_only=True, required=True)
-    
+
     class Meta:
         model = User
         fields = [
