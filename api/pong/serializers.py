@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import User, Game, Tournament, BlockchainScore
 from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 # TODO: ここ追加する
 class UserSerializer(serializers.ModelSerializer):
@@ -18,7 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
             'password2'
         ]
     def validate(self, attrs):
-        if attes['password'] != attrs['password2']:
+        if attrs['password'] != attrs['password2']:
             raise serializers.ValidationError({"password": "Passwords do not match."})
         
         try:
