@@ -21,6 +21,8 @@ const RegisterPage = new Page({
         username: formData.get('username'),
         email: formData.get('email'),
         display_name: formData.get('display_name'),
+        password: formData.get('password'),
+        password2: formData.get('password2'),
       };
 
       try {
