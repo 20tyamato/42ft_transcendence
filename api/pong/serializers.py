@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import User, Game, Tournament, BlockchainScore
 
+# TODO: ここ追加する
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
