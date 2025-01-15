@@ -3,9 +3,7 @@ from .models import User, Game, Tournament, BlockchainScore
 from django.contrib.auth import authenticate
 
 class UserSerializer(serializers.ModelSerializer):
-    # パスワードはUserモデル内で管理しない
     password = serializers.CharField(write_only=True, required=True)
-    password2 = serializers.CharField(write_only=True, required=True)
 
     class Meta:
         model = User
@@ -15,7 +13,6 @@ class UserSerializer(serializers.ModelSerializer):
             'email',
             'display_name',
             'password',
-            'password2'
         ]
         extra_kwargs = {
             'username': {'required': True},
@@ -32,8 +29,6 @@ class UserSerializer(serializers.ModelSerializer):
         return super().validate(attrs)
 
     def create(self, validated_data):
-        validated_data.pop('password2', None)
-
         user = User.objects.create(
             username=validated_data['username'],
             email=validated_data.get('email', ''),

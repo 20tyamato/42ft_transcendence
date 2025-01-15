@@ -26,7 +26,7 @@ class UserListCreateView(generics.ListCreateAPIView):
 
 class LoginView(APIView):
     serializer_class = LoginSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = [AllowAny]
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
