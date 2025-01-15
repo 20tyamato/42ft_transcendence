@@ -17,12 +17,47 @@ const RegisterPage = new Page({
 
       const formData = new FormData(form);
 
+      // バリデーションチェック
+      const password = formData.get('password') as string;
+      const password2 = formData.get('password2') as string;
+      const username = formData.get('username') as string;
+      const email = formData.get('email') as string;
+      const display_name = formData.get('display_name') as string;
+
+      // 必須フィールドのチェック
+      if (!username || !email || !display_name || !password || !password2) {
+        if (responseMessage) {
+          responseMessage.textContent = 'All fields are required';
+          responseMessage.style.color = 'red';
+        }
+        return;
+      }
+
+      // メールアドレスの形式チェック
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        if (responseMessage) {
+          responseMessage.textContent = 'Please enter a valid email address';
+          responseMessage.style.color = 'red';
+        }
+        return;
+      }
+
+      // パスワードの一致確認
+      if (password !== password2) {
+        if (responseMessage) {
+          responseMessage.textContent = 'Passwords do not match';
+          responseMessage.style.color = 'red';
+        }
+        return;
+      }
+
       const userData = {
-        username: formData.get('username'),
-        email: formData.get('email'),
-        display_name: formData.get('display_name'),
-        password: formData.get('password'),
-        password2: formData.get('password2'),
+        username,
+        email,
+        display_name,
+        password,
+        password2,
       };
 
       try {
