@@ -50,17 +50,19 @@ const LoginPage = new Page({
     });
 
     const togglePasswordBtn = document.getElementById('toggle-password');
-    if (togglePasswordBtn) {
-      togglePasswordBtn.addEventListener('click', () => {
-        const passwordField = document.getElementById('password') as HTMLInputElement;
-        if (!passwordField) return;
+    const passwordField = document.getElementById('password') as HTMLInputElement;
+    const passwordIcon = document.getElementById('password-icon');
 
+    if (togglePasswordBtn && passwordField && passwordIcon) {
+      togglePasswordBtn.addEventListener('click', () => {
         if (passwordField.type === 'password') {
           passwordField.type = 'text';
-          togglePasswordBtn.textContent = 'Hide';
+          passwordIcon.classList.remove('fa-eye');
+          passwordIcon.classList.add('fa-eye-slash');
         } else {
           passwordField.type = 'password';
-          togglePasswordBtn.textContent = 'Show';
+          passwordIcon.classList.remove('fa-eye-slash');
+          passwordIcon.classList.add('fa-eye');
         }
       });
     }

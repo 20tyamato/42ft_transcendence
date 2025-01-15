@@ -61,23 +61,20 @@ body {
   text-align: center;
 }
 
-.password-field {
+.password-field button {
+  background: none;
+  border: none;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
-  width: 100%;
+  padding: 0;
 }
 
-.password-field button {
-  padding: 8px 12px;
-  background-color: #6c757d; 
-  border: none;
-  border-radius: 4px;
-  color: #fff;
-  cursor: pointer;
-  width: 100px;
+.password-field i {
+  font-size: 1.2rem;
+  color: #ccc;
 }
 
-.password-field button:hover {
-  background-color: #5a6268;
+.password-field button:hover i {
+  color: #007bff;
 }
