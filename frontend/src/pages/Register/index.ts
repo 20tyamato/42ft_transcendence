@@ -79,6 +79,38 @@ const RegisterPage = new Page({
         responseMessage!.style.color = 'red';
       }
     });
+
+    const togglePasswordBtn = document.getElementById('toggle-password');
+    if (togglePasswordBtn) {
+      togglePasswordBtn.addEventListener('click', () => {
+        const passwordField = document.getElementById('password') as HTMLInputElement;
+        if (!passwordField) return;
+
+        if (passwordField.type === 'password') {
+          passwordField.type = 'text';
+          togglePasswordBtn.textContent = 'Hide';
+        } else {
+          passwordField.type = 'password';
+          togglePasswordBtn.textContent = 'Show';
+        }
+      });
+    }
+
+    const togglePasswordConfirmBtn = document.getElementById('toggle-password-confirm');
+    if (togglePasswordConfirmBtn) {
+      togglePasswordConfirmBtn.addEventListener('click', () => {
+        const passwordConfirmField = document.getElementById('password_confirm') as HTMLInputElement;
+        if (!passwordConfirmField) return;
+
+        if (passwordConfirmField.type === 'password') {
+          passwordConfirmField.type = 'text';
+          togglePasswordConfirmBtn.textContent = 'Hide';
+        } else {
+          passwordConfirmField.type = 'password';
+          togglePasswordConfirmBtn.textContent = 'Show';
+        }
+      });
+    }
   },
 });
 

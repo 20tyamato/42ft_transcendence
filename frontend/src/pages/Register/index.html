@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <link rel="stylesheet" href="./style.css">
   <title>User Registration</title>
 </head>
@@ -20,10 +20,16 @@
       <input type="text" id="display_name" name="display_name" required />
 
       <label for="password">Password</label>
-      <input type="password" id="password" name="password" required />
+      <div class="password-field">
+        <input type="password" id="password" name="password" required />
+        <button type="button" id="toggle-password">Show</button>
+      </div>
 
       <label for="password_confirm">Confirm Password</label>
-      <input type="password" id="password_confirm" name="password_confirm" required />
+      <div class="password-field">
+        <input type="password" id="password_confirm" name="password_confirm" required />
+        <button type="button" id="toggle-password-confirm">Show</button>
+      </div>
 
       <button type="submit" class="btn btn-primary">Register</button>
     </form>

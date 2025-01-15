@@ -48,6 +48,22 @@ const LoginPage = new Page({
         responseMessage!.style.color = 'red';
       }
     });
+
+    const togglePasswordBtn = document.getElementById('toggle-password');
+    if (togglePasswordBtn) {
+      togglePasswordBtn.addEventListener('click', () => {
+        const passwordField = document.getElementById('password') as HTMLInputElement;
+        if (!passwordField) return;
+
+        if (passwordField.type === 'password') {
+          passwordField.type = 'text';
+          togglePasswordBtn.textContent = 'Hide';
+        } else {
+          passwordField.type = 'password';
+          togglePasswordBtn.textContent = 'Show';
+        }
+      });
+    }
   },
 });
 
