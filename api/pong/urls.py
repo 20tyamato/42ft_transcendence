@@ -3,7 +3,8 @@ from .views import (
     UserListCreateView, UserRetrieveUpdateDestroyView,
     GameListCreateView, GameRetrieveUpdateDestroyView,
     TournamentListCreateView, TournamentRetrieveUpdateDestroyView,
-    BlockchainScoreListCreateView, BlockchainScoreRetrieveUpdateDestroyView
+    BlockchainScoreListCreateView, BlockchainScoreRetrieveUpdateDestroyView,
+    LoginView
 )
 
 app_name = "pong"
@@ -11,6 +12,9 @@ urlpatterns = [
     # User
     path('users/', UserListCreateView.as_view(), name='user-list-create'),
     path('users/<int:pk>/', UserRetrieveUpdateDestroyView.as_view(), name='user-detail'),
+
+    # Login
+    path('login/', LoginView.as_view(), name='login'),
 
     # Game
     path('games/', GameListCreateView.as_view(), name='game-list-create'),
