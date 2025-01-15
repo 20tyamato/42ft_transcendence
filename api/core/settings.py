@@ -148,3 +148,6 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication'
     ],
 }
+
+# ユーザー認証
+AUTH_USER_MODEL = 'pong.User'

@@ -32,21 +32,23 @@ class UserSerializer(serializers.ModelSerializer):
         return super().validate(attrs)
 
     def create(self, validated_data):
-        # Remove password2 as we don't need it for user creation
+        print("Creating user with data:", validated_data)  # デバッグログ
+        
         validated_data.pop('password2', None)
-
-        # Create user instance but don't save it yet
-        user = User.objects.create(
-            username=validated_data['username'],
-            email=validated_data.get('email', ''),
-            display_name=validated_data['display_name']
-        )
-
-        # Set password (this handles the hashing)
-        user.set_password(validated_data['password'])
-        user.save()
-
-        return user
+        
+        try:
+            user = User.objects.create(
+                username=validated_data['username'],
+                email=validated_data.get('email', ''),
+                display_name=validated_data['display_name']
+            )
+            user.set_password(validated_data['password'])
+            user.save()
+            print("User created successfully:", user.id)  # デバッグログ
+            return user
+        except Exception as e:
+            print("Error creating user:", str(e))  # エラーログ
+            raise
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(required=True)
