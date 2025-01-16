@@ -61,13 +61,26 @@ body {
   text-align: center;
 }
 
+.password-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-field input {
+  width: 100%;
+  padding-right: 40px;
+}
+
 .password-field button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-70%);
   background: none;
   border: none;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  padding: 0;
+  outline: none;
 }
 
 .password-field i {
