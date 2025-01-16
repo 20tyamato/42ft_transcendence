@@ -60,3 +60,21 @@ body {
 .centered-text {
   text-align: center;
 }
+
+.password-field button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.password-field i {
+  font-size: 1.2rem;
+  color: #ccc;
+}
+
+.password-field button:hover i {
+  color: #007bff;
+}

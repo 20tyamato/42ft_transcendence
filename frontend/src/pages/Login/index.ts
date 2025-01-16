@@ -48,6 +48,24 @@ const LoginPage = new Page({
         responseMessage!.style.color = 'red';
       }
     });
+
+    const togglePasswordBtn = document.getElementById('toggle-password');
+    const passwordField = document.getElementById('password') as HTMLInputElement;
+    const passwordIcon = document.getElementById('password-icon');
+
+    if (togglePasswordBtn && passwordField && passwordIcon) {
+      togglePasswordBtn.addEventListener('click', () => {
+        if (passwordField.type === 'password') {
+          passwordField.type = 'text';
+          passwordIcon.classList.remove('fa-eye');
+          passwordIcon.classList.add('fa-eye-slash');
+        } else {
+          passwordField.type = 'password';
+          passwordIcon.classList.remove('fa-eye-slash');
+          passwordIcon.classList.add('fa-eye');
+        }
+      });
+    }
   },
 });
 

@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.utils import timezone
-from .models import User, Game, Tournament, BlockchainScore
+from pong.models import User, Game, Tournament, BlockchainScore
 
 class UserModelTests(TestCase):
     def test_create_user(self):

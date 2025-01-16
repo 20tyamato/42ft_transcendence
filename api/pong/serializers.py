@@ -1,7 +1,10 @@
 from rest_framework import serializers
 from .models import User, Game, Tournament, BlockchainScore
+from django.contrib.auth import authenticate
 
 class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=True)
+
     class Meta:
         model = User
         fields = [
@@ -9,8 +12,49 @@ class UserSerializer(serializers.ModelSerializer):
             'username',
             'email',
             'display_name',
+            'password',
         ]
+        extra_kwargs = {
+            'username': {'required': True},
+            'email': {'required': True},
+            'display_name': {'required': True},
+        }
 
+    def validate(self, attrs):
+        # 空文字列のチェック
+        for field in ['username', 'email', 'display_name']:
+            if field in attrs and not attrs[field].strip():
+                raise serializers.ValidationError({field: "This field may not be blank."})
+
+        return super().validate(attrs)
+
+    def create(self, validated_data):
+        user = User.objects.create(
+            username=validated_data['username'],
+            email=validated_data.get('email', ''),
+            display_name=validated_data['display_name']
+        )
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField(required=True)
+    password = serializers.CharField(required=True, write_only=True)
+
+    def validate(self, attrs):
+        username = attrs.get('username')
+        password = attrs.get('password')
+
+        if username and password:
+            user = authenticate(username=username, password=password)
+            if user:
+                if user.is_active:
+                    attrs['user'] = user
+                    return attrs
+                raise serializers.ValidationError('User account is disabled.')
+            raise serializers.ValidationError('Unable to log in with provided credentials.')
+        raise serializers.ValidationError('Must include "username" and "password".')
 
 class GameSerializer(serializers.ModelSerializer):
     player1 = UserSerializer(read_only=True)

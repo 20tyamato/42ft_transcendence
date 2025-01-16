@@ -32,7 +32,8 @@
     - タイトル：`Add 〇〇 Feature`
     - アサイン：メンバーの誰か
     - ラベル：適切なのを選択
-  - ローカルのアップデート：`git checkout develop; git pull origin develop`
+  - ローカルのアップデート：`git checkout main; git pull origin main`
+  - データベースを最新のにする: `make migrate`
   - ローカル環境でブランチを切る：`git checkout -b <your_name>/add-feature#issue_id`
   - 作業
   - コミット：`git commit -am "Add 〇〇 Feature #issue_id"`
