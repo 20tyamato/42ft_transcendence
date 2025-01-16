@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="./style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <title>User Registration</title>
@@ -30,7 +30,7 @@
 
       <label for="password_confirm">Confirm Password</label>
       <div class="password-field">
-        <input type="password" id="password_confirm" name="password_confirm" required />
+        <input type="password" id="password-confirm" name="password_confirm" required />
         <button type="button" id="toggle-password-confirm">
           <i class="fa fa-eye" id="password-confirm-icon"></i>
         </button>
@@ -38,7 +38,9 @@
 
       <button type="submit" class="btn btn-primary">Register</button>
     </form>
-    <p class="centered-text">Already have an account? <a href="./login">Login</a></p>
+    <p class="centered-text">
+      Already have an account? <a href="./login">Login</a>
+    </p>
     <div id="response-message"></div>
   </div>
   <script type="module" src="./index.ts"></script>
