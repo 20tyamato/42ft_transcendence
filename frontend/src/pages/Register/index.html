@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <title>User Registration</title>
 </head>
 <body>
@@ -22,13 +23,17 @@
       <label for="password">Password</label>
       <div class="password-field">
         <input type="password" id="password" name="password" required />
-        <button type="button" id="toggle-password">Show</button>
+        <button type="button" id="toggle-password">
+          <i class="fa fa-eye" id="password-icon"></i>
+        </button>
       </div>
 
       <label for="password_confirm">Confirm Password</label>
       <div class="password-field">
         <input type="password" id="password_confirm" name="password_confirm" required />
-        <button type="button" id="toggle-password-confirm">Show</button>
+        <button type="button" id="toggle-password-confirm">
+          <i class="fa fa-eye" id="password-confirm-icon"></i>
+        </button>
       </div>
 
       <button type="submit" class="btn btn-primary">Register</button>

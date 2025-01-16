@@ -62,22 +62,32 @@ body {
 }
 
 .password-field {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
+}
+
+.password-field input {
   width: 100%;
+  padding-right: 40px;
 }
 
 .password-field button {
-  padding: 8px 12px;
-  background-color: #6c757d; 
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-70%);
+  background: none;
   border: none;
-  border-radius: 4px;
-  color: #fff;
   cursor: pointer;
-  width: 100px;
+  outline: none;
 }
 
-.password-field button:hover {
-  background-color: #5a6268;
+.password-field i {
+  font-size: 1.2rem;
+  color: #ccc;
+}
+
+.password-field button:hover i {
+  color: #007bff;
 }
