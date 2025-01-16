@@ -11,7 +11,7 @@ interface IBlockchainScore {
   score: number;
 }
 
-const UserProfilePage = new Page({
+const ProfilePage = new Page({
   name: 'UserProfile',
   config: {
     layout: CommonLayout,
@@ -56,4 +56,4 @@ const UserProfilePage = new Page({
   },
 });
 
-export default UserProfilePage;
+export default ProfilePage;

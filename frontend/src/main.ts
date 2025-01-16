@@ -1,13 +1,12 @@
 import NotFoundPage from '@/pages/404/index';
 import HomePage from '@/pages/Home/index';
 import LoginPage from '@/pages/Login/index';
+import ModesPage from '@/pages/Modes/index';
 import MultiPlayPage from '@/pages/MultiPlay/index';
-import QuickStartPage from '@/pages/QuickStart/index';
+import ProfilePage from '@/pages/Profile/index';
 import RankingPage from '@/pages/Ranking/index';
 import RegisterPage from '@/pages/Register/index';
-import SamplePage from '@/pages/Sample/index';
 import SinglePlayPage from '@/pages/SinglePlay/index';
-import UserProfilePage from '@/pages/UserProfile/index';
 
 import { Page } from './core/Page';
 
@@ -32,9 +31,8 @@ const routes: Record<string, Page> = {
   '/404': NotFoundPage,
   '/register': RegisterPage,
   '/login': LoginPage,
-  '/sample': SamplePage,
+  '/modes': ModesPage,
   '/': HomePage,
-  '/quickstart': QuickStartPage,
   // FIXME: ちゃんと実装する
   // '/singleplay': requireAuth(SinglePlayPage),
   '/singleplay': SinglePlayPage,
@@ -43,8 +41,8 @@ const routes: Record<string, Page> = {
   '/multiplay': MultiPlayPage,
   '/ranking': RankingPage,
   // FIXME: ちゃんと実装する
-  // '/userprofile': requireAuth(UserProfilePage),
-  '/userprofile': UserProfilePage,
+  // '/userprofile': requireAuth(ProfilePage),
+  '/userprofile': ProfilePage,
 };
 
 async function router(path: string) {

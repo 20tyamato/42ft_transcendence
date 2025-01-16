@@ -1,7 +1,7 @@
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 
-const SamplePage = new Page({
+const ModesPage = new Page({
   name: 'Sample',
   config: {
     layout: CommonLayout,
@@ -27,4 +27,4 @@ const SamplePage = new Page({
   },
 });
 
-export default SamplePage;
+export default ModesPage;
