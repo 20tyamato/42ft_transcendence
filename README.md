@@ -107,33 +107,33 @@
 
 - [Frontend](http://127.0.0.1:3001)
   - `http://localhost:3001/`
-  　- Welcomeページ
+    - Welcomeページ
   - `http://localhost:3001/404`
-  　- 404ページ
+    - 404ページ
   - `http://localhost:3001/register`
-  　- ユーザー登録ページ
+    - ユーザー登録ページ
   - `http://localhost:3001/login`
-  　- ログインページ
+    - ログインページ
   - `http://localhost:3001/profile`
-  　- ユーザープロフィールページ
+    - ユーザープロフィールページ
   - `http://localhost:3001/modes`
-  　- ゲームモード選択ページ
+    - ゲームモード選択ページ
   - `http://localhost:3001/settings/game`
-  　- ゲーム設定ページ
+    - ゲーム設定ページ
   - `http://localhost:3001/settings/account`
-  　- ユーザーアカウント設定ページ
+    - ユーザーアカウント設定ページ
   - `http://localhost:3001/singleplay`
-  　- シングルプレイヤーページ
+    - シングルプレイヤーページ
   - `http://localhost:3001/multiplay`
-  　- マルチプレイヤーページ
+    - マルチプレイヤーページ
   - `http://localhost:3001/games/:gameId/results`
-  　- マッチ結果ページ
+    - マッチ結果ページ
   - `http://localhost:3001/tournaments`
-  　- トーナメント一覧ページ
+    - トーナメント一覧ページ
   - `http://localhost:3001/tournaments/:tournamentId`
-  　- トーナメント詳細ページ
+    - トーナメント詳細ページ
   - `http://localhost:3001/leaderboard`
-  　- リーダーボードページ
+    - リーダーボードページ
 - [Backend](http://127.0.0.1:8000/)
   - `http://127.0.0.1:8000/admin/`
   - `http://127.0.0.1:8000/api/users/`
