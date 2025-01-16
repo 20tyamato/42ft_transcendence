@@ -105,15 +105,37 @@
 
 ## Access Links
 
-- [API](http://127.0.0.1:3001)
+- [Frontend](http://127.0.0.1:3001)
+　- `http://localhost:3001/`
+  　- Welcomeページ
+　- `http://localhost:3001/register`
+  　- ユーザー登録ページ
+　- `http://localhost:3001/login`
+  　- ログインページ
+　- `http://localhost:3001/profile`
+  　- ユーザープロフィールページ
+　- `http://localhost:3001/modes`
+  　- ゲームモード選択ページ
+　- `http://localhost:3001/settings/game`
+  　- ゲーム設定ページ
+　- `http://localhost:3001/settings/account`
+  　- ユーザーアカウント設定ページ
+　- `http://localhost:3001/singleplayer`
+  　- シングルプレイヤーページ
+　- `http://localhost:3001/multiplayer`
+  　- マルチプレイヤーページ
+　- `http://localhost:3001/games/:gameId/results`
+  　- マッチ結果ページ
+　- `http://localhost:3001/tournaments`
+  　- トーナメント一覧ページ
+　- `http://localhost:3001/tournaments/:tournamentId`
+  　- トーナメント詳細ページ
+　- `http://localhost:3001/leaderboard`
+  　- リーダーボードページ
+- [Backend](http://127.0.0.1:8000/)
   - `http://127.0.0.1:8000/admin/`
   - `http://127.0.0.1:8000/api/users/`
   - `http://127.0.0.1:8000/api/games/`
-- [Frontend](http://127.0.0.1:8000/)
-  - `http://localhost:3001/`
-  - `http://localhost:3001/register`
-  - `http://localhost:3001/login`
-  - `http://localhost:3001/sample`
 
 ## HTTPS
 
