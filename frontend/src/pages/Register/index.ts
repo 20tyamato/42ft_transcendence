@@ -99,7 +99,9 @@ const RegisterPage = new Page({
     const togglePasswordConfirmBtn = document.getElementById('toggle-password-confirm');
     if (togglePasswordConfirmBtn) {
       togglePasswordConfirmBtn.addEventListener('click', () => {
-        const passwordConfirmField = document.getElementById('password_confirm') as HTMLInputElement;
+        const passwordConfirmField = document.getElementById(
+          'password_confirm'
+        ) as HTMLInputElement;
         if (!passwordConfirmField) return;
 
         if (passwordConfirmField.type === 'password') {
