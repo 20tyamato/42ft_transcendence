@@ -7,7 +7,7 @@ DB_CONTAINER := $(PROJECT_NAME)-db-1
 all: up
 
 up:
-	docker compose up --build
+	docker compose up
 
 down:
 	docker compose down

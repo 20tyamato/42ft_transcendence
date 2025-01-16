@@ -36,7 +36,7 @@ const LoginPage = new Page({
           responseMessage!.textContent = 'Login successful!';
           responseMessage!.style.color = 'green';
           console.log(result);
-          window.location.href = '/sample';
+          window.location.href = '/modes';
         } else {
           const error = await response.json();
           responseMessage!.textContent = `Error: ${error.message || 'Invalid credentials'}`;

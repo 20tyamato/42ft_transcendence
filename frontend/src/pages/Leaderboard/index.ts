@@ -6,7 +6,7 @@ interface IRankingUser {
   score: number;
 }
 
-const RankingPage = new Page({
+const LeaderboardPage = new Page({
   name: 'Ranking',
   config: {
     layout: CommonLayout,
@@ -41,4 +41,4 @@ const RankingPage = new Page({
   },
 });
 
-export default RankingPage;
+export default LeaderboardPage;
