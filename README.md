@@ -108,6 +108,8 @@
 - [Frontend](http://127.0.0.1:3001)
 　- `http://localhost:3001/`
   　- Welcomeページ
+　- `http://localhost:3001/404`
+  　- 404ページ
 　- `http://localhost:3001/register`
   　- ユーザー登録ページ
 　- `http://localhost:3001/login`
@@ -120,9 +122,9 @@
   　- ゲーム設定ページ
 　- `http://localhost:3001/settings/account`
   　- ユーザーアカウント設定ページ
-　- `http://localhost:3001/singleplayer`
+　- `http://localhost:3001/singleplay`
   　- シングルプレイヤーページ
-　- `http://localhost:3001/multiplayer`
+　- `http://localhost:3001/multiplay`
   　- マルチプレイヤーページ
 　- `http://localhost:3001/games/:gameId/results`
   　- マッチ結果ページ

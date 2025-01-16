@@ -1,10 +1,10 @@
 import NotFoundPage from '@/pages/404/index';
 import HomePage from '@/pages/Home/index';
+import LeaderboardPage from '@/pages/Leaderboard/index';
 import LoginPage from '@/pages/Login/index';
 import ModesPage from '@/pages/Modes/index';
 import MultiPlayPage from '@/pages/MultiPlay/index';
 import ProfilePage from '@/pages/Profile/index';
-import RankingPage from '@/pages/Ranking/index';
 import RegisterPage from '@/pages/Register/index';
 import SinglePlayPage from '@/pages/SinglePlay/index';
 
@@ -27,22 +27,22 @@ const appDiv = document.getElementById('app');
 //   }
 // }
 
+// FIX: requireAuthを使うように変更する
 const routes: Record<string, Page> = {
+  '/': HomePage,
   '/404': NotFoundPage,
   '/register': RegisterPage,
   '/login': LoginPage,
+  '/profile': ProfilePage,
   '/modes': ModesPage,
-  '/': HomePage,
-  // FIXME: ちゃんと実装する
-  // '/singleplay': requireAuth(SinglePlayPage),
+  // '/settings/game': SettingsGamePage,
+  // '/settings/account': SettingsAccountPage,
   '/singleplay': SinglePlayPage,
-  // FIXME: ちゃんと実装する
-  // '/multiplay': requireAuth(MultiPlayPage),
   '/multiplay': MultiPlayPage,
-  '/ranking': RankingPage,
-  // FIXME: ちゃんと実装する
-  // '/userprofile': requireAuth(ProfilePage),
-  '/userprofile': ProfilePage,
+  // '/games/:id/results': GameResultsPage,
+  // '/tournament': TournamentListPage,
+  // '/tournament/:id': TournamentPage,
+  '/leaderboard': LeaderboardPage,
 };
 
 async function router(path: string) {
