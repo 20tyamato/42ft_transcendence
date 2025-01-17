@@ -11,11 +11,15 @@ const createThreeScene = () => {
     0.1,
     1000
   );
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
+
+  // 透過背景にするため alpha: true を指定
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  // 背景透過 (0x000000, 0) で完全な透明に
+  renderer.setClearColor(0x000000, 0);
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.getElementById('background')?.appendChild(renderer.domElement);
 
-  // Light
+  // ライト設定
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
   scene.add(ambientLight);
 
@@ -23,42 +27,54 @@ const createThreeScene = () => {
   directionalLight.position.set(5, 5, 5).normalize();
   scene.add(directionalLight);
 
-  // Paddle Geometry (Placeholder for actual paddle design)
-  const paddleGeometry = new THREE.BoxGeometry(1, 0.1, 2);
-  const paddleMaterial = new THREE.MeshStandardMaterial({
-    color: 0xff5733,
-  });
-  const paddle = new THREE.Mesh(paddleGeometry, paddleMaterial);
-  scene.add(paddle);
+  // ----- 卓球ラケットの形状を作成 -----
+  const paddleGroup = new THREE.Group();
 
-  // Position the paddle
-  paddle.position.y = 0.5; // Lift above the table
-  paddle.rotation.z = Math.PI / 4;
+  // ラケット面（円形の薄いシリンダー）
+  const bladeRadius = 0.7;
+  const bladeThickness = 0.05; // 厚みを少しだけ持たせる
+  const bladeGeometry = new THREE.CylinderGeometry(bladeRadius, bladeRadius, bladeThickness, 32);
+  const bladeMaterial = new THREE.MeshStandardMaterial({ color: 0xff5733 });
+  const blade = new THREE.Mesh(bladeGeometry, bladeMaterial);
 
-  // Table (Optional base for aesthetics)
-  const tableGeometry = new THREE.BoxGeometry(4, 0.1, 2);
-  const tableMaterial = new THREE.MeshStandardMaterial({ color: 0x2a9df4 });
-  const table = new THREE.Mesh(tableGeometry, tableMaterial);
-  scene.add(table);
+  // CylinderGeometry はデフォルトでY軸方向に高さが伸びるので、
+  // ラケット面がXY平面になるように回転させる
+  blade.rotation.x = Math.PI / 2;
+  paddleGroup.add(blade);
 
-  table.position.y = 0; // Align table below the paddle
+  // グリップ（細長い立方体）
+  const handleGeometry = new THREE.BoxGeometry(0.15, 0.4, 0.15);
+  const handleMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
+  const handle = new THREE.Mesh(handleGeometry, handleMaterial);
 
-  // Camera Position
+  // グリップを少しラケット面から離して配置
+  handle.position.y = -0.4;
+  paddleGroup.add(handle);
+
+  // シーンに追加
+  scene.add(paddleGroup);
+
+  // ラケットの初期位置・回転調整
+  paddleGroup.position.y = 0.5;
+  paddleGroup.rotation.z = Math.PI / 4;
+
+  // カメラの位置
   camera.position.z = 5;
 
-  // Animate Paddle
+  // テーブルは不要とのことなので削除しました
+
+  // アニメーション（ラケット回転）
   const animate = () => {
     requestAnimationFrame(animate);
 
-    // Rotate paddle
-    paddle.rotation.y += 0.01;
+    // ラケットを回転させる
+    paddleGroup.rotation.y += 0.01;
 
     renderer.render(scene, camera);
   };
-
   animate();
 
-  // Adjust renderer on resize
+  // リサイズ時の対応
   window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;
@@ -73,13 +89,12 @@ const HomePage = new Page({
   },
   mounted: async () => {
     const loginBtn = document.querySelector('a[href="/login"]');
-
     loginBtn?.addEventListener('click', (event) => {
       event.preventDefault();
       window.location.href = '/login';
     });
 
-    // Initialize Three.js Scene
+    // Three.js 初期化
     createThreeScene();
   },
 });
