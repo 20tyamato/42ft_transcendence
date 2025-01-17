@@ -43,12 +43,12 @@ const createThreeScene = () => {
   paddleGroup.add(blade);
 
   // グリップ（細長い立方体）
-  const handleGeometry = new THREE.BoxGeometry(0.15, 0.4, 0.15);
+  const handleGeometry = new THREE.BoxGeometry(0.15, 1.0, 0.15);
   const handleMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
   const handle = new THREE.Mesh(handleGeometry, handleMaterial);
 
-  // グリップを少しラケット面から離して配置
-  handle.position.y = -0.4;
+  // 取手がラケット面に自然につくよう、少し下に配置（例：-0.55）
+  handle.position.y = -0.55;
   paddleGroup.add(handle);
 
   // シーンに追加
