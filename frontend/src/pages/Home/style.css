@@ -32,7 +32,7 @@ body, html {
   position: relative;
   margin: auto;
   top: 0%;
-  transform: translateY(-10%);
+  transform: translateY(50%);
 }
 
 /* Header Styles */
