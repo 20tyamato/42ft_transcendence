@@ -1,8 +1,8 @@
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 
-const ModesPage = new Page({
-  name: 'Modes',
+const ResultPage = new Page({
+  name: 'Result',
   config: {
     layout: CommonLayout,
   },
@@ -22,4 +22,4 @@ const ModesPage = new Page({
   },
 });
 
-export default ModesPage;
+export default ResultPage;

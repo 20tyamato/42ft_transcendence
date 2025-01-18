@@ -1,55 +1,70 @@
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: black;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  overflow: hidden;
-}
-
-.game-modes-container {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-gap: 20px;
-  align-items: center;
-}
-
-.game-mode-button {
-  display: block;
-  width: 300px;
-  height: 100px;
-  font-size: 1.5rem;
-  font-weight: bold;
+.tournament-container {
+  margin: 50px auto;
+  max-width: 1200px;
   color: #fff;
   text-align: center;
-  line-height: 100px;
-  background: transparent;
-  border: none;
-  border-radius: 15px;
-  cursor: pointer;
-  position: relative;
-  text-transform: uppercase;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.game-mode-button:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+/* タイトル */
+.tournament-container h1 {
+  margin-bottom: 40px;
 }
 
-.single-mode {
-  background: linear-gradient(90deg, #4facfe, #00f2fe);
-  box-shadow: 0 0 20px rgba(79, 172, 254, 0.7);
+/* 各ラウンドの枠 */
+.round {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 40px;
 }
 
-.multi-mode {
-  background: linear-gradient(90deg, #a64ac9, #db36a4);
-  box-shadow: 0 0 20px rgba(164, 74, 201, 0.7);
+/* 各試合（matchup） */
+.matchup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #222;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+  width: 120px;
+  margin: 0 10px; /* 余白を少しつける */
 }
 
-.tournament-mode {
-  background: linear-gradient(90deg, #ffd700, #ffae42);
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
+/* プレイヤー名表示部分 */
+.player {
+  margin: 5px 0;
+  padding: 10px;
+  background: #555;
+  border-radius: 5px;
+  text-align: center;
+  width: 100%;
+}
+
+/* チャンピオン表示 */
+.champion {
+  margin-top: 40px;
+}
+
+.champion h2 {
+  margin-bottom: 20px;
+}
+
+.champion .player {
+  display: inline-block;
+  width: auto;
+  background: #999;
+}
+
+/* 必要があればメディアクエリなどでレスポンシブ調整 */
+@media (max-width: 768px) {
+  .tournament-container {
+    width: 95%;
+  }
+  .round {
+    flex-direction: column;
+    align-items: center;
+  }
+  .matchup {
+    margin-bottom: 20px;
+  }
 }

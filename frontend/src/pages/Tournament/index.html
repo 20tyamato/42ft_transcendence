@@ -1,17 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Game Modes</title>
-  <link rel="stylesheet" href="./style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Tournament Bracket</title>
+  <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
-  <div class="game-modes-container">
-    <button class="game-mode-button single-mode">SINGLE MODE</button>
-    <button class="game-mode-button multi-mode">MULTI MODE</button>
-    <button class="game-mode-button tournament-mode">TOURNAMENT</button>
+  <div class="tournament-container">
+    <h1>8-Player Tournament</h1>
+    
+    <div class="round round-1">
+      <div class="matchup">
+        <div class="player">Player 1</div>
+        <div class="player">Player 2</div>
+      </div>
+      <div class="matchup">
+        <div class="player">Player 3</div>
+        <div class="player">Player 4</div>
+      </div>
+      <div class="matchup">
+        <div class="player">Player 5</div>
+        <div class="player">Player 6</div>
+      </div>
+      <div class="matchup">
+        <div class="player">Player 7</div>
+        <div class="player">Player 8</div>
+      </div>
+    </div>
+
+    <div class="round round-2">
+      <div class="matchup">
+        <div class="player">Winner of Match 1</div>
+        <div class="player">Winner of Match 2</div>
+      </div>
+      <div class="matchup">
+        <div class="player">Winner of Match 3</div>
+        <div class="player">Winner of Match 4</div>
+      </div>
+    </div>
+
+    <div class="round round-3">
+      <div class="matchup">
+        <div class="player">Winner of Semifinal 1</div>
+        <div class="player">Winner of Semifinal 2</div>
+      </div>
+    </div>
+
+    <div class="champion">
+      <h2>Champion</h2>
+      <div class="player">Winner of the Final</div>
+    </div>
   </div>
-  <script type="module" src="./index.ts"></script>
 </body>
 </html>

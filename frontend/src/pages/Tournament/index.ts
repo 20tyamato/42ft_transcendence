@@ -1,25 +1,22 @@
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 
-const ModesPage = new Page({
-  name: 'Modes',
+const TournamentPage = new Page({
+  name: 'Tournament',
   config: {
     layout: CommonLayout,
   },
   mounted: async () => {
-    const singleModeButton = document.querySelector('.single-mode');
-    const multiModeButton = document.querySelector('.multi-mode');
-    const tournamentModeButton = document.querySelector('.tournament-mode');
+    const modeButtons = document.querySelectorAll('.mode-button');
 
-    const navigateTo = (path: string) => {
-      console.log(`Navigating to ${path}`);
-      window.location.href = path;
-    };
-
-    singleModeButton?.addEventListener('click', () => navigateTo('/singleplay/select'));
-    multiModeButton?.addEventListener('click', () => navigateTo('/multiplay'));
-    tournamentModeButton?.addEventListener('click', () => navigateTo('/tournaments'));
+    modeButtons.forEach((button, index) => {
+      button.addEventListener('click', () => {
+        const modes = ['Single Play', 'Tournament'];
+        alert(`You selected ${modes[index]} mode!`);
+        // Add navigation or other functionality here
+      });
+    });
   },
 });
 
-export default ModesPage;
+export default TournamentPage;
