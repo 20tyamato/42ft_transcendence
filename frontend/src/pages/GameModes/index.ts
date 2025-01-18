@@ -1,7 +1,7 @@
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 
-const ModesPage = new Page({
+const GameModesPage = new Page({
   name: 'GameModes',
   config: {
     layout: CommonLayout,
@@ -23,4 +23,4 @@ const ModesPage = new Page({
   },
 });
 
-export default ModesPage;
+export default GameModesPage;

@@ -1,8 +1,8 @@
 import NotFoundPage from '@/pages/404/index';
+import GameModesPage from '@/pages/GameModes/index';
 import HomePage from '@/pages/Home/index';
 import LeaderboardPage from '@/pages/Leaderboard/index';
 import LoginPage from '@/pages/Login/index';
-import ModesPage from '@/pages/Modes/index';
 import MultiPlayPage from '@/pages/MultiPlay/index';
 import ProfilePage from '@/pages/Profile/index';
 import RegisterPage from '@/pages/Register/index';
@@ -34,7 +34,7 @@ const routes: Record<string, Page> = {
   '/register': RegisterPage,
   '/login': LoginPage,
   '/profile': ProfilePage,
-  '/modes': ModesPage,
+  '/modes': GameModesPage,
   // '/settings/game': SettingsGamePage,
   // '/settings/account': SettingsAccountPage,
   '/singleplay': SinglePlayPage,
