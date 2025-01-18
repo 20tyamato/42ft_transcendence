@@ -12,7 +12,7 @@ interface IBlockchainScore {
 }
 
 const ProfilePage = new Page({
-  name: 'UserProfile',
+  name: 'Profile',
   config: {
     layout: CommonLayout,
   },
