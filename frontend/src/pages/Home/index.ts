@@ -48,7 +48,7 @@ const createThreeScene = () => {
   const handle = new THREE.Mesh(handleGeometry, handleMaterial);
 
   // 取手がラケット面に自然につくよう、少し下に配置（例：-0.55）
-  handle.position.y = -0.55;
+  handle.position.y = -0.75;
   paddleGroup.add(handle);
 
   // シーンに追加
