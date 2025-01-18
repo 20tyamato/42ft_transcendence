@@ -17,7 +17,7 @@ const SinglePlaySelectPage = new Page({
       if (!loadingOverlay || !countdownDisplay) return;
       loadingOverlay.classList.remove('hidden');
 
-      let remaining = 10;
+      let remaining = 3;
 
       countdownDisplay.textContent = remaining.toString();
 

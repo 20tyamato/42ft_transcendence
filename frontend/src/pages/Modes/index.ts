@@ -18,7 +18,7 @@ const ModesPage = new Page({
 
     singleModeButton?.addEventListener('click', () => navigateTo('/singleplay/select'));
     multiModeButton?.addEventListener('click', () => navigateTo('/multiplay'));
-    tournamentModeButton?.addEventListener('click', () => navigateTo('/tournaments'));
+    tournamentModeButton?.addEventListener('click', () => navigateTo('/tournament'));
   },
 });
 

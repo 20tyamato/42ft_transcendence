@@ -1,60 +1,114 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
 body {
     margin: 0;
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(to bottom right, #17a2b8, #0dcaf0);
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(135deg, #1f4037, #99f2c8);
     color: #fff;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-  }
-  
-  .multiplay-container {
+    overflow: hidden;
+}
+
+.multiplay-container {
     width: 90%;
     max-width: 600px;
-    background: rgba(0, 0, 0, 0.4);
-    padding: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    padding: 30px;
     border-radius: 15px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
     text-align: center;
-  }
-  
-  .hidden {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.hidden {
     display: none;
-  }
-  
-  .btn {
-    padding: 10px 20px;
-    margin: 5px;
-    border-radius: 5px;
+}
+
+header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #17a2b8;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+main p {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+}
+
+.btn {
+    padding: 12px 25px;
+    margin: 10px 5px;
+    border-radius: 25px;
     border: none;
     cursor: pointer;
     color: #fff;
-    transition: 0.3s;
-  }
-  .btn-primary {
-    background-color: #007bff;
-  }
-  .btn-secondary {
-    background-color: #28a745;
-  }
-  .btn-tertiary {
-    background-color: #dc3545;
-  }
-  
-  .btn:hover {
-    opacity: 0.8;
-  }
-  
-  input[type="number"] {
-    padding: 5px;
+    font-weight: 600;
     font-size: 1rem;
-    width: 60px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.btn-primary {
+    background-color: #007bff;
+}
+
+.btn-secondary {
+    background-color: #28a745;
+}
+
+.btn-tertiary {
+    background-color: #dc3545;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    opacity: 0.9;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+}
+
+input[type="number"] {
+    padding: 10px;
+    font-size: 1rem;
+    width: 70px;
     text-align: center;
-    margin-right: 10px;
-  }
-  
-  footer p {
-    margin-top: 20px;
+    margin: 15px auto;
+    display: block;
+    border: 2px solid #fff;
+    border-radius: 10px;
+    background: transparent;
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+input[type="number"]:focus {
+    outline: none;
+    border-color: #17a2b8;
+    box-shadow: 0 0 10px rgba(23, 162, 184, 0.5);
+}
+
+footer p {
+    margin-top: 30px;
     font-size: 0.9rem;
-    opacity: 0.7;
-  }
+    color: rgba(255, 255, 255, 0.7);
+}
+
+footer p:hover {
+    color: #fff;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

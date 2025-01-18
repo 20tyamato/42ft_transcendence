@@ -60,3 +60,21 @@ body {
     width: 160px;
     margin: 0 70px;
 }
+
+.btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    color: #fff;
+    background-color: #007bff;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-top: 20px;
+  }
+  
+  .btn:hover {
+    background-color: #0056b3;
+  }
+  

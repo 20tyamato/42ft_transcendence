@@ -7,7 +7,11 @@ const TournamentPage = new Page({
     layout: CommonLayout,
   },
   mounted: async () => {
-    console.log('Tournament page is mounted');
+    const backBtn = document.getElementById('backBtn');
+    
+    backBtn?.addEventListener('click', () => {
+      window.location.href = '/';
+    });
   },
 });
 
