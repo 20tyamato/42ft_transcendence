@@ -7,7 +7,11 @@ const ResultPage = new Page({
     layout: CommonLayout,
   },
   mounted: async () => {
-    console.log('Result page is mounted');
+    const backBtn = document.getElementById('backBtn');
+    
+    backBtn?.addEventListener('click', () => {
+      window.location.href = '/';
+    });
   },
 });
 

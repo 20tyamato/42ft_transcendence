@@ -1,57 +1,70 @@
 body {
-    margin: 0;
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(to bottom right, #f8f9fa, #ced4da);
-    color: #333;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-  }
-  
-  .ranking-container {
-    background: #fff;
-    width: 100%;
-    max-width: 1000px;
-    border-radius: 15px;
-    text-align: center;
-    padding: 20px;
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-  }
-  
-  header h1 {
-    margin-bottom: 20px;
-  }
-  
-  .ranking-list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 20px 0;
-    text-align: left;
-  }
-  
-  .ranking-list li {
-    margin: 5px 0;
-    padding: 5px;
-    border-bottom: 1px solid #eee;
-  }
-  
-  .btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: 0.3s;
-    color: #fff;
-    background-color: #007bff;
-  }
-  
-  .btn:hover {
-    opacity: 0.8;
-  }
-  
-  footer p {
-    margin-top: 20px;
-    font-size: 0.9rem;
-    color: #666;
-  }
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(to bottom right, #e9ecef, #dee2e6);
+  color: #343a40;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.ranking-container {
+  background: #ffffff;
+  width: 800px; /* 固定幅 */
+  border-radius: 15px;
+  text-align: center;
+  padding: 30px 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+header h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #495057;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
+.ranking-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ranking-list li {
+  margin: 10px 0;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-size: 1rem;
+  color: #495057;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ranking-list li span.rank {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #007bff;
+}
+
+.btn {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+  color: #fff;
+  background-color: #007bff;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}

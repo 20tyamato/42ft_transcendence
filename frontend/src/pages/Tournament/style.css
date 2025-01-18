@@ -7,7 +7,7 @@
 
 /* ページ全体の背景など */
 body {
-  font-family: 'Poppins', sans-serif; /* Google Fonts */
+  font-family: 'Poppins', sans-serif;
   background: linear-gradient(135deg, #141E30 0%, #243B55 100%);
   min-height: 100vh;
   display: flex;
@@ -17,19 +17,19 @@ body {
 
 /* トーナメント全体のコンテナ */
 .tournament-container {
-  max-width: 1200px;
-  width: 95%;
+  max-width: 1500px;
+  width: 90%;
   color: #fff;
   text-align: center;
   position: relative;
-  padding: 40px 20px;
-  background-color: rgba(0, 0, 0, 0.5); /* 半透明の黒背景 */
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.5);
   border-radius: 10px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .tournament-container h1 {
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   font-size: 2rem;
   font-weight: 600;
 }
@@ -37,9 +37,10 @@ body {
 /* ラウンドを横方向に並べるためのラッパ */
 .bracket {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
-  align-items: flex-start;
-  flex-wrap: wrap; /* 画面が狭いときに折り返すため */
+  align-items: center;
+  flex-wrap: nowrap;
 }
 
 /* 各ラウンドのカラム */
@@ -66,7 +67,6 @@ body {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* ホバーアクション：少し浮き上がる */
 .matchup:hover {
   transform: translateY(-3px);
   box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
@@ -83,20 +83,14 @@ body {
   transition: background 0.2s ease;
 }
 
-/* プレイヤーにホバーした際、色を明るくする */
 .player:hover {
   background: #666;
 }
 
 /* Champion 表示エリア */
 .champion-area {
-  margin-top: 40px;
+  margin-bottom: 40px;
 }
-.champion {
-  margin: 0 auto;
-}
-
-/* Champion プレイヤーは目立たせる */
 .champion .player {
   display: inline-block;
   background: gold;
@@ -108,15 +102,14 @@ body {
   box-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
 }
 
-/* コネクタ（線）の描画）
-   結線部分をキレイに見せるため、色合いや位置調整を少し変更 */
+/* コネクタ（線）の描画） */
 .round-1 .matchup::after {
   content: "";
   position: absolute;
   right: -70px;
   top: 50%;
   width: 70px;
-  height: 2px;
+  height: 6px;
   background: #fff;
 }
 .round-2 .matchup::after {
@@ -125,7 +118,7 @@ body {
   right: -70px;
   top: 50%;
   width: 70px;
-  height: 2px;
+  height: 6px;
   background: #fff;
 }
 .round-3 .matchup::after {
@@ -134,41 +127,17 @@ body {
   right: 50%;
   top: 50%;
   width: 50%;
-  height: 2px;
+  height: 6px;
   background: #fff;
 }
 
-/* 縦方向の線 */
+/* 縦方向の線も太くする */
 .round-2 .matchup:nth-child(2)::before {
   content: "";
   position: absolute;
   right: -70px;
   top: -50%;
-  width: 2px;
+  width: 6px;
   height: 100%;
   background: #fff;
-}
-.round-3 .matchup::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: -40px;
-  width: 2px;
-  height: 40px;
-  background: #fff;
-}
-
-/* レスポンシブ対応：画面幅が小さい場合は線を非表示にする等 */
-@media (max-width: 768px) {
-  .round-1 .matchup::after,
-  .round-2 .matchup::after,
-  .round-3 .matchup::after,
-  .round-2 .matchup:nth-child(2)::before,
-  .round-3 .matchup::before {
-    display: none;
-  }
-
-  .matchup {
-    margin: 10px auto;
-  }
 }

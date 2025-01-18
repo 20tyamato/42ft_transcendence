@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tournament Bracket</title>
-  <!-- Google Fonts などを使いたい場合は、以下のように読み込む -->
   <link
     href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
     rel="stylesheet"
@@ -13,11 +12,15 @@
 </head>
 <body>
   <div class="tournament-container">
-    <h1>8人トーナメント</h1>
+    <h1>トーナメント</h1>
 
-    <!-- ラウンドを横並びにするコンテナ -->
+    <div class="champion-area">
+      <div class="champion">
+        <div class="player">Champion</div>
+      </div>
+    </div>
+
     <div class="bracket">
-      <!-- Round 1 -->
       <div class="round round-1">
         <div class="matchup">
           <div class="player">Player 1</div>
@@ -37,7 +40,6 @@
         </div>
       </div>
 
-      <!-- Round 2 -->
       <div class="round round-2">
         <div class="matchup">
           <div class="player">Winner of Match 1</div>
@@ -49,19 +51,11 @@
         </div>
       </div>
 
-      <!-- Round 3 (決勝) -->
       <div class="round round-3">
         <div class="matchup">
           <div class="player">Winner of Semifinal 1</div>
           <div class="player">Winner of Semifinal 2</div>
         </div>
-      </div>
-    </div>
-
-    <!-- Champion -->
-    <div class="champion-area">
-      <div class="champion">
-        <div class="player">Champion</div>
       </div>
     </div>
   </div>

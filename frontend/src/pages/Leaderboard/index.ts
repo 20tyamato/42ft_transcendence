@@ -30,7 +30,7 @@ const LeaderboardPage = new Page({
 
     topTen.forEach((user, index) => {
       const li = document.createElement('li');
-      li.textContent = `#${index + 1} ${user.username} - Lv. ${user.level}`;
+      li.innerHTML = `<span class="rank">${index + 1}</span>${user.username} - Lv. ${user.level}`;
       rankingList?.appendChild(li);
     });
 
