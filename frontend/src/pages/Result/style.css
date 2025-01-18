@@ -1,0 +1,55 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.game-modes-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 20px;
+  align-items: center;
+}
+
+.game-mode-button {
+  display: block;
+  width: 300px;
+  height: 100px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #fff;
+  text-align: center;
+  line-height: 100px;
+  background: transparent;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  position: relative;
+  text-transform: uppercase;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.game-mode-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+}
+
+.single-mode {
+  background: linear-gradient(90deg, #4facfe, #00f2fe);
+  box-shadow: 0 0 20px rgba(79, 172, 254, 0.7);
+}
+
+.multi-mode {
+  background: linear-gradient(90deg, #a64ac9, #db36a4);
+  box-shadow: 0 0 20px rgba(164, 74, 201, 0.7);
+}
+
+.tournament-mode {
+  background: linear-gradient(90deg, #ffd700, #ffae42);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
+}
