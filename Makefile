@@ -30,7 +30,7 @@ migrate:
 	docker exec -it $(API_CONTAINER) python manage.py migrate
 
 ruff:
-	docker exec -it $(API_CONTAINER) poetry run ruff check .
+	docker exec -it $(API_CONTAINER) poetry run ruff check . --fix
 
 lint:
 	cd frontend && npm run lint

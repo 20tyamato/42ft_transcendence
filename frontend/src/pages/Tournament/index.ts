@@ -8,7 +8,7 @@ const TournamentPage = new Page({
   },
   mounted: async () => {
     const backBtn = document.getElementById('backBtn');
-    
+
     backBtn?.addEventListener('click', () => {
       window.location.href = '/';
     });

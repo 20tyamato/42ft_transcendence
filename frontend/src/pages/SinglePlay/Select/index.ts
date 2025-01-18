@@ -36,7 +36,8 @@ const SinglePlaySelectPage = new Page({
       button.addEventListener('click', async () => {
         console.log('Navigating to /singleplay/game');
         showLoadingScreen('/singleplay/game');
-        // const selectedLevel = levels[index];
+        const selectedLevel = levels[index];
+        console.log(`You selected ${selectedLevel} level!`);
 
         // try {
         //   const response = await fetch('http://127.0.0.1:8000/api/games/', {
