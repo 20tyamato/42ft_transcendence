@@ -11,15 +11,14 @@ const GameModesPage = new Page({
     const multiModeButton = document.querySelector('.multi-mode');
     const tournamentModeButton = document.querySelector('.tournament-mode');
 
-    const handleClick = (mode: string) => {
-      console.log(`${mode} button clicked`);
-      alert(`You selected ${mode}!`);
-      // Add navigation or mode-specific logic here
+    const navigateTo = (path: string) => {
+      console.log(`Navigating to ${path}`);
+      window.location.href = path; // Navigate to the specified path
     };
 
-    singleModeButton?.addEventListener('click', () => handleClick('Single Mode'));
-    multiModeButton?.addEventListener('click', () => handleClick('Multi Mode'));
-    tournamentModeButton?.addEventListener('click', () => handleClick('Tournament Mode'));
+    singleModeButton?.addEventListener('click', () => navigateTo('/singleplay'));
+    multiModeButton?.addEventListener('click', () => navigateTo('/multiplay'));
+    tournamentModeButton?.addEventListener('click', () => navigateTo('/tournaments'));
   },
 });
 
