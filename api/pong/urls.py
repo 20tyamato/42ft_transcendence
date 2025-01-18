@@ -1,19 +1,13 @@
 from django.urls import path
 from .views import (
-    UserListCreateView,
-    UserRetrieveUpdateDestroyView,
-    GameListCreateView,
-    GameRetrieveUpdateDestroyView,
-    TournamentListCreateView,
-    TournamentRetrieveUpdateDestroyView,
-    BlockchainScoreListCreateView,
-    BlockchainScoreRetrieveUpdateDestroyView,
-    LoginView,
-    create_single_game,
+    UserListCreateView, UserRetrieveUpdateDestroyView,
+    GameListCreateView, GameRetrieveUpdateDestroyView,
+    TournamentListCreateView, TournamentRetrieveUpdateDestroyView,
+    BlockchainScoreListCreateView, BlockchainScoreRetrieveUpdateDestroyView,
+    LoginView
 )
 
 app_name = "pong"
-
 urlpatterns = [
     # User
     path('users/', UserListCreateView.as_view(), name='user-list-create'),
@@ -25,7 +19,6 @@ urlpatterns = [
     # Game
     path('games/', GameListCreateView.as_view(), name='game-list-create'),
     path('games/<int:pk>/', GameRetrieveUpdateDestroyView.as_view(), name='game-detail'),
-    path('games/create/', create_single_game, name='create-single-game'),  # 直接ビュー関数を指定
 
     # Tournament
     path('tournaments/', TournamentListCreateView.as_view(), name='tournament-list-create'),
