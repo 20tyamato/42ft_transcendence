@@ -12,8 +12,7 @@ const SinglePlaySelectPage = new Page({
     levelButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
         const levels = ['Easy', 'Medium', 'Hard'];
-        alert(`You selected ${levels[index]} level!`);
-        // Add navigation or other functionality here
+        // apiで送って、Djangoゲームモデルを一個作成して、それを用いて、ゲーム画面に遷移する
       });
     });
   },
