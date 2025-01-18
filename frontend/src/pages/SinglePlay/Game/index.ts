@@ -2,7 +2,7 @@ import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 
 const SinglePlayPage = new Page({
-  name: 'SinglePlay',
+  name: 'SinglePlay/Game',
   config: {
     layout: CommonLayout,
   },

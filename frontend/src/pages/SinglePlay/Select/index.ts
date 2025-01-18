@@ -2,7 +2,7 @@ import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 
 const SinglePlaySelectPage = new Page({
-  name: 'Level Selection',
+  name: 'SinglePlay/Select',
   config: {
     layout: CommonLayout,
   },
