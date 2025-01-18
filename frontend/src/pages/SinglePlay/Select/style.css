@@ -1,0 +1,65 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.level-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.level-card {
+  width: 120px;
+  height: 200px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s, background 0.3s;
+}
+
+.level-card:hover {
+  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.easy-level {
+  background: #fff;
+}
+
+.medium-level {
+  background: #ccc;
+}
+
+.hard-level {
+  background: #888;
+}
+
+.stars {
+  font-size: 1.5rem;
+  color: black;
+}
+
+.level-button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.level-button:hover {
+  background: #0056b3;
+}

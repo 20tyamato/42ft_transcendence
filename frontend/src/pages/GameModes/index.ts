@@ -13,10 +13,10 @@ const GameModesPage = new Page({
 
     const navigateTo = (path: string) => {
       console.log(`Navigating to ${path}`);
-      window.location.href = path; // Navigate to the specified path
+      window.location.href = path;
     };
 
-    singleModeButton?.addEventListener('click', () => navigateTo('/singleplay'));
+    singleModeButton?.addEventListener('click', () => navigateTo('/singleplay/select'));
     multiModeButton?.addEventListener('click', () => navigateTo('/multiplay'));
     tournamentModeButton?.addEventListener('click', () => navigateTo('/tournaments'));
   },
