@@ -1,52 +1,174 @@
+/* ベースのリセット */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ページ全体の背景など */
+body {
+  font-family: 'Poppins', sans-serif; /* Google Fonts */
+  background: linear-gradient(135deg, #141E30 0%, #243B55 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* トーナメント全体のコンテナ */
 .tournament-container {
-  margin: 50px auto;
   max-width: 1200px;
+  width: 95%;
   color: #fff;
   text-align: center;
+  position: relative;
+  padding: 40px 20px;
+  background-color: rgba(0, 0, 0, 0.5); /* 半透明の黒背景 */
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .tournament-container h1 {
   margin-bottom: 40px;
-  transform: translateY(-10%);
+  font-size: 2rem;
+  font-weight: 600;
 }
 
-.round {
+/* ラウンドを横方向に並べるためのラッパ */
+.bracket {
   display: flex;
-  justify-content: space-around;
-  margin-bottom: 40px;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap; /* 画面が狭いときに折り返すため */
 }
 
-.matchup {
+/* 各ラウンドのカラム */
+.round {
   display: flex;
   flex-direction: column;
   align-items: center;
+  flex: 1;
+  min-width: 160px;
+  margin: 0 10px;
+  position: relative;
+}
+
+/* 対戦カード（Matchup）のボックス */
+.matchup {
   background: #222;
   border-radius: 10px;
-  padding: 10px;
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-  width: 120px;
-  margin: 0 10px;
+  width: 140px;
+  margin: 20px 0;
+  padding: 10px;
+  position: relative;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+/* ホバーアクション：少し浮き上がる */
+.matchup:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+}
+
+/* プレイヤーのボックス */
 .player {
-  margin: 5px 0;
-  padding: 10px;
   background: #555;
   border-radius: 5px;
-  text-align: center;
-  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  color: #fff;
+  font-weight: 400;
+  transition: background 0.2s ease;
 }
 
-.champion {
+/* プレイヤーにホバーした際、色を明るくする */
+.player:hover {
+  background: #666;
+}
+
+/* Champion 表示エリア */
+.champion-area {
   margin-top: 40px;
 }
-
-.champion h2 {
-  margin-bottom: 20px;
+.champion {
+  margin: 0 auto;
 }
 
+/* Champion プレイヤーは目立たせる */
 .champion .player {
   display: inline-block;
-  width: auto;
-  background: #999;
+  background: gold;
+  color: #000;
+  min-width: 160px;
+  font-weight: 600;
+  border-radius: 5px;
+  padding: 15px;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+}
+
+/* コネクタ（線）の描画）
+   結線部分をキレイに見せるため、色合いや位置調整を少し変更 */
+.round-1 .matchup::after {
+  content: "";
+  position: absolute;
+  right: -70px;
+  top: 50%;
+  width: 70px;
+  height: 2px;
+  background: #fff;
+}
+.round-2 .matchup::after {
+  content: "";
+  position: absolute;
+  right: -70px;
+  top: 50%;
+  width: 70px;
+  height: 2px;
+  background: #fff;
+}
+.round-3 .matchup::after {
+  content: "";
+  position: absolute;
+  right: 50%;
+  top: 50%;
+  width: 50%;
+  height: 2px;
+  background: #fff;
+}
+
+/* 縦方向の線 */
+.round-2 .matchup:nth-child(2)::before {
+  content: "";
+  position: absolute;
+  right: -70px;
+  top: -50%;
+  width: 2px;
+  height: 100%;
+  background: #fff;
+}
+.round-3 .matchup::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -40px;
+  width: 2px;
+  height: 40px;
+  background: #fff;
+}
+
+/* レスポンシブ対応：画面幅が小さい場合は線を非表示にする等 */
+@media (max-width: 768px) {
+  .round-1 .matchup::after,
+  .round-2 .matchup::after,
+  .round-3 .matchup::after,
+  .round-2 .matchup:nth-child(2)::before,
+  .round-3 .matchup::before {
+    display: none;
+  }
+
+  .matchup {
+    margin: 10px auto;
+  }
 }
