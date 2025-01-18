@@ -6,8 +6,8 @@ import LoginPage from '@/pages/Login/index';
 import MultiPlayPage from '@/pages/MultiPlay/index';
 import ProfilePage from '@/pages/Profile/index';
 import RegisterPage from '@/pages/Register/index';
-import SinglePlayPage from '@/pages/SinglePlay/index';
 import SinglePlaySelectPage from '@/pages/SinglePlay/Select/index';
+import SinglePlayPage from '@/pages/SinglePlay/index';
 
 import { Page } from './core/Page';
 
