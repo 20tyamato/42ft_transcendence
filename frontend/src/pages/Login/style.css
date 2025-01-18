@@ -8,20 +8,6 @@ body, html {
   color: #f8fafc;
 }
 
-#background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url('./main.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  z-index: -1;
-}
-
-
 .login-container {
   max-width: 400px;
   margin: 50px auto;
