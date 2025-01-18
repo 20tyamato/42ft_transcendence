@@ -6,8 +6,8 @@ import LoginPage from '@/pages/Login/index';
 import MultiPlayPage from '@/pages/MultiPlay/index';
 import ProfilePage from '@/pages/Profile/index';
 import RegisterPage from '@/pages/Register/index';
+import SinglePlayPage from '@/pages/SinglePlay/Game/index';
 import SinglePlaySelectPage from '@/pages/SinglePlay/Select/index';
-import SinglePlayPage from '@/pages/SinglePlay/index';
 
 import { Page } from './core/Page';
 
@@ -38,7 +38,7 @@ const routes: Record<string, Page> = {
   '/modes': GameModesPage,
   // '/settings/game': SettingsGamePage,
   // '/settings/account': SettingsAccountPage,
-  '/singleplay': SinglePlayPage,
+  '/singleplay/game': SinglePlayPage,
   '/singleplay/select': SinglePlaySelectPage,
   '/multiplay': MultiPlayPage,
   // '/games/:id/results': GameResultsPage,
