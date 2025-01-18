@@ -5,12 +5,7 @@ import * as THREE from 'three';
 const createThreeScene = () => {
   // Scene, Camera, Renderer
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-  );
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
   // 透過背景にするため alpha: true を指定
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -44,7 +39,7 @@ const createThreeScene = () => {
 
   // グリップ（細長い立方体）
   const handleGeometry = new THREE.BoxGeometry(0.15, 1.0, 0.15);
-  const handleMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
+  const handleMaterial = new THREE.MeshStandardMaterial({ color: 0x8b4513 });
   const handle = new THREE.Mesh(handleGeometry, handleMaterial);
 
   // 取手がラケット面に自然につくよう、少し下に配置（例：-0.55）
