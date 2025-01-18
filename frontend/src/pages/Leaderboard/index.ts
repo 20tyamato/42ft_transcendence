@@ -3,11 +3,11 @@ import CommonLayout from '@/layouts/common/index';
 
 interface IRankingUser {
   username: string;
-  score: number;
+  level: number;
 }
 
 const LeaderboardPage = new Page({
-  name: 'Ranking',
+  name: 'Leaderboard',
   config: {
     layout: CommonLayout,
   },
@@ -15,23 +15,22 @@ const LeaderboardPage = new Page({
     const rankingList = document.getElementById('rankingList');
     const backBtn = document.getElementById('backBtn');
 
-    // ダミーデータ（本来はAPIやDBなどから取得）
     const topTen: IRankingUser[] = [
-      { username: 'Alice', score: 1000 },
-      { username: 'Bob', score: 950 },
-      { username: 'Carol', score: 900 },
-      { username: 'Dave', score: 850 },
-      { username: 'Eve', score: 800 },
-      { username: 'Frank', score: 750 },
-      { username: 'Grace', score: 700 },
-      { username: 'Heidi', score: 650 },
-      { username: 'Ivan', score: 600 },
-      { username: 'Judy', score: 550 },
+      { username: 'Alice', level: 10 },
+      { username: 'Bob', level: 8 },
+      { username: 'Carol', level: 6 },
+      { username: 'Dave', level: 6 },
+      { username: 'Eve', level: 5 },
+      { username: 'Frank', level: 4 },
+      { username: 'Grace', level: 3 },
+      { username: 'Heidi', level: 3 },
+      { username: 'Ivan', level: 2 },
+      { username: 'Judy', level: 1 },
     ];
 
     topTen.forEach((user, index) => {
       const li = document.createElement('li');
-      li.textContent = `#${index + 1} ${user.username} - ${user.score} pts`;
+      li.textContent = `#${index + 1} ${user.username} - Lv. ${user.level}`;
       rankingList?.appendChild(li);
     });
 

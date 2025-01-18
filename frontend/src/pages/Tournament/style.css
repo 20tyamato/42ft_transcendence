@@ -50,16 +50,3 @@
   width: auto;
   background: #999;
 }
-
-/* @media (max-width: 768px) {
-  .tournament-container {
-    width: 95%;
-  }
-  .round {
-    flex-direction: column;
-    align-items: center;
-  }
-  .matchup {
-    margin-bottom: 20px;
-  }
-} */
