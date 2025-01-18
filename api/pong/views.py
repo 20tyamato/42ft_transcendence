@@ -59,15 +59,13 @@ class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated, IsOwnerOfUserProfile]
 
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
+# @api_view(['POST'])
+# @permission_classes([IsAuthenticated])
 def create_single_game(request):
-    """AI対戦用Gameを作成するエンドポイント"""
     User = get_user_model()
     level = request.data.get('level', 'Easy')
     user = request.user
 
-    # AI対戦用の仮ユーザーを用意
     try:
         ai_user = User.objects.get(username='ai_user')
     except User.DoesNotExist:
@@ -77,7 +75,6 @@ def create_single_game(request):
             display_name='AI Opponent'
         )
 
-    # Gameオブジェクト作成
     game = Game.objects.create(
         player1=user,
         player2=ai_user,

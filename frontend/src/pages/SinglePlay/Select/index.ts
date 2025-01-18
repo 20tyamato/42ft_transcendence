@@ -15,12 +15,10 @@ const SinglePlaySelectPage = new Page({
         const selectedLevel = levels[index];
 
         try {
-          // Django 側のエンドポイントに POST リクエスト
-          const response = await fetch('http://127.0.0.1:8000/api/games/create/', {
+          const response = await fetch('http://127.0.0.1:8000/api/games/', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              // 認証が必要なら、Cookie 認証や JWT 認証ヘッダの付与が必要
             },
             body: JSON.stringify({
               level: selectedLevel,
@@ -34,9 +32,8 @@ const SinglePlaySelectPage = new Page({
           const data = await response.json();
           // data は { game_id: <作成された Game のID> } の想定
 
-          // 取得したゲームIDを使ってゲーム画面に遷移
-          // ここはルーティングの仕組みに合わせて変えてください
-          window.location.href = `/game/${data.game_id}/?level=${selectedLevel}`;
+          // window.location.href = `/game/${data.game_id}/?level=${selectedLevel}`;
+          window.location.href = `/singleplay/game/`;
 
         } catch (error) {
           console.error(error);

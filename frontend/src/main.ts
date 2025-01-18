@@ -1,6 +1,7 @@
 import NotFoundPage from '@/pages/404/index';
 import HomePage from '@/pages/Home/index';
 import LeaderboardPage from '@/pages/Leaderboard/index';
+import LoadingPage from '@/pages/Loading/index';
 import LoginPage from '@/pages/Login/index';
 import ModesPage from '@/pages/Modes/index';
 import MultiPlayPage from '@/pages/MultiPlay/index';
@@ -45,6 +46,7 @@ const routes: Record<string, Page> = {
   // '/tournament': TournamentListPage,
   // '/tournament/:id': TournamentPage,
   '/leaderboard': LeaderboardPage,
+  '/loading': LoadingPage,
 };
 
 async function router(path: string) {
