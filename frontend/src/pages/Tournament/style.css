@@ -5,19 +5,17 @@
   text-align: center;
 }
 
-/* タイトル */
 .tournament-container h1 {
   margin-bottom: 40px;
+  transform: translateY(-10%);
 }
 
-/* 各ラウンドの枠 */
 .round {
   display: flex;
   justify-content: space-around;
   margin-bottom: 40px;
 }
 
-/* 各試合（matchup） */
 .matchup {
   display: flex;
   flex-direction: column;
@@ -27,10 +25,9 @@
   padding: 10px;
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
   width: 120px;
-  margin: 0 10px; /* 余白を少しつける */
+  margin: 0 10px;
 }
 
-/* プレイヤー名表示部分 */
 .player {
   margin: 5px 0;
   padding: 10px;
@@ -40,7 +37,6 @@
   width: 100%;
 }
 
-/* チャンピオン表示 */
 .champion {
   margin-top: 40px;
 }
@@ -55,8 +51,7 @@
   background: #999;
 }
 
-/* 必要があればメディアクエリなどでレスポンシブ調整 */
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .tournament-container {
     width: 95%;
   }
@@ -67,4 +62,4 @@
   .matchup {
     margin-bottom: 20px;
   }
-}
+} */

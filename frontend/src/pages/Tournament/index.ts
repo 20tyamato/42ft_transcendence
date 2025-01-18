@@ -7,15 +7,7 @@ const TournamentPage = new Page({
     layout: CommonLayout,
   },
   mounted: async () => {
-    const modeButtons = document.querySelectorAll('.mode-button');
-
-    modeButtons.forEach((button, index) => {
-      button.addEventListener('click', () => {
-        const modes = ['Single Play', 'Tournament'];
-        alert(`You selected ${modes[index]} mode!`);
-        // Add navigation or other functionality here
-      });
-    });
+    console.log('Tournament page is mounted');
   },
 });
 
