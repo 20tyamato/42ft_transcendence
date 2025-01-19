@@ -12,9 +12,24 @@
     "editor.tabSize": 2,
     "editor.insertSpaces": true
   },
+  "[javascript]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  },
+  "[typescript]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  },
   "html.format.enable": true,
   "html.format.indentInnerHtml": true,
   "html.format.wrapLineLength": 120,
   "html.format.wrapAttributes": "auto",
-  "css.format.enable": true
+  "css.format.enable": true,
+  "javascript.format.enable": true,
+  "prettier.printWidth": 80,
+  "prettier.tabWidth": 2,
+  "prettier.useTabs": false,
+  "prettier.singleQuote": true,
+  "prettier.trailingComma": "es5",
+  "prettier.arrowParens": "always"
 }
