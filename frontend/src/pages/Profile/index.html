@@ -1,42 +1,42 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>User Profile</title>
-  <link rel="stylesheet" href="./style.css" />
-</head>
-<body>
-  <div class="userprofile-container">
-    <header>
-      <h1>User Profile Management</h1>
-    </header>
-    <main>
-      <div class="profile-section">
-        <img id="avatar" src="./api/avatars/avator.png" alt="Avatar" />
-        <div class="info">
-          <p>Username: <span id="username">John Doe</span></p>
-          <p>Current Ranking: <span id="ranking">5</span></p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Profile</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="userprofile-container">
+      <header>
+        <h1>User Profile Management</h1>
+      </header>
+      <main>
+        <div class="profile-section">
+          <img id="avatar" src="./api/avatars/avator.png" alt="Avatar" />
+          <div class="info">
+            <p>Username: <span id="username">John Doe</span></p>
+            <p>Current Ranking: <span id="ranking">5</span></p>
+          </div>
         </div>
-      </div>
-      <div class="history-section">
-        <h2>Tournament History</h2>
-        <ul id="tournamentHistory">
-          <!-- トーナメント履歴が動的に追加される -->
-        </ul>
-      </div>
-      <div class="score-section">
-        <h2>Blockchain Scores</h2>
-        <ul id="scoreList">
-          <!-- ブロックチェーン保存のスコアを表示する -->
-        </ul>
-      </div>
-      <button id="editBtn" class="btn btn-primary">Edit Profile</button>
-    </main>
-    <footer>
-      <p>© 2025 42Tokyo</p>
-    </footer>
-  </div>
-  <script type="module" src="./index.ts"></script>
-</body>
+        <div class="history-section">
+          <h2>Tournament History</h2>
+          <ul id="tournamentHistory">
+            <!-- トーナメント履歴が動的に追加される -->
+          </ul>
+        </div>
+        <div class="score-section">
+          <h2>Blockchain Scores</h2>
+          <ul id="scoreList">
+            <!-- ブロックチェーン保存のスコアを表示する -->
+          </ul>
+        </div>
+        <button id="editBtn" class="btn btn-primary">Edit Profile</button>
+      </main>
+      <footer>
+        <p>© 2025 42Tokyo</p>
+      </footer>
+    </div>
+    <script type="module" src="./index.ts"></script>
+  </body>
 </html>

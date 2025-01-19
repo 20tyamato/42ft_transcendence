@@ -1,123 +1,125 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
 body {
-    margin: 0;
-    font-family: 'Roboto', sans-serif;
-    background: linear-gradient(135deg, #1f2937, #374151);
-    color: #f8fafc;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    overflow: hidden;
-    position: relative;
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(135deg, #1f2937, #374151);
+  color: #f8fafc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  overflow: hidden;
+  position: relative;
 }
 
 body::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, rgba(255,255,255,0.1) 1%, transparent 40%);
-    background-size: 200px 200px;
-    z-index: -1;
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1%, transparent 40%);
+  background-size: 200px 200px;
+  z-index: -1;
 }
 
 .singleplay-container {
-    text-align: center;
-    background: rgba(0, 0, 0, 0.8);
-    padding: 30px;
-    border-radius: 15px;
-    width: 90%;
-    max-width: 500px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    animation: fadeIn 0.5s ease-out;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 30px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.5s ease-out;
 }
 
 header h1 {
-    margin-bottom: 20px;
-    font-size: 3rem;
-    color: #38bdf8;
-    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  margin-bottom: 20px;
+  font-size: 3rem;
+  color: #38bdf8;
+  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
 main p {
-    font-size: 1.2rem;
-    margin-bottom: 20px;
-    color: #cbd5e1;
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: #cbd5e1;
 }
 
 .select-box {
-    margin-bottom: 20px;
-    padding: 10px;
-    font-size: 1rem;
-    border: none;
-    border-radius: 10px;
-    background: #374151;
-    color: #ffffff;
-    width: 100%;
-    max-width: 300px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    transition: box-shadow 0.3s;
+  margin-bottom: 20px;
+  padding: 10px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 10px;
+  background: #374151;
+  color: #ffffff;
+  width: 100%;
+  max-width: 300px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  transition: box-shadow 0.3s;
 }
 
 .select-box:hover {
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
 }
 
 .btn {
-    margin: 10px;
-    padding: 12px 25px;
-    font-size: 1.2rem;
-    border-radius: 25px;
-    border: none;
-    cursor: pointer;
-    color: #fff;
-    transition: transform 0.2s, box-shadow 0.3s;
-    width: 100%;
-    max-width: 300px;
+  margin: 10px;
+  padding: 12px 25px;
+  font-size: 1.2rem;
+  border-radius: 25px;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  transition:
+    transform 0.2s,
+    box-shadow 0.3s;
+  width: 100%;
+  max-width: 300px;
 }
 
 .btn-primary {
-    background-color: #3b82f6;
-    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+  background-color: #3b82f6;
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
 }
 
 .btn-secondary {
-    background-color: #10b981;
-    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+  background-color: #10b981;
+  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
 }
 
 .btn-tertiary {
-    background-color: #ef4444;
-    box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+  background-color: #ef4444;
+  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
 }
 
 .btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
 }
 
 .hidden {
-    display: none;
+  display: none;
 }
 
 footer p {
-    margin-top: 20px;
-    font-size: 0.9rem;
-    opacity: 0.7;
-    color: #d1d5db;
+  margin-top: 20px;
+  font-size: 0.9rem;
+  opacity: 0.7;
+  color: #d1d5db;
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

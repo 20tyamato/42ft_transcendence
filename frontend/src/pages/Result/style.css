@@ -37,7 +37,9 @@ body {
   margin: 15px 0;
   padding: 15px;
   display: block;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .result-item:hover {

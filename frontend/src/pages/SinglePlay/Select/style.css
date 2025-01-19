@@ -24,7 +24,9 @@ body {
   align-items: center;
   padding: 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-  transition: transform 0.3s, background 0.3s;
+  transition:
+    transform 0.3s,
+    background 0.3s;
 }
 
 .level-card:hover {

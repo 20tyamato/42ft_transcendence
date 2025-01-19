@@ -1,34 +1,35 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="./style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <title>User Login</title>
-</head>
-<body>
-  <div class="login-container">
-    <h1>Login</h1>
-    <form id="login-form">
-      <label for="username">Username</label>
-      <input type="text" id="username" name="username" required />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <title>User Login</title>
+  </head>
+  <body>
+    <div class="login-container">
+      <h1>Login</h1>
+      <form id="login-form">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required />
 
-      <label for="password">Password</label>
-      <div class="password-field">
-        <input type="password" id="password" name="password" required />
-        <button type="button" id="toggle-password">
-          <i class="fa fa-eye" id="password-icon"></i>
-        </button>
-      </div>
+        <label for="password">Password</label>
+        <div class="password-field">
+          <input type="password" id="password" name="password" required />
+          <button type="button" id="toggle-password">
+            <i class="fa fa-eye" id="password-icon"></i>
+          </button>
+        </div>
 
-      <button type="submit" class="btn btn-primary">Login</button>
-    </form>
-    <p class="centered-text">
-      Don't have an account? <a href="./register">Register</a>
-    </p>
-    <div id="response-message"></div>
-  </div>
-  <script type="module" src="./index.ts"></script>
-</body>
+        <button type="submit" class="btn btn-primary">Login</button>
+      </form>
+      <p class="centered-text">Don't have an account? <a href="./register">Register</a></p>
+      <div id="response-message"></div>
+    </div>
+    <script type="module" src="./index.ts"></script>
+  </body>
 </html>
