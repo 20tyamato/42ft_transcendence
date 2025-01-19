@@ -3,5 +3,18 @@
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
-  }
+  },
+  "[html]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  },
+  "[css]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  },
+  "html.format.enable": true,
+  "html.format.indentInnerHtml": true,
+  "html.format.wrapLineLength": 120,
+  "html.format.wrapAttributes": "auto",
+  "css.format.enable": true
 }
