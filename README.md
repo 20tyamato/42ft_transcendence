@@ -122,10 +122,12 @@
     - ゲーム設定ページ
   - `http://localhost:3001/settings/account`
     - ユーザーアカウント設定ページ
-  - `http://localhost:3001/singleplay`
-    - シングルプレイヤーページ
-  - `http://localhost:3001/multiplay`
-    - マルチプレイヤーページ
+  - `http://localhost:3001/singleplay/select`
+    - シングルプレイヤーレベル選択ページ
+  - `http://localhost:3001/singleplay/:gameId`
+    - シングルプレイヤーゲームページ
+  - `http://localhost:3001/multiplay/:gameId`
+    - マルチプレイヤーゲームページ
   - `http://localhost:3001/games/:gameId/results`
     - マッチ結果ページ
   - `http://localhost:3001/tournaments`

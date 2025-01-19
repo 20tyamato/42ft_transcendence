@@ -2,28 +2,23 @@ import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 
 const ModesPage = new Page({
-  name: 'Sample',
+  name: 'Modes',
   config: {
     layout: CommonLayout,
   },
   mounted: async () => {
-    const button = document.querySelector('#random-message-button');
-    const messageDisplay = document.querySelector('#random-message');
+    const singleModeButton = document.querySelector('.single-mode');
+    const multiModeButton = document.querySelector('.multi-mode');
+    const tournamentModeButton = document.querySelector('.tournament-mode');
 
-    button?.addEventListener('click', () => {
-      const messages = [
-        'Hello, World!',
-        'Welcome to the Sample Page!',
-        'You clicked the button!',
-        'Have a great day!',
-        'Keep exploring and learning!',
-      ];
+    const navigateTo = (path: string) => {
+      console.log(`Navigating to ${path}`);
+      window.location.href = path;
+    };
 
-      const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-      if (messageDisplay) {
-        messageDisplay.textContent = randomMessage;
-      }
-    });
+    singleModeButton?.addEventListener('click', () => navigateTo('/singleplay/select'));
+    multiModeButton?.addEventListener('click', () => navigateTo('/multiplay'));
+    tournamentModeButton?.addEventListener('click', () => navigateTo('/tournament'));
   },
 });
 

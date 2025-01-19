@@ -1,0 +1,73 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.results-container {
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 15px;
+  padding: 40px;
+  width: 90%;
+  max-width: 600px;
+  color: #fff;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.results-container h1 {
+  font-size: 2.5rem;
+  margin-bottom: 30px;
+  font-weight: 600;
+}
+
+/* 個々の結果カード */
+.result-item {
+  background: #333;
+  border-radius: 10px;
+  margin: 15px 0;
+  padding: 15px;
+  display: block;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.result-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.result-item .player {
+  margin: 0 5px;
+  font-weight: 600;
+  color: #fdbb2d;
+}
+
+.result-item strong {
+  color: #fdbb2d;
+}
+
+.btn {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+  color: #fff;
+  background-color: #007bff;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}

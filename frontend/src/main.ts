@@ -6,7 +6,10 @@ import ModesPage from '@/pages/Modes/index';
 import MultiPlayPage from '@/pages/MultiPlay/index';
 import ProfilePage from '@/pages/Profile/index';
 import RegisterPage from '@/pages/Register/index';
-import SinglePlayPage from '@/pages/SinglePlay/index';
+import SinglePlayPage from '@/pages/SinglePlay/Game/index';
+import SinglePlaySelectPage from '@/pages/SinglePlay/Select/index';
+import TournamentPage from '@/pages/Tournament/index';
+import ResultPage from './pages/Result/index';
 
 import { Page } from './core/Page';
 
@@ -37,10 +40,12 @@ const routes: Record<string, Page> = {
   '/modes': ModesPage,
   // '/settings/game': SettingsGamePage,
   // '/settings/account': SettingsAccountPage,
-  '/singleplay': SinglePlayPage,
+  '/singleplay/game': SinglePlayPage,
+  '/singleplay/select': SinglePlaySelectPage,
   '/multiplay': MultiPlayPage,
   // '/games/:id/results': GameResultsPage,
-  // '/tournament': TournamentListPage,
+  '/result': ResultPage,
+  '/tournament': TournamentPage,
   // '/tournament/:id': TournamentPage,
   '/leaderboard': LeaderboardPage,
 };

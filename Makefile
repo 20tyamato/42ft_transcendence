@@ -30,6 +30,9 @@ migrate:
 	docker exec -it $(API_CONTAINER) python manage.py migrate
 
 ruff:
+	docker exec -it $(API_CONTAINER) poetry run ruff check . --fix
+
+super_ruff:
 	docker exec -it $(API_CONTAINER) poetry run ruff check .
 
 lint:
@@ -91,4 +94,4 @@ help:
 	@echo " make ruff"
 	@echo " make test"
 
-.PHONY: all up down re clean fbuild test makemigrations migrate ruff lint api_in front_in db_in api_logs front_logs db_logs
+.PHONY: all up down re clean fbuild test makemigrations migrate ruff super_ruff lint api_in front_in db_in api_logs front_logs db_logs help

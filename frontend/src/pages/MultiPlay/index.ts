@@ -68,7 +68,7 @@ const MultiPlayPage = new Page({
     });
 
     exitBtn?.addEventListener('click', () => {
-      window.location.href = '/';
+      window.location.href = '/modes';
     });
   },
 });

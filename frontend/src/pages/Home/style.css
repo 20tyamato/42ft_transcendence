@@ -1,27 +1,36 @@
-body {
+body, html {
   margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
   font-family: 'Arial', sans-serif;
-  background: linear-gradient(135deg, #3b82f6, #9333ea);
+  overflow: hidden;
   color: #f8fafc;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+}
+
+/* Three.js の canvas を背景の上に重ねるための設定 */
+#background canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1; /* 背景の次層に置く */
 }
 
 .home-container {
   text-align: center;
   padding: 30px;
-  background: rgba(255, 255, 255, 0.1);
   border-radius: 20px;
   max-width: 400px;
   width: 90%;
   box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+  position: relative;
+  margin: auto;
+  top: 0%;
+  transform: translateY(300%);
 }
 
-header h1 {
-  font-size: 2.5rem;
-  margin-bottom: 20px;
+h1 {
+  font-size: 5rem;
   color: #ffffff;
 }
 
@@ -43,8 +52,8 @@ main p {
 
 .btn {
   display: block;
-  padding: 15px;
-  font-size: 1.2rem;
+  padding: 10px;
+  font-size: 1.5rem;
   text-decoration: none;
   color: #fff;
   border-radius: 8px;

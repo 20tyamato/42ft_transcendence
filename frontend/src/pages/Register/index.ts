@@ -81,35 +81,37 @@ const RegisterPage = new Page({
     });
 
     const togglePasswordBtn = document.getElementById('toggle-password');
-    if (togglePasswordBtn) {
-      togglePasswordBtn.addEventListener('click', () => {
-        const passwordField = document.getElementById('password') as HTMLInputElement;
-        if (!passwordField) return;
+    const passwordField = document.getElementById('password') as HTMLInputElement;
+    const passwordIcon = document.getElementById('password-icon');
 
+    if (togglePasswordBtn && passwordField && passwordIcon) {
+      togglePasswordBtn.addEventListener('click', () => {
         if (passwordField.type === 'password') {
           passwordField.type = 'text';
-          togglePasswordBtn.textContent = 'Hide';
+          passwordIcon.classList.remove('fa-eye');
+          passwordIcon.classList.add('fa-eye-slash');
         } else {
           passwordField.type = 'password';
-          togglePasswordBtn.textContent = 'Show';
+          passwordIcon.classList.remove('fa-eye-slash');
+          passwordIcon.classList.add('fa-eye');
         }
       });
     }
 
     const togglePasswordConfirmBtn = document.getElementById('toggle-password-confirm');
-    if (togglePasswordConfirmBtn) {
-      togglePasswordConfirmBtn.addEventListener('click', () => {
-        const passwordConfirmField = document.getElementById(
-          'password_confirm'
-        ) as HTMLInputElement;
-        if (!passwordConfirmField) return;
+    const passwordConfirmField = document.getElementById('password-confirm') as HTMLInputElement;
+    const passwordConfirmIcon = document.getElementById('password-confirm-icon');
 
+    if (togglePasswordConfirmBtn && passwordConfirmField && passwordConfirmIcon) {
+      togglePasswordConfirmBtn.addEventListener('click', () => {
         if (passwordConfirmField.type === 'password') {
           passwordConfirmField.type = 'text';
-          togglePasswordConfirmBtn.textContent = 'Hide';
+          passwordConfirmIcon.classList.remove('fa-eye');
+          passwordConfirmIcon.classList.add('fa-eye-slash');
         } else {
           passwordConfirmField.type = 'password';
-          togglePasswordConfirmBtn.textContent = 'Show';
+          passwordConfirmIcon.classList.remove('fa-eye-slash');
+          passwordConfirmIcon.classList.add('fa-eye');
         }
       });
     }
