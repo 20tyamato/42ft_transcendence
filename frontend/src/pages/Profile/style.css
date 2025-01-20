@@ -9,8 +9,8 @@
 
 body {
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #1f1c2c 0%, #928dab 100%);
-  color: #fff;
+  background: transparent;
+  color: #000;
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -18,46 +18,14 @@ body {
 }
 
 /* ------------------------------
-   コンテナレイアウト
------------------------------- */
-.userprofile-container {
-  max-width: 800px;
-  margin: 20px;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(10px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* ------------------------------
-   メインコンテンツ
------------------------------- */
-main {
-  width: 100%;
-  padding: 40px 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* ------------------------------
    フリップカード用スタイル
 ------------------------------ */
 .profile-card {
-  width: 100%;
-  max-width: 500px;
-  height: 320px;
-  margin-bottom: 40px;
+  width: 400px;
+  height: 240px;
   perspective: 1200px;
   position: relative;
   cursor: pointer;
-  transition:
-    transform 0.5s ease,
-    box-shadow 0.3s ease;
 }
 
 .profile-card:hover {
@@ -94,33 +62,24 @@ main {
   transition: box-shadow 0.3s ease;
 }
 
-.card-front:hover,
-.card-back:hover {
-  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.4);
-}
-
-/* 表面 */
 .card-front {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(0, 0, 0, 0.2));
-  backdrop-filter: blur(6px);
 }
 
-/* 裏面 */
 .card-back {
   transform: rotateY(180deg);
   background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.3));
-  backdrop-filter: blur(8px);
 }
 
 /* ------------------------------
    プロフィールセクション
 ------------------------------ */
 .profile-section img {
-  width: 120px;
-  height: 120px;
+  width: 80px;
+  height: 80px;
   object-fit: cover;
   border-radius: 50%;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   border: 3px solid #fff;
   transition:
     transform 0.3s ease,
@@ -133,30 +92,10 @@ main {
 }
 
 .profile-section .info p {
-  margin: 6px 0;
-  font-size: 1rem;
-  text-align: center;
-}
-
-/* ------------------------------
-   ボタンスタイル
------------------------------- */
-.btn {
-  font-size: 1rem;
-  padding: 12px 24px;
-  border: none;
-  cursor: pointer;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #ff4c60, #ff7c90);
+  margin: 4px 0;
+  font-size: 0.9rem;
   color: #fff;
-  transition:
-    transform 0.3s ease,
-    background 0.3s ease;
-}
-
-.btn:hover {
-  transform: translateY(-5px);
-  background: linear-gradient(135deg, #e04353, #ff4c60);
+  text-align: center;
 }
 
 /* ------------------------------
@@ -164,13 +103,12 @@ main {
 ------------------------------ */
 @media (max-width: 600px) {
   .profile-card {
-    max-width: 100%;
+    width: 90%;
     height: auto;
-    padding: 20px;
   }
 
-  .btn {
-    width: 100%;
-    font-size: 0.9rem;
+  .profile-section img {
+    width: 60px;
+    height: 60px;
   }
 }
