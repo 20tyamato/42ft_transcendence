@@ -8,11 +8,13 @@
 }
 
 body {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
-  /* 背景をグラデーションに */
+  font-family: 'Poppins', sans-serif;
   background: linear-gradient(135deg, #1f1c2c 0%, #928dab 100%);
   color: #fff;
   min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* ------------------------------
@@ -20,19 +22,22 @@ body {
 ------------------------------ */
 .userprofile-container {
   max-width: 800px;
-  margin: 0 auto;
-  min-height: 100vh;
+  margin: 20px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
   display: flex;
   flex-direction: column;
-  background-color: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(4px);
+  align-items: center;
 }
 
 /* ------------------------------
    メインコンテンツ
 ------------------------------ */
 main {
-  flex: 1;
+  width: 100%;
   padding: 40px 20px;
   display: flex;
   flex-direction: column;
@@ -47,16 +52,24 @@ main {
   max-width: 500px;
   height: 320px;
   margin-bottom: 40px;
-  perspective: 1000px;
+  perspective: 1200px;
   position: relative;
   cursor: pointer;
+  transition:
+    transform 0.5s ease,
+    box-shadow 0.3s ease;
+}
+
+.profile-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
 }
 
 .card-inner {
   position: relative;
   width: 100%;
   height: 100%;
-  transition: transform 0.8s ease;
+  transition: transform 1s ease;
   transform-style: preserve-3d;
 }
 
@@ -71,89 +84,58 @@ main {
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  border-radius: 16px;
   padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  transition: box-shadow 0.3s ease;
+}
+
+.card-front:hover,
+.card-back:hover {
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.4);
 }
 
 /* 表面 */
 .card-front {
-  background: rgba(255, 255, 255, 0.15);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(0, 0, 0, 0.2));
   backdrop-filter: blur(6px);
 }
 
 /* 裏面 */
 .card-back {
   transform: rotateY(180deg);
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(6px);
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.3));
+  backdrop-filter: blur(8px);
 }
 
 /* ------------------------------
    プロフィールセクション
 ------------------------------ */
-.profile-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
 .profile-section img {
   width: 120px;
   height: 120px;
   object-fit: cover;
   border-radius: 50%;
   margin-bottom: 16px;
-  border: 2px solid #fff;
+  border: 3px solid #fff;
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.profile-section img:hover {
+  transform: scale(1.1);
+  border-color: #ff4c60;
 }
 
 .profile-section .info p {
   margin: 6px 0;
   font-size: 1rem;
-}
-
-/* ------------------------------
-   トーナメント・スコアセクション
------------------------------- */
-.history-section,
-.score-section {
-  width: 100%;
   text-align: center;
-  margin-bottom: 16px;
-}
-
-.history-section h2,
-.score-section h2 {
-  margin-bottom: 8px;
-  font-size: 1.2rem;
-  border-bottom: 1px solid #fff;
-  display: inline-block;
-  padding-bottom: 4px;
-}
-
-.history-section ul,
-.score-section ul {
-  list-style: none;
-  padding: 0;
-}
-
-.history-section li,
-.score-section li {
-  margin: 4px 0;
-  font-size: 0.9rem;
-}
-
-/* ------------------------------
-   タップ・クリックヒント
------------------------------- */
-.tap-hint {
-  margin-top: 12px;
-  font-size: 0.85rem;
-  color: #ccc;
 }
 
 /* ------------------------------
@@ -161,20 +143,34 @@ main {
 ------------------------------ */
 .btn {
   font-size: 1rem;
-  padding: 10px 20px;
+  padding: 12px 24px;
   border: none;
   cursor: pointer;
-  border-radius: 6px;
-  transition: background-color 0.3s ease;
-  outline: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #ff4c60, #ff7c90);
   color: #fff;
-  margin-top: 20px;
+  transition:
+    transform 0.3s ease,
+    background 0.3s ease;
 }
 
-.btn-primary {
-  background-color: #ff4c60;
+.btn:hover {
+  transform: translateY(-5px);
+  background: linear-gradient(135deg, #e04353, #ff4c60);
 }
 
-.btn-primary:hover {
-  background-color: #e04353;
+/* ------------------------------
+   メディアクエリ
+------------------------------ */
+@media (max-width: 600px) {
+  .profile-card {
+    max-width: 100%;
+    height: auto;
+    padding: 20px;
+  }
+
+  .btn {
+    width: 100%;
+    font-size: 0.9rem;
+  }
 }

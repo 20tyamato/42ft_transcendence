@@ -48,6 +48,7 @@ const ProfilePage = new Page({
     if (avatarEl) {
       // もしAPIからアバターURLを取得するなら差し替え
       // avatarEl.src = userData.avatarUrl || './api/avatars/avator.png';
+      avatarEl.src = 'avator.png';
     }
     usernameEl.textContent = username;
     emailEl.textContent = email;
