@@ -34,7 +34,7 @@ const ProfilePage = new Page({
     // --- 取得データを変数に格納 ---
     const username = userData.username;
     const email = userData.email;
-    const ranking = 5; // 仮で5を設定
+    const ranking = 5; // 仮の例
     const tournamentHistory: ITournamentHistory[] = [
       { date: '2025-01-01', result: 'Won' },
       { date: '2025-01-05', result: 'Lost' },
@@ -46,9 +46,8 @@ const ProfilePage = new Page({
 
     // --- 画面に反映 ---
     if (avatarEl) {
-      // もしAPIからアバターURLを取得するなら差し替え
+      // APIからのアバターURLがあれば差し替え
       avatarEl.src = userData.avatarUrl || './api/avatars/avator.png';
-      // avatarEl.src = 'avator.png';
     }
     usernameEl.textContent = username;
     emailEl.textContent = email;
