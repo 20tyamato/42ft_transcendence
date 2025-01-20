@@ -30,8 +30,11 @@ const ProfilePage = new Page({
     const tournamentHistoryEl = document.getElementById('tournamentHistory');
     const scoreListEl = document.getElementById('scoreList');
     const editBtn = document.getElementById('editBtn');
+    const backBtn = document.getElementById('backBtn');
+    const avatarUploadBtn = document.getElementById('avatarUploadBtn');
+    const avatarUploadInput = document.getElementById('avatarUpload') as HTMLInputElement;
 
-    // --- 取得データを変数に格納 ---
+    // --- 取得データを変数に格納 (例) ---
     const username = userData.username;
     const email = userData.email;
     const ranking = 5; // 仮の例
@@ -49,9 +52,9 @@ const ProfilePage = new Page({
       // APIからのアバターURLがあれば差し替え
       avatarEl.src = userData.avatarUrl || './api/avatars/avator.png';
     }
-    usernameEl.textContent = username;
-    emailEl.textContent = email;
-    rankingEl.textContent = ranking.toString();
+    if (usernameEl) usernameEl.textContent = username;
+    if (emailEl) emailEl.textContent = email;
+    if (rankingEl) rankingEl.textContent = ranking.toString();
 
     // トーナメント履歴の描画
     tournamentHistory?.forEach((item) => {
@@ -70,7 +73,12 @@ const ProfilePage = new Page({
     // --- Editボタンのイベント ---
     editBtn?.addEventListener('click', () => {
       alert('Move to Profile Edit Form');
-      // 別の画面に遷移させる場合はここで処理
+      // 別画面に遷移させる場合はここで処理
+    });
+
+    // --- 戻るボタンのイベント ---
+    backBtn?.addEventListener('click', () => {
+      window.history.back();
     });
 
     // ▼ カードフリップのイベント ▼
@@ -81,6 +89,24 @@ const ProfilePage = new Page({
         cardInner?.classList.toggle('is-flipped');
       });
     }
+
+    // ▼ アバターアップロード機能 ▼
+    avatarUploadBtn?.addEventListener('click', () => {
+      // ファイル選択ダイアログを開く
+      avatarUploadInput?.click();
+    });
+
+    avatarUploadInput?.addEventListener('change', () => {
+      if (!avatarUploadInput.files || avatarUploadInput.files.length === 0) return;
+      const file = avatarUploadInput.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (avatarEl && e.target) {
+          avatarEl.src = e.target.result as string;
+        }
+      };
+      reader.readAsDataURL(file);
+    });
   },
 });
 

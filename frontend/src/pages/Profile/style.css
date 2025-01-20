@@ -29,10 +29,11 @@ body {
 /* ------------------------------
    フリップカード用スタイル
 ------------------------------ */
+/* カードサイズを大きめに調整 (PC向け) */
 .profile-card {
-  width: 400px;
-  height: 240px;
-  perspective: 1000px; /* 3Dの奥行きを作成 */
+  width: 500px;
+  height: 300px;
+  perspective: 1000px; /* 3Dの奥行き */
   position: relative;
   cursor: pointer;
 }
@@ -60,21 +61,22 @@ body {
   backface-visibility: hidden;
   border-radius: 16px;
   padding: 20px;
-  /* 厚みを演出するため、カードの影を付ける */
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-  background: #fff; /* 白色カードに設定 */
-  color: #000; /* 白色背景に黒文字 */
-  transform: translateZ(10px); /* カードを少し手前に */
+  /* カードの背景色をダーク系のグラデーションに変更（クールな印象） */
+  background: linear-gradient(135deg, #1f1f1f, #3a3a3a);
+  color: #fff;
+  transform: translateZ(10px);
 }
 
-/* フロント面のデザイン */
+/* フロント面の追加装飾があればこちらで */
 .card-front {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(240, 240, 240, 1));
+  /* 例: ちょっと濃淡を変える */
+  background: linear-gradient(135deg, #2a2a2a, #444);
 }
 
-/* バック面のデザイン */
+/* バック面の追加装飾があればこちらで */
 .card-back {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(230, 230, 230, 1));
+  background: linear-gradient(135deg, #202020, #4e4e4e);
   transform: rotateY(180deg) translateZ(10px);
 }
 
@@ -94,12 +96,12 @@ body {
 }
 
 .profile-section img {
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   object-fit: cover;
   border-radius: 50%;
   margin-bottom: 12px;
-  border: 3px solid #000; /* 黒い枠で囲む */
+  border: 3px solid #fff; /* まわりを白枠 */
   transition:
     transform 0.3s ease,
     border-color 0.3s ease;
@@ -112,8 +114,7 @@ body {
 
 .profile-section .info p {
   margin: 4px 0;
-  font-size: 0.9rem;
-  color: #000; /* カードが白色なので文字色を黒に */
+  font-size: 1rem;
   text-align: center;
 }
 
@@ -122,10 +123,10 @@ body {
 ------------------------------ */
 .tap-hint {
   margin-top: 1rem;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   opacity: 0.8;
   text-align: center;
-  color: #000; /* ヒントの文字色を黒 */
+  color: #fff;
 }
 
 /* ------------------------------
@@ -138,37 +139,31 @@ body {
 
 .history-section h2,
 .score-section h2 {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   margin-bottom: 0.5rem;
-  color: #000;
+  color: #ff4c60; /* タイトルを目立たせる例 */
 }
 
 /* ------------------------------
    ボタン
 ------------------------------ */
 .btn {
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.2rem;
   border-radius: 4px;
   cursor: pointer;
   border: none;
 }
 
+/* 主要ボタン */
 .btn-primary {
   background-color: #ff4c60;
   color: #fff;
 }
 
-/* ------------------------------
-   レスポンシブデザイン
------------------------------- */
-@media (max-width: 600px) {
-  .profile-card {
-    width: 90%;
-    height: auto;
-  }
-
-  .profile-section img {
-    width: 60px;
-    height: 60px;
-  }
+/* セカンダリボタン */
+.btn-secondary {
+  background-color: #555;
+  color: #fff;
 }
+
+/* PC向けのみのため、メディアクエリは削除 or 非対応 */
