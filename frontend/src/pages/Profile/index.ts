@@ -21,12 +21,14 @@ const ProfilePage = new Page({
     const data = await response.json();
     const userData = data[0];
     const usernameEl = document.getElementById('username') as HTMLElement;
+    const emailEl = document.getElementById('email') as HTMLElement;
     const rankingEl = document.getElementById('ranking') as HTMLElement;
     const tournamentHistoryEl = document.getElementById('tournamentHistory');
     const scoreListEl = document.getElementById('scoreList');
     const editBtn = document.getElementById('editBtn');
 
     const username = userData.username;
+    const email = userData.email;
     const ranking = 5;
     const tournamentHistory: ITournamentHistory[] = [
       { date: '2025-01-01', result: 'Won' },
@@ -36,9 +38,9 @@ const ProfilePage = new Page({
       { txHash: '0x123...', score: 100 },
       { txHash: '0x456...', score: 80 },
     ];
-
     // 画面に反映
     usernameEl.textContent = username;
+    emailEl.textContent = email;
     rankingEl.textContent = ranking.toString();
     tournamentHistory.forEach((item) => {
       const li = document.createElement('li');
