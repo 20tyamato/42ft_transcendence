@@ -1,86 +1,99 @@
 body {
   margin: 0;
-  font-family: 'Arial', sans-serif;
-  background: linear-gradient(to bottom right, #6f42c1, #d63384);
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+  padding: 0;
+  font-family: sans-serif;
+  background-color: #f0f0f0;
 }
 
 .userprofile-container {
-  background: rgba(0, 0, 0, 0.4);
-  border-radius: 15px;
-  width: 90%;
   max-width: 600px;
-  padding: 20px;
+  margin: 0 auto;
+  background: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header,
+footer {
+  background: #ddd;
+  padding: 10px;
   text-align: center;
 }
 
-header h1 {
-  margin-bottom: 20px;
+main {
+  flex: 1;
+  padding: 20px;
 }
 
+/* ここからフリップカード用スタイル */
+.profile-card {
+  width: 100%;
+  max-width: 400px;
+  height: 300px;
+  margin: 0 auto 20px; /* センターに配置 */
+  perspective: 1000px; /* 3D回転の「奥行き」 */
+  cursor: pointer;
+  position: relative;
+  /* 必要に応じてデザインを変更 */
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s ease;
+  transform-style: preserve-3d; /* 子要素を3Dに */
+}
+
+.card-inner.is-flipped {
+  transform: rotateY(180deg); /* 回転 */
+}
+
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden; /* 裏面が透けないように */
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+}
+
+/* 裏面は180度回転させておく */
+.card-back {
+  transform: rotateY(180deg);
+  background: #fafafa; /* 表面と色を変えるなど */
+}
+
+/* プロフィールやヒストリーなど既存のセクションデザイン */
 .profile-section {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 20px;
-  margin-bottom: 30px;
+  flex-direction: column;
 }
-
 .profile-section img {
   width: 100px;
   height: 100px;
+  object-fit: cover;
   border-radius: 50%;
-}
-
-.info p {
-  margin: 5px 0;
+  margin-bottom: 8px;
 }
 
 .history-section,
 .score-section {
-  margin-bottom: 20px;
-  text-align: left;
+  margin-bottom: 12px;
 }
 
-.history-section h2,
-.score-section h2 {
-  margin-bottom: 10px;
-}
-
-ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-ul li {
-  background: rgba(255, 255, 255, 0.1);
-  margin: 5px 0;
-  padding: 5px 10px;
-  border-radius: 5px;
-}
-
-.btn {
-  padding: 10px 20px;
-  margin-top: 20px;
-  border: none;
-  border-radius: 5px;
-  background-color: #007bff;
-  color: #fff;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.btn:hover {
-  opacity: 0.8;
-}
-
-footer p {
-  margin-top: 20px;
-  font-size: 0.9rem;
-  opacity: 0.7;
+/* ヒント用の小さめテキスト */
+.tap-hint {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: #666;
 }
