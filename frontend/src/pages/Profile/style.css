@@ -1,41 +1,71 @@
-body {
+/* ------------------------------
+   リセット・ベーススタイル
+------------------------------ */
+* {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
-  background-color: #f0f0f0;
 }
 
+body {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  /* 背景をグラデーションに */
+  background: linear-gradient(135deg, #1f1c2c 0%, #928dab 100%);
+  color: #fff;
+  min-height: 100vh;
+}
+
+/* ------------------------------
+   コンテナレイアウト
+------------------------------ */
 .userprofile-container {
-  max-width: 600px;
+  max-width: 800px;
   margin: 0 auto;
-  background: #fff;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(4px);
 }
 
+/* ------------------------------
+   ヘッダー＆フッタースタイル
+------------------------------ */
 header,
 footer {
-  background: #ddd;
-  padding: 10px;
   text-align: center;
+  padding: 20px 10px;
+  background: rgba(0, 0, 0, 0.5);
 }
 
+header h1,
+footer p {
+  margin: 0;
+  color: #fff;
+}
+
+/* ------------------------------
+   メインコンテンツ
+------------------------------ */
 main {
   flex: 1;
-  padding: 20px;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* ここからフリップカード用スタイル */
+/* ------------------------------
+   フリップカード用スタイル
+------------------------------ */
 .profile-card {
   width: 100%;
-  max-width: 400px;
-  height: 300px;
-  margin: 0 auto 20px; /* センターに配置 */
-  perspective: 1000px; /* 3D回転の「奥行き」 */
-  cursor: pointer;
+  max-width: 500px;
+  height: 320px;
+  margin-bottom: 40px;
+  perspective: 1000px;
   position: relative;
-  /* 必要に応じてデザインを変更 */
+  cursor: pointer;
 }
 
 .card-inner {
@@ -43,57 +73,124 @@ main {
   width: 100%;
   height: 100%;
   transition: transform 0.8s ease;
-  transform-style: preserve-3d; /* 子要素を3Dに */
+  transform-style: preserve-3d;
 }
 
 .card-inner.is-flipped {
-  transform: rotateY(180deg); /* 回転 */
+  transform: rotateY(180deg);
 }
 
+/* カード共通スタイル */
 .card-front,
 .card-back {
   position: absolute;
   width: 100%;
   height: 100%;
-  backface-visibility: hidden; /* 裏面が透けないように */
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  background: #fff;
+  backface-visibility: hidden;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 16px;
 }
 
-/* 裏面は180度回転させておく */
+/* 表面 */
+.card-front {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(6px);
+}
+
+/* 裏面 */
 .card-back {
   transform: rotateY(180deg);
-  background: #fafafa; /* 表面と色を変えるなど */
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(6px);
 }
 
-/* プロフィールやヒストリーなど既存のセクションデザイン */
+/* ------------------------------
+   プロフィールセクション
+------------------------------ */
 .profile-section {
   display: flex;
-  align-items: center;
   flex-direction: column;
+  align-items: center;
 }
+
 .profile-section img {
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   object-fit: cover;
   border-radius: 50%;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
+  border: 2px solid #fff;
 }
 
+.profile-section .info p {
+  margin: 6px 0;
+  font-size: 1rem;
+}
+
+/* ------------------------------
+   トーナメント・スコアセクション
+------------------------------ */
 .history-section,
 .score-section {
-  margin-bottom: 12px;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 16px;
 }
 
-/* ヒント用の小さめテキスト */
+.history-section h2,
+.score-section h2 {
+  margin-bottom: 8px;
+  font-size: 1.2rem;
+  border-bottom: 1px solid #fff;
+  display: inline-block;
+  padding-bottom: 4px;
+}
+
+.history-section ul,
+.score-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.history-section li,
+.score-section li {
+  margin: 4px 0;
+  font-size: 0.9rem;
+}
+
+/* ------------------------------
+   タップ・クリックヒント
+------------------------------ */
 .tap-hint {
-  margin-top: 8px;
+  margin-top: 12px;
   font-size: 0.85rem;
-  color: #666;
+  color: #ccc;
+}
+
+/* ------------------------------
+   ボタンスタイル
+------------------------------ */
+.btn {
+  font-size: 1rem;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+  outline: none;
+  color: #fff;
+  margin-top: 20px;
+}
+
+.btn-primary {
+  background-color: #ff4c60;
+}
+
+.btn-primary:hover {
+  background-color: #e04353;
 }
