@@ -35,19 +35,22 @@
   </body>
 </html> -->
 <!doctype html>
-<html>
+<html lang="en">
   <head>
-    <script
-      data-require="three.js@0.0.0-r61"
-      data-semver="0.0.0-r61"
-      src="//cdnjs.cloudflare.com/ajax/libs/three.js/r61/three.min.js"
-    ></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Single Play</title>
     <link rel="stylesheet" href="style.css" />
   </head>
-
   <body>
-    <h3 id="scoreBoard"></h3>
     <div id="container"></div>
-    <script src="logic.ts"></script>
+    <h3 id="scoreBoard"></h3>
+    <div id="gameOver" class="hidden">
+      <h1>Game Over</h1>
+      <p>Your score: <span id="finalScore"></span></p>
+      <button id="retryBtn">Retry</button>
+      <button id="exitBtn">Exit</button>
+    </div>
+    <script type="module" src="./index.ts"></script>
   </body>
 </html>
