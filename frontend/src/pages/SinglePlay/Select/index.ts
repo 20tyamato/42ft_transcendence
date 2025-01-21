@@ -12,7 +12,7 @@ const SinglePlaySelectPage = new Page({
     function showLoadingScreen(targetPath: string) {
       const loadingOverlay = document.getElementById('loading-overlay');
       const countdownDisplay = document.getElementById('countdown');
-      let remaining = 10;
+      let remaining = 3;
 
       if (loadingOverlay && countdownDisplay) {
         loadingOverlay.classList.remove('hidden');
