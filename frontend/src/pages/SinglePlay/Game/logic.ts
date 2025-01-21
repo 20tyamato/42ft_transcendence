@@ -131,7 +131,7 @@ export function setAILevel(level: number) {
 
 export function startGameLoop(onGameEnd: () => void) {
   running = true;
-  let frame = () => {
+  const frame = () => {
     if (!running) return;
 
     updatePaddlePosition();
