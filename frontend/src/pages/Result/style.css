@@ -14,14 +14,8 @@ body {
 }
 
 .results-container {
-  background-color: rgba(0, 0, 0, 0.6);
-  border-radius: 15px;
-  padding: 40px;
-  width: 90%;
-  max-width: 600px;
-  color: #fff;
   text-align: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  color: #fff;
 }
 
 .results-container h1 {
@@ -30,68 +24,30 @@ body {
   font-weight: 600;
 }
 
-/* 個々の結果カード */
 .result-item {
-  background: #333;
+  background: rgba(51, 51, 51, 0.8);
   border-radius: 10px;
-  margin: 15px 0;
-  padding: 30px 60px; 
-  display: block;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  min-width: 400px; 
+  margin: 30px auto;
+  padding: 40px 80px;
+  width: 600px;
 }
 
-.result-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-}
-
-.result-item .player {
-  margin: 0 5px;
-  font-weight: 600;
-  color: #fdbb2d;
-}
-
-.result-item strong {
-  color: #fdbb2d;
-}
-
-.btn {
-  padding: 12px 25px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: 0.3s;
-  color: #fff;
-  background-color: #007bff;
-  font-size: 1rem;
-  font-weight: bold;
-  margin-top: 20px;
-}
-
-.btn:hover {
-  background-color: #0056b3;
-}
-
-/* スコア表示のスタイル */
-.score-display {
+.player-names {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 80px;
-  margin: 20px 0;
+  justify-content: space-between;
+  margin-bottom: 20px;
 }
 
-.player-side, .cpu-side {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.player-name {
+.player, .cpu {
   font-size: 1.5rem;
   color: #fdbb2d;
-  margin-bottom: 10px;
+}
+
+.score-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0;
 }
 
 .score {
@@ -103,33 +59,39 @@ body {
 .vs {
   font-size: 2rem;
   color: #fff;
-  align-self: center;
-  margin-top: 30px;
 }
 
 .result-message {
   font-size: 2.5rem;
   font-weight: bold;
-  text-align: center;
-  margin: 20px 0;
+  margin: 30px 0;
+}
+
+.win {
   color: #4ade80;
-  text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+}
+
+.lose {
+  color: #ef4444;
 }
 
 .btn {
   background-color: #007bff;
+  color: white;
   padding: 12px 30px;
+  border: none;
+  border-radius: 5px;
   font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-.result-message.lose {
-  color: #ef4444;
-  text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+.btn:hover {
+  background-color: #0056b3;
 }
 
-/* プレイヤー名のスタイル調整 */
-.player {
-  font-size: 1.5rem;
-  color: #fdbb2d;
-  text-shadow: 0 0 5px rgba(253, 187, 45, 0.3);
+.score-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
