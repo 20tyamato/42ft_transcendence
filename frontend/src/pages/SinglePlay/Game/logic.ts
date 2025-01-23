@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 let aiLevel = 1;
 let running = false;
-let score = { player1: 0, player2: 0 };
+// let score = { player1: 0, player2: 0 };
 let ball: THREE.Mesh, paddle1: THREE.Mesh, paddle2: THREE.Mesh;
 let renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera;
 const FIELD_WIDTH = 1200,
@@ -13,6 +13,13 @@ const keysPressed: { ArrowLeft: boolean; ArrowRight: boolean } = {
   ArrowLeft: false,
   ArrowRight: false,
 };
+
+export interface GameScore {
+  player1: number;
+  player2: number;
+}
+
+export let score: GameScore = { player1: 0, player2: 0 };
 
 export function initGame() {
   const container = document.getElementById('container');
@@ -118,8 +125,8 @@ function showGameStartText() {
   setTimeout(() => {
     gameStartDiv.remove();
     startGameLoop(() => {
-      alert('Game Over!');
-      window.location.href = '/singleplay/select';
+      localStorage.setItem('finalScore', JSON.stringify(score));
+      window.location.href = '/result';
     });
   }, 3000);
 }
@@ -211,4 +218,8 @@ function updateScoreBoard() {
     scoreBoard.style.top = '10px';
     scoreBoard.style.width = '100%';
   }
+}
+
+export function getFinalScore() {
+  return score;
 }
