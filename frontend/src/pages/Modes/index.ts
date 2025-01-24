@@ -1,10 +1,10 @@
 import { Page } from '@/core/Page';
-import CommonLayout from '@/layouts/common/index';
+import LoggedInLayout from '@/layouts/loggedin/index';
 
 const ModesPage = new Page({
   name: 'Modes',
   config: {
-    layout: CommonLayout,
+    layout: LoggedInLayout,
   },
   mounted: async () => {
     const singleModeButton = document.querySelector('.single-mode');
