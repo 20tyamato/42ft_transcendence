@@ -57,9 +57,18 @@ class LoginSerializer(serializers.Serializer):
         raise serializers.ValidationError('Must include "username" and "password".')
 
 class GameSerializer(serializers.ModelSerializer):
-    player1 = UserSerializer(read_only=True)
-    player2 = UserSerializer(read_only=True)
-    winner = UserSerializer(read_only=True)
+    player1 = serializers.CharField(source='player1.username')
+    player2 = serializers.CharField(source='player2.username', allow_null=True, required=False, allow_blank=True)
+    winner = serializers.CharField(source='winner.username', allow_null=True, required=False, allow_blank=True)
+
+    def create(self, validated_data):
+        print("Received data:", validated_data)  # 受け取ったデータの確認
+        player1_name = validated_data.pop('player1')
+        print("Looking for player:", player1_name)  # 検索するユーザー名の確認
+        try:
+            player1 = User.objects.get(username=player1_name)
+        except User.DoesNotExist:
+            print("Available users:", User.objects.all().values('username', 'display_name'))
 
     class Meta:
         model = Game

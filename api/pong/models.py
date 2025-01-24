@@ -26,7 +26,7 @@ class User(AbstractUser):
 
 class Game(models.Model):
     player1 = models.ForeignKey(User, related_name="games_as_player1", on_delete=models.CASCADE)
-    player2 = models.ForeignKey(User, related_name="games_as_player2", on_delete=models.CASCADE)
+    player2 = models.ForeignKey(User, related_name="games_as_player2", null=True, blank=True, on_delete=models.CASCADE)
     start_time = models.DateTimeField(auto_now_add=True)
     end_time = models.DateTimeField(null=True, blank=True)
     winner = models.ForeignKey(User, related_name="games_won", null=True, blank=True, on_delete=models.SET_NULL)

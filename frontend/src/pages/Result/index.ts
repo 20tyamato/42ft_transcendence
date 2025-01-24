@@ -18,8 +18,8 @@ async function sendGameResult(score: GameScore, difficulty: number) {
     }
 
     const gameData = {
-      player1: username,  // 現在のユーザー
-      player2: null,    // AIの場合はnull
+      player1: username,
+      player2: null,
       score_player1: score.player1,
       score_player2: score.player2,
       is_ai_opponent: true,
@@ -27,7 +27,7 @@ async function sendGameResult(score: GameScore, difficulty: number) {
       end_time: new Date().toISOString()
     };
 
-    const response = await fetch('/api/games/', {
+    const response = await fetch('http://127.0.0.1:8000/api/games/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
