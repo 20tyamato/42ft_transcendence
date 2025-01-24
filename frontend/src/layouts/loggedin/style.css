@@ -1,3 +1,14 @@
+/* 上部のバー */
+.top-bar {
+  height: 5px;
+  width: 100%;
+  background: linear-gradient(90deg, #ff7eb3, #7ed8ff);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 20;
+}
+
 .header {
   display: flex;
   justify-content: space-between;
@@ -5,8 +16,10 @@
   padding: 20px 40px;
   background-color: #ffffff;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  position: relative;
+  position: sticky;
+  top: 5px; /* 上部バーの高さ分スペースを確保 */
   z-index: 10;
+  width: 100%;
 }
 
 .header__logo img {
