@@ -2,7 +2,6 @@ import * as THREE from 'three';
 
 let aiLevel = 1;
 let running = false;
-// let score = { player1: 0, player2: 0 };
 let ball: THREE.Mesh, paddle1: THREE.Mesh, paddle2: THREE.Mesh;
 let renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera;
 const FIELD_WIDTH = 1200,

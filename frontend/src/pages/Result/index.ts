@@ -10,21 +10,20 @@ async function sendGameResult(score: GameScore, difficulty: number) {
   try {
     // ローカルストレージからユーザー情報を取得
     const token = localStorage.getItem('token');
-    const userId = localStorage.getItem('userId');
+    const username = localStorage.getItem('username');
 
-    // TODO: 1/23時点。ここで引っかかってバックエンドへの送信まで至っていない
-    if (!token || !userId) {
+    if (!token || !username) {
       console.error('User not authenticated');
       return;
     }
 
     const gameData = {
-      player1: userId,  // 現在のユーザー
+      player1: username,  // 現在のユーザー
       player2: null,    // AIの場合はnull
       score_player1: score.player1,
       score_player2: score.player2,
       is_ai_opponent: true,
-      winner: score.player1 > score.player2 ? userId : null,
+      winner: score.player1 > score.player2 ? username : null,
       end_time: new Date().toISOString()
     };
 

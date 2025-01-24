@@ -33,6 +33,8 @@ const LoginPage = new Page({
 
         if (response.ok) {
           const result = await response.json();
+          localStorage.setItem('token', result.token);
+          localStorage.setItem('username', result.username);
           responseMessage!.textContent = 'Login successful!';
           responseMessage!.style.color = 'green';
           console.log(result);
