@@ -16,8 +16,8 @@
   padding: 20px 40px;
   background-color: #ffffff;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 5px; /* 上部バーの高さ分スペースを確保 */
+  position: fixed;
+  top: 5px;
   z-index: 10;
   width: 100%;
 }
@@ -58,7 +58,7 @@
 }
 
 .content {
-  padding: 100px;
+  padding: 100px 20px;
 }
 
 #background {
