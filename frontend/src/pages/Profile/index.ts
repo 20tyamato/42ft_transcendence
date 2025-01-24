@@ -71,13 +71,12 @@ const ProfilePage = new Page({
 
     // --- Editボタンのイベント ---
     editBtn?.addEventListener('click', () => {
-      alert('Move to Profile Edit Form');
-      // 別画面に遷移させる場合はここで処理
+      window.location.href = '/settings/user';
     });
 
     // --- 戻るボタンのイベント ---
     backBtn?.addEventListener('click', () => {
-      window.history.back();
+      window.location.href = '/modes';
     });
 
     // ▼ カードフリップのイベント ▼
@@ -91,7 +90,6 @@ const ProfilePage = new Page({
 
     // ▼ アバターアップロード機能 ▼
     avatarUploadBtn?.addEventListener('click', () => {
-      // ファイル選択ダイアログを開く
       avatarUploadInput?.click();
     });
 
