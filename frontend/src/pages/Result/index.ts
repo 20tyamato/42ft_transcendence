@@ -6,7 +6,7 @@ interface GameScore {
   player2: number;
 }
 
-async function sendGameResult(score: GameScore, difficulty: number) {
+async function sendGameResult(score: GameScore) {
   try {
     // ローカルストレージからユーザー情報を取得
     const token = localStorage.getItem('token');
@@ -24,16 +24,16 @@ async function sendGameResult(score: GameScore, difficulty: number) {
       score_player2: score.player2,
       is_ai_opponent: true,
       winner: score.player1 > score.player2 ? username : null,
-      end_time: new Date().toISOString()
+      end_time: new Date().toISOString(),
     };
 
     const response = await fetch('http://127.0.0.1:8000/api/games/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Token ${token}`
+        Authorization: `Token ${token}`,
       },
-      body: JSON.stringify(gameData)
+      body: JSON.stringify(gameData),
     });
 
     // デバッグ用のログを追加
@@ -64,7 +64,7 @@ const ResultPage = new Page({
 
     if (storedScore && difficulty) {
       const score = JSON.parse(storedScore);
-      
+
       // スコアの表示を更新
       const playerScoreElement = document.getElementById('playerScore');
       const cpuScoreElement = document.getElementById('cpuScore');
@@ -78,7 +78,7 @@ const ResultPage = new Page({
 
       if (playerScoreElement) playerScoreElement.textContent = String(score.player1);
       if (cpuScoreElement) cpuScoreElement.textContent = String(score.player2);
-      
+
       // 勝敗メッセージの設定
       if (resultMessage) {
         if (score.player1 > score.player2) {

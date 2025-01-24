@@ -34,8 +34,10 @@ class Game(models.Model):
     score_player2 = models.IntegerField(default=0)
     is_ai_opponent = models.BooleanField(default=False)
 
+    # FIXME: display_name削除してusernameに統一したい...
     def __str__(self):
-        return f"Game {self.id} - {self.player1.display_name} vs {self.player2.display_name}"
+        player2_name = "AI" if self.is_ai_opponent else self.player2.display_name
+        return f"Game {self.id} - {self.player1.display_name} vs {player2_name}"
 
 class Tournament(models.Model):
     name = models.CharField(max_length=100)

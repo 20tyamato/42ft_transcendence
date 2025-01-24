@@ -61,6 +61,35 @@ class GameSerializer(serializers.ModelSerializer):
     player2 = serializers.CharField(source='player2.username', allow_null=True, required=False, allow_blank=True)
     winner = serializers.CharField(source='winner.username', allow_null=True, required=False, allow_blank=True)
 
+    def validate_player1(self, value):
+        """Validate that player1 exists"""
+        try:
+            User.objects.get(username=value)
+            return value
+        except User.DoesNotExist:
+            raise serializers.ValidationError("Player1 does not exist")
+
+    def validate_player2(self, value):
+        """Validate player2 if present"""
+        if value:
+            try:
+                User.objects.get(username=value)
+                return value
+            except User.DoesNotExist:
+                raise serializers.ValidationError("Player2 does not exist")
+        return value
+
+    def validate(self, data):
+        """Validate complete set of data"""
+        if not data.get('player1'):
+            raise serializers.ValidationError("Player1 is required")
+
+        if data.get('is_ai_opponent') is False:
+            if data.get('player2', {}).get('username') is None:
+                raise serializers.ValidationError("Player2 is required for non-AI games")
+
+        return data
+
     def create(self, validated_data):
         player1_data = validated_data.pop('player1')
         player2_data = validated_data.pop('player2')
@@ -68,12 +97,12 @@ class GameSerializer(serializers.ModelSerializer):
         winner_data = validated_data.pop('winner', None)
 
         player1 = User.objects.get(username=player1_data['username'])
-        
+
         if player2_data['username'] is None:
             validated_data['player2'] = None
         else:
             validated_data['player2'] = User.objects.get(username=player2_data['username'])
-        
+
         # NOTE: 空欄もありえるので.今後の要件で変更あるかも.
         if winner_data and winner_data['username']:
             validated_data['winner'] = User.objects.get(username=winner_data['username'])

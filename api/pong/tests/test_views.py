@@ -1,7 +1,7 @@
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from django.urls import reverse
-from pong.models import User
+from pong.models import User, Game
 from django.contrib.auth import get_user_model
 
 class UserViewsTest(APITestCase):
@@ -219,3 +219,27 @@ class LoginViewTest(APITestCase):
         response = self.client.get(self.login_url)
 
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+class GameViewTests(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='testuser',
+            password='testpass',
+            display_name='Test User'
+        )
+        self.client.force_authenticate(user=self.user)
+
+    def test_create_ai_game(self):
+        """Test creating a game against AI"""
+        url = reverse('pong:game-list-create')
+        data = {
+            'player1': self.user.username,
+            'player2': None,
+            'score_player1': 15,
+            'score_player2': 10,
+            'is_ai_opponent': True,
+            'winner': self.user.username
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Game.objects.count(), 1)
