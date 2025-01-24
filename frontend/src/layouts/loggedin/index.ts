@@ -1,7 +1,7 @@
 import { Layout } from '@/core/Layout';
 
 const LoggedInLayout = new Layout({
-  name: 'LoggedIn',
+  name: 'loggedin',
 });
 
 export default LoggedInLayout;

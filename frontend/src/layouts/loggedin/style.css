@@ -2,7 +2,7 @@
 .top-bar {
   height: 5px;
   width: 100%;
-  background: linear-gradient(90deg, #ff7eb3, #7ed8ff);
+  background: linear-gradient(90deg, #ff4e50, #1f1c2c);
   position: fixed;
   top: 0;
   left: 0;
@@ -14,8 +14,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px 40px;
-  background-color: #ffffff;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #121212; /* ダークカラー */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6);
   position: fixed;
   top: 5px;
   z-index: 10;
@@ -25,6 +25,7 @@
 
 .header__logo img {
   height: 40px;
+  filter: brightness(0.8);
 }
 
 .header__profile {
@@ -36,11 +37,11 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background-color: #f0f0f0;
+  background: linear-gradient(135deg, #1f1c2c, #ff4e50); /* グラデーションアイコン */
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
   transition:
     transform 0.3s ease,
     box-shadow 0.3s ease;
@@ -55,11 +56,12 @@
 
 .profile-icon:hover {
   transform: scale(1.1);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
 }
 
 .content {
   padding: 100px 20px;
+  color: #ffffff; /* 白文字でダーク背景に映えるように */
 }
 
 #background {
@@ -74,4 +76,5 @@
   background-repeat: no-repeat;
   z-index: -2;
   overflow: hidden;
+  filter: brightness(0.6); /* 背景を暗めにして前面要素を際立たせる */
 }
