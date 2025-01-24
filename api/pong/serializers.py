@@ -62,13 +62,26 @@ class GameSerializer(serializers.ModelSerializer):
     winner = serializers.CharField(source='winner.username', allow_null=True, required=False, allow_blank=True)
 
     def create(self, validated_data):
-        print("Received data:", validated_data)  # 受け取ったデータの確認
-        player1_name = validated_data.pop('player1')
-        print("Looking for player:", player1_name)  # 検索するユーザー名の確認
-        try:
-            player1 = User.objects.get(username=player1_name)
-        except User.DoesNotExist:
-            print("Available users:", User.objects.all().values('username', 'display_name'))
+        player1_data = validated_data.pop('player1')
+        player2_data = validated_data.pop('player2')
+        # NOTE: Noneはデフォルト値.試合が中断されたときやAI対戦のときを想定
+        winner_data = validated_data.pop('winner', None)
+
+        player1 = User.objects.get(username=player1_data['username'])
+        
+        if player2_data['username'] is None:
+            validated_data['player2'] = None
+        else:
+            validated_data['player2'] = User.objects.get(username=player2_data['username'])
+        
+        # NOTE: 空欄もありえるので.今後の要件で変更あるかも.
+        if winner_data and winner_data['username']:
+            validated_data['winner'] = User.objects.get(username=winner_data['username'])
+        else:
+            validated_data['winner'] = None
+
+        game = Game.objects.create(player1=player1, **validated_data)
+        return game
 
     class Meta:
         model = Game
