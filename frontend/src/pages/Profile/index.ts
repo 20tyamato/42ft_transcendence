@@ -49,7 +49,7 @@ const ProfilePage = new Page({
 
     // --- 画面に反映 ---
     if (avatarEl) {
-      avatarEl.src = userData.avatarUrl || '/src/layouts/loggedin/avator.png';
+      avatarEl.src = userData.avatarUrl || '/src/layouts/common/avator.png';
     }
     if (usernameEl) usernameEl.textContent = username;
     if (emailEl) emailEl.textContent = email;
