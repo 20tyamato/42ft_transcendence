@@ -13,6 +13,9 @@ class UserSerializer(serializers.ModelSerializer):
             'email',
             'display_name',
             'password',
+            'avatar',
+            'level',
+            'experience',
         ]
         extra_kwargs = {
             'username': {'required': True},
@@ -21,7 +24,6 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
     def validate(self, attrs):
-        # 空文字列のチェック
         for field in ['username', 'email', 'display_name']:
             if field in attrs and not attrs[field].strip():
                 raise serializers.ValidationError({field: "This field may not be blank."})
@@ -32,7 +34,8 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create(
             username=validated_data['username'],
             email=validated_data.get('email', ''),
-            display_name=validated_data['display_name']
+            display_name=validated_data['display_name'],
+            avatar=validated_data.get('avatar', ''),
         )
         user.set_password(validated_data['password'])
         user.save()
