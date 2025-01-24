@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Profile</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <!-- 角に罰をつける、これが戻る -->
+    <!-- 右下にペンのアイコンをつける、これがsetting/accountに飛ぶ -->
+    <div class="userprofile-container">
+      <!-- ▼ 戻るボタンを追加 ▼ -->
+      <button id="backBtn" class="btn btn-secondary">HOME</button>
+
+      <div class="profile-card">
+        <div class="card-inner">
+          <!-- ▼ フロント面 ▼ -->
+          <div class="card-front">
+            <div class="profile-section">
+              <img id="avatar" src="/src/layouts/common/avator.png" alt="Avatar" />
+              <div class="info">
+                <p>Username: <span id="username"></span></p>
+                <p>Email: <span id="email"></span></p>
+                <p>Current Ranking: <span id="ranking">5</span></p>
+              </div>
+            </div>
+            <p class="tap-hint">タップまたはクリックで裏面を表示</p>
+          </div>
+
+          <!-- ▼ バック面 ▼ -->
+          <div class="card-back">
+            <div class="history-section">
+              <h2>Tournament History</h2>
+              <ul id="tournamentHistory">
+                <!-- トーナメント履歴が動的に追加される -->
+              </ul>
+            </div>
+            <div class="score-section">
+              <h2>Blockchain Scores</h2>
+              <ul id="scoreList">
+                <!-- ブロックチェーン保存のスコアを表示する -->
+              </ul>
+            </div>
+            <p class="tap-hint">タップまたはクリックで表面に戻る</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ▼ アバターアップロード用の入力とボタンを追加 ▼ -->
+      <input type="file" id="avatarUpload" accept="image/*" style="display: none" />
+      <button id="avatarUploadBtn" class="btn btn-secondary">アバターをアップロード</button>
+
+      <button id="editBtn" class="btn btn-primary">Edit Profile</button>
+    </div>
+
+    <!-- TypeScriptのエントリポイント。ビルド後はindex.jsになる想定 -->
+    <script type="module" src="./index.ts"></script>
+  </body>
+</html>
