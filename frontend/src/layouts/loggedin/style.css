@@ -18,7 +18,8 @@
   top: 5px;
   z-index: 10;
   width: 100%;
-  transform: translateX(-38.5%);
+  top: 0;
+  left: 0;
 }
 
 .header__logo img {
@@ -35,7 +36,7 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #1f1c2c, #ff4e50); /* グラデーションアイコン */
+  background: linear-gradient(135deg, #1f1c2c, #ff4e50);
   display: flex;
   justify-content: center;
   align-items: center;
