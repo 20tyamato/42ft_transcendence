@@ -1,4 +1,4 @@
-import { initGame, startGameLoop, resetGame, setAILevel } from './logic';
+import { initGame, startGameLoop, resetGame, setAILevel, getFinalScore } from './logic';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 
@@ -17,8 +17,8 @@ const SinglePlayPage = new Page({
       setAILevel(Number(selectedLevel)); // 保存されたレベルを設定
       initGame();
       startGameLoop(() => {
-        alert('Game Over!');
-        window.location.href = '/';
+        localStorage.setItem('finalScore', JSON.stringify(getFinalScore()));
+        window.location.href = '/result';
       });
     } else {
       alert('No level selected. Returning to level selection.');
