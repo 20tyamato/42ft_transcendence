@@ -36,6 +36,8 @@ class UserSerializer(serializers.ModelSerializer):
             email=validated_data.get('email', ''),
             display_name=validated_data['display_name'],
             avatar=validated_data.get('avatar', ''),
+            level=validated_data.get('level', 1),
+            experience=validated_data.get('experience', 0),
         )
         user.set_password(validated_data['password'])
         user.save()

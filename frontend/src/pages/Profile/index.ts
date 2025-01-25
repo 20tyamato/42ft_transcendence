@@ -1,5 +1,5 @@
 import { Page } from '@/core/Page';
-import CommonLayout from '@/layouts/common/index';
+import backHomeLayout from '@/layouts/backhome/index';
 
 interface ITournamentHistory {
   date: string;
@@ -14,7 +14,7 @@ interface IBlockchainScore {
 const ProfilePage = new Page({
   name: 'Profile',
   config: {
-    layout: CommonLayout,
+    layout: backHomeLayout,
   },
   mounted: async () => {
     // --- Fetchでユーザーデータを取得 ---
@@ -26,18 +26,18 @@ const ProfilePage = new Page({
     const avatarEl = document.getElementById('avatar') as HTMLImageElement;
     const usernameEl = document.getElementById('username') as HTMLElement;
     const emailEl = document.getElementById('email') as HTMLElement;
-    const rankingEl = document.getElementById('ranking') as HTMLElement;
+    const experienceEl = document.getElementById('experience') as HTMLElement;
     const tournamentHistoryEl = document.getElementById('tournamentHistory');
     const scoreListEl = document.getElementById('scoreList');
     const editBtn = document.getElementById('editBtn');
-    const backBtn = document.getElementById('backBtn');
     const avatarUploadBtn = document.getElementById('avatarUploadBtn');
     const avatarUploadInput = document.getElementById('avatarUpload') as HTMLInputElement;
 
     // --- 取得データを変数に格納 (例) ---
     const username = userData.username;
     const email = userData.email;
-    const ranking = 5; // 仮の例
+    const experience = userData.experience;
+    const level = userData.level;
     const tournamentHistory: ITournamentHistory[] = [
       { date: '2025-01-01', result: 'Won' },
       { date: '2025-01-05', result: 'Lost' },
@@ -53,7 +53,8 @@ const ProfilePage = new Page({
     }
     if (usernameEl) usernameEl.textContent = username;
     if (emailEl) emailEl.textContent = email;
-    if (rankingEl) rankingEl.textContent = ranking.toString();
+    if (experienceEl) experienceEl.textContent = experience.toString();
+    if (level) level.textContent = level.toString();
 
     // トーナメント履歴の描画
     tournamentHistory?.forEach((item) => {
@@ -72,11 +73,6 @@ const ProfilePage = new Page({
     // --- Editボタンのイベント ---
     editBtn?.addEventListener('click', () => {
       window.location.href = '/settings/user';
-    });
-
-    // --- 戻るボタンのイベント ---
-    backBtn?.addEventListener('click', () => {
-      window.location.href = '/modes';
     });
 
     // ▼ カードフリップのイベント ▼
