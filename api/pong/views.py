@@ -58,7 +58,7 @@ class UpdateUserImageView(APIView):
             'message': 'Avatar updated successfully',
             'avatar': user.avatar
         })
-    
+
     def delete(self, request):
         user = request.user
         user.avatar = 'default_avatar.png'
@@ -68,13 +68,13 @@ class UpdateUserImageView(APIView):
             'message': 'Avatar deleted successfully',
             'avatar': user.avatar
         })
-    
+
     def get(self, request):
         user = request.user
         return Response({
             'avatar': user.avatar
         })
-    
+
     def put(self, request):
         user = request.user
         user.avatar = request.data['avatar']
@@ -84,7 +84,7 @@ class UpdateUserImageView(APIView):
             'message': 'Avatar updated successfully',
             'avatar': user.avatar
         })
-    
+
 class UpdateUserInfoView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -99,7 +99,7 @@ class UpdateUserInfoView(APIView):
             'display_name': user.display_name,
             'email': user.email
         })
-    
+
     def get(self, request):
         user = request.user
         return Response({

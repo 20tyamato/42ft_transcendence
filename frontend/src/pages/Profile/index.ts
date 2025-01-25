@@ -1,87 +1,152 @@
 import { Page } from '@/core/Page';
 import backHomeLayout from '@/layouts/backhome/index';
 
-interface ITournamentHistory {
-  date: string;
-  result: string;
+interface IUserData {
+ display_name: string;
+ email: string;
+ avatar?: string;
 }
 
-interface IBlockchainScore {
-  txHash: string;
-  score: number;
-}
+// 共通のfetch設定
+const fetchWithAuth = (url: string, options: RequestInit = {}) => {
+  const token = localStorage.getItem('token');
+  console.log('Token format:', token); // トークンの形式を確認
 
-const ProfilePage = new Page({
-  name: 'Profile',
-  config: {
-    layout: backHomeLayout,
-  },
-  mounted: async () => {
-    // --- Fetchでユーザーデータを取得 ---
-    const response = await fetch('http://127.0.0.1:8000/api/users/');
-    const data = await response.json();
-    const userData = data[0];
+  return fetch(url, {
+    ...options,
+    headers: {
+      ...options.headers,
+      'Authorization': `Token ${token}`, // Bearerから Tokenに変更してテスト
+      'Content-Type': 'application/json',
+    },
+  });
+};
 
-    // --- HTML要素を取得 ---
-    const avatarEl = document.getElementById('avatar') as HTMLImageElement;
-    const usernameEl = document.getElementById('username') as HTMLElement;
-    const emailEl = document.getElementById('email') as HTMLElement;
-    const experienceEl = document.getElementById('experience') as HTMLElement;
-    const levelEl = document.getElementById('level') as HTMLElement;
+const SettingsUserPage = new Page({
+ name: 'Settings/User',
+ config: {
+   layout: backHomeLayout,
+ },
+ mounted: async () => {
+   const avatarPreviewEl = document.getElementById('avatarPreview') as HTMLImageElement;
+   const avatarUploadInput = document.getElementById('avatarUpload') as HTMLInputElement;
+   const emailInput = document.getElementById('emailInput') as HTMLInputElement;
+   const form = document.getElementById('userSettingsForm') as HTMLFormElement;
 
-    const tournamentHistoryEl = document.getElementById('tournamentHistory');
-    const scoreListEl = document.getElementById('scoreList');
+   const token = localStorage.getItem('token');
+   if (!token) {
+     console.error('No token found');
+     return;
+   }
 
-    // ボタンはコメントアウトしている場合は取得できないので必要なければ削除でOK
-    // const avatarUploadBtn = document.getElementById('avatarUploadBtn');
-    const avatarUploadInput = document.getElementById('avatarUpload') as HTMLInputElement;
+   // ユーザー情報の取得
+   const fetchUserData = async (): Promise<IUserData> => {
+     const infoResponse = await fetchWithAuth('http://127.0.0.1:8000/api/users/info/');
+     const avatarResponse = await fetchWithAuth('http://127.0.0.1:8000/api/users/avatar/');
+     
+     if (!infoResponse.ok || !avatarResponse.ok) {
+       throw new Error('Failed to fetch user data');
+     }
 
-    // --- 取得データを変数に格納 (例) ---
-    const username = userData.username;
-    const email = userData.email;
-    const experience = userData.experience;
-    const level = userData.level;
-    const tournamentHistory: ITournamentHistory[] = [
-      { date: '2025-01-01', result: 'Won' },
-      { date: '2025-01-05', result: 'Lost' },
-    ];
-    const blockchainScores: IBlockchainScore[] = [
-      { txHash: '0x123...', score: 100 },
-      { txHash: '0x456...', score: 80 },
-    ];
+     return {
+       ...(await infoResponse.json()),
+       avatar: (await avatarResponse.json()).avatar
+     };
+   };
 
-    // --- 画面に反映 ---
-    if (avatarEl) {
-      avatarEl.src = userData.avatarUrl || '/src/layouts/common/avator.png';
-    }
-    if (usernameEl) usernameEl.textContent = username;
-    if (emailEl) emailEl.textContent = email;
-    if (experienceEl) experienceEl.textContent = experience.toString();
-    if (levelEl) levelEl.textContent = level.toString();
+   // アバタープレビュー
+   avatarUploadInput.addEventListener('change', () => {
+     if (!avatarUploadInput.files?.length) return;
+     const file = avatarUploadInput.files[0];
+     const reader = new FileReader();
+     reader.onload = (e) => {
+       if (avatarPreviewEl && e.target?.result) {
+         avatarPreviewEl.src = e.target.result as string;
+       }
+     };
+     reader.readAsDataURL(file);
+   });
 
-    // トーナメント履歴の描画
-    tournamentHistory.forEach((item) => {
-      const li = document.createElement('li');
-      li.textContent = `${item.date} - ${item.result}`;
-      tournamentHistoryEl?.appendChild(li);
+   // ユーザー情報の更新
+   const updateUserInfo = async (email: string) => {
+    const response = await fetchWithAuth('http://127.0.0.1:8000/api/users/info/', {
+      method: 'PUT',
+      body: JSON.stringify({ email, display_name: 'test' }) // display_nameも必要
     });
-
-    // スコアの描画
-    blockchainScores.forEach((item) => {
-      const li = document.createElement('li');
-      li.textContent = `TxHash: ${item.txHash} | Score: ${item.score}`;
-      scoreListEl?.appendChild(li);
-    });
-
-    // ▼ カードフリップのイベント ▼
-    const profileCard = document.querySelector('.profile-card');
-    if (profileCard) {
-      profileCard.addEventListener('click', () => {
-        const cardInner = profileCard.querySelector('.card-inner');
-        cardInner?.classList.toggle('is-flipped');
-      });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Update user info error:', errorData);
+      throw new Error(`Failed to update user info: ${JSON.stringify(errorData)}`);
     }
-  },
+    return response.json();
+  };
+
+   // アバター更新
+   const updateAvatar = async (avatar: string) => {
+    const response = await fetchWithAuth('http://127.0.0.1:8000/api/users/avatar/', {
+      method: 'PUT',
+      body: JSON.stringify({ avatar })
+    });
+  
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Update avatar error:', errorData);
+      throw new Error(`Failed to update avatar: ${JSON.stringify(errorData)}`);
+    }
+    return response.json();
+  };
+
+   // ファイルをBase64に変換
+   const fileToBase64 = async (file: File): Promise<string> => {
+     return new Promise((resolve, reject) => {
+       const reader = new FileReader();
+       reader.onload = (e) => {
+         if (e.target?.result) {
+           resolve(e.target.result as string);
+         } else {
+           reject('FileReader error');
+         }
+       };
+       reader.onerror = () => reject('FileReader error');
+       reader.readAsDataURL(file);
+     });
+   };
+
+   try {
+     // 初期データのセット
+     const userData = await fetchUserData();
+     if (userData.avatar && avatarPreviewEl) {
+       avatarPreviewEl.src = userData.avatar;
+     }
+     if (userData.email && emailInput) {
+       emailInput.value = userData.email;
+     }
+   } catch (error) {
+     console.error('Failed to load user data:', error);
+     alert('ユーザー情報の取得に失敗しました。');
+   }
+
+   // フォーム送信
+   form.addEventListener('submit', async (event) => {
+     event.preventDefault();
+     
+     try {
+       const newEmail = emailInput.value.trim();
+       await updateUserInfo(newEmail);
+
+       if (avatarUploadInput.files?.length) {
+         const base64Avatar = await fileToBase64(avatarUploadInput.files[0]);
+         await updateAvatar(base64Avatar);
+       }
+
+       window.location.href = '/profile';
+     } catch (error) {
+       console.error('Update failed:', error);
+       alert('更新に失敗しました。');
+     }
+   });
+ },
 });
 
-export default ProfilePage;
+export default SettingsUserPage;

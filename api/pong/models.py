@@ -24,15 +24,15 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.display_name
-    
+
     @property
     def total_games_played(self):
         return self.games_as_player1.count() + self.games_as_player2.count()
-    
+
     @property
     def total_games_won(self):
         return self.games_won.count()
-    
+
     @property
     def total_games_lost(self):
         return self.total_games_played - self.total_games_won
