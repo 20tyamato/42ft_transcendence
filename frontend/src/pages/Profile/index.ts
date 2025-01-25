@@ -27,6 +27,8 @@ const ProfilePage = new Page({
     const usernameEl = document.getElementById('username') as HTMLElement;
     const emailEl = document.getElementById('email') as HTMLElement;
     const experienceEl = document.getElementById('experience') as HTMLElement;
+    const levelEl = document.getElementById('level') as HTMLElement; // 追加
+
     const tournamentHistoryEl = document.getElementById('tournamentHistory');
     const scoreListEl = document.getElementById('scoreList');
     const avatarUploadBtn = document.getElementById('avatarUploadBtn');
@@ -53,7 +55,7 @@ const ProfilePage = new Page({
     if (usernameEl) usernameEl.textContent = username;
     if (emailEl) emailEl.textContent = email;
     if (experienceEl) experienceEl.textContent = experience.toString();
-    if (level) level.textContent = level.toString();
+    if (levelEl) levelEl.textContent = level.toString(); // 修正
 
     // トーナメント履歴の描画
     tournamentHistory?.forEach((item) => {
