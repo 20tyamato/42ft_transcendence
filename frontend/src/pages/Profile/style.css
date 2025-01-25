@@ -115,10 +115,17 @@ body {
   border-color: #ff4c60;
 }
 
+.profile-section .info h1 {
+  margin: 4px 0;
+  text-align: left;
+  transform: translateX(65px);
+}
+
 .profile-section .info p {
   margin: 4px 0;
   font-size: 1rem;
-  text-align: center;
+  text-align: left;
+  transform: translateX(65px);
 }
 
 /* ------------------------------
@@ -130,6 +137,7 @@ body {
   opacity: 0.8;
   text-align: center;
   color: #fff;
+  transform: translateY(50px);
 }
 
 /* ------------------------------

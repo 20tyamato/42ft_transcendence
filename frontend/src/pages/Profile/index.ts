@@ -29,7 +29,6 @@ const ProfilePage = new Page({
     const experienceEl = document.getElementById('experience') as HTMLElement;
     const tournamentHistoryEl = document.getElementById('tournamentHistory');
     const scoreListEl = document.getElementById('scoreList');
-    const editBtn = document.getElementById('editBtn');
     const avatarUploadBtn = document.getElementById('avatarUploadBtn');
     const avatarUploadInput = document.getElementById('avatarUpload') as HTMLInputElement;
 
@@ -68,11 +67,6 @@ const ProfilePage = new Page({
       const li = document.createElement('li');
       li.textContent = `TxHash: ${item.txHash} | Score: ${item.score}`;
       scoreListEl?.appendChild(li);
-    });
-
-    // --- Editボタンのイベント ---
-    editBtn?.addEventListener('click', () => {
-      window.location.href = '/settings/user';
     });
 
     // ▼ カードフリップのイベント ▼
