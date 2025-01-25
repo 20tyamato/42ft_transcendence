@@ -16,7 +16,12 @@
         <div class="card-inner">
           <div class="card-front">
             <div class="profile-section">
-              <img id="avatar" src="/src/layouts/common/avator.png" alt="Avatar" />
+              <img
+                id="avatar"
+                src="/src/layouts/common/avator.png"
+                alt="Avatar"
+                style="cursor: pointer"
+              />
               <div class="info">
                 <h1 id="mycard">
                   My Card
@@ -50,9 +55,9 @@
         </div>
       </div>
 
-      <!-- ▼ アバターアップロード用の入力とボタンを追加 ▼ -->
+      <!-- ▼ アバターアップロード用のinput。ボタンはコメントアウトにしています。 ▼ -->
       <input type="file" id="avatarUpload" accept="image/*" style="display: none" />
-      <button id="avatarUploadBtn" class="btn btn-secondary">アバターをアップロード</button>
+      <!-- <button id="avatarUploadBtn" class="btn btn-secondary">アバターをアップロード</button> -->
     </div>
 
     <!-- TypeScriptのエントリポイント。ビルド後はindex.jsになる想定 -->

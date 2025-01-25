@@ -1,5 +1,5 @@
 import { Page } from '@/core/Page';
-import CommonLayout from '@/layouts/common/index';
+import backHomeLayout from '@/layouts/backhome/index';
 
 interface ITournamentHistory {
   date: string;
@@ -11,10 +11,10 @@ interface IBlockchainScore {
   score: number;
 }
 
-const SettingsUserPage = new Page({
-  name: 'Settings/User',
+const ProfilePage = new Page({
+  name: 'Profile',
   config: {
-    layout: CommonLayout,
+    layout: backHomeLayout,
   },
   mounted: async () => {
     // --- Fetchでユーザーデータを取得 ---
@@ -26,18 +26,21 @@ const SettingsUserPage = new Page({
     const avatarEl = document.getElementById('avatar') as HTMLImageElement;
     const usernameEl = document.getElementById('username') as HTMLElement;
     const emailEl = document.getElementById('email') as HTMLElement;
-    const rankingEl = document.getElementById('ranking') as HTMLElement;
+    const experienceEl = document.getElementById('experience') as HTMLElement;
+    const levelEl = document.getElementById('level') as HTMLElement;
+
     const tournamentHistoryEl = document.getElementById('tournamentHistory');
     const scoreListEl = document.getElementById('scoreList');
-    const editBtn = document.getElementById('editBtn');
-    const backBtn = document.getElementById('backBtn');
-    const avatarUploadBtn = document.getElementById('avatarUploadBtn');
+
+    // ボタンはコメントアウトしている場合は取得できないので必要なければ削除でOK
+    // const avatarUploadBtn = document.getElementById('avatarUploadBtn');
     const avatarUploadInput = document.getElementById('avatarUpload') as HTMLInputElement;
 
     // --- 取得データを変数に格納 (例) ---
     const username = userData.username;
     const email = userData.email;
-    const ranking = 5; // 仮の例
+    const experience = userData.experience;
+    const level = userData.level;
     const tournamentHistory: ITournamentHistory[] = [
       { date: '2025-01-01', result: 'Won' },
       { date: '2025-01-05', result: 'Lost' },
@@ -53,30 +56,21 @@ const SettingsUserPage = new Page({
     }
     if (usernameEl) usernameEl.textContent = username;
     if (emailEl) emailEl.textContent = email;
-    if (rankingEl) rankingEl.textContent = ranking.toString();
+    if (experienceEl) experienceEl.textContent = experience.toString();
+    if (levelEl) levelEl.textContent = level.toString();
 
     // トーナメント履歴の描画
-    tournamentHistory?.forEach((item) => {
+    tournamentHistory.forEach((item) => {
       const li = document.createElement('li');
       li.textContent = `${item.date} - ${item.result}`;
       tournamentHistoryEl?.appendChild(li);
     });
 
     // スコアの描画
-    blockchainScores?.forEach((item) => {
+    blockchainScores.forEach((item) => {
       const li = document.createElement('li');
       li.textContent = `TxHash: ${item.txHash} | Score: ${item.score}`;
       scoreListEl?.appendChild(li);
-    });
-
-    // --- Editボタンのイベント ---
-    editBtn?.addEventListener('click', () => {
-      window.location.href = '/settings/user';
-    });
-
-    // --- 戻るボタンのイベント ---
-    backBtn?.addEventListener('click', () => {
-      window.location.href = '/modes';
     });
 
     // ▼ カードフリップのイベント ▼
@@ -88,23 +82,36 @@ const SettingsUserPage = new Page({
       });
     }
 
-    // ▼ アバターアップロード機能 ▼
+    // ▼ アバター画像をクリックしたらファイル選択画面を開く ▼
+    if (avatarEl) {
+      avatarEl.addEventListener('click', (event) => {
+        event.stopPropagation();
+        avatarUploadInput?.click();
+      });
+    }
+
+    // ▼ アップロードした画像を即時プレビュー ▼
+    if (avatarUploadInput) {
+      avatarUploadInput.addEventListener('change', () => {
+        if (!avatarUploadInput.files || avatarUploadInput.files.length === 0) return;
+        const file = avatarUploadInput.files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (avatarEl && e.target) {
+            avatarEl.src = e.target.result as string;
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // ▼ （参考）ボタンを使う場合はこちらも有効化
+    /*
     avatarUploadBtn?.addEventListener('click', () => {
       avatarUploadInput?.click();
     });
-
-    avatarUploadInput?.addEventListener('change', () => {
-      if (!avatarUploadInput.files || avatarUploadInput.files.length === 0) return;
-      const file = avatarUploadInput.files[0];
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        if (avatarEl && e.target) {
-          avatarEl.src = e.target.result as string;
-        }
-      };
-      reader.readAsDataURL(file);
-    });
+    */
   },
 });
 
-export default SettingsUserPage;
+export default ProfilePage;

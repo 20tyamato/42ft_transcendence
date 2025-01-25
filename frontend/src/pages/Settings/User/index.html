@@ -5,24 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>User Profile</title>
     <link rel="stylesheet" href="./style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
   </head>
   <body>
-    <!-- 角に罰をつける、これが戻る -->
-    <!-- 右下にペンのアイコンをつける、これがsetting/accountに飛ぶ -->
     <div class="userprofile-container">
-      <!-- ▼ 戻るボタンを追加 ▼ -->
-      <button id="backBtn" class="btn btn-secondary">HOME</button>
-
       <div class="profile-card">
         <div class="card-inner">
-          <!-- ▼ フロント面 ▼ -->
           <div class="card-front">
             <div class="profile-section">
-              <img id="avatar" src="/src/layouts/common/avator.png" alt="Avatar" />
+              <!--
+                ↓ クリックでアップロード用のinputをトリガーするのでid="avatar"はこのまま
+                   あとでTypeScriptでクリックイベントを付与
+              -->
+              <img
+                id="avatar"
+                src="/src/layouts/common/avator.png"
+                alt="Avatar"
+                style="cursor: pointer"
+              />
               <div class="info">
+                <h1 id="mycard">
+                  My Card
+                  <a href="/settings/user"> <i class="far fa-edit"></i></a>
+                </h1>
                 <p>Username: <span id="username"></span></p>
                 <p>Email: <span id="email"></span></p>
-                <p>Current Ranking: <span id="ranking">5</span></p>
+                <p>Current experience: <span id="experience"></span></p>
+                <p>Level: <span id="level"></span></p>
               </div>
             </div>
             <p class="tap-hint">タップまたはクリックで裏面を表示</p>
@@ -47,11 +59,9 @@
         </div>
       </div>
 
-      <!-- ▼ アバターアップロード用の入力とボタンを追加 ▼ -->
+      <!-- ▼ アバターアップロード用のinput。ボタンはコメントアウトにしています。 ▼ -->
       <input type="file" id="avatarUpload" accept="image/*" style="display: none" />
-      <button id="avatarUploadBtn" class="btn btn-secondary">アバターをアップロード</button>
-
-      <button id="editBtn" class="btn btn-primary">Edit Profile</button>
+      <!-- <button id="avatarUploadBtn" class="btn btn-secondary">アバターをアップロード</button> -->
     </div>
 
     <!-- TypeScriptのエントリポイント。ビルド後はindex.jsになる想定 -->

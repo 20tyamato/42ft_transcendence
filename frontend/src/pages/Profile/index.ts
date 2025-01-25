@@ -27,11 +27,13 @@ const ProfilePage = new Page({
     const usernameEl = document.getElementById('username') as HTMLElement;
     const emailEl = document.getElementById('email') as HTMLElement;
     const experienceEl = document.getElementById('experience') as HTMLElement;
-    const levelEl = document.getElementById('level') as HTMLElement; // 追加
+    const levelEl = document.getElementById('level') as HTMLElement;
 
     const tournamentHistoryEl = document.getElementById('tournamentHistory');
     const scoreListEl = document.getElementById('scoreList');
-    const avatarUploadBtn = document.getElementById('avatarUploadBtn');
+
+    // ボタンはコメントアウトしている場合は取得できないので必要なければ削除でOK
+    // const avatarUploadBtn = document.getElementById('avatarUploadBtn');
     const avatarUploadInput = document.getElementById('avatarUpload') as HTMLInputElement;
 
     // --- 取得データを変数に格納 (例) ---
@@ -55,17 +57,17 @@ const ProfilePage = new Page({
     if (usernameEl) usernameEl.textContent = username;
     if (emailEl) emailEl.textContent = email;
     if (experienceEl) experienceEl.textContent = experience.toString();
-    if (levelEl) levelEl.textContent = level.toString(); // 修正
+    if (levelEl) levelEl.textContent = level.toString();
 
     // トーナメント履歴の描画
-    tournamentHistory?.forEach((item) => {
+    tournamentHistory.forEach((item) => {
       const li = document.createElement('li');
       li.textContent = `${item.date} - ${item.result}`;
       tournamentHistoryEl?.appendChild(li);
     });
 
     // スコアの描画
-    blockchainScores?.forEach((item) => {
+    blockchainScores.forEach((item) => {
       const li = document.createElement('li');
       li.textContent = `TxHash: ${item.txHash} | Score: ${item.score}`;
       scoreListEl?.appendChild(li);
@@ -79,23 +81,6 @@ const ProfilePage = new Page({
         cardInner?.classList.toggle('is-flipped');
       });
     }
-
-    // ▼ アバターアップロード機能 ▼
-    avatarUploadBtn?.addEventListener('click', () => {
-      avatarUploadInput?.click();
-    });
-
-    avatarUploadInput?.addEventListener('change', () => {
-      if (!avatarUploadInput.files || avatarUploadInput.files.length === 0) return;
-      const file = avatarUploadInput.files[0];
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        if (avatarEl && e.target) {
-          avatarEl.src = e.target.result as string;
-        }
-      };
-      reader.readAsDataURL(file);
-    });
   },
 });
 
