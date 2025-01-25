@@ -1,9 +1,10 @@
+<!-- frontend/src/pages/Result/index.html -->
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Match Results</title>
+    <title>Game Result</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap"
       rel="stylesheet"
@@ -12,25 +13,22 @@
   </head>
   <body>
     <div class="results-container">
-      <h1>Match Results</h1>
-
+      <h1>Game Result</h1>
       <div class="result-item">
-        <span class="player">Player 1</span> vs. <span class="player">Player 2</span> <br />↓<br />
-        <strong>Winner: Player 2</strong>
+        <div class="score-display">
+          <div class="player-side">
+            <div id="playerName" class="player-name">Player</div>
+            <div id="playerScore" class="score">15</div>
+          </div>
+          <div class="vs">VS</div>
+          <div class="cpu-side">
+            <div class="player-name">CPU</div>
+            <div id="cpuScore" class="score">0</div>
+          </div>
+        </div>
+        <div id="result-message" class="result-message">You Win!</div>
       </div>
-      <div class="result-item">
-        <span class="player">Player 3</span> vs. <span class="player">Player 4</span> <br />↓<br />
-        <strong>Winner: Player 3</strong>
-      </div>
-      <div class="result-item">
-        <span class="player">Player 5</span> vs. <span class="player">Player 6</span> <br />↓<br />
-        <strong>Winner: Player 6</strong>
-      </div>
-      <div class="result-item">
-        <span class="player">Player 7</span> vs. <span class="player">Player 8</span> <br />↓<br />
-        <strong>Winner: Player 7</strong>
-      </div>
-      <button id="backBtn" class="btn">Back to Home</button>
+      <button id="exitBtn" class="btn">Exit to Menu</button>
     </div>
   </body>
 </html>

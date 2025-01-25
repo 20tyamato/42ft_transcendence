@@ -26,6 +26,9 @@ test:
 makemigrations:
 	docker exec -it $(API_CONTAINER) python manage.py makemigrations
 
+showmigrations:
+	docker exec -it $(API_CONTAINER) python manage.py showmigrations
+
 migrate:
 	docker exec -it $(API_CONTAINER) python manage.py migrate
 

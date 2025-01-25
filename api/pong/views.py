@@ -113,6 +113,16 @@ class GameListCreateView(generics.ListCreateAPIView):
     serializer_class = GameSerializer
     permission_classes = [IsAuthenticated]
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        game = serializer.save()
+
+        return Response({
+            'game': GameSerializer(game, context=self.get_serializer_context()).data,
+            'message': 'Game created successfully'
+        }, status=status.HTTP_201_CREATED)
+
 class GameRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Game.objects.all()
     serializer_class = GameSerializer

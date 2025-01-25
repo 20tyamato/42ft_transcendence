@@ -14,14 +14,8 @@ body {
 }
 
 .results-container {
-  background-color: rgba(0, 0, 0, 0.6);
-  border-radius: 15px;
-  padding: 40px;
-  width: 90%;
-  max-width: 600px;
-  color: #fff;
   text-align: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  color: #fff;
 }
 
 .results-container h1 {
@@ -30,46 +24,74 @@ body {
   font-weight: 600;
 }
 
-/* 個々の結果カード */
 .result-item {
-  background: #333;
+  background: rgba(51, 51, 51, 0.8);
   border-radius: 10px;
-  margin: 15px 0;
-  padding: 15px;
-  display: block;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+  margin: 30px auto;
+  padding: 40px 80px;
+  width: 600px;
 }
 
-.result-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+.player-names {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
 }
 
-.result-item .player {
-  margin: 0 5px;
-  font-weight: 600;
+.player, .cpu {
+  font-size: 1.5rem;
   color: #fdbb2d;
 }
 
-.result-item strong {
+.score-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.score {
+  font-size: 5rem;
+  font-weight: bold;
   color: #fdbb2d;
+}
+
+.vs {
+  font-size: 2rem;
+  color: #fff;
+}
+
+.result-message {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 30px 0;
+}
+
+.win {
+  color: #4ade80;
+}
+
+.lose {
+  color: #ef4444;
 }
 
 .btn {
-  padding: 12px 25px;
+  background-color: #007bff;
+  color: white;
+  padding: 12px 30px;
   border: none;
   border-radius: 5px;
+  font-size: 1.2rem;
   cursor: pointer;
-  transition: 0.3s;
-  color: #fff;
-  background-color: #007bff;
-  font-size: 1rem;
-  font-weight: bold;
-  margin-top: 20px;
+  transition: background-color 0.3s;
 }
 
 .btn:hover {
   background-color: #0056b3;
+}
+
+.score-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }

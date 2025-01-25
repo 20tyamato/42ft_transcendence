@@ -1,6 +1,7 @@
-from pong.models import User
+from pong.models import User, Game
 from rest_framework.test import APITestCase
-from pong.serializers import UserSerializer
+from django.utils import timezone
+from pong.serializers import UserSerializer, GameSerializer
 
 class UserSerializerTests(APITestCase):
     def setUp(self):
@@ -143,3 +144,106 @@ class UserSerializerTests(APITestCase):
         serializer = UserSerializer(data=data)
         self.assertFalse(serializer.is_valid())
         self.assertIn('username', serializer.errors)
+
+
+class GameSerializerTests(APITestCase):
+    def setUp(self):
+        self.player1 = User.objects.create_user(
+            username='player1',
+            password='playerpass1',
+            display_name='Player 1'
+        )
+        self.player2 = User.objects.create_user(
+            username='player2',
+            password='playerpass2',
+            display_name='Player 2'
+        )
+
+    def test_serialize_ai_game(self):
+        """Test serialization of AI game"""
+        game_data = {
+            'player1': 'player1',
+            'player2': None,
+            'score_player1': 15,
+            'score_player2': 10,
+            'is_ai_opponent': True,
+            'winner': 'player1',
+            'end_time': timezone.now()
+        }
+        serializer = GameSerializer(data=game_data)
+        self.assertTrue(serializer.is_valid())
+
+    def test_serialize_human_game(self):
+        """Test serialization of human vs human game"""
+        game_data = {
+            'player1': 'player1',
+            'player2': 'player2',
+            'score_player1': 10,
+            'score_player2': 15,
+            'is_ai_opponent': False,
+            'winner': 'player1',
+            'end_time': timezone.now()
+        }
+        serializer = GameSerializer(data=game_data)
+        self.assertTrue(serializer.is_valid())
+
+    def test_deserialize_game(self):
+        """Test deserialization of game data"""
+        game = Game.objects.create(
+            player1=self.player1,
+            player2=None,
+            score_player1=15,
+            score_player2=10,
+            is_ai_opponent=True,
+            winner=self.player1
+        )
+        serializer = GameSerializer(game)
+        data = serializer.data
+        self.assertEqual(data['player1'], self.player1.username)
+        self.assertIsNone(data['player2'])
+        self.assertTrue(data['is_ai_opponent'])
+
+    def test_nonexistent_player1(self):
+        """Test validation when player1 doesn't exist"""
+        data = {
+            'player1': 'nonexistent_user',
+            'score_player1': 15,
+            'score_player2': 10,
+            'is_ai_opponent': True
+        }
+        serializer = GameSerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('Player1 does not exist', str(serializer.errors))
+
+    def test_missing_player1(self):
+        """Test validation when player1 is missing"""
+        data = {
+            'score_player1': 15,
+            'score_player2': 10,
+            'is_ai_opponent': True
+        }
+        serializer = GameSerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('This field is required', str(serializer.errors))
+
+    def test_nonexistent_player2_in_human_game(self):
+        """Test validation when player2 doesn't exist in human game"""
+        data = {
+            'player1': 'player1',
+            'player2': 'nonexistent_user',
+            'is_ai_opponent': False
+        }
+        serializer = GameSerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('Player2 does not exist', str(serializer.errors))
+
+    def test_missing_player2_in_human_game(self):
+        """Test validation when player2 is missing in human game"""
+        data = {
+            'player1': 'player1',
+            'player2': None,
+            'is_ai_opponent': False
+        }
+        serializer = GameSerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('Player2 is required for non-AI games', str(serializer.errors))
