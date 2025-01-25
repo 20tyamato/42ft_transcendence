@@ -9,6 +9,7 @@ class CustomUserAdmin(UserAdmin):
         "display_name",
         "email",
         "level",
+        "experience",
         "is_staff",
         "is_superuser",
         "is_active",
@@ -21,7 +22,7 @@ class CustomUserAdmin(UserAdmin):
             "fields": ("username", "password")
         }),
         ("Personal info", {
-            "fields": ("display_name", "avatar", "email", "level")
+            "fields": ("display_name", "avatar", "email", "level", "experience")
         }),
         ("Permissions", {
             "fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions")

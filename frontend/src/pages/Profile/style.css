@@ -1,86 +1,185 @@
-body {
+/* ------------------------------
+   リセット・ベーススタイル
+------------------------------ */
+* {
+  box-sizing: border-box;
   margin: 0;
-  font-family: 'Arial', sans-serif;
-  background: linear-gradient(to bottom right, #6f42c1, #d63384);
+  padding: 0;
+}
+
+/* 背景を黒色、文字を白色に設定 */
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #000;
   color: #fff;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
 }
 
+/* コンテナの中央寄せ */
 .userprofile-container {
-  background: rgba(0, 0, 0, 0.4);
-  border-radius: 15px;
-  width: 90%;
-  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* ------------------------------
+   フリップカード用スタイル
+------------------------------ */
+/* カードサイズを大きめに調整 (PC向け) */
+.profile-card {
+  width: 500px;
+  height: 300px;
+  perspective: 1000px; /* 3Dの奥行き */
+  position: relative;
+  cursor: pointer;
+}
+
+/* カードに厚みを感じさせるスタイル */
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.8s ease;
+}
+
+/* カードが反転するときの処理 */
+.card-inner.is-flipped {
+  transform: rotateY(180deg);
+}
+
+/* フロントとバック共通のスタイル */
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 16px;
   padding: 20px;
-  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  /* カードの背景色をダーク系のグラデーションに変更（クールな印象） */
+  background: linear-gradient(135deg, #1f1f1f, #3a3a3a);
+  color: #fff;
+  transform: translateZ(10px);
 }
 
-header h1 {
-  margin-bottom: 20px;
+/* フロント面の追加装飾があればこちらで */
+.card-front {
+  /* 例: ちょっと濃淡を変える */
+  background: linear-gradient(135deg, #2a2a2a, #444);
 }
 
+/* バック面の追加装飾があればこちらで */
+.card-back {
+  background: linear-gradient(135deg, #202020, #4e4e4e);
+  transform: rotateY(180deg) translateZ(10px);
+}
+
+/* カード全体のホバー効果 */
+.profile-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+}
+
+/* ------------------------------
+   プロフィールセクション
+------------------------------ */
 .profile-section {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 20px;
-  margin-bottom: 30px;
 }
 
 .profile-section img {
-  width: 100px;
-  height: 100px;
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
   border-radius: 50%;
+  margin-bottom: 12px;
+  border: 3px solid #fff;
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease;
+  position: absolute;
+  top: 20px;
+  left: 20px;
 }
 
-.info p {
-  margin: 5px 0;
+.profile-section img:hover {
+  transform: scale(1.05);
+  border-color: #ff4c60;
 }
 
+.profile-section .info h1 {
+  margin: 4px 0;
+  text-align: left;
+  transform: translateX(65px);
+}
+
+.profile-section .info p {
+  margin: 4px 0;
+  font-size: 1rem;
+  text-align: left;
+  transform: translateX(65px);
+}
+
+.profile-section .info a {
+  color: #fff;
+  font-size: 1.5rem;
+}
+
+/* ------------------------------
+   タップヒントのスタイル
+------------------------------ */
+.tap-hint {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  opacity: 0.8;
+  text-align: center;
+  color: #fff;
+  transform: translateY(50px);
+}
+
+/* ------------------------------
+   バック面のセクション
+------------------------------ */
 .history-section,
 .score-section {
-  margin-bottom: 20px;
-  text-align: left;
+  margin-bottom: 1rem;
 }
 
 .history-section h2,
 .score-section h2 {
-  margin-bottom: 10px;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: #ff4c60; /* タイトルを目立たせる例 */
 }
 
-ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-ul li {
-  background: rgba(255, 255, 255, 0.1);
-  margin: 5px 0;
-  padding: 5px 10px;
-  border-radius: 5px;
-}
-
+/* ------------------------------
+   ボタン
+------------------------------ */
 .btn {
-  padding: 10px 20px;
-  margin-top: 20px;
-  border: none;
-  border-radius: 5px;
-  background-color: #007bff;
-  color: #fff;
+  padding: 0.5rem 1.2rem;
+  border-radius: 4px;
   cursor: pointer;
-  transition: 0.3s;
+  border: none;
 }
 
-.btn:hover {
-  opacity: 0.8;
+/* 主要ボタン */
+.btn-primary {
+  background-color: #ff4c60;
+  color: #fff;
 }
 
-footer p {
-  margin-top: 20px;
-  font-size: 0.9rem;
-  opacity: 0.7;
+/* セカンダリボタン */
+.btn-secondary {
+  background-color: #555;
+  color: #fff;
 }
+
+/* PC向けのみのため、メディアクエリは削除 or 非対応 */

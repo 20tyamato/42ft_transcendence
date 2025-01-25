@@ -70,6 +70,7 @@ const RegisterPage = new Page({
           responseMessage!.textContent = 'Registration successful!';
           responseMessage!.style.color = 'green';
           console.log(result);
+          window.location.href = '/login';
         } else {
           const error = await response.json();
           responseMessage!.textContent = `Error: ${error.message || 'Something went wrong'}`;

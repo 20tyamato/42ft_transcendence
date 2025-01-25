@@ -1,7 +1,31 @@
-.header {
-  background-color: #f0f0f0;
+.top-bar {
+  height: 5px;
+  width: 100%;
+  background: linear-gradient(90deg, #ff4e50, #1f1c2c);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 20;
 }
 
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6);
+  position: fixed;
+  top: 5px;
+  z-index: 10;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+
+.header__logo img {
+  height: 40px;
+  filter: brightness(0.8);
+}
 .footer {
   background-color: #f0f0f0;
 }

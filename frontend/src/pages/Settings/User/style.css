@@ -1,0 +1,109 @@
+/* ------------------------------
+   ベーススタイル
+------------------------------ */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #000;
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ------------------------------
+   ユーザー設定ページコンテナ
+------------------------------ */
+.user-settings-container {
+  width: 90%;
+  max-width: 500px;
+  background: linear-gradient(135deg, #1f1f1f, #3a3a3a);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.settings-title {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+/* ------------------------------
+   フォーム全体
+------------------------------ */
+.user-settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* ラベル */
+.form-group label {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+/* テキスト入力 */
+.form-group input[type='email'] {
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: none;
+  font-size: 1rem;
+}
+
+/* ------------------------------
+   アバター画像プレビュー
+------------------------------ */
+.avatar-preview-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+.avatar-preview {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #fff;
+}
+
+/* ファイル入力 */
+#avatarUpload {
+  color: #fff;
+  border: none;
+}
+
+/* ------------------------------
+   ボタン
+------------------------------ */
+.btn {
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+  font-size: 1rem;
+}
+
+/* 主要ボタン */
+.btn-primary {
+  background-color: #ff4c60;
+  color: #fff;
+  transition: background-color 0.3s;
+}
+.btn-primary:hover {
+  background-color: #e94354;
+}

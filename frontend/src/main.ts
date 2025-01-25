@@ -10,6 +10,7 @@ import SinglePlayPage from '@/pages/SinglePlay/Game/index';
 import SinglePlaySelectPage from '@/pages/SinglePlay/Select/index';
 import TournamentPage from '@/pages/Tournament/index';
 import ResultPage from './pages/Result/index';
+import SettingsUserPage from './pages/Settings/User/index';
 
 import { Page } from './core/Page';
 
@@ -39,7 +40,7 @@ const routes: Record<string, Page> = {
   '/profile': ProfilePage,
   '/modes': ModesPage,
   // '/settings/game': SettingsGamePage,
-  // '/settings/account': SettingsAccountPage,
+  '/settings/user': SettingsUserPage,
   '/singleplay/game': SinglePlayPage,
   '/singleplay/select': SinglePlaySelectPage,
   '/multiplay': MultiPlayPage,

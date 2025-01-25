@@ -5,6 +5,7 @@ class User(AbstractUser):
     display_name = models.CharField(max_length=50, unique=True)
     avatar = models.ImageField(upload_to="avatars/", null=True, blank=True, default="default_avatar.png")
     level = models.IntegerField(default=1)
+    experience = models.IntegerField(default=0)
 
     groups = models.ManyToManyField(
         "auth.Group",
@@ -23,6 +24,18 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.display_name
+
+    @property
+    def total_games_played(self):
+        return self.games_as_player1.count() + self.games_as_player2.count()
+
+    @property
+    def total_games_won(self):
+        return self.games_won.count()
+
+    @property
+    def total_games_lost(self):
+        return self.total_games_played - self.total_games_won
 
 class Game(models.Model):
     player1 = models.ForeignKey(User, related_name="games_as_player1", on_delete=models.CASCADE)

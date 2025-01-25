@@ -46,6 +46,67 @@ class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
     permission_classes = [IsAuthenticated, IsOwnerOfUserProfile]
 
+class UpdateUserImageView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        user.avatar = request.data['avatar']
+        user.save()
+
+        return Response({
+            'message': 'Avatar updated successfully',
+            'avatar': user.avatar
+        })
+
+    def delete(self, request):
+        user = request.user
+        user.avatar = 'default_avatar.png'
+        user.save()
+
+        return Response({
+            'message': 'Avatar deleted successfully',
+            'avatar': user.avatar
+        })
+
+    def get(self, request):
+        user = request.user
+        return Response({
+            'avatar': user.avatar
+        })
+
+    def put(self, request):
+        user = request.user
+        user.avatar = request.data['avatar']
+        user.save()
+
+        return Response({
+            'message': 'Avatar updated successfully',
+            'avatar': user.avatar
+        })
+
+class UpdateUserInfoView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        user = request.user
+        user.display_name = request.data['display_name']
+        user.email = request.data['email']
+        user.save()
+
+        return Response({
+            'message': 'User info updated successfully',
+            'display_name': user.display_name,
+            'email': user.email
+        })
+
+    def get(self, request):
+        user = request.user
+        return Response({
+            'display_name': user.display_name,
+            'email': user.email
+        })
+
 
 class GameListCreateView(generics.ListCreateAPIView):
     queryset = Game.objects.all()
