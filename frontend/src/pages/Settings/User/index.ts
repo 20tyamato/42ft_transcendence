@@ -19,7 +19,8 @@ const SettingsUserPage = new Page({
     const emailInput = document.getElementById('emailInput') as HTMLInputElement;
     const form = document.getElementById('userSettingsForm') as HTMLFormElement;
 
-    const userId = 1;
+    // ここを変更
+    const userId = 0;
     const response = await fetch(`http://127.0.0.1:8000/api/users/${userId}`);
     const userData = (await response.json()) as IUserData;
 
