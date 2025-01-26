@@ -21,5 +21,4 @@ COPY . .
 RUN poetry install --no-interaction --no-ansi --no-root
 
 # サーバー起動
-CMD ["poetry", "run", "python", "manage.py", "runserver", "0.0.0.0:8000"]
-
+CMD ["sh", "-c", "DJANGO_SETTINGS_MODULE=core.settings poetry run daphne -b 0.0.0.0 -p 8000 core.asgi:application"]

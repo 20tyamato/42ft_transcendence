@@ -13,7 +13,7 @@ export class WebSocketManager {
   // 接続管理
   connect(): void {
       try {
-          const baseUrl = 'ws://127.0.0.1:8000/ws/pong';
+          const baseUrl = 'ws://127.0.0.1:3001/ws/pong';
           let wsUrl = '';
 
           // エンドポイントに応じてURLを構築
