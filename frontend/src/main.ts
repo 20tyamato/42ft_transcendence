@@ -3,7 +3,8 @@ import HomePage from '@/pages/Home/index';
 import LeaderboardPage from '@/pages/Leaderboard/index';
 import LoginPage from '@/pages/Login/index';
 import ModesPage from '@/pages/Modes/index';
-import MultiPlayPage from '@/pages/MultiPlay/index';
+import MultiPlayWaitingPage from '@/pages/MultiPlay/Waiting/index';
+// import MultiPlayGamePage from '@/pages/MultiPlay/Game/index';
 import ProfilePage from '@/pages/Profile/index';
 import RegisterPage from '@/pages/Register/index';
 import SinglePlayPage from '@/pages/SinglePlay/Game/index';
@@ -39,15 +40,13 @@ const routes: Record<string, Page> = {
   '/login': LoginPage,
   '/profile': ProfilePage,
   '/modes': ModesPage,
-  // '/settings/game': SettingsGamePage,
   '/settings/user': SettingsUserPage,
   '/singleplay/game': SinglePlayPage,
   '/singleplay/select': SinglePlaySelectPage,
-  '/multiplay': MultiPlayPage,
-  // '/games/:id/results': GameResultsPage,
+  '/multiplay/waiting': MultiPlayWaitingPage,  // 待機画面
+  // '/multiplay/game': MultiPlayGamePage,        // ゲーム画面
   '/result': ResultPage,
   '/tournament': TournamentPage,
-  // '/tournament/:id': TournamentPage,
   '/leaderboard': LeaderboardPage,
 };
 
