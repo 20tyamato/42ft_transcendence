@@ -23,13 +23,22 @@ const LoginPage = new Page({
       };
 
       try {
-        const response = await fetch('http://127.0.0.1:3001/api/login/', {
+        const response = await fetch('/api/login/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(loginData),
         });
+        console.log('Response status:', response.status);
+        console.log('Request URL:', response.url); // 実際のリクエストURLを確認
+        console.log('Response headers:', response.headers);
+
+        if (!response.ok) {
+          const text = await response.text();
+          console.log('Error response:', text);
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
         if (response.ok) {
           const result = await response.json();
@@ -45,7 +54,7 @@ const LoginPage = new Page({
           responseMessage!.style.color = 'red';
         }
       } catch (error) {
-        console.error(error);
+        console.error('Error details:', error);
         responseMessage!.textContent = 'An unexpected error occurred.';
         responseMessage!.style.color = 'red';
       }
