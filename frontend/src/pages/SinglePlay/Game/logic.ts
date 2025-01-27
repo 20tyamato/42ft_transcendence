@@ -20,6 +20,8 @@ export interface GameScore {
 
 export let score: GameScore = { player1: 0, player2: 0 };
 
+let ballVelocity = new THREE.Vector3(0, 0, -10); // ボールの初期速度
+
 export function initGame() {
   const container = document.getElementById('container');
   renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -50,25 +52,47 @@ export function initGame() {
   const ballGeometry = new THREE.SphereGeometry(BALL_RADIUS, 16, 16);
   const ballMaterial = new THREE.MeshLambertMaterial({ color: 0xcc0000 });
   ball = new THREE.Mesh(ballGeometry, ballMaterial);
+  ball.position.set(0, 0, 0); // ボールの初期位置を設定
   scene.add(ball);
 
   // ライト追加
-  const ambientLight = new THREE.AmbientLight(0x404040, 3);
-  scene.add(ambientLight);
-
-  const pointLight = new THREE.PointLight(0xffffff, 1);
-  pointLight.position.set(0, 500, 0);
-  scene.add(pointLight);
-
-  const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-  directionalLight.position.set(0, 1, 1).normalize();
-  scene.add(directionalLight);
-
-  const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1);
-  hemisphereLight.position.set(0, 200, 0);
-  scene.add(hemisphereLight);
+  const updateBallLight = setupLighting();
 
   updateScoreBoard();
+
+  // 全画面対応
+  window.addEventListener('resize', () => {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+  });
+
+  function setupLighting() {
+    // 環境光
+    const ambientLight = new THREE.AmbientLight(0xffffff, 2);
+    scene.add(ambientLight);
+
+    // ポイントライト
+    const pointLight = new THREE.PointLight(0xffffff, 1.5);
+    pointLight.position.set(0, 500, 0);
+    scene.add(pointLight);
+
+    // ボールの光
+    const ballLight = new THREE.PointLight(0xff4d4d, 1.5, 500);
+    ballLight.position.set(ball.position.x, ball.position.y, ball.position.z);
+    scene.add(ballLight);
+
+    // 光をボールに追従させる
+    function updateBallLight() {
+      ballLight.position.set(ball.position.x, ball.position.y, ball.position.z);
+    }
+    return updateBallLight;
+  }
+
+  function updateBallPosition() {
+    ball.position.add(ballVelocity); // ボールの位置を更新
+    updateBallLight(); // ボールの光を更新
+  }
 
   // 全画面対応
   window.addEventListener('resize', () => {
@@ -110,14 +134,7 @@ function updatePaddlePosition() {
 
 function showGameStartText() {
   const gameStartDiv = document.createElement('div');
-  gameStartDiv.style.position = 'absolute';
-  gameStartDiv.style.top = '50%';
-  gameStartDiv.style.left = '50%';
-  gameStartDiv.style.transform = 'translate(-50%, -50%)';
-  gameStartDiv.style.color = '#fff';
-  gameStartDiv.style.fontSize = '4rem';
-  gameStartDiv.style.fontWeight = 'bold';
-  gameStartDiv.style.textShadow = '0px 0px 10px rgba(0,0,0,0.5)';
+  gameStartDiv.classList.add('gameStartText');
   gameStartDiv.innerText = 'GAME START!';
   document.body.appendChild(gameStartDiv);
 
@@ -166,25 +183,50 @@ function createPaddle() {
 }
 
 function processCpuPaddle() {
-  const cpuSpeed = 2 + aiLevel * 2;
+  const cpuSpeed = Math.min(4 + aiLevel * 3, Math.abs(ball.position.x - paddle2.position.x));
   const ballPos = ball.position;
   const cpuPos = paddle2.position;
 
   if (cpuPos.x > ballPos.x) {
-    cpuPos.x -= Math.min(cpuPos.x - ballPos.x, cpuSpeed);
+    cpuPos.x -= cpuSpeed;
   } else {
-    cpuPos.x += Math.min(ballPos.x - cpuPos.x, cpuSpeed);
+    cpuPos.x += cpuSpeed;
   }
 }
 
+const velocity = { x: 5, z: -10 }; // ボールの速度を変数として保持
+
 function updateBallPosition() {
-  const velocity = { x: 5, z: -10 };
   ball.position.x += velocity.x;
   ball.position.z += velocity.z;
 
-  if (ball.position.x < -FIELD_WIDTH / 2 || ball.position.x > FIELD_WIDTH / 2) {
-    velocity.x *= -1;
+  if (
+    ball.position.x < -FIELD_WIDTH / 2 + BALL_RADIUS ||
+    ball.position.x > FIELD_WIDTH / 2 - BALL_RADIUS
+  ) {
+    velocity.x *= -1; // 壁で反射
   }
+
+  if (checkPaddleCollision(paddle1) || checkPaddleCollision(paddle2)) {
+    velocity.z *= -1; // パドルで反射
+    velocity.x += Math.random() * 2 - 1; // 軽いランダム性を追加
+  }
+}
+
+function checkPaddleCollision(paddle: THREE.Mesh): boolean {
+  const paddleBounds = {
+    xMin: paddle.position.x - 100,
+    xMax: paddle.position.x + 100,
+    zMin: paddle.position.z - 10,
+    zMax: paddle.position.z + 10,
+  };
+
+  return (
+    ball.position.x > paddleBounds.xMin &&
+    ball.position.x < paddleBounds.xMax &&
+    ball.position.z > paddleBounds.zMin &&
+    ball.position.z < paddleBounds.zMax
+  );
 }
 
 function checkScore() {
