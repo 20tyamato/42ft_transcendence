@@ -1,4 +1,12 @@
-import { initGame, startGameLoop, resetGame, setAILevel, getFinalScore } from './logic';
+import {
+  initGame,
+  startGameLoop,
+  resetGame,
+  setAILevel,
+  getFinalScore,
+  togglePause,
+  setupPauseMenu,
+} from './logic';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 
@@ -10,11 +18,14 @@ const SinglePlayPage = new Page({
   mounted: async () => {
     const selectedLevel = localStorage.getItem('selectedLevel');
     console.log(`Retrieved selected level: ${selectedLevel}`); // 取得値を確認
-    const retryBtn = document.getElementById('retryBtn');
-    const exitBtn = document.getElementById('exitBtn');
+    const retryBtn = document.getElementById('retryBtn') as HTMLButtonElement;
+    const exitBtn = document.getElementById('exitBtn') as HTMLButtonElement;
+    const resumeBtn = document.getElementById('resumeBtn') as HTMLButtonElement;
+    const pauseBtn = document.getElementById('pauseBtn') as HTMLButtonElement;
+    const pauseOverlay = document.getElementById('pauseOverlay') as HTMLDivElement;
 
     if (selectedLevel) {
-      setAILevel(Number(selectedLevel)); // 保存されたレベルを設定
+      setAILevel(Number(selectedLevel));
       initGame();
       startGameLoop(() => {
         localStorage.setItem('finalScore', JSON.stringify(getFinalScore()));
@@ -22,8 +33,9 @@ const SinglePlayPage = new Page({
       });
     } else {
       alert('No level selected. Returning to level selection.');
-      window.location.href = '/singleplay/select'; // レベル選択ページに戻る
+      window.location.href = '/singleplay/select';
     }
+    setupPauseMenu();
 
     retryBtn?.addEventListener('click', () => {
       resetGame();
@@ -32,6 +44,16 @@ const SinglePlayPage = new Page({
 
     exitBtn?.addEventListener('click', () => {
       window.location.href = '/singleplay/select';
+    });
+
+    resumeBtn?.addEventListener('click', () => {
+      pauseOverlay.classList.add('hidden');
+      // ゲームを再開するロジックを追加
+    });
+
+    pauseBtn?.addEventListener('click', () => {
+      pauseOverlay.classList.remove('hidden');
+      // ゲームを一時停止するロジックを追加
     });
   },
 });
