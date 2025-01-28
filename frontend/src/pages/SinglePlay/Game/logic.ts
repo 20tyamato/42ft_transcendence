@@ -1,8 +1,9 @@
 import * as THREE from 'three';
+import Ball from './Ball';
 
 let aiLevel = 1;
 let running = false;
-let ball: THREE.Mesh, paddle1: THREE.Mesh, paddle2: THREE.Mesh;
+let ball: Ball, paddle1: THREE.Mesh, paddle2: THREE.Mesh;
 let renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera;
 const FIELD_WIDTH = 1200,
   FIELD_LENGTH = 3000,
@@ -19,8 +20,6 @@ export interface GameScore {
 }
 
 export let score: GameScore = { player1: 0, player2: 0 };
-
-let ballVelocity = new THREE.Vector3(0, 0, -10); // ボールの初期速度
 
 export function initGame() {
   const container = document.getElementById('container');
@@ -49,15 +48,10 @@ export function initGame() {
   paddle2.position.z = -FIELD_LENGTH / 2;
   scene.add(paddle2);
 
-  const ballGeometry = new THREE.SphereGeometry(BALL_RADIUS, 16, 16);
-  const ballMaterial = new THREE.MeshLambertMaterial({ color: 0xcc0000 });
-  ball = new THREE.Mesh(ballGeometry, ballMaterial);
-  ball.position.set(0, 0, 0);
-  scene.add(ball);
+  ball = new Ball(scene, 30, new THREE.Vector3(0, 30, 0), aiLevel);
 
   setupLighting();
   setupPauseMenu();
-
   updateScoreBoard();
 
   // 全画面対応
@@ -124,7 +118,8 @@ export function startGameLoop(onGameEnd: () => void) {
     if (!running) return; // ポーズ中は停止
 
     updatePaddlePosition();
-    updateBallPosition();
+    // updateBallPosition();
+    ball.update(paddle1, paddle2); // Ball クラスの update を使用
     processCpuPaddle();
     if (checkScore()) {
       running = false;
@@ -137,14 +132,15 @@ export function startGameLoop(onGameEnd: () => void) {
 }
 
 export function resetGame() {
-  ball.position.set(0, 0, 0);
+  ball.setPosition(new THREE.Vector3(0, 0, 0));
+  ball.resetVelocity();
   score = { player1: 0, player2: 0 };
   updateScoreBoard();
 }
 
 function resetBall() {
-  ball.position.set(0, 0, 0);
-  ballVelocity.set(0, 0, -10); // ボールの初期速度をリセット
+  ball.setPosition(new THREE.Vector3(0, 0, 0));
+  ball.resetVelocity();
 }
 
 export function setupPauseMenu() {
@@ -156,7 +152,6 @@ export function setupPauseMenu() {
 
   pauseBtn?.addEventListener('click', () => {
     running = false;
-    // pauseOverlay?.classList.remove('hidden');
     if (pauseOverlay) {
       pauseOverlay.style.display = 'flex'; // ポーズ画面を表示
     }
@@ -164,7 +159,6 @@ export function setupPauseMenu() {
 
   resumeBtn?.addEventListener('click', () => {
     running = true;
-    // pauseOverlay?.classList.add('hidden');
     if (pauseOverlay) {
       pauseOverlay.style.display = 'none'; // メニューを非表示
     }
@@ -185,28 +179,14 @@ export function setupPauseMenu() {
 }
 
 function setupLighting() {
-  // 環境光
   const ambientLight = new THREE.AmbientLight(0xffffff, 2);
   scene.add(ambientLight);
 
-  // ポイントライト
   const pointLight = new THREE.PointLight(0xffffff, 1.5);
   pointLight.position.set(0, 500, 0);
   scene.add(pointLight);
-
-  // ボールの光
-  const ballLight = new THREE.PointLight(0xff4d4d, 1.5, 500);
-  ballLight.position.set(ball.position.x, ball.position.y, ball.position.z);
-  scene.add(ballLight);
-
-  // 光をボールに追従させる
-  function updateBallLight() {
-    ballLight.position.set(ball.position.x, ball.position.y, ball.position.z);
-  }
-  return updateBallLight;
 }
 
-// 全画面対応
 window.addEventListener('resize', () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
   camera.aspect = window.innerWidth / window.innerHeight;
@@ -224,8 +204,8 @@ function createPaddle() {
 }
 
 function processCpuPaddle() {
-  const cpuSpeed = Math.min(4 + aiLevel * 3, Math.abs(ball.position.x - paddle2.position.x));
-  const ballPos = ball.position;
+  const cpuSpeed = Math.min(4 + aiLevel * 5, Math.abs(ball.getPosition().x - paddle2.position.x));
+  const ballPos = ball.getPosition();
   const cpuPos = paddle2.position;
 
   if (cpuPos.x > ballPos.x) {
@@ -235,47 +215,12 @@ function processCpuPaddle() {
   }
 }
 
-const velocity = { x: 5, z: -10 }; // ボールの速度を変数として保持
-
-function updateBallPosition() {
-  ball.position.x += velocity.x;
-  ball.position.z += velocity.z;
-
-  if (
-    ball.position.x < -FIELD_WIDTH / 2 + BALL_RADIUS ||
-    ball.position.x > FIELD_WIDTH / 2 - BALL_RADIUS
-  ) {
-    velocity.x *= -1; // 壁で反射
-  }
-
-  if (checkPaddleCollision(paddle1) || checkPaddleCollision(paddle2)) {
-    velocity.z *= -1; // パドルで反射
-    velocity.x += Math.random() * 2 - 1; // 軽いランダム性を追加
-  }
-}
-
-function checkPaddleCollision(paddle: THREE.Mesh): boolean {
-  const paddleBounds = {
-    xMin: paddle.position.x - 100,
-    xMax: paddle.position.x + 100,
-    zMin: paddle.position.z - 10,
-    zMax: paddle.position.z + 10,
-  };
-
-  return (
-    ball.position.x > paddleBounds.xMin &&
-    ball.position.x < paddleBounds.xMax &&
-    ball.position.z > paddleBounds.zMin &&
-    ball.position.z < paddleBounds.zMax
-  );
-}
-
-function checkScore() {
-  if (ball.position.z > FIELD_LENGTH / 2) {
+function checkScore(): boolean {
+  if (ball.getPosition().z > FIELD_LENGTH / 2) {
     score.player2++;
     updateScoreBoard();
     resetBall();
-  } else if (ball.position.z < -FIELD_LENGTH / 2) {
+  } else if (ball.getPosition().z < -FIELD_LENGTH / 2) {
     score.player1++;
     updateScoreBoard();
     resetBall();
@@ -296,13 +241,13 @@ function updateScoreBoard() {
     scoreBoard.style.position = 'absolute';
     scoreBoard.style.top = '10px';
     scoreBoard.style.width = '100%';
-    scoreBoard.style.whiteSpace = 'pre-line'; // 改行を反映
+    scoreBoard.style.whiteSpace = 'pre-line';
   }
 }
 
 export function togglePause() {
   const pauseOverlay = document.getElementById('pauseOverlay');
-  running = !running; // running 状態を切り替え
+  running = !running;
   pauseOverlay?.classList.toggle('hidden'); // UI を切り替え
   if (running) {
     startGameLoop(() => {
