@@ -1,4 +1,5 @@
 version: "3.9"
+# FIXME: magic port number???たまに環境内でポートナンバーが衝突して使えないことがある
 services:
   api:
     build:
