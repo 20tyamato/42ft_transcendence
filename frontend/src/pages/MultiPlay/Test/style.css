@@ -1,13 +1,16 @@
 .websocket-test {
   max-width: 600px;
-  margin: 0 auto;
+  margin: 20px auto;
   padding: 20px;
+  background-color: white; /* 背景色を白に */
+  border-radius: 8px; /* 角を丸く */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* シャドウを追加してコントラストを強調 */
 }
 
 .connection-status {
   margin: 20px 0;
   padding: 10px;
-  background-color: #f0f0f0;
+  background-color: #f8f9fa;
   border-radius: 4px;
 }
 
@@ -56,4 +59,13 @@
 
 #message-list li:last-child {
   border-bottom: none;
+}
+
+/* テキストの色を黒に明示的に指定 */
+.websocket-test,
+.websocket-test h1,
+.websocket-test h2,
+.websocket-test span,
+#message-list li {
+  color: #000;
 }

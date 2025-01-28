@@ -3,17 +3,31 @@ import CommonLayout from '@/layouts/common/index';
 import './style.css';
 
 const WebSocketTestPage = new Page({
-  name: 'WebSocket Test',
+  name: 'MultiPlay/Test', // パスを修正
   config: {
     layout: CommonLayout,
+    html: '/src/pages/MultiPlay/Test/index.html', // パスを明示的に指定
   },
   mounted: async () => {
+    console.log('WebSocketTest page mounting...');
     let socket: WebSocket | null = null;
+
+    // DOM要素の取得を確認
     const statusElement = document.getElementById('connection-status');
+    console.log('Status element found:', !!statusElement);
+
     const messageList = document.getElementById('message-list');
+    console.log('Message list element found:', !!messageList);
+
+    const messageInput = document.getElementById('message-input') as HTMLInputElement;
+    console.log('Message input element found:', !!messageInput);
+
+    const sendButton = document.getElementById('send-button');
+    console.log('Send button element found:', !!sendButton);
 
     // WebSocket接続の初期化
     function initWebSocket() {
+      console.log('Initializing WebSocket...');
       socket = new WebSocket('ws://localhost:8000/ws/test/');
 
       socket.onopen = () => {
@@ -25,9 +39,13 @@ const WebSocketTestPage = new Page({
       };
 
       socket.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        addMessage(data.message);
-        console.log('Message received:', data.message);
+        try {
+          const data = JSON.parse(event.data);
+          addMessage(data.message);
+          console.log('Message received:', data.message);
+        } catch (e) {
+          console.error('Error parsing message:', e);
+        }
       };
 
       socket.onclose = () => {
@@ -47,7 +65,6 @@ const WebSocketTestPage = new Page({
 
     function sendMessage(message: string) {
       if (!message.trim()) return;
-
       if (socket && socket.readyState === WebSocket.OPEN) {
         socket.send(
           JSON.stringify({
@@ -65,24 +82,28 @@ const WebSocketTestPage = new Page({
         li.textContent = message;
         messageList.appendChild(li);
         messageList.scrollTop = messageList.scrollHeight;
+      } else {
+        console.error('Message list element not found');
       }
     }
 
     // イベントリスナーの設定
-    const sendButton = document.getElementById('send-button');
-    const messageInput = document.getElementById('message-input') as HTMLInputElement;
-
-    sendButton?.addEventListener('click', () => {
-      sendMessage(messageInput?.value || '');
-      messageInput.value = '';
-    });
-
-    messageInput?.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
+    if (sendButton && messageInput) {
+      console.log('Setting up event listeners...');
+      sendButton.addEventListener('click', () => {
         sendMessage(messageInput.value);
         messageInput.value = '';
-      }
-    });
+      });
+
+      messageInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          sendMessage(messageInput.value);
+          messageInput.value = '';
+        }
+      });
+    } else {
+      console.error('Required elements not found for event listeners');
+    }
 
     // WebSocket接続の開始
     initWebSocket();
