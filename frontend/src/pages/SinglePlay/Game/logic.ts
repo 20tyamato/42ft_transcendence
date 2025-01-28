@@ -286,8 +286,9 @@ function checkScore() {
 
 function updateScoreBoard() {
   const scoreBoard = document.getElementById('scoreBoard');
+  const username = localStorage.getItem('username') || 'Player';
   if (scoreBoard) {
-    scoreBoard.textContent = `Player 1: ${score.player1} Player 2: ${score.player2}`;
+    scoreBoard.textContent = `${username}  vs  CPU\n${score.player1}  -  ${score.player2}`;
     scoreBoard.style.fontSize = '2rem';
     scoreBoard.style.color = '#38bdf8';
     scoreBoard.style.textShadow = '0px 0px 10px rgba(0,0,0,0.5)';
@@ -295,6 +296,7 @@ function updateScoreBoard() {
     scoreBoard.style.position = 'absolute';
     scoreBoard.style.top = '10px';
     scoreBoard.style.width = '100%';
+    scoreBoard.style.whiteSpace = 'pre-line'; // 改行を反映
   }
 }
 
