@@ -1,4 +1,5 @@
 version: "3.9"
+# FIXME: magic port number???たまに環境内でポートナンバーが衝突して使えないことがある
 services:
   api:
     build:
@@ -50,3 +51,19 @@ services:
       - /app/node_modules
     environment:
       - HOST=0.0.0.0
+
+  redis:
+    image: redis:7
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+
+volumes:
+  redis_data:
+
+networks:
+  app-network:
+    driver: bridge
