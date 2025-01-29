@@ -1,0 +1,71 @@
+.websocket-test {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: white; /* 背景色を白に */
+  border-radius: 8px; /* 角を丸く */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* シャドウを追加してコントラストを強調 */
+}
+
+.connection-status {
+  margin: 20px 0;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}
+
+.message-area {
+  margin: 20px 0;
+  display: flex;
+  gap: 10px;
+}
+
+#message-input {
+  flex-grow: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+#send-button {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#send-button:hover {
+  background-color: #0056b3;
+}
+
+.messages {
+  margin-top: 20px;
+}
+
+#message-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+#message-list li {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+#message-list li:last-child {
+  border-bottom: none;
+}
+
+/* テキストの色を黒に明示的に指定 */
+.websocket-test,
+.websocket-test h1,
+.websocket-test h2,
+.websocket-test span,
+#message-list li {
+  color: #000;
+}

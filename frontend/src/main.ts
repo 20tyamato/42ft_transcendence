@@ -11,6 +11,7 @@ import SinglePlaySelectPage from '@/pages/SinglePlay/Select/index';
 import TournamentPage from '@/pages/Tournament/index';
 import ResultPage from './pages/Result/index';
 import SettingsUserPage from './pages/Settings/User/index';
+import WebSocketTestPage from '@/pages/MultiPlay/Test/index';
 
 import { Page } from './core/Page';
 
@@ -44,6 +45,7 @@ const routes: Record<string, Page> = {
   '/singleplay/game': SinglePlayPage,
   '/singleplay/select': SinglePlaySelectPage,
   '/multiplay': MultiPlayPage,
+  '/multiplay/test': WebSocketTestPage,
   // '/games/:id/results': GameResultsPage,
   '/result': ResultPage,
   '/tournament': TournamentPage,

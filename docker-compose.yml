@@ -1,17 +1,18 @@
-version: "3.9"
-# FIXME: magic port number???たまに環境内でポートナンバーが衝突して使えないことがある
+version: '3.9'
 services:
   api:
     build:
       context: ./api
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - '8000:8000'
     volumes:
       - ./api:/code
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_started
     environment:
       - DEBUG=1
       - DB_NAME=postgres
@@ -19,6 +20,8 @@ services:
       - DB_PASSWORD=postgres
       - DB_HOST=db
       - DB_PORT=5432
+    networks:
+      - app-network
     tty: true
     stdin_open: true
 
@@ -33,9 +36,11 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
     ports:
-      - "5432:5432"
+      - '5432:5432'
+    networks:
+      - app-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 5s
       timeout: 5s
       retries: 5
@@ -45,17 +50,19 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "3001:3001"
+      - '3001:3001'
     volumes:
       - ./frontend:/app
       - /app/node_modules
     environment:
       - HOST=0.0.0.0
+    networks:
+      - app-network
 
   redis:
     image: redis:7
     ports:
-      - "6380:6379"
+      - '6380:6379'
     volumes:
       - redis_data:/data
     networks:
