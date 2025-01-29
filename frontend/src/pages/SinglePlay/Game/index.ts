@@ -1,14 +1,14 @@
-import {
-  initGame,
-  startGameLoop,
-  resetGame,
-  setAILevel,
-  getFinalScore,
-  togglePause,
-  setupPauseMenu,
-} from './logic';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
+import {
+  getFinalScore,
+  initGame,
+  resetGame,
+  setAILevel,
+  // togglePause,
+  setupPauseMenu,
+  startGameLoop,
+} from './logic';
 
 const SinglePlayPage = new Page({
   name: 'SinglePlay/Game',

@@ -6,8 +6,8 @@ let running = false;
 let ball: Ball, paddle1: THREE.Mesh, paddle2: THREE.Mesh;
 let renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera;
 const FIELD_WIDTH = 1200,
-  FIELD_LENGTH = 3000,
-  BALL_RADIUS = 20;
+  FIELD_LENGTH = 3000;
+// BALL_RADIUS = 20;
 
 const keysPressed: { ArrowLeft: boolean; ArrowRight: boolean } = {
   ArrowLeft: false,
