@@ -1,12 +1,13 @@
 import * as THREE from 'three';
+import Ball from './Ball';
 
 let aiLevel = 1;
 let running = false;
-let ball: THREE.Mesh, paddle1: THREE.Mesh, paddle2: THREE.Mesh;
+let ball: Ball, paddle1: THREE.Mesh, paddle2: THREE.Mesh;
 let renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera;
 const FIELD_WIDTH = 1200,
-  FIELD_LENGTH = 3000,
-  BALL_RADIUS = 20;
+  FIELD_LENGTH = 3000;
+// BALL_RADIUS = 20;
 
 const keysPressed: { ArrowLeft: boolean; ArrowRight: boolean } = {
   ArrowLeft: false,
@@ -47,27 +48,10 @@ export function initGame() {
   paddle2.position.z = -FIELD_LENGTH / 2;
   scene.add(paddle2);
 
-  const ballGeometry = new THREE.SphereGeometry(BALL_RADIUS, 16, 16);
-  const ballMaterial = new THREE.MeshLambertMaterial({ color: 0xcc0000 });
-  ball = new THREE.Mesh(ballGeometry, ballMaterial);
-  scene.add(ball);
+  ball = new Ball(scene, 30, new THREE.Vector3(0, 30, 0), aiLevel);
 
-  // ライト追加
-  const ambientLight = new THREE.AmbientLight(0x404040, 3);
-  scene.add(ambientLight);
-
-  const pointLight = new THREE.PointLight(0xffffff, 1);
-  pointLight.position.set(0, 500, 0);
-  scene.add(pointLight);
-
-  const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-  directionalLight.position.set(0, 1, 1).normalize();
-  scene.add(directionalLight);
-
-  const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1);
-  hemisphereLight.position.set(0, 200, 0);
-  scene.add(hemisphereLight);
-
+  setupLighting();
+  setupPauseMenu();
   updateScoreBoard();
 
   // 全画面対応
@@ -110,14 +94,7 @@ function updatePaddlePosition() {
 
 function showGameStartText() {
   const gameStartDiv = document.createElement('div');
-  gameStartDiv.style.position = 'absolute';
-  gameStartDiv.style.top = '50%';
-  gameStartDiv.style.left = '50%';
-  gameStartDiv.style.transform = 'translate(-50%, -50%)';
-  gameStartDiv.style.color = '#fff';
-  gameStartDiv.style.fontSize = '4rem';
-  gameStartDiv.style.fontWeight = 'bold';
-  gameStartDiv.style.textShadow = '0px 0px 10px rgba(0,0,0,0.5)';
+  gameStartDiv.classList.add('gameStartText');
   gameStartDiv.innerText = 'GAME START!';
   document.body.appendChild(gameStartDiv);
 
@@ -138,14 +115,15 @@ export function setAILevel(level: number) {
 export function startGameLoop(onGameEnd: () => void) {
   running = true;
   const frame = () => {
-    if (!running) return;
+    if (!running) return; // ポーズ中は停止
 
     updatePaddlePosition();
-    updateBallPosition();
+    // updateBallPosition();
+    ball.update(paddle1, paddle2); // Ball クラスの update を使用
     processCpuPaddle();
     if (checkScore()) {
       running = false;
-      onGameEnd();
+      if (onGameEnd) onGameEnd();
     }
     renderer.render(scene, camera);
     requestAnimationFrame(frame);
@@ -154,10 +132,70 @@ export function startGameLoop(onGameEnd: () => void) {
 }
 
 export function resetGame() {
-  ball.position.set(0, 0, 0);
+  ball.setPosition(new THREE.Vector3(0, 0, 0));
+  ball.resetVelocity();
   score = { player1: 0, player2: 0 };
   updateScoreBoard();
 }
+
+function resetBall() {
+  ball.setPosition(new THREE.Vector3(0, 0, 0));
+  ball.resetVelocity();
+}
+
+export function setupPauseMenu() {
+  const pauseBtn = document.getElementById('pauseBtn');
+  const pauseOverlay = document.getElementById('pauseOverlay');
+  const resumeBtn = document.getElementById('resumeBtn');
+  const retryBtn = document.getElementById('retryBtn');
+  const exitBtn = document.getElementById('exitBtn');
+
+  pauseBtn?.addEventListener('click', () => {
+    running = false;
+    if (pauseOverlay) {
+      pauseOverlay.style.display = 'flex'; // ポーズ画面を表示
+    }
+  });
+
+  resumeBtn?.addEventListener('click', () => {
+    running = true;
+    if (pauseOverlay) {
+      pauseOverlay.style.display = 'none'; // メニューを非表示
+    }
+    startGameLoop(() => {
+      alert('Game Over!');
+      window.location.href = '/result';
+    });
+  });
+
+  retryBtn?.addEventListener('click', () => {
+    resetGame();
+    window.location.reload();
+  });
+
+  exitBtn?.addEventListener('click', () => {
+    window.location.href = '/singleplay/select';
+  });
+}
+
+function setupLighting() {
+  const ambientLight = new THREE.AmbientLight(0xffffff, 2);
+  scene.add(ambientLight);
+
+  const pointLight = new THREE.PointLight(0xffffff, 1.5);
+  pointLight.position.set(0, 500, 0);
+  scene.add(pointLight);
+}
+
+window.addEventListener('resize', () => {
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+});
+
+// キー操作をリスン
+window.addEventListener('keydown', handleKeyDown);
+window.addEventListener('keyup', handleKeyUp);
 
 function createPaddle() {
   const geometry = new THREE.BoxGeometry(200, 30, 10);
@@ -166,33 +204,23 @@ function createPaddle() {
 }
 
 function processCpuPaddle() {
-  const cpuSpeed = 2 + aiLevel * 2;
-  const ballPos = ball.position;
+  const cpuSpeed = Math.min(4 + aiLevel * 5, Math.abs(ball.getPosition().x - paddle2.position.x));
+  const ballPos = ball.getPosition();
   const cpuPos = paddle2.position;
 
   if (cpuPos.x > ballPos.x) {
-    cpuPos.x -= Math.min(cpuPos.x - ballPos.x, cpuSpeed);
+    cpuPos.x -= cpuSpeed;
   } else {
-    cpuPos.x += Math.min(ballPos.x - cpuPos.x, cpuSpeed);
+    cpuPos.x += cpuSpeed;
   }
 }
 
-function updateBallPosition() {
-  const velocity = { x: 5, z: -10 };
-  ball.position.x += velocity.x;
-  ball.position.z += velocity.z;
-
-  if (ball.position.x < -FIELD_WIDTH / 2 || ball.position.x > FIELD_WIDTH / 2) {
-    velocity.x *= -1;
-  }
-}
-
-function checkScore() {
-  if (ball.position.z > FIELD_LENGTH / 2) {
+function checkScore(): boolean {
+  if (ball.getPosition().z > FIELD_LENGTH / 2) {
     score.player2++;
     updateScoreBoard();
     resetBall();
-  } else if (ball.position.z < -FIELD_LENGTH / 2) {
+  } else if (ball.getPosition().z < -FIELD_LENGTH / 2) {
     score.player1++;
     updateScoreBoard();
     resetBall();
@@ -201,14 +229,11 @@ function checkScore() {
   return score.player1 >= 15 || score.player2 >= 15;
 }
 
-function resetBall() {
-  ball.position.set(0, 0, 0);
-}
-
 function updateScoreBoard() {
   const scoreBoard = document.getElementById('scoreBoard');
+  const username = localStorage.getItem('username') || 'Player';
   if (scoreBoard) {
-    scoreBoard.textContent = `Player 1: ${score.player1} Player 2: ${score.player2}`;
+    scoreBoard.textContent = `${username}  vs  CPU\n${score.player1}  -  ${score.player2}`;
     scoreBoard.style.fontSize = '2rem';
     scoreBoard.style.color = '#38bdf8';
     scoreBoard.style.textShadow = '0px 0px 10px rgba(0,0,0,0.5)';
@@ -216,6 +241,19 @@ function updateScoreBoard() {
     scoreBoard.style.position = 'absolute';
     scoreBoard.style.top = '10px';
     scoreBoard.style.width = '100%';
+    scoreBoard.style.whiteSpace = 'pre-line';
+  }
+}
+
+export function togglePause() {
+  const pauseOverlay = document.getElementById('pauseOverlay');
+  running = !running;
+  pauseOverlay?.classList.toggle('hidden'); // UI を切り替え
+  if (running) {
+    startGameLoop(() => {
+      alert('Game Over!');
+      window.location.href = '/result';
+    });
   }
 }
 
