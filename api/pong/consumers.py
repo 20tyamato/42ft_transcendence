@@ -27,7 +27,7 @@ class TestConsumer(AsyncWebsocketConsumer):
 
     async def chat_message(self, event):
         message = event['message']
-        
+
         # WebSocketにメッセージを送信
         await self.send(text_data=json.dumps({
             'message': message
