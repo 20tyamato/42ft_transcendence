@@ -9,14 +9,10 @@
   <body>
     <div class="user-settings-container">
       <h1 class="settings-title">ユーザー設定</h1>
-
-      <!-- ユーザー設定フォーム -->
       <form id="userSettingsForm" class="user-settings-form">
-        <!-- アバター画像 -->
         <div class="form-group">
           <label for="avatarUpload">アバター画像</label>
           <div class="avatar-preview-wrapper">
-            <!-- 画像プレビュー -->
             <img
               id="avatarPreview"
               src="/src/layouts/common/avator.png"
@@ -24,11 +20,8 @@
               class="avatar-preview"
             />
           </div>
-          <!-- ファイルアップロード -->
           <input type="file" id="avatarUpload" accept="image/*" />
         </div>
-
-        <!-- メールアドレス -->
         <div class="form-group">
           <label for="emailInput">メールアドレス</label>
           <input
@@ -39,13 +32,9 @@
             required
           />
         </div>
-
-        <!-- 保存ボタン -->
         <button type="submit" class="btn btn-primary">保存</button>
       </form>
     </div>
-
-    <!-- メイン処理スクリプト -->
     <script type="module" src="./index.ts"></script>
   </body>
 </html>
