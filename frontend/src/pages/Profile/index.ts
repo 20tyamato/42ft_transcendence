@@ -58,6 +58,53 @@ const ProfilePage = new Page({
     if (emailEl) emailEl.textContent = email;
     if (experienceEl) experienceEl.textContent = experience.toString();
     if (levelEl) levelEl.textContent = level.toString();
+    const cardBack = document.querySelector('.card-back') as HTMLElement;
+    const cardFront = document.querySelector('.card-front') as HTMLElement;
+
+    // カードの色を変更するクラスを動的に追加
+    if (cardBack) {
+      cardBack.classList.remove(
+        'level-1-5',
+        'level-6-10',
+        'level-11-15',
+        'level-16-20',
+        'level-21-25'
+      );
+
+      if (level <= 5) {
+        cardBack.classList.add('level-1-5');
+      } else if (level <= 10) {
+        cardBack.classList.add('level-6-10');
+      } else if (level <= 15) {
+        cardBack.classList.add('level-11-15');
+      } else if (level <= 20) {
+        cardBack.classList.add('level-16-20');
+      } else {
+        cardBack.classList.add('level-21-25');
+      }
+    }
+
+    if (cardFront) {
+      cardFront.classList.remove(
+        'level-1-5',
+        'level-6-10',
+        'level-11-15',
+        'level-16-20',
+        'level-21-25'
+      );
+
+      if (level <= 5) {
+        cardFront.classList.add('level-1-5');
+      } else if (level <= 10) {
+        cardFront.classList.add('level-6-10');
+      } else if (level <= 15) {
+        cardFront.classList.add('level-11-15');
+      } else if (level <= 20) {
+        cardFront.classList.add('level-16-20');
+      } else {
+        cardFront.classList.add('level-21-25');
+      }
+    }
 
     // トーナメント履歴の描画
     tournamentHistory.forEach((item) => {
