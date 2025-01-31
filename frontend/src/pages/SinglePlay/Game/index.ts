@@ -51,7 +51,6 @@ const SinglePlayPage = new Page({
     const background = document.getElementById('background');
     if (header) header.classList.add('none');
     if (background) background.classList.add('none');
-
     const selectedLevel = localStorage.getItem('selectedLevel');
     console.log(`Retrieved selected level: ${selectedLevel}`);
 
