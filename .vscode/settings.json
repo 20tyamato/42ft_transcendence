@@ -31,5 +31,6 @@
   "prettier.useTabs": false,
   "prettier.singleQuote": true,
   "prettier.trailingComma": "es5",
-  "prettier.arrowParens": "always"
+  "prettier.arrowParens": "always",
+  "liveServer.settings.port": 5501
 }

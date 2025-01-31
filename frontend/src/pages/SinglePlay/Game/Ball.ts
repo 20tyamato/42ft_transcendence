@@ -9,10 +9,9 @@ export default class Ball {
     this.velocity = new THREE.Vector3(speed, 0, -speed); // 初期速度をAIレベルに依存
 
     const ballGeometry = new THREE.SphereGeometry(radius, 32, 32);
-    const ballMaterial = new THREE.MeshStandardMaterial({
-      color: 0xffffff,
+    const ballMaterial = new THREE.MeshNormalMaterial({
       wireframe: true,
-      transparent: true,
+      // transparent: true,
       opacity: 0.8,
     });
     this.ball = new THREE.Mesh(ballGeometry, ballMaterial);
