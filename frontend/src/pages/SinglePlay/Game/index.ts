@@ -16,6 +16,11 @@ const SinglePlayPage = new Page({
     layout: CommonLayout,
   },
   mounted: async () => {
+    // ヘッダーと背景を非表示にする
+    const header = document.querySelector('.header');
+    const background = document.getElementById('background');
+    if (header) header.classList.add('none');
+    if (background) background.classList.add('none');
     const selectedLevel = localStorage.getItem('selectedLevel');
     console.log(`Retrieved selected level: ${selectedLevel}`); // 取得値を確認
     const retryBtn = document.getElementById('retryBtn') as HTMLButtonElement;

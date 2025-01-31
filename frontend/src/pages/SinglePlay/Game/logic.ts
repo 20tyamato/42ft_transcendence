@@ -7,7 +7,6 @@ let ball: Ball, paddle1: THREE.Mesh, paddle2: THREE.Mesh;
 let renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera;
 const FIELD_WIDTH = 1200,
   FIELD_LENGTH = 3000;
-// BALL_RADIUS = 20;
 
 const keysPressed: { ArrowLeft: boolean; ArrowRight: boolean } = {
   ArrowLeft: false,
@@ -34,7 +33,7 @@ export function initGame() {
 
   // フィールド追加
   const fieldGeometry = new THREE.BoxGeometry(FIELD_WIDTH, 5, FIELD_LENGTH);
-  const fieldMaterial = new THREE.MeshLambertMaterial({ color: 0x003300 });
+  const fieldMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
   const field = new THREE.Mesh(fieldGeometry, fieldMaterial);
   field.position.set(0, -50, 0);
   scene.add(field);
