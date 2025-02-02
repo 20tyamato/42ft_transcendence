@@ -1,5 +1,6 @@
 import { Page } from '@/core/Page';
 import backHomeLayout from '@/layouts/backhome/index';
+import { API_URL } from '@/config/config';
 
 interface IUserData {
   display_name: string;
@@ -20,8 +21,8 @@ const SettingsUserPage = new Page({
 
     // ユーザー情報の取得
     const fetchUserData = async (): Promise<IUserData> => {
-      const infoResponse = await fetch('http://127.0.0.1:8000/api/users/info/');
-      const avatarResponse = await fetch('http://127.0.0.1:8000/api/users/avatar/');
+      const infoResponse = await fetch(`${API_URL}/api/users/info/`);
+      const avatarResponse = await fetch(`${API_URL}/api/users/avatar/`);
 
       return {
         ...(await infoResponse.json()),

@@ -1,5 +1,6 @@
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
+import { API_URL } from '@/config/config';
 
 interface GameScore {
   player1: number;
@@ -27,7 +28,7 @@ async function sendGameResult(score: GameScore) {
       end_time: new Date().toISOString(),
     };
 
-    const response = await fetch('http://127.0.0.1:8000/api/games/', {
+    const response = await fetch(`${API_URL}/api/games/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
