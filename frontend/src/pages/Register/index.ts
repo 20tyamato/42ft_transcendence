@@ -61,6 +61,7 @@ const RegisterPage = new Page({
           headers: {
             'Content-Type': 'application/json',
           },
+          credentials: 'include',
           body: JSON.stringify(userData),
         });
 

@@ -34,6 +34,7 @@ async function sendGameResult(score: GameScore) {
         'Content-Type': 'application/json',
         Authorization: `Token ${token}`,
       },
+      credentials: 'include',
       body: JSON.stringify(gameData),
     });
 

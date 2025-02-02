@@ -17,6 +17,7 @@ export async function saveScore(player: string, score: number): Promise<void> {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify({ player, score }),
     });
 
