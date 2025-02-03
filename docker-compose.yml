@@ -14,12 +14,12 @@ services:
       redis:
         condition: service_started
     environment:
-      - DEBUG=1
-      - DB_NAME=postgres
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
-      - DB_HOST=db
-      - DB_PORT=5432
+      DEBUG: ${DEBUG}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
     networks:
       - app-network
     tty: true
@@ -30,17 +30,17 @@ services:
       context: ./db
       dockerfile: Dockerfile
     volumes:
-      - ./db/data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     ports:
       - '5432:5432'
     networks:
       - app-network
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER}']
       interval: 5s
       timeout: 5s
       retries: 5
@@ -53,9 +53,7 @@ services:
       - '3001:3001'
     volumes:
       - ./frontend:/app
-      - /app/node_modules
-    environment:
-      - HOST=0.0.0.0
+      - ./frontend/node_modules:/app/node_modules
     networks:
       - app-network
 
@@ -70,6 +68,7 @@ services:
 
 volumes:
   redis_data:
+  postgres_data:
 
 networks:
   app-network:

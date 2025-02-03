@@ -18,7 +18,7 @@ clean: down
 	docker system prune -af --volumes
 
 fbuild:
-	docker compose up --build --no-cache
+	docker compose build --no-cache && docker compose up
 
 test:
 	docker exec -it $(API_CONTAINER) python manage.py test pong
@@ -31,6 +31,10 @@ showmigrations:
 
 migrate:
 	docker exec -it $(API_CONTAINER) python manage.py migrate
+
+# テストデータをDBに入れる
+loaddata:
+	docker exec -it $(API_CONTAINER) python manage.py loaddata initial_data
 
 ruff:
 	docker exec -it $(API_CONTAINER) poetry run ruff check . --fix
