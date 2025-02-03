@@ -20,6 +20,8 @@ COPY . .
 # 依存関係のインストール
 RUN poetry install --no-interaction --no-ansi --no-root
 
-# サーバー起動
-CMD ["poetry", "run", "daphne", "-b", "0.0.0.0", "-p", "8000", "core.asgi:application"]
+# エントリーポイントスクリプトに実行権限を付与
+RUN chmod +x entrypoint.sh
 
+# サーバー起動
+ENTRYPOINT ["./entrypoint.sh"]

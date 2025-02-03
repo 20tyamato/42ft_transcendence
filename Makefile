@@ -32,6 +32,10 @@ showmigrations:
 migrate:
 	docker exec -it $(API_CONTAINER) python manage.py migrate
 
+# テストデータをDBに入れる
+loaddata:
+	docker exec -it $(API_CONTAINER) python manage.py loaddata initial_data
+
 ruff:
 	docker exec -it $(API_CONTAINER) poetry run ruff check . --fix
 
