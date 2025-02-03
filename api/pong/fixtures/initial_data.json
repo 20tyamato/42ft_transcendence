@@ -1,0 +1,14 @@
+[
+  {
+    "model": "pong.user",
+    "pk": 1,
+    "fields": {
+      "username": "sample",
+      "email": "sample@example.com",
+      "display_name": "Sample User",
+      "is_staff": true,
+      "is_superuser": true,
+      "password": "pbkdf2_sha256$870000$sTLmJl8DHUGeoN3oIpBjZO$LvALcWRNdyoH4UQ9Es6lFDi4quYJKj96LlUwJKVJCYc="
+    }
+  }
+]
