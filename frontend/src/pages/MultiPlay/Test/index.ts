@@ -1,6 +1,7 @@
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import './style.css';
+import { WS_URL } from '@/config/config';
 
 const WebSocketTestPage = new Page({
   name: 'MultiPlay/Test', // パスを修正
@@ -28,7 +29,7 @@ const WebSocketTestPage = new Page({
     // WebSocket接続の初期化
     function initWebSocket() {
       console.log('Initializing WebSocket...');
-      socket = new WebSocket('ws://localhost:8000/ws/test/');
+      socket = new WebSocket(`${WS_URL}/ws/test/`);
 
       socket.onopen = () => {
         console.log('WebSocket connection established');
