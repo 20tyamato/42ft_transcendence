@@ -20,6 +20,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
+      HOST_IP: ${HOST_IP}  # ホストマシンのIP
     networks:
       - app-network
     tty: true

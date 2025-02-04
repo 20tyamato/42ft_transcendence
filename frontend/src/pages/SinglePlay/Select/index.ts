@@ -36,7 +36,7 @@ const SinglePlaySelectPage = new Page({
         if (level) {
           localStorage.setItem('selectedLevel', level); // レベルを保存
           console.log(`Selected level: ${level}`);
-          showLoadingScreen('/singleplay/game'); // 正しいURLに遷移
+          showLoadingScreen('/singleplay/game');
         } else {
           console.error('Level attribute not found on button.');
         }
@@ -44,33 +44,5 @@ const SinglePlaySelectPage = new Page({
     });
   },
 });
-// try {
-//   const response = await fetch('http://127.0.0.1:8000/api/games/', {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//     },
-//     body: JSON.stringify({
-//       level: selectedLevel,
-//     }),
-//   });
-
-//   if (!response.ok) {
-//     throw new Error('Failed to create game');
-//   }
-
-//   const data = await response.json();
-//   // data は { game_id: <作成された Game のID> } の想定
-
-//   // window.location.href = `/game/${data.game_id}/?level=${selectedLevel}`;
-//   window.location.href = `/singleplay/game/`;
-
-// } catch (error) {
-//   console.error(error);
-// }
-//       });
-//     });
-//   },
-// });
 
 export default SinglePlaySelectPage;

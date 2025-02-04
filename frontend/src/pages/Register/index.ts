@@ -1,5 +1,6 @@
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
+import { API_URL } from '@/config/config';
 
 const RegisterPage = new Page({
   name: 'Register',
@@ -55,11 +56,12 @@ const RegisterPage = new Page({
       };
 
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/users/', {
+        const response = await fetch(`${API_URL}/api/users/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
+          credentials: 'include',
           body: JSON.stringify(userData),
         });
 

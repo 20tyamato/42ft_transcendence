@@ -1,5 +1,6 @@
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
+import { API_URL } from '@/config/config';
 
 const LoginPage = new Page({
   name: 'Login',
@@ -23,11 +24,12 @@ const LoginPage = new Page({
       };
 
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/login/', {
+        const response = await fetch(`${API_URL}/api/login/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
+          credentials: 'include',
           body: JSON.stringify(loginData),
         });
 

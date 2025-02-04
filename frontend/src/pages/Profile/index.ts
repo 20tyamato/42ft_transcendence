@@ -1,5 +1,6 @@
 import { Page } from '@/core/Page';
 import backHomeLayout from '@/layouts/backhome/index';
+import { API_URL } from '@/config/config';
 
 interface ITournamentHistory {
   date: string;
@@ -18,7 +19,7 @@ const ProfilePage = new Page({
   },
   mounted: async () => {
     // --- Fetchでユーザーデータを取得 ---
-    const response = await fetch('http://127.0.0.1:8000/api/users/');
+    const response = await fetch(`${API_URL}/api/users/`);
     const data = await response.json();
     const userData = data[0];
 

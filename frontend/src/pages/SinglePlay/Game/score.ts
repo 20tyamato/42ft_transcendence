@@ -1,4 +1,4 @@
-const API_BASE_URL = '/api';
+import { API_URL } from '@/config/config';
 
 interface LeaderboardEntry {
   player: string;
@@ -12,11 +12,12 @@ interface LeaderboardEntry {
  */
 export async function saveScore(player: string, score: number): Promise<void> {
   try {
-    const response = await fetch(`${API_BASE_URL}/save-score/`, {
+    const response = await fetch(`${API_URL}/save-score/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify({ player, score }),
     });
 
@@ -39,7 +40,7 @@ export async function saveScore(player: string, score: number): Promise<void> {
  */
 export async function getLeaderboard(): Promise<LeaderboardEntry[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/leaderboard/`);
+    const response = await fetch(`${API_URL}/leaderboard/`);
     if (!response.ok) {
       console.error('Failed to fetch leaderboard:', await response.text());
       return [];
