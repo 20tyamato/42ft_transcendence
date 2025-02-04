@@ -145,9 +145,16 @@ make up
   - `http://localhost:3001/leaderboard`
     - リーダーボードページ
 - [Backend](http://127.0.0.1:8000/)
+
   - `http://127.0.0.1:8000/admin/`
   - `http://127.0.0.1:8000/api/users/`
   - `http://127.0.0.1:8000/api/games/`
+
+- [ELK](http://127.0.0.1:5601/)
+  - `http://127.0.0.1:5601/`
+    - Kibana トップページ
+  - username: `elastic`
+  - password: `password`
 
 ## HTTPS
 
