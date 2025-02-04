@@ -56,7 +56,7 @@ elk-setup:
 	docker compose -f docker-compose.elk.yml up setup
 
 elk-up:
-	docker compose -f docker-compose.elk.yml up
+	docker compose -f docker-compose.elk.yml up -d
 
 db_in:
 	docker exec -it $(DB_CONTAINER) bash

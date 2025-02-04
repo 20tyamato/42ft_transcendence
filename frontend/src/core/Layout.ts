@@ -1,3 +1,5 @@
+import { Logger } from "./Logger";
+
 type LayoutConfig = {
   html: string;
   css: string;
@@ -18,9 +20,11 @@ const getDefaultConfig = (name: string, config?: Partial<LayoutConfig>): LayoutC
 
 export class Layout {
   readonly config: LayoutConfig;
+  readonly logger: Logger;
 
   constructor(props: LayoutProps) {
     this.config = getDefaultConfig(props.name, props.config);
+    this.logger = new Logger();
   }
 
   async render() {

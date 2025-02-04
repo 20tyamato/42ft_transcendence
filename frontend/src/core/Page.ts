@@ -1,5 +1,6 @@
 import CommonLayout from '@/layouts/common/index';
 import { Layout } from './Layout';
+import { Logger } from './Logger';
 
 type PageConfig = {
   html: string;
@@ -10,7 +11,7 @@ type PageConfig = {
 type PageProps = {
   name: string;
   config?: Partial<PageConfig>;
-  mounted?: () => Promise<void>;
+  mounted?: ({pg}: {pg: Page}) => Promise<void>;
 };
 
 const getDefaultConfig = (name: string, config?: Partial<PageConfig>): PageConfig => {
@@ -24,10 +25,12 @@ const getDefaultConfig = (name: string, config?: Partial<PageConfig>): PageConfi
 
 export class Page {
   readonly config: PageConfig;
-  mounted?: () => Promise<void>;
+  readonly logger: Logger;
+  mounted?: ({pg}: {pg: Page}) => Promise<void>;
 
   constructor(props: PageProps) {
     this.config = getDefaultConfig(props.name, props.config);
+    this.logger = new Logger();
     this.mounted = props.mounted;
   }
 
