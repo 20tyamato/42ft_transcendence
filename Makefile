@@ -9,7 +9,7 @@ all: up
 
 setup-env:
 	@echo "Setting up environment variables..."
-	@echo "HOST_IP=$(HOST_IP)" > .env
+	@echo "HOST_IP=$(HOST_IP)" >> .env
 	@echo "Creating frontend/.env..."
 	@echo "VITE_API_URL=http://$(HOST_IP):8000" > frontend/.env
 	@echo "VITE_WS_URL=ws://$(HOST_IP):8000" >> frontend/.env
@@ -76,9 +76,6 @@ front_logs:
 
 db_logs:
 	docker logs -f $(DB_CONTAINER)
-
-check-ip:
-	@echo "HOST_IP is set to: $(HOST_IP)"
 
 submit:
 	@echo "=============================="
