@@ -1,4 +1,4 @@
-import { Logger } from "./Logger";
+import { Logger } from './Logger';
 
 type LayoutConfig = {
   html: string;
