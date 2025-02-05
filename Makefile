@@ -51,13 +51,13 @@ api_in:
 front_in:
 	docker exec -it $(FRONTEND_CONTAINER) bash
 
-
 elk-setup:
 	docker compose -f docker-compose.elk.yml up setup
 
 elk-up:
 	docker compose -f docker-compose.elk.yml up -d
 
+# .env の HOST_IP を設定
 hostip:
 	scripts/setup-host-ip.sh
 
@@ -100,6 +100,9 @@ help:
 	@echo " lint - run lint"
 	@echo " api_in - enter api container"
 	@echo " front_in - enter frontend container"
+	@echo " elk-setup - setup ELK server"
+	@echo " elk-up - up ELK server"
+	@echo " hostip - set HOST_IP in .env"
 	@echo " db_in - enter db container"
 	@echo " api_logs - show api logs"
 	@echo " front_logs - show frontend logs"
