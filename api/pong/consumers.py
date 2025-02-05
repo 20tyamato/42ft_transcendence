@@ -1,8 +1,7 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
 from channels.db import database_sync_to_async
-from asgiref.sync import sync_to_async
-from .models import User, GameSession
+from .models import GameSession
 
 class TestConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -88,7 +87,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
 
     async def join_matchmaking(self):
         session, match_found = await self.create_or_join_session()
-        
+
         if match_found:
             # マッチが成立した場合、両プレイヤーに通知
             match_data = {
@@ -98,7 +97,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             }
             # player1のチャンネル名を構築
             player1_channel = f"user_{session.player1.id}"
-            
+
             # 両プレイヤーにマッチ成立を通知
             await self.channel_layer.group_send(
                 player1_channel,
