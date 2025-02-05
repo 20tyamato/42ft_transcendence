@@ -1,23 +1,22 @@
-/** 
+/**
  * ELKにログを送信する
  */
 export class Logger {
-  constructor() {
-  }
+  constructor() {}
 
-  info(message:string) {
+  public info(message: string) {
     console.info(message);
   }
-  
-  log(message: string) {
+
+  public log(message: string) {
     console.log(message);
   }
 
-  error(message: string) {
+  public error(message: string) {
     console.error(message);
   }
 
-  warn(message: string) {
+  public warn(message: string) {
     console.warn(message);
   }
 }

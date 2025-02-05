@@ -68,7 +68,7 @@ async function router(path: string) {
   window.history.pushState({}, '', path);
 
   if (targetPage.mounted) {
-    await targetPage.mounted({pg: targetPage});
+    await targetPage.mounted({ pg: targetPage });
   }
 }
 
