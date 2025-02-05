@@ -20,7 +20,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
-      HOST_IP: ${HOST_IP}  # ホストマシンのIP
+      HOST_IP: ${HOST_IP} # ホストマシンのIP
     networks:
       - app-network
     tty: true
@@ -50,6 +50,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    environment:
+      LOGSTASH_URL: http://localhost:50000
     ports:
       - '3001:3001'
     volumes:
