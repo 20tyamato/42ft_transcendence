@@ -51,6 +51,13 @@ api_in:
 front_in:
 	docker exec -it $(FRONTEND_CONTAINER) bash
 
+
+elk-setup:
+	docker compose -f docker-compose.elk.yml up setup
+
+elk-up:
+	docker compose -f docker-compose.elk.yml up -d
+
 db_in:
 	docker exec -it $(DB_CONTAINER) bash
 

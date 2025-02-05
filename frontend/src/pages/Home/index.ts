@@ -82,7 +82,8 @@ const HomePage = new Page({
   config: {
     layout: CommonLayout,
   },
-  mounted: async () => {
+  mounted: async ({ pg }: { pg: Page }) => {
+    pg.logger.info('HomePage mounted!');
     const loginBtn = document.querySelector('a[href="/login"]');
     loginBtn?.addEventListener('click', (event) => {
       event.preventDefault();
