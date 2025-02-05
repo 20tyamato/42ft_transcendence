@@ -57,8 +57,7 @@ services:
       - ./frontend:/app
       - /app/node_modules
     environment:
-      LOGSTASH_URL: http://localhost:50000
-      CHOKIDAR_USEPOLLING: true
+      VITE_LOGSTASH_URL: ${VITE_LOGSTASH_URL}
     networks:
       - app-network
 
