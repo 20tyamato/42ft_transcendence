@@ -58,7 +58,7 @@ elk-setup:
 elk-up:
 	docker compose -f docker-compose.elk.yml up -d
 
-host-ip-setup:
+hostip:
 	scripts/setup-host-ip.sh
 
 db_in:
