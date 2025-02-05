@@ -2,7 +2,10 @@
  * ELKにログを送信する
  */
 export class Logger {
-  constructor() {}
+  private logstashUrl: string;
+  constructor() {
+    this.logstashUrl = import.meta.env.VITE_LOGSTASH_URL || 'http://localhost:50000';
+  }
 
   public info(message: string) {
     console.info(message);
