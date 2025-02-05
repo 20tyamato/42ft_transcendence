@@ -18,54 +18,51 @@ const WaitingPage = new Page({
     const statusElement = document.getElementById('connection-status');
     const cancelButton = document.getElementById('cancel-button');
 
-    function initWebSocket() {
-      console.log('Initializing WebSocket...');
-      socket = new WebSocket(`${WS_URL}/ws/matchmaking/`);
+  function initWebSocket() {
+    console.log('Initializing WebSocket...'); // デバッグ出力追加
+    socket = new WebSocket(`${WS_URL}/ws/matchmaking/`);
 
-      socket.onopen = () => {
-        console.log('WebSocket connection established');
-        if (statusElement) {
-          statusElement.textContent = 'Looking for opponent...';
-          statusElement.style.color = 'green';
-        }
+    socket.onopen = () => {
+        console.log('WebSocket connection established'); // デバッグ出力追加
+        // 接続時にマッチメイキング参加のメッセージを送信
         socket.send(JSON.stringify({
-          type: 'join_matchmaking'
+            type: 'join_matchmaking'
         }));
-      };
+    };
 
-      socket.onmessage = (event) => {
-        try {
+    socket.onmessage = (event) => {
+      try {
           const data = JSON.parse(event.data);
-          console.log('Received message:', data);
-    
+          console.log('Received websocket message:', data);
+  
           if (data.type === 'waiting') {
-            if (statusElement) {
-              statusElement.textContent = data.message;
-            }
+              if (statusElement) {
+                  statusElement.textContent = data.message;
+              }
           } else if (data.type === 'match_found') {
-            console.log('Match found! Session ID:', data.session_id);
-            // マッチング成立時の処理
-            window.location.href = `/multiplay/game?session=${data.session_id}`;
+              console.log('Match found with session:', data.session_id); // 追加
+              const gameUrl = `/multiplay/game?session=${data.session_id}`;
+              console.log('Generated URL:', gameUrl); // 追加
+              
+              // 遷移前に少し待機して確実にログを確認できるようにする
+              setTimeout(() => {
+                  console.log('Navigating to:', gameUrl); // 追加
+                  window.location.href = gameUrl;
+              }, 100000000);
           }
-        } catch (e) {
+      } catch (e) {
           console.error('Error parsing message:', e);
-        }
-      };
+      }
+    };
 
-      socket.onclose = () => {
-        console.log('WebSocket connection closed');
-        if (statusElement) {
-          statusElement.textContent = 'Connection lost';
-          statusElement.style.color = 'red';
-        }
-        // 3秒後に再接続
-        setTimeout(() => initWebSocket(), 3000);
-      };
+    socket.onerror = (error) => {
+        console.error('WebSocket error:', error); // デバッグ出力追加
+    };
 
-      socket.onerror = (error) => {
-        console.error('WebSocket error:', error);
-      };
-    }
+    socket.onclose = () => {
+        console.log('WebSocket connection closed'); // デバッグ出力追加
+    };
+  }
 
     // キャンセルボタンのイベントリスナー
     if (cancelButton) {

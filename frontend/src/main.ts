@@ -13,6 +13,7 @@ import ResultPage from './pages/Result/index';
 import SettingsUserPage from './pages/Settings/User/index';
 import WebSocketTestPage from '@/pages/MultiPlay/Test/index';
 import WaitingPage from '@/pages/MultiPlay/Waiting/index';
+import GamePage from '@/pages/MultiPlay/Game/index';
 
 import { Page } from './core/Page';
 
@@ -48,6 +49,7 @@ const routes: Record<string, Page> = {
   '/multiplay': MultiPlayPage,
   '/multiplay/test': WebSocketTestPage,
   '/multiplay/waiting': WaitingPage,
+  '/multiplay/game': GamePage, 
   // '/games/:id/results': GameResultsPage,
   '/result': ResultPage,
   '/tournament': TournamentPage,

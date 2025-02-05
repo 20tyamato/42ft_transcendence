@@ -63,23 +63,27 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             return
 
     async def join_matchmaking(self):
+        print("Player joining matchmaking") # デバッグ出力追加
+        print(f"Current waiting players: {len(self.waiting_players)}") # デバッグ出力追加
+        
         self.waiting_players.append(self)
         await self.send(json.dumps({
             'type': 'waiting',
             'message': 'Waiting for opponent...'
         }))
         
-        # 2人以上のプレイヤーが待機中の場合マッチングを行う
+        print(f"After joining: {len(self.waiting_players)} players waiting") # デバッグ出力追加
         if len(self.waiting_players) >= 2:
+            print("Match found! Creating game session...") # デバッグ出力追加
             player1 = self.waiting_players.pop(0)
             player2 = self.waiting_players.pop(0)
             
-            # 両プレイヤーにマッチング成立を通知
             match_data = {
                 'type': 'match_found',
-                'session_id': f"game_{id(player1)}_{id(player2)}"  # 仮のセッションID
+                'session_id': f"game_{id(player1)}_{id(player2)}"
             }
             
+            print(f"Sending match data: {match_data}") # デバッグ出力追加
             await player1.send(json.dumps(match_data))
             await player2.send(json.dumps(match_data))
 
