@@ -28,15 +28,23 @@ const WaitingPage = new Page({
           statusElement.textContent = 'Looking for opponent...';
           statusElement.style.color = 'green';
         }
+        socket.send(JSON.stringify({
+          type: 'join_matchmaking'
+        }));
       };
 
       socket.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          console.log('Received:', data);
-
-          if (data.type === 'match_found') {
-            // マッチが見つかった場合、ゲーム画面に遷移
+          console.log('Received message:', data);
+    
+          if (data.type === 'waiting') {
+            if (statusElement) {
+              statusElement.textContent = data.message;
+            }
+          } else if (data.type === 'match_found') {
+            console.log('Match found! Session ID:', data.session_id);
+            // マッチング成立時の処理
             window.location.href = `/multiplay/game?session=${data.session_id}`;
           }
         } catch (e) {
