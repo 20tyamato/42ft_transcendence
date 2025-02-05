@@ -58,6 +58,9 @@ elk-setup:
 elk-up:
 	docker compose -f docker-compose.elk.yml up -d
 
+hostip:
+	scripts/setup-host-ip.sh
+
 db_in:
 	docker exec -it $(DB_CONTAINER) bash
 
