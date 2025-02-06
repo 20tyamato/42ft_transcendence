@@ -41,30 +41,31 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
     waiting_players = []  # クラス変数として待機プレイヤーを管理
 
     async def connect(self):
-        # いったん認証チェックなしで接続を許可
         await self.accept()
-        print("Client connected to matchmaking")  # デバッグ用ログ
+        print("Client connected to matchmaking")
 
     async def disconnect(self, close_code):
-        # 切断時は待機リストから削除
         if self in self.waiting_players:
             self.waiting_players.remove(self)
-        print("Client disconnected from matchmaking")  # デバッグ用ログ
+        print("Client disconnected from matchmaking")
 
     async def receive(self, text_data):
         try:
             data = json.loads(text_data)
-            print(f"Received message: {data}")  # デバッグ用ログ
+            print(f"Received message: {data}")
             
             if data.get('type') == 'join_matchmaking':
+                # ユーザー名を取得
+                self.username = data.get('username')
                 await self.join_matchmaking()
+                
         except json.JSONDecodeError:
             print("Received invalid JSON")
             return
 
     async def join_matchmaking(self):
-        print("Player joining matchmaking") # デバッグ出力追加
-        print(f"Current waiting players: {len(self.waiting_players)}") # デバッグ出力追加
+        print(f"Player {self.username} joining matchmaking")
+        print(f"Current waiting players: {len(self.waiting_players)}")
         
         self.waiting_players.append(self)
         await self.send(json.dumps({
@@ -72,18 +73,19 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             'message': 'Waiting for opponent...'
         }))
         
-        print(f"After joining: {len(self.waiting_players)} players waiting") # デバッグ出力追加
+        print(f"After joining: {len(self.waiting_players)} players waiting")
         if len(self.waiting_players) >= 2:
-            print("Match found! Creating game session...") # デバッグ出力追加
             player1 = self.waiting_players.pop(0)
             player2 = self.waiting_players.pop(0)
             
             match_data = {
                 'type': 'match_found',
-                'session_id': f"game_{id(player1)}_{id(player2)}"
+                'session_id': f"game_{player1.username}_{player2.username}",
+                'player1': player1.username,
+                'player2': player2.username
             }
             
-            print(f"Sending match data: {match_data}") # デバッグ出力追加
+            print(f"Match found! Creating game session: {match_data}")
             await player1.send(json.dumps(match_data))
             await player2.send(json.dumps(match_data))
 
@@ -91,8 +93,8 @@ class GameConsumer(AsyncWebsocketConsumer):
     games = {}  # セッションIDをキーとしたゲームインスタンスの管理
 
     async def connect(self):
-        # セッションIDをURLパラメータから取得
         self.session_id = self.scope['url_route']['kwargs']['session_id']
+        self.username = self.scope['url_route']['kwargs']['username']
         self.game_group_name = f'game_{self.session_id}'
 
         # ゲームグループに参加
@@ -101,14 +103,18 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
         await self.accept()
+        print(f"Player {self.username} connected to game {self.session_id}")
 
-        # 必要に応じてゲームインスタンスを作成
+        # ゲームインスタンスの作成または参加
         if self.session_id not in self.games:
-            self.games[self.session_id] = MultiplayerPongGame(
-                game_id=self.session_id,
-                player1_id=self.scope["url_route"]["kwargs"]["player1_id"],
-                player2_id=self.scope["url_route"]["kwargs"]["player2_id"]
-            )
+            # セッションIDからプレイヤー名を抽出
+            player_names = self.session_id.replace('game_', '').split('_')
+            if len(player_names) == 2:
+                self.games[self.session_id] = MultiplayerPongGame(
+                    game_id=self.session_id,
+                    player1_name=player_names[0],
+                    player2_name=player_names[1]
+                )
 
         # ゲーム更新ループの開始
         asyncio.create_task(self.game_loop())
@@ -138,6 +144,8 @@ class GameConsumer(AsyncWebsocketConsumer):
             await asyncio.sleep(0.016)  # 約60FPS
 
     async def disconnect(self, close_code):
+        print(f"Player {self.username} disconnected from game {self.session_id}")
+        
         # グループから削除
         await self.channel_layer.group_discard(
             self.game_group_name,
@@ -155,9 +163,9 @@ class GameConsumer(AsyncWebsocketConsumer):
         game = self.games.get(self.session_id)
         
         if game and data['type'] == 'move':
-            # プレイヤーの移動を処理
+            # プレイヤーの移動を処理（usernameベースに変更）
             game.move_player(
-                player_id=data['player_id'],
+                username=self.username,  # player_idをusernameに変更
                 new_x=data['position']
             )
 
@@ -165,7 +173,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         # 各クライアントに適した視点のゲーム状態を送信
         game = self.games.get(self.session_id)
         if game:
-            state = game.get_state_for_player(self.scope["url_route"]["kwargs"]["player_id"])
+            state = game.get_state_for_player(self.username)  # player_idをusernameに変更
             await self.send(text_data=json.dumps({
                 'type': 'state_update',
                 'state': state
