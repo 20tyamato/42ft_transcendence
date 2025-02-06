@@ -51,6 +51,7 @@ const GamePage = new Page({
        socket.onmessage = (event) => {
            try {
                const data = JSON.parse(event.data);
+               console.log('Received game state:', data); 
                if (data.type === 'state_update') {
                    renderer.updateState(data.state);
                    renderer.render();
@@ -76,13 +77,17 @@ const GamePage = new Page({
            if (socket.readyState !== WebSocket.OPEN) return;
 
            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-               const movement = e.key === 'ArrowLeft' ? -10 : 10;
-               socket.send(JSON.stringify({
-                   type: 'move',
-                   username: username,
-                   position: movement
-               }));
-           }
+            const currentPosition = this.paddle ? this.paddle.position.x : 0;
+            const movement = e.key === 'ArrowLeft' ? -10 : 10;
+            const newPosition = currentPosition + movement;  // 現在位置から移動
+            
+            console.log('Sending move:', { newPosition });  // デバッグログ
+            socket.send(JSON.stringify({
+                type: 'move',
+                username: username,
+                position: newPosition  // 絶対位置を送信
+            }));
+        }
        });
 
        function updateScoreBoard(score: any) {

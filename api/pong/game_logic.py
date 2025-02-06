@@ -5,6 +5,7 @@ from django.utils import timezone
 from .models import Game
 from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
+from uuid import uuid4
 
 @dataclass
 class Vector3D:
@@ -21,8 +22,10 @@ class MultiplayerPongGame:
     PADDLE_SPEED = 10
     WINNING_SCORE = 15
 
+    # TODO: game_idのデータ型がおかしいのでうまくやりたい
     def __init__(self, game_id: str, player1_name: str, player2_name: str):
-        self.game_id = game_id
+        # FIXME: 本来はgame_idを使うべき
+        self.game_id = 1234
         self.player1_name = player1_name
         self.player2_name = player2_name
         
@@ -73,9 +76,16 @@ class MultiplayerPongGame:
         if not self.is_active:
             return self.get_state()
 
+        # より小さなデルタ時間を使用
+        adjusted_delta = min(delta_time, 0.016)  # 最大60FPS相当
+
         # ボールの移動
-        self.ball.x += self.ball_velocity.x * delta_time
-        self.ball.z += self.ball_velocity.z * delta_time
+        self.ball.x += self.ball_velocity.x * adjusted_delta
+        self.ball.z += self.ball_velocity.z * adjusted_delta
+
+        # デバッグ出力
+        print(f"Ball position: {self.ball.x}, {self.ball.z}")
+        print(f"Ball velocity: {self.ball_velocity.x}, {self.ball_velocity.z}")
 
         # 衝突判定と処理
         self._handle_wall_collision()

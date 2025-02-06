@@ -51,8 +51,13 @@ export class GameRenderer {
    }
 
    private setupScene(container: HTMLElement) {
-       this.renderer.setSize(window.innerWidth, window.innerHeight);
+       const width = container.clientWidth || window.innerWidth;
+       const height = container.clientHeight || window.innerHeight;
+       this.renderer.setSize(width, height);
        container.appendChild(this.renderer.domElement);
+
+       // レンダラーのピクセル比を設定
+       this.renderer.setPixelRatio(window.devicePixelRatio);
 
        // フィールドの作成
        const fieldGeometry = new THREE.BoxGeometry(this.FIELD_WIDTH, 5, this.FIELD_LENGTH);
