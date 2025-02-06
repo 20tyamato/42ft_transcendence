@@ -37,18 +37,22 @@ const ProfilePage = new Page({
   },
   mounted: async () => {
     try {
-      const userData = await fetchCurrentUser();
-      console.log('userData:', userData);
-
+      // Front HTML elements
       const avatarEl = document.getElementById('avatar') as HTMLImageElement;
       const usernameEl = document.getElementById('username') as HTMLElement;
       const emailEl = document.getElementById('email') as HTMLElement;
       const experienceEl = document.getElementById('experience') as HTMLElement;
       const levelEl = document.getElementById('level') as HTMLElement;
 
+      // Back HTML elements
       const tournamentHistoryEl = document.getElementById('tournamentHistory');
       const scoreListEl = document.getElementById('scoreList');
 
+      // User Data from Backend
+      const userData = await fetchCurrentUser();
+      console.log('userData:', userData);
+
+      const avatarUrl = userData.avatarUrl;
       const username = userData.username;
       const email = userData.email;
       const experience = userData.experience;
@@ -62,14 +66,16 @@ const ProfilePage = new Page({
         { txHash: '0x456...', score: 80 },
       ];
 
+      // Update Front HTML elements
       if (avatarEl) {
-        avatarEl.src = userData.avatarUrl || '/src/layouts/common/avator.png';
+        avatarEl.src = avatarUrl || '/src/layouts/common/avator.png';
       }
       if (usernameEl) usernameEl.textContent = username;
       if (emailEl) emailEl.textContent = email;
       if (experienceEl) experienceEl.textContent = experience.toString();
       if (levelEl) levelEl.textContent = level.toString();
 
+      // Change color of card based on level
       const cardBack = document.querySelector('.card-back') as HTMLElement;
       const cardFront = document.querySelector('.card-front') as HTMLElement;
 
@@ -117,18 +123,19 @@ const ProfilePage = new Page({
         }
       }
 
+      // Update Back HTML elements
       tournamentHistory.forEach((item) => {
         const li = document.createElement('li');
         li.textContent = `${item.date} - ${item.result}`;
         tournamentHistoryEl?.appendChild(li);
       });
-
       blockchainScores.forEach((item) => {
         const li = document.createElement('li');
         li.textContent = `TxHash: ${item.txHash} | Score: ${item.score}`;
         scoreListEl?.appendChild(li);
       });
 
+      // Add flip effect to profile card
       const profileCard = document.querySelector('.profile-card');
       if (profileCard) {
         profileCard.addEventListener('click', () => {

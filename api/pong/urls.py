@@ -17,9 +17,11 @@ urlpatterns = [
     # User
     path('users/', UserListCreateView.as_view(), name='user-list-create'),
     path('users/<int:pk>/', UserRetrieveUpdateDestroyView.as_view(), name='user-detail'),
+    path('users/<int:pk>/avatar/', UserRetrieveUpdateDestroyView.as_view(), name='user-avatar'),
 
-    # ログイン中のユーザー情報を返すエンドポイント
+    # Current User
     path('users/me/', CurrentUserRetrieveView.as_view(), name='current-user-detail'),
+    path('users/me/avatar/', UserRetrieveUpdateDestroyView.as_view(), name='current-user-avatar'),
 
     # Login
     path('login/', LoginView.as_view(), name='login'),
