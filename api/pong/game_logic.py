@@ -3,6 +3,8 @@ from typing import Optional, Dict
 from dataclasses import dataclass
 from django.utils import timezone
 from .models import Game
+from channels.db import database_sync_to_async
+from django.contrib.auth import get_user_model
 
 @dataclass
 class Vector3D:
@@ -41,6 +43,31 @@ class MultiplayerPongGame:
         }
         self.is_active = True
         self.last_update = timezone.now()
+
+    async def _get_or_create_game(self) -> Game:
+        """
+        ゲームインスタンスを取得または作成する
+        """
+        User = get_user_model()
+        
+        # player1とplayer2のユーザーインスタンスを取得
+        player1 = await database_sync_to_async(User.objects.get)(username=self.player1_name)
+        player2 = await database_sync_to_async(User.objects.get)(username=self.player2_name)
+        
+        # ゲームを取得または作成
+        try:
+            game = await database_sync_to_async(Game.objects.get)(id=self.game_id)
+        except Game.DoesNotExist:
+            game = await database_sync_to_async(Game.objects.create)(
+                id=self.game_id,
+                player1=player1,
+                player2=player2,
+                score_player1=self.score[self.player1_name],
+                score_player2=self.score[self.player2_name],
+                is_ai_opponent=False
+            )
+        
+        return game
 
     def update(self, delta_time: float) -> Dict:
         if not self.is_active:
@@ -109,6 +136,29 @@ class MultiplayerPongGame:
         
         await game.save()
 
+    def get_state(self) -> dict:
+        """現在のゲーム状態を辞書形式で返す"""
+        return {
+            'ball': {
+                'position': {
+                    'x': self.ball.x,
+                    'y': self.ball.y,
+                    'z': self.ball.z
+                },
+                'velocity': {
+                    'x': self.ball_velocity.x,
+                    'y': self.ball_velocity.y,
+                    'z': self.ball_velocity.z
+                }
+            },
+            'players': {
+                self.player1_name: {'x': self.paddles[self.player1_name], 'z': self.FIELD_LENGTH/2},
+                self.player2_name: {'x': self.paddles[self.player2_name], 'z': -self.FIELD_LENGTH/2}
+            },
+            'score': self.score,
+            'is_active': self.is_active
+        }
+
     def get_winner(self) -> Optional[str]:
         """勝者のusernameを返す"""
         if self.score[self.player1_name] >= self.WINNING_SCORE:
@@ -130,6 +180,29 @@ class MultiplayerPongGame:
             if self._check_paddle_hit(paddle_x, paddle_z if username == self.player1_name else -paddle_z):
                 self.ball_velocity.z *= -1
                 self.ball_velocity.x += (self.ball.x - paddle_x) * 0.1
+
+    def _check_paddle_hit(self, paddle_x: float, paddle_z: float) -> bool:
+        """パドルとボールの衝突を判定"""
+        paddle_half_width = self.PADDLE_WIDTH / 2
+        ball_radius = self.BALL_RADIUS
+
+        # パドルのバウンディングボックス
+        paddle_bounds = {
+            'min_x': paddle_x - paddle_half_width,
+            'max_x': paddle_x + paddle_half_width,
+            'min_z': paddle_z - 10,  # パドルの厚さ
+            'max_z': paddle_z + 10
+        }
+
+        # ボールがパドルの範囲内にあるかチェック
+        is_hit = (
+            self.ball.x + ball_radius > paddle_bounds['min_x'] and
+            self.ball.x - ball_radius < paddle_bounds['max_x'] and
+            self.ball.z + ball_radius > paddle_bounds['min_z'] and
+            self.ball.z - ball_radius < paddle_bounds['max_z']
+        )
+
+        return is_hit
 
     def _check_scoring(self) -> None:
         if abs(self.ball.z) > self.FIELD_LENGTH / 2:

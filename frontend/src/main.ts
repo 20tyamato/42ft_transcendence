@@ -60,7 +60,6 @@ const routes: Record<string, Page> = {
 async function router(path: string) {
   if (!appDiv) return;
 
-  // パスとクエリを分離
   const [pathWithoutQuery] = path.split('?');
   console.log("Router handling:", {
       fullPath: path,
@@ -74,8 +73,10 @@ async function router(path: string) {
 
   document.title = 'ft_transcendence';
 
-  // クエリパラメータを含めた完全なURLを使用
-  window.history.pushState({}, '', path);
+  // replaceStateを使用してブラウザの履歴を適切に管理
+  if (!window.location.pathname.startsWith('/multiplay/game')) {
+      window.history.pushState({}, '', path);
+  }
 
   if (targetPage.mounted) {
       await targetPage.mounted({pg: targetPage});
