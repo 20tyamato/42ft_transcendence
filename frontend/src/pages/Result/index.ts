@@ -1,6 +1,6 @@
+import { API_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
-import { API_URL } from '@/config/config';
 
 interface GameScore {
   player1: number;
@@ -9,7 +9,6 @@ interface GameScore {
 
 async function sendGameResult(score: GameScore) {
   try {
-    // ローカルストレージからユーザー情報を取得
     const token = localStorage.getItem('token');
     const username = localStorage.getItem('username');
 
@@ -93,7 +92,7 @@ const ResultPage = new Page({
       }
 
       // 結果をバックエンドに送信
-      await sendGameResult(score, Number(difficulty));
+      await sendGameResult(score);
 
       // スコアをクリア
       localStorage.removeItem('finalScore');
