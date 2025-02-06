@@ -48,7 +48,7 @@ const WaitingPage = new Page({
               setTimeout(() => {
                   console.log('Navigating to:', gameUrl); // 追加
                   window.location.href = gameUrl;
-              }, 100000000);
+              }, 2000);
           }
       } catch (e) {
           console.error('Error parsing message:', e);

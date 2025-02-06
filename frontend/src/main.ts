@@ -60,29 +60,35 @@ const routes: Record<string, Page> = {
 async function router(path: string) {
   if (!appDiv) return;
 
-  const targetPage = routes[path] ?? NotFoundPage;
+  // パスとクエリを分離
+  const [pathWithoutQuery] = path.split('?');
+  console.log("Router handling:", {
+      fullPath: path,
+      pathWithoutQuery,
+      query: window.location.search
+  });
+
+  const targetPage = routes[pathWithoutQuery] ?? NotFoundPage;
   const content = await targetPage.render();
   appDiv.innerHTML = content;
 
-  // // ページタイトルを変更（Page.name があればそれを使う想定）
-  // document.title = targetPage.name || 'ft_transcendence';
   document.title = 'ft_transcendence';
 
-  // 履歴 API で pushState
+  // クエリパラメータを含めた完全なURLを使用
   window.history.pushState({}, '', path);
 
   if (targetPage.mounted) {
-    await targetPage.mounted({pg: targetPage});
+      await targetPage.mounted({pg: targetPage});
   }
 }
 
 // ブラウザの戻る/進むボタン対応
 window.onpopstate = () => {
-  const path = window.location.pathname;
+  const path = window.location.pathname + window.location.search;
   router(path);
 };
 
 // 初回アクセス時
 document.addEventListener('DOMContentLoaded', () => {
-  router(window.location.pathname);
+  router(window.location.pathname + window.location.search);
 });

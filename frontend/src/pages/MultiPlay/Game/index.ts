@@ -11,18 +11,28 @@ const GamePage = new Page({
         layout: CommonLayout,
     },
     mounted: async () => {
-        console.log("Game Page Mounting...");
-
+        console.log("Full URL:", window.location.href);
+        console.log("Search string:", window.location.search);
+        
         const urlParams = new URLSearchParams(window.location.search);
+        console.log("All URL parameters:", Object.fromEntries(urlParams));
+        
         const sessionId = urlParams.get('session');
-        const playername = localStorage.getItem('username');
+        const username = localStorage.getItem('username');
 
-        console.log("Params check:", { sessionId, playername });
+        console.log("Extracted values:", {
+            sessionId,
+            username,
+            rawSearch: window.location.search,
+            parsedParams: urlParams
+        });
 
-        if (!sessionId || !playername) {
-            console.log("Missing required params, will redirect in 2 seconds...");  // 追加
-            await new Promise(resolve => setTimeout(resolve, 2000));  // 2秒待機
-            console.log("Redirecting to /multiplay");  // 追加
+        if (!sessionId || !username) {
+            console.log("Check failed:", {
+                hasSessionId: !!sessionId,
+                hasUsername: !!username
+            });
+            await new Promise(resolve => setTimeout(resolve, 20000000));
             window.location.href = '/multiplay';
             return;
         }
@@ -31,7 +41,7 @@ const GamePage = new Page({
         if (!container) return;
 
         const renderer = new GameRenderer(container);
-        const socket = new WebSocket(`${WS_URL}/ws/game/${sessionId}/${playername}/`);
+        const socket = new WebSocket(`${WS_URL}/ws/game/${sessionId}/${username}/`);
 
         socket.onopen = () => {
             console.log('Game WebSocket connected');
@@ -52,7 +62,7 @@ const GamePage = new Page({
                 const movement = e.key === 'ArrowLeft' ? -10 : 10;
                 socket.send(JSON.stringify({
                     type: 'move',
-                    player_id: playername,
+                    player_id: username,
                     position: movement
                 }));
             }
@@ -61,8 +71,8 @@ const GamePage = new Page({
         function updateScoreBoard(score: any) {
             const scoreBoard = document.getElementById('score-board');
             if (scoreBoard) {
-                scoreBoard.textContent = `${score[playername]} - ${
-                    Object.entries(score).find(([id]) => id !== playername)?.[1] || 0
+                scoreBoard.textContent = `${score[username]} - ${
+                    Object.entries(score).find(([id]) => id !== username)?.[1] || 0
                 }`;
             }
         }
