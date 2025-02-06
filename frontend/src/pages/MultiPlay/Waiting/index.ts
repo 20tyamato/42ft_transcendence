@@ -18,51 +18,64 @@ const WaitingPage = new Page({
     const statusElement = document.getElementById('connection-status');
     const cancelButton = document.getElementById('cancel-button');
 
-  function initWebSocket() {
-    console.log('Initializing WebSocket...'); // デバッグ出力追加
-    socket = new WebSocket(`${WS_URL}/ws/matchmaking/`);
+    function initWebSocket() {
+      console.log('Initializing WebSocket...');
+      socket = new WebSocket(`${WS_URL}/ws/matchmaking/`);
 
-    socket.onopen = () => {
-        console.log('WebSocket connection established'); // デバッグ出力追加
-        // 接続時にマッチメイキング参加のメッセージを送信
+      socket.onopen = () => {
+        console.log('WebSocket connection established');
+        const username = localStorage.getItem('username');
+        if (!username) {
+          console.error('No username found');
+          window.location.href = '/multiplay';
+          return;
+        }
+
+        // 接続時にマッチメイキング参加のメッセージを送信（usernameを含める）
         socket.send(JSON.stringify({
-            type: 'join_matchmaking'
+          type: 'join_matchmaking',
+          username: username
         }));
-    };
+      };
 
-    socket.onmessage = (event) => {
-      try {
+      socket.onmessage = (event) => {
+        try {
           const data = JSON.parse(event.data);
           console.log('Received websocket message:', data);
-  
+
           if (data.type === 'waiting') {
-              if (statusElement) {
-                  statusElement.textContent = data.message;
-              }
+            if (statusElement) {
+              statusElement.textContent = data.message;
+            }
           } else if (data.type === 'match_found') {
-              console.log('Match found with session:', data.session_id); // 追加
-              const gameUrl = `/multiplay/game?session=${data.session_id}`;
-              console.log('Generated URL:', gameUrl); // 追加
-              
-              // 遷移前に少し待機して確実にログを確認できるようにする
-              setTimeout(() => {
-                  console.log('Navigating to:', gameUrl); // 追加
-                  window.location.href = gameUrl;
-              }, 2000);
+            console.log('Match found:', data);
+            const username = localStorage.getItem('username');
+            // player1とplayer2の情報も受け取るように
+            const gameUrl = `/multiplay/game?session=${data.session_id}&isPlayer1=${username === data.player1}`;
+            console.log('Navigating to:', gameUrl);
+            window.location.href = gameUrl;
           }
-      } catch (e) {
+        } catch (e) {
           console.error('Error parsing message:', e);
-      }
-    };
+        }
+      };
 
-    socket.onerror = (error) => {
-        console.error('WebSocket error:', error); // デバッグ出力追加
-    };
+      socket.onerror = (error) => {
+        console.error('WebSocket error:', error);
+        if (statusElement) {
+          statusElement.textContent = 'Connection error. Retrying...';
+        }
+      };
 
-    socket.onclose = () => {
-        console.log('WebSocket connection closed'); // デバッグ出力追加
-    };
-  }
+      socket.onclose = () => {
+        console.log('WebSocket connection closed');
+        if (statusElement) {
+          statusElement.textContent = 'Connection lost. Reconnecting...';
+        }
+        // 5秒後に再接続を試みる
+        setTimeout(initWebSocket, 5000);
+      };
+    }
 
     // キャンセルボタンのイベントリスナー
     if (cancelButton) {
@@ -70,7 +83,7 @@ const WaitingPage = new Page({
         if (socket) {
           socket.close();
         }
-        window.location.href = '/multiplay';  // マルチプレイのメインページに戻る
+        window.location.href = '/multiplay';
       });
     }
 
