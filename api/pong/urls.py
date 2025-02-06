@@ -5,6 +5,7 @@ from .views import (
     GameListCreateView, GameRetrieveUpdateDestroyView,
     TournamentListCreateView, TournamentRetrieveUpdateDestroyView,
     BlockchainScoreListCreateView, BlockchainScoreRetrieveUpdateDestroyView,
+    CurrentUserRetrieveView,
     LoginView
 )
 
@@ -16,6 +17,9 @@ urlpatterns = [
     # User
     path('users/', UserListCreateView.as_view(), name='user-list-create'),
     path('users/<int:pk>/', UserRetrieveUpdateDestroyView.as_view(), name='user-detail'),
+
+    # ログイン中のユーザー情報を返すエンドポイント
+    path('users/me/', CurrentUserRetrieveView.as_view(), name='current-user-detail'),
 
     # Login
     path('login/', LoginView.as_view(), name='login'),

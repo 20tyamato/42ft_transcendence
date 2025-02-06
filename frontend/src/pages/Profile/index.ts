@@ -12,15 +12,34 @@ interface IBlockchainScore {
   score: number;
 }
 
+const token = localStorage.getItem('token');
+const username = localStorage.getItem('username');
+
+const fetchCurrentUser = async () => {
+  const response = await fetch(`${API_URL}/api/users/me/`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Token ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch user data');
+  }
+  const userData = await response.json();
+  return userData;
+};
+
 const ProfilePage = new Page({
   name: 'Profile',
   config: {
     layout: backHomeLayout,
   },
   mounted: async () => {
-    const response = await fetch(`${API_URL}/api/users/`);
-    const data = await response.json();
-    const userData = data[0];
+    const response = await fetchCurrentUser();
+    const userData = await response.json();
+    console.log('userData:', userData);
 
     const avatarEl = document.getElementById('avatar') as HTMLImageElement;
     const usernameEl = document.getElementById('username') as HTMLElement;

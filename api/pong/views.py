@@ -29,6 +29,13 @@ class UserListCreateView(generics.ListCreateAPIView):
             'user': UserSerializer(user, context=self.get_serializer_context()).data,
             'message': 'User created successfully'
         }, status=status.HTTP_201_CREATED)
+    
+class CurrentUserRetrieveView(generics.RetrieveAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
 
 class LoginView(APIView):
     serializer_class = LoginSerializer
