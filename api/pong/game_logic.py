@@ -18,7 +18,7 @@ class MultiplayerPongGame:
     PADDLE_WIDTH = 200
     BALL_RADIUS = 30
     INITIAL_BALL_SPEED = 300
-    PADDLE_SPEED = 10
+    PADDLE_SPEED = 30
     WINNING_SCORE = 15
 
     def __init__(self, session_id: str, player1_name: str, player2_name: str):
