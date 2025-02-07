@@ -17,7 +17,7 @@ class MultiplayerPongGame:
     FIELD_LENGTH = 3000
     PADDLE_WIDTH = 200
     BALL_RADIUS = 30
-    INITIAL_BALL_SPEED = 100
+    INITIAL_BALL_SPEED = 300
     PADDLE_SPEED = 10
     WINNING_SCORE = 15
 
@@ -87,46 +87,6 @@ class MultiplayerPongGame:
         self._check_scoring()
 
         return self.get_state()
-
-    def get_state_for_player(self, username: str) -> Dict:
-        """プレイヤーの視点に応じたゲーム状態を返す"""
-        base_state = self.get_state()
-        
-        # player2の場合は座標を反転
-        if username == self.player2_name:
-            # ボールの位置とベロシティを反転
-            base_state['ball']['position']['z'] *= -1
-            base_state['ball']['velocity']['z'] *= -1
-            
-            # プレイヤー2の視点でのパドル配置
-            base_state['players'] = {
-                # 自分（プレイヤー2）のパドルを手前に
-                self.player2_name: {
-                    'x': self.paddles[self.player2_name],
-                    'z': -self.FIELD_LENGTH/2  # 手前
-                },
-                # 相手（プレイヤー1）のパドルを奥に
-                self.player1_name: {
-                    'x': self.paddles[self.player1_name],
-                    'z': self.FIELD_LENGTH/2   # 奥
-                }
-            }
-        else:
-            # プレイヤー1の視点でのパドル配置
-            base_state['players'] = {
-                # 自分（プレイヤー1）のパドルを手前に
-                self.player1_name: {
-                    'x': self.paddles[self.player1_name],
-                    'z': self.FIELD_LENGTH/2   # 手前
-                },
-                # 相手（プレイヤー2）のパドルを奥に
-                self.player2_name: {
-                    'x': self.paddles[self.player2_name],
-                    'z': -self.FIELD_LENGTH/2  # 奥
-                }
-            }
-
-        return base_state
 
     def move_player(self, username: str, new_x: float) -> None:
         """プレイヤーの移動を処理"""

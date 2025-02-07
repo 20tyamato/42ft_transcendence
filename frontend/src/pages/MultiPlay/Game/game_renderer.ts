@@ -147,17 +147,30 @@ export class GameRenderer {
 
     public updateState(newState: GameState) {
         this.currentState = newState;
-
+    
+        // プレイヤー2の場合、Z座標を反転させる必要はない
+        // （カメラが既に回転しているため）
+        const ballPosition = {
+            x: newState.ball.position.x,
+            y: newState.ball.position.y,
+            z: newState.ball.position.z
+        };
+    
         // ボールの位置更新
         this.ball.position.set(
-            newState.ball.position.x,
-            newState.ball.position.y,
-            newState.ball.position.z
+            ballPosition.x,
+            ballPosition.y,
+            ballPosition.z
         );
-
+    
         // パドルの位置更新
         Object.entries(newState.players).forEach(([username, position]) => {
-            this.createOrUpdatePaddle(username, position.x, position.z);
+            // サーバーから送られてきた座標をそのまま使用
+            this.createOrUpdatePaddle(
+                username,
+                position.x,
+                position.z
+            );
         });
     }
 

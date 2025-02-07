@@ -193,7 +193,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         # 各クライアントに適した視点のゲーム状態を送信
         game = self.games.get(self.session_id)
         if game:
-            state = game.get_state_for_player(self.username)  # player_idをusernameに変更
+            state = game.get_state()
             await self.send(text_data=json.dumps({
                 'type': 'state_update',
                 'state': state
