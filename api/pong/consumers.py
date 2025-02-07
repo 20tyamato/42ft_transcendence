@@ -6,6 +6,7 @@ from asgiref.sync import sync_to_async
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from channels.db import database_sync_to_async
+from .models import Game
 
 class TestConsumer(AsyncWebsocketConsumer):
     async def connect(self):
