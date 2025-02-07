@@ -88,9 +88,9 @@ export class GameRenderer {
 
     private setupCamera() {
         if (this.isPlayer1) {
-            this.camera.position.set(0, 800, this.FIELD_LENGTH / 2 + 1000);
+            this.camera.position.set(0, 200, this.FIELD_LENGTH / 2 + 1000);
         } else {
-            this.camera.position.set(0, 800, -(this.FIELD_LENGTH / 2 + 1000));
+            this.camera.position.set(0, 200, -(this.FIELD_LENGTH / 2 + 1000));
             this.camera.rotation.y = Math.PI;
         }
         this.camera.lookAt(0, 0, 0);

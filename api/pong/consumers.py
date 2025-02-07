@@ -1,12 +1,11 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
-from channels.db import database_sync_to_async
-from .models import GameSession
 from .game_logic import MultiplayerPongGame
 import asyncio
 from asgiref.sync import sync_to_async
 from django.utils import timezone
 from django.contrib.auth import get_user_model
+from channels.db import database_sync_to_async
 
 class TestConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -94,11 +93,12 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
 
 class GameConsumer(AsyncWebsocketConsumer):
     games = {}  # セッションIDをキーとしたゲームインスタンスの管理
-
+    
     async def connect(self):
         self.session_id = self.scope['url_route']['kwargs']['session_id']
         self.username = self.scope['url_route']['kwargs']['username']
         self.game_group_name = f'game_{self.session_id}'
+        self.game_task = None
 
         await self.channel_layer.group_add(
             self.game_group_name,
@@ -118,79 +118,64 @@ class GameConsumer(AsyncWebsocketConsumer):
                 )
 
         # ゲーム更新ループの開始
-        asyncio.create_task(self.game_loop())
-
-    @sync_to_async
-    def save_game_state(self, game):
-        """同期的なデータベース操作を非同期コンテキストで実行するためのメソッド"""
-        game_instance = game._get_or_create_game()
-        game_instance.score_player1 = game.score[game.player1_name]
-        game_instance.score_player2 = game.score[game.player2_name]
-        
-        if not game.is_active:
-            game_instance.end_time = timezone.now()
-            winner_name = game.get_winner()
-            if winner_name:
-                User = get_user_model()
-                winner = User.objects.get(username=winner_name)
-                game_instance.winner = winner
-        
-        game_instance.save()
-
-    async def game_loop(self):
-        while True:
-            if self.session_id in self.games:
-                game = self.games[self.session_id]
-                state = game.update(delta_time=0.016)  # 約60FPS
-                
-                # 全プレイヤーに状態を送信
-                await self.channel_layer.group_send(
-                    self.game_group_name,
-                    {
-                        'type': 'game_state',
-                        'state': state
-                    }
-                )
-                
-                # ゲーム状態の保存を非同期で実行
-                try:
-                    await self.save_game_state(game)
-                except Exception as e:
-                    print(f"Error saving game state: {e}")
-                
-                if not game.is_active:
-                    break
-                    
-            await asyncio.sleep(0.016)  # 約60FPS
+        self.game_task = asyncio.create_task(self.game_loop())
 
     async def disconnect(self, close_code):
+        # ゲームループのキャンセル
+        if self.game_task:
+            self.game_task.cancel()
+            try:
+                await self.game_task
+            except asyncio.CancelledError:
+                pass
+
         print(f"Player {self.username} disconnected from game {self.session_id}")
         
-        # グループから削除
         await self.channel_layer.group_discard(
             self.game_group_name,
             self.channel_name
         )
         
-        # 必要に応じてゲームを終了
         if self.session_id in self.games:
             game = self.games[self.session_id]
-            await game.save_game_state()
+            await self.save_game_state(game)
             del self.games[self.session_id]
+
+    @database_sync_to_async
+    def save_game_state(self, game):
+        """同期的なデータベース操作を非同期コンテキストで実行するためのメソッド"""
+        if not hasattr(game, 'db_game_id'):
+            return
+            
+        try:
+            game_instance = Game.objects.get(id=game.db_game_id)
+            game_instance.score_player1 = game.score[game.player1_name]
+            game_instance.score_player2 = game.score[game.player2_name]
+            
+            if not game.is_active:
+                game_instance.end_time = timezone.now()
+                winner_name = game.get_winner()
+                if winner_name:
+                    winner = User.objects.get(username=winner_name)
+                    game_instance.winner = winner
+            
+            game_instance.save()
+        except Game.DoesNotExist:
+            print(f"Game with id {game.db_game_id} not found")
+        except Exception as e:
+            print(f"Error saving game state: {e}")
 
     async def receive(self, text_data):
         data = json.loads(text_data)
         game = self.games.get(self.session_id)
         
         if game and data['type'] == 'move':
-            # プレイヤーの移動を処理（usernameベースに変更）
             game.move_player(
-                username=self.username,  # player_idをusernameに変更
+                username=self.username,
                 new_x=data['position']
             )
 
     async def game_state(self, event):
-        # 各クライアントに適した視点のゲーム状態を送信
         game = self.games.get(self.session_id)
         if game:
             state = game.get_state()
@@ -198,3 +183,32 @@ class GameConsumer(AsyncWebsocketConsumer):
                 'type': 'state_update',
                 'state': state
             }))
+
+    async def game_loop(self):
+        try:
+            while True:
+                if self.session_id in self.games:
+                    game = self.games[self.session_id]
+                    state = game.update(delta_time=0.016)
+                    
+                    await self.channel_layer.group_send(
+                        self.game_group_name,
+                        {
+                            'type': 'game_state',
+                            'state': state
+                        }
+                    )
+                    
+                    # ゲーム状態の保存（頻度を下げる）
+                    if game.score[game.player1_name] > 0 or game.score[game.player2_name] > 0:
+                        await self.save_game_state(game)
+                    
+                    if not game.is_active:
+                        break
+                        
+                await asyncio.sleep(0.016)  # 約60FPS
+        except asyncio.CancelledError:
+            # クリーンアップ処理
+            pass
+        except Exception as e:
+            print(f"Error in game loop: {e}")
