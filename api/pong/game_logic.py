@@ -32,12 +32,12 @@ class MultiplayerPongGame:
         self.player1_name = player1_name
         self.player2_name = player2_name
         self.db_game_id = None  # データベースのGame.idを保持するための変数
-        
+
         # ゲーム状態の初期化
         self.ball = Vector3D(0, 30, 0)
         self.ball_velocity = Vector3D(
-            self.INITIAL_BALL_SPEED, 
-            0, 
+            self.INITIAL_BALL_SPEED,
+            0,
             -self.INITIAL_BALL_SPEED
         )
         self.paddles = {
@@ -62,7 +62,7 @@ class MultiplayerPongGame:
         User = get_user_model()
         player1 = await database_sync_to_async(User.objects.get)(username=self.player1_name)
         player2 = await database_sync_to_async(User.objects.get)(username=self.player2_name)
-        
+
         game = await database_sync_to_async(Game.objects.create)(
             player1=player1,
             player2=player2,
@@ -92,7 +92,7 @@ class MultiplayerPongGame:
         """プレイヤーの移動を処理"""
         if username not in self.paddles:
             return
-            
+
         # 移動制限
         max_x = (self.FIELD_WIDTH - self.PADDLE_WIDTH) / 2
         self.paddles[username] = max(min(new_x, max_x), -max_x)
@@ -101,11 +101,11 @@ class MultiplayerPongGame:
         """ゲーム状態をDBに保存"""
         # Gameモデルのインスタンスを取得または作成
         game = await self._get_or_create_game()
-        
+
         # スコアを更新
         game.score_player1 = self.score[self.player1_name]
         game.score_player2 = self.score[self.player2_name]
-        
+
         if not self.is_active:
             game.end_time = timezone.now()
             winner_name = self.get_winner()
@@ -115,7 +115,7 @@ class MultiplayerPongGame:
                 User = get_user_model()
                 winner = await User.objects.get(username=winner_name)
                 game.winner = winner
-        
+
         await game.save()
 
     def get_state(self) -> dict:
@@ -157,7 +157,7 @@ class MultiplayerPongGame:
 
     def _handle_paddle_collision(self) -> None:
         paddle_z = self.FIELD_LENGTH / 2
-        
+
         for username, paddle_x in self.paddles.items():
             if self._check_paddle_hit(paddle_x, paddle_z if username == self.player1_name else -paddle_z):
                 self.ball_velocity.z *= -1
@@ -190,7 +190,7 @@ class MultiplayerPongGame:
         if abs(self.ball.z) > self.FIELD_LENGTH / 2:
             scoring_player = self.player1_name if self.ball.z < 0 else self.player2_name
             self.score[scoring_player] += 1
-            
+
             if max(self.score.values()) >= self.WINNING_SCORE:
                 self.is_active = False
             else:
@@ -199,7 +199,7 @@ class MultiplayerPongGame:
     def _reset_ball(self) -> None:
         self.ball = Vector3D(0, 30, 0)
         self.ball_velocity = Vector3D(
-            self.INITIAL_BALL_SPEED, 
-            0, 
+            self.INITIAL_BALL_SPEED,
+            0,
             -self.INITIAL_BALL_SPEED
         )
