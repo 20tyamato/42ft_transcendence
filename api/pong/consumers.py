@@ -4,6 +4,9 @@ from channels.db import database_sync_to_async
 from .models import GameSession
 from .game_logic import MultiplayerPongGame
 import asyncio
+from asgiref.sync import sync_to_async
+from django.utils import timezone
+from django.contrib.auth import get_user_model
 
 class TestConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -97,7 +100,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         self.username = self.scope['url_route']['kwargs']['username']
         self.game_group_name = f'game_{self.session_id}'
 
-        # ゲームグループに参加
         await self.channel_layer.group_add(
             self.game_group_name,
             self.channel_name
@@ -105,19 +107,35 @@ class GameConsumer(AsyncWebsocketConsumer):
         await self.accept()
         print(f"Player {self.username} connected to game {self.session_id}")
 
-        # ゲームインスタンスの作成または参加
         if self.session_id not in self.games:
             # セッションIDからプレイヤー名を抽出
             player_names = self.session_id.replace('game_', '').split('_')
             if len(player_names) == 2:
                 self.games[self.session_id] = MultiplayerPongGame(
-                    game_id=self.session_id,
+                    session_id=self.session_id,
                     player1_name=player_names[0],
                     player2_name=player_names[1]
                 )
 
         # ゲーム更新ループの開始
         asyncio.create_task(self.game_loop())
+
+    @sync_to_async
+    def save_game_state(self, game):
+        """同期的なデータベース操作を非同期コンテキストで実行するためのメソッド"""
+        game_instance = game._get_or_create_game()
+        game_instance.score_player1 = game.score[game.player1_name]
+        game_instance.score_player2 = game.score[game.player2_name]
+        
+        if not game.is_active:
+            game_instance.end_time = timezone.now()
+            winner_name = game.get_winner()
+            if winner_name:
+                User = get_user_model()
+                winner = User.objects.get(username=winner_name)
+                game_instance.winner = winner
+        
+        game_instance.save()
 
     async def game_loop(self):
         while True:
@@ -134,11 +152,13 @@ class GameConsumer(AsyncWebsocketConsumer):
                     }
                 )
                 
-                # ゲーム状態の保存
-                await game.save_game_state()
+                # ゲーム状態の保存を非同期で実行
+                try:
+                    await self.save_game_state(game)
+                except Exception as e:
+                    print(f"Error saving game state: {e}")
                 
                 if not game.is_active:
-                    # ゲーム終了処理
                     break
                     
             await asyncio.sleep(0.016)  # 約60FPS

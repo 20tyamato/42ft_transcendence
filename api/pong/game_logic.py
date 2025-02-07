@@ -2,10 +2,9 @@
 from typing import Optional, Dict
 from dataclasses import dataclass
 from django.utils import timezone
-from .models import Game
-from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
-from uuid import uuid4
+from channels.db import database_sync_to_async
+from .models import Game
 
 @dataclass
 class Vector3D:
@@ -22,12 +21,17 @@ class MultiplayerPongGame:
     PADDLE_SPEED = 10
     WINNING_SCORE = 15
 
-    # TODO: game_idのデータ型がおかしいのでうまくやりたい
-    def __init__(self, game_id: str, player1_name: str, player2_name: str):
-        # FIXME: 本来はgame_idを使うべき
-        self.game_id = 1234
+    def __init__(self, session_id: str, player1_name: str, player2_name: str):
+        """
+        Args:
+            session_id (str): WebSocketセッションの識別子
+            player1_name (str): プレイヤー1のユーザー名
+            player2_name (str): プレイヤー2のユーザー名
+        """
+        self.session_id = session_id  # game_idをsession_idに名称変更
         self.player1_name = player1_name
         self.player2_name = player2_name
+        self.db_game_id = None  # データベースのGame.idを保持するための変数
         
         # ゲーム状態の初期化
         self.ball = Vector3D(0, 30, 0)
@@ -48,44 +52,34 @@ class MultiplayerPongGame:
         self.last_update = timezone.now()
 
     async def _get_or_create_game(self) -> Game:
-        """
-        ゲームインスタンスを取得または作成する
-        """
+        """ゲームインスタンスを取得または作成する"""
+        if self.db_game_id is not None:
+            try:
+                return await database_sync_to_async(Game.objects.get)(id=self.db_game_id)
+            except Game.DoesNotExist:
+                pass
+
         User = get_user_model()
-        
-        # player1とplayer2のユーザーインスタンスを取得
         player1 = await database_sync_to_async(User.objects.get)(username=self.player1_name)
         player2 = await database_sync_to_async(User.objects.get)(username=self.player2_name)
         
-        # ゲームを取得または作成
-        try:
-            game = await database_sync_to_async(Game.objects.get)(id=self.game_id)
-        except Game.DoesNotExist:
-            game = await database_sync_to_async(Game.objects.create)(
-                id=self.game_id,
-                player1=player1,
-                player2=player2,
-                score_player1=self.score[self.player1_name],
-                score_player2=self.score[self.player2_name],
-                is_ai_opponent=False
-            )
-        
+        game = await database_sync_to_async(Game.objects.create)(
+            player1=player1,
+            player2=player2,
+            score_player1=self.score[self.player1_name],
+            score_player2=self.score[self.player2_name],
+            is_ai_opponent=False
+        )
+        self.db_game_id = game.id
         return game
 
     def update(self, delta_time: float) -> Dict:
         if not self.is_active:
             return self.get_state()
 
-        # より小さなデルタ時間を使用
-        adjusted_delta = min(delta_time, 0.016)  # 最大60FPS相当
-
         # ボールの移動
-        self.ball.x += self.ball_velocity.x * adjusted_delta
-        self.ball.z += self.ball_velocity.z * adjusted_delta
-
-        # デバッグ出力
-        print(f"Ball position: {self.ball.x}, {self.ball.z}")
-        print(f"Ball velocity: {self.ball_velocity.x}, {self.ball_velocity.z}")
+        self.ball.x += self.ball_velocity.x * delta_time
+        self.ball.z += self.ball_velocity.z * delta_time
 
         # 衝突判定と処理
         self._handle_wall_collision()
