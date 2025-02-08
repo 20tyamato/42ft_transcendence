@@ -11,7 +11,7 @@ type PageConfig = {
 type PageProps = {
   name: string;
   config?: Partial<PageConfig>;
-  mounted?: ({pg}: {pg: Page}) => Promise<void>;
+  mounted?: ({ pg }: { pg: Page }) => Promise<void>;
 };
 
 const getDefaultConfig = (name: string, config?: Partial<PageConfig>): PageConfig => {
@@ -26,7 +26,7 @@ const getDefaultConfig = (name: string, config?: Partial<PageConfig>): PageConfi
 export class Page {
   readonly config: PageConfig;
   readonly logger: Logger;
-  mounted?: ({pg}: {pg: Page}) => Promise<void>;
+  mounted?: ({ pg }: { pg: Page }) => Promise<void>;
 
   constructor(props: PageProps) {
     this.config = getDefaultConfig(props.name, props.config);

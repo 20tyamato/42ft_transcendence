@@ -32,10 +32,12 @@ const WaitingPage = new Page({
         }
 
         // 接続時にマッチメイキング参加のメッセージを送信（usernameを含める）
-        socket.send(JSON.stringify({
-          type: 'join_matchmaking',
-          username: username
-        }));
+        socket.send(
+          JSON.stringify({
+            type: 'join_matchmaking',
+            username: username,
+          })
+        );
       };
 
       socket.onmessage = (event) => {

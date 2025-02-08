@@ -19,21 +19,6 @@ import { Page } from './core/Page';
 
 const appDiv = document.getElementById('app');
 
-// // ダミーのログインチェック関数（本来はトークンチェックやセッションチェックを行う）
-// function isLoggedIn(): boolean {
-//   // 例: localStorage に "isLoggedIn" フラグがあればログイン扱いとする
-//   return localStorage.getItem('isLoggedIn') === 'true';
-// }
-
-// // シンプルなルートガードの例
-// function requireAuth(targetPage: Page, fallbackPath = '/login'): Page {
-//   if (isLoggedIn()) {
-//     return targetPage;
-//   } else {
-//     return routes[fallbackPath] || NotFoundPage;
-//   }
-// }
-
 // FIX: requireAuthを使うように変更する
 const routes: Record<string, Page> = {
   '/': HomePage,
@@ -49,7 +34,7 @@ const routes: Record<string, Page> = {
   '/multiplay': MultiPlayPage,
   '/multiplay/test': WebSocketTestPage,
   '/multiplay/waiting': WaitingPage,
-  '/multiplay/game': GamePage, 
+  '/multiplay/game': GamePage,
   // '/games/:id/results': GameResultsPage,
   '/result': ResultPage,
   '/tournament': TournamentPage,
@@ -59,27 +44,22 @@ const routes: Record<string, Page> = {
 
 async function router(path: string) {
   if (!appDiv) return;
-
   const [pathWithoutQuery] = path.split('?');
-  console.log("Router handling:", {
-      fullPath: path,
-      pathWithoutQuery,
-      query: window.location.search
+  console.log('Router handling:', {
+    fullPath: path,
+    pathWithoutQuery,
+    query: window.location.search,
   });
-
   const targetPage = routes[pathWithoutQuery] ?? NotFoundPage;
   const content = await targetPage.render();
   appDiv.innerHTML = content;
-
   document.title = 'ft_transcendence';
-
   // replaceStateを使用してブラウザの履歴を適切に管理
   if (!window.location.pathname.startsWith('/multiplay/game')) {
-      window.history.pushState({}, '', path);
+    window.history.pushState({}, '', path);
   }
-
   if (targetPage.mounted) {
-      await targetPage.mounted({pg: targetPage});
+    await targetPage.mounted({ pg: targetPage });
   }
 }
 
