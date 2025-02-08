@@ -58,8 +58,9 @@ elk-up:
 	docker compose -f docker-compose.elk.yml up -d
 
 # .env の HOST_IP を設定
-hostip:
-	scripts/setup-host-ip.sh
+# FIXME: it doesnt work on linux
+# hostip:
+# 	scripts/setup-host-ip.sh
 
 db_in:
 	docker exec -it $(DB_CONTAINER) bash
