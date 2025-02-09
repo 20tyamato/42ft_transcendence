@@ -62,9 +62,9 @@ elk-reload:
 
 
 # .env の HOST_IP を設定
-# FIXME: it doesnt work on linux
-# hostip:
-# 	scripts/setup-host-ip.sh
+# NOTE linuxで動くか要確認
+hostip:
+	scripts/setup-host-ip.sh
 
 db_in:
 	docker exec -it $(DB_CONTAINER) bash
