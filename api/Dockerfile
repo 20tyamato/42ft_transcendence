@@ -5,7 +5,7 @@ WORKDIR /code
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV PATH="/root/.local/bin:$PATH"
-
+ENV DJANGO_ENV=development
 
 
 # poetryのインストールと設定
@@ -24,7 +24,7 @@ COPY . .
 RUN poetry install --no-interaction --no-ansi --no-root
 
 # watchmanのインストール
-RUN pip install watchdog
+RUN pip install watchdog watchdog[watchmedo]
 
 # エントリーポイントスクリプトに実行権限を付与
 RUN chmod +x entrypoint.sh
