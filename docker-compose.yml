@@ -50,15 +50,14 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    environment:
-      LOGSTASH_URL: http://localhost:50000
-      VITE_LOGSTASH_URL: ${VITE_LOGSTASH_URL}
     ports:
       - '3001:3001'
       - '24678:24678'
     volumes:
       - ./frontend:/app
       - /app/node_modules
+    environment:
+      VITE_LOGSTASH_URL: ${VITE_LOGSTASH_URL}
     networks:
       - app-network
 
