@@ -4,7 +4,7 @@ from .game_logic import MultiplayerPongGame
 import asyncio
 from django.utils import timezone
 from channels.db import database_sync_to_async
-from .models import Game
+from .models import Game, User
 
 class TestConsumer(AsyncWebsocketConsumer):
     async def connect(self):

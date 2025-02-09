@@ -146,6 +146,8 @@ export class GameRenderer {
   }
 
   private interpolateState(deltaTime: number) {
+    // lint回避のためだけに定義
+    console.log(deltaTime);
     // 必要に応じて状態の補間処理を実装
     // 現在は単純な更新のみ
   }
