@@ -29,9 +29,6 @@ DEBUG = True
 HOST_IP = os.getenv('HOST_IP', 'localhost')
 ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', HOST_IP]
 
-RUNSERVER_PORT = '8001'  # 開発サーバー用ポート
-DAPHNE_PORT = '8000'    # daphne用ポート
-
 CORS_ALLOW_ALL_ORIGINS = False  # 本番環境では必ずFalseに
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = [
