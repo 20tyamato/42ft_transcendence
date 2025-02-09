@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import (
+    HealthCheckView,
     UserListCreateView, UserRetrieveUpdateDestroyView,
     GameListCreateView, GameRetrieveUpdateDestroyView,
     TournamentListCreateView, TournamentRetrieveUpdateDestroyView,
@@ -9,6 +10,9 @@ from .views import (
 
 app_name = "pong"
 urlpatterns = [
+    # HealthCheck
+    path('healthcheck/', HealthCheckView.as_view(), name='healthcheck'),
+
     # User
     path('users/', UserListCreateView.as_view(), name='user-list-create'),
     path('users/<int:pk>/', UserRetrieveUpdateDestroyView.as_view(), name='user-detail'),
