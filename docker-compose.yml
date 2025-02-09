@@ -70,6 +70,18 @@ services:
     networks:
       - app-network
 
+  pgweb:
+    image: sosedoff/pgweb
+    ports:
+      - '8081:8081'
+    environment:
+      DATABASE_URL: postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}?sslmode=disable
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app-network
+
 volumes:
   redis_data:
   postgres_data:
