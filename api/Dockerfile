@@ -2,8 +2,11 @@ FROM python:3.11.1
 
 WORKDIR /code
 
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 ENV PATH="/root/.local/bin:$PATH"
+
+
 
 # poetryのインストールと設定
 RUN curl -sSL https://install.python-poetry.org | python3 - && \
@@ -19,6 +22,9 @@ COPY . .
 
 # 依存関係のインストール
 RUN poetry install --no-interaction --no-ansi --no-root
+
+# watchmanのインストール
+RUN pip install watchdog
 
 # エントリーポイントスクリプトに実行権限を付与
 RUN chmod +x entrypoint.sh
