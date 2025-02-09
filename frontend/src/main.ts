@@ -12,25 +12,12 @@ import TournamentPage from '@/pages/Tournament/index';
 import ResultPage from './pages/Result/index';
 import SettingsUserPage from './pages/Settings/User/index';
 import WebSocketTestPage from '@/pages/MultiPlay/Test/index';
+import WaitingPage from '@/pages/MultiPlay/Waiting/index';
+import GamePage from '@/pages/MultiPlay/Game/index';
 
 import { Page } from './core/Page';
 
 const appDiv = document.getElementById('app');
-
-// // ダミーのログインチェック関数（本来はトークンチェックやセッションチェックを行う）
-// function isLoggedIn(): boolean {
-//   // 例: localStorage に "isLoggedIn" フラグがあればログイン扱いとする
-//   return localStorage.getItem('isLoggedIn') === 'true';
-// }
-
-// // シンプルなルートガードの例
-// function requireAuth(targetPage: Page, fallbackPath = '/login'): Page {
-//   if (isLoggedIn()) {
-//     return targetPage;
-//   } else {
-//     return routes[fallbackPath] || NotFoundPage;
-//   }
-// }
 
 // FIX: requireAuthを使うように変更する
 const routes: Record<string, Page> = {
@@ -46,6 +33,8 @@ const routes: Record<string, Page> = {
   '/singleplay/select': SinglePlaySelectPage,
   '/multiplay': MultiPlayPage,
   '/multiplay/test': WebSocketTestPage,
+  '/multiplay/waiting': WaitingPage,
+  '/multiplay/game': GamePage,
   // '/games/:id/results': GameResultsPage,
   '/result': ResultPage,
   '/tournament': TournamentPage,
@@ -55,18 +44,20 @@ const routes: Record<string, Page> = {
 
 async function router(path: string) {
   if (!appDiv) return;
-
-  const targetPage = routes[path] ?? NotFoundPage;
+  const [pathWithoutQuery] = path.split('?');
+  console.log('Router handling:', {
+    fullPath: path,
+    pathWithoutQuery,
+    query: window.location.search,
+  });
+  const targetPage = routes[pathWithoutQuery] ?? NotFoundPage;
   const content = await targetPage.render();
   appDiv.innerHTML = content;
-
-  // // ページタイトルを変更（Page.name があればそれを使う想定）
-  // document.title = targetPage.name || 'ft_transcendence';
   document.title = 'ft_transcendence';
-
-  // 履歴 API で pushState
-  window.history.pushState({}, '', path);
-
+  // replaceStateを使用してブラウザの履歴を適切に管理
+  if (!window.location.pathname.startsWith('/multiplay/game')) {
+    window.history.pushState({}, '', path);
+  }
   if (targetPage.mounted) {
     await targetPage.mounted({ pg: targetPage });
   }
@@ -74,11 +65,11 @@ async function router(path: string) {
 
 // ブラウザの戻る/進むボタン対応
 window.onpopstate = () => {
-  const path = window.location.pathname;
+  const path = window.location.pathname + window.location.search;
   router(path);
 };
 
 // 初回アクセス時
 document.addEventListener('DOMContentLoaded', () => {
-  router(window.location.pathname);
+  router(window.location.pathname + window.location.search);
 });

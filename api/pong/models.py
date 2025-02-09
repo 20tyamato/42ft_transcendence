@@ -70,3 +70,19 @@ class BlockchainScore(models.Model):
 
     def __str__(self):
         return f"Blockchain Score for Tournament {self.tournament.name}"
+
+class GameSession(models.Model):
+    STATUS_CHOICES = [
+        ('WAITING', 'Waiting'),
+        ('IN_PROGRESS', 'In Progress'),
+        ('COMPLETED', 'Completed'),
+    ]
+
+    player1 = models.ForeignKey(User, related_name='sessions_as_player1', on_delete=models.CASCADE)
+    player2 = models.ForeignKey(User, related_name='sessions_as_player2', on_delete=models.CASCADE, null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='WAITING')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Game Session {self.id}: {self.player1.display_name} vs {self.player2.display_name if self.player2 else 'Waiting'}"
