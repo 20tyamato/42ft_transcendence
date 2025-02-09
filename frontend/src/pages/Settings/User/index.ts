@@ -54,7 +54,7 @@ const SettingsUserPage = new Page({
 
     // ユーザー情報の更新
     const updateUserInfo = async (email: string) => {
-      return fetch('http://127.0.0.1:8000/api/users/info/', {
+      return fetch(`${API_URL}/api/users/info/`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
@@ -63,7 +63,7 @@ const SettingsUserPage = new Page({
 
     // アバター更新
     const updateAvatar = async (avatar: string) => {
-      return fetch('http://127.0.0.1:8000/api/users/avatar/', {
+      return fetch(`${API_URL}/api/users/avatar/`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ avatar }),
