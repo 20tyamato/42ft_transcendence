@@ -14,8 +14,6 @@ services:
       redis:
         condition: service_started
     environment:
-      PYTHONDONTWRITEBYTECODE: 1
-      DJANGO_DEBUG: 'true'
       DEBUG: ${DEBUG}
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
