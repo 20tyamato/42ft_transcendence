@@ -73,7 +73,7 @@ services:
   pgweb:
     image: sosedoff/pgweb
     ports:
-      - '8081:8081'
+      - '5433:8081'
     environment:
       DATABASE_URL: postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}?sslmode=disable
     depends_on:
