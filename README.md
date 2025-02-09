@@ -151,10 +151,15 @@ make up
   - `http://127.0.0.1:8000/api/games/`
 
 - [ELK](http://127.0.0.1:5601/)
+
   - `http://127.0.0.1:5601/`
     - Kibana トップページ
   - username: `elastic`
   - password: `password`
+
+- [DB 可視化ツール（pgweb）](http://127.0.0.1:5433/)
+  - `http://127.0.0.1:5433/`
+    - pgweb トップページ
 
 ## HTTPS
 
