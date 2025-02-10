@@ -1,7 +1,7 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .models import User, Game, Tournament, BlockchainScore
-from .serializers import UserSerializer, LoginSerializer, GameSerializer, TournamentSerializer, BlockchainScoreSerializer
+from .serializers import UserSerializer, LoginSerializer, GameSerializer, TournamentSerializer, BlockchainScoreSerializer, UserAvatarSerializer
 from .permissions import IsOwnerOfUserProfile, IsPlayerOrReadOnly, IsOwnerOfTournament, IsOwnerOfBlockchainScore
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -58,6 +58,13 @@ class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
 
     permission_classes = [IsAuthenticated, IsOwnerOfUserProfile]
+
+class UserAvatarUpdateView(generics.RetrieveUpdateAPIView):
+    serializer_class = UserAvatarSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
 
 class UpdateUserImageView(APIView):
     permission_classes = [IsAuthenticated]
