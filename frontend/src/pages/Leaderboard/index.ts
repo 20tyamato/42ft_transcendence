@@ -35,8 +35,6 @@ const LeaderboardPage = new Page({
 
     try {
       const users: IRankingUser[] = await fetchUsers();
-      console.log(users);
-
       const sortedUsers = users.sort((a, b) => b.level - a.level).slice(0, 10);
 
       sortedUsers.forEach((user, index) => {
