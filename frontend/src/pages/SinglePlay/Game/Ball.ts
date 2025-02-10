@@ -1,68 +1,50 @@
 import * as THREE from 'three';
+import Experience from './Experience';
 
 export default class Ball {
+  private experience: Experience;
+  private scene: THREE.Scene;
+  private camera: THREE.PerspectiveCamera;
   private ball: THREE.Mesh;
-  private velocity: THREE.Vector3;
+  private ballGeometry: THREE.SphereGeometry;
+  private ballMaterial: THREE.MeshBasicMaterial;
+  private mainLight: THREE.HemisphereLight;
+  private BALL_RADIUS: number;
+  private FIELD_LENGTH: number;
 
-  constructor(scene: THREE.Scene, radius: number, position: THREE.Vector3, aiLevel: number) {
-    const speed = aiLevel * 5; // AIレベルに応じた速度を設定
-    this.velocity = new THREE.Vector3(speed, 0, -speed); // 初期速度をAIレベルに依存
+  constructor(canvas: HTMLCanvasElement) {
+    this.experience = new Experience(canvas);
+    this.scene = this.experience.scene;
+    this.camera = this.experience.camera;
 
-    const ballGeometry = new THREE.SphereGeometry(radius, 32, 32);
-    const ballMaterial = new THREE.MeshNormalMaterial({
+    this.BALL_RADIUS = this.experience.BALL_RADIUS;
+    this.FIELD_LENGTH = this.experience.FIELD_LENGTH;
+
+    this.ballGeometry = new THREE.SphereGeometry(this.BALL_RADIUS, 12, 12);
+    this.ballMaterial = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
       wireframe: true,
-      // transparent: true,
-      opacity: 0.8,
+      transparent: true,
+      opacity: 0.1,
     });
-    this.ball = new THREE.Mesh(ballGeometry, ballMaterial);
-    this.ball.position.copy(position);
-    scene.add(this.ball);
+    this.mainLight = new THREE.HemisphereLight(0xffffff, 0x003300);
+
+    this.ball = this.createBall();
   }
 
-  update(paddle1: THREE.Mesh, paddle2: THREE.Mesh) {
-    // ボールの移動
-    this.ball.position.add(this.velocity);
-
-    // 壁での反射
-    if (this.ball.position.x < -600 || this.ball.position.x > 600) {
-      this.velocity.x *= -1;
-    }
-
-    // パドルでの反射
-    if (this.checkPaddleCollision(paddle1) || this.checkPaddleCollision(paddle2)) {
-      this.velocity.z *= -1;
-      this.velocity.x += Math.random() * 2 - 1; // ランダム性を追加
-    }
+  private createBall(): THREE.Mesh {
+    const ball = new THREE.Mesh(this.ballGeometry, this.ballMaterial);
+    this.scene.add(ball);
+    this.scene.add(this.mainLight);
+    return ball;
   }
 
-  private checkPaddleCollision(paddle: THREE.Mesh): boolean {
-    const paddleBounds = {
-      xMin: paddle.position.x - 100,
-      xMax: paddle.position.x + 100,
-      zMin: paddle.position.z - 10,
-      zMax: paddle.position.z + 10,
-    };
-
-    return (
-      this.ball.position.x > paddleBounds.xMin &&
-      this.ball.position.x < paddleBounds.xMax &&
-      this.ball.position.z > paddleBounds.zMin &&
-      this.ball.position.z < paddleBounds.zMax
-    );
+  public getPosition(): THREE.Vector3 {
+    return this.ball.position;
   }
 
-  // ボールの位置を取得
-  getPosition(): THREE.Vector3 {
-    return this.ball.position.clone();
-  }
-
-  // ボールの位置を設定
-  setPosition(position: THREE.Vector3) {
-    this.ball.position.copy(position);
-  }
-
-  // ボールの速度をリセット
-  resetVelocity() {
-    this.velocity.set(5, 0, -10);
+  public update(): void {
+    this.ball.rotation.y += 0.007;
+    this.ball.rotation.x += 0.004;
   }
 }
