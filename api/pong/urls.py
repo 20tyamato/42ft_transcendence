@@ -1,11 +1,11 @@
 from django.urls import path
 from .views import (
     HealthCheckView,
-    UserListCreateView, UserRetrieveUpdateDestroyView,
+    UserListCreateView, UserRetrieveUpdateView,
     GameListCreateView, GameRetrieveUpdateDestroyView,
     TournamentListCreateView, TournamentRetrieveUpdateDestroyView,
     BlockchainScoreListCreateView, BlockchainScoreRetrieveUpdateDestroyView,
-    UserAvatarUpdateView, CurrentUserRetrieveUpdateView, 
+    UserAvatarUpdateView, 
     LoginView
 )
 
@@ -16,11 +16,12 @@ urlpatterns = [
 
     # User
     path('users/', UserListCreateView.as_view(), name='user-list-create'),
-    path('users/<int:pk>/', UserRetrieveUpdateDestroyView.as_view(), name='user-detail'),
-    path('users/<int:pk>/avatar/', UserRetrieveUpdateDestroyView.as_view(), name='user-avatar'),
+
+    path('users/<int:pk>/', UserRetrieveUpdateView.as_view(), name='user-detail'),
+    path('users/<int:pk>/avatar/', UserAvatarUpdateView.as_view(), name='user-avatar'),
 
     # Current User
-    path('users/me/', CurrentUserRetrieveUpdateView.as_view(), name='current-user-detail'),
+    path('users/me/', UserRetrieveUpdateView.as_view(), name='current-user-detail'),
     path('users/me/avatar/', UserAvatarUpdateView.as_view(), name='current-user-avatar'),
 
     # Login

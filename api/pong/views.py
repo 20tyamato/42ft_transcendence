@@ -46,13 +46,7 @@ class LoginView(APIView):
             'username': user.username
         })
 
-class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-    permission_classes = [IsAuthenticated, IsOwnerOfUserProfile]
-
-class CurrentUserRetrieveUpdateView(generics.RetrieveUpdateAPIView):
+class UserRetrieveUpdateView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
