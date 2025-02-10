@@ -3,7 +3,7 @@ from django.db import models
 
 class User(AbstractUser):
     display_name = models.CharField(max_length=50, unique=True)
-    avatar = models.ImageField(upload_to="avatars/", null=True, blank=True, default="avatars/default_avatar.png")
+    avatar = models.ImageField(upload_to="avatars/", null=True, blank=True, default="default_avatar.png")
     level = models.IntegerField(default=1)
     experience = models.IntegerField(default=0)
 
