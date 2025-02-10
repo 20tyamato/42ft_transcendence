@@ -189,3 +189,6 @@ REST_FRAMEWORK = {
 
 # ユーザー認証
 AUTH_USER_MODEL = 'pong.User'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

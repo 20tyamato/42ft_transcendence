@@ -8,28 +8,40 @@ interface IUserData {
   avatar?: string;
 }
 
+const token = localStorage.getItem('token');
+const username = localStorage.getItem('username');
+
+const fetchCurrentUser = async () => {
+  const response = await fetch(`${API_URL}/api/users/me/`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Token ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch user data');
+  }
+  return response.json();
+};
+
 const SettingsUserPage = new Page({
   name: 'Settings/User',
   config: {
     layout: backHomeLayout,
   },
   mounted: async () => {
+    // HTML Elements
     const avatarPreviewEl = document.getElementById('avatarPreview') as HTMLImageElement;
     const avatarUploadInput = document.getElementById('avatarUpload') as HTMLInputElement;
     const emailInput = document.getElementById('emailInput') as HTMLInputElement;
     const form = document.getElementById('userSettingsForm') as HTMLFormElement;
 
-    const fetchUserData = async (): Promise<IUserData> => {
-      const infoResponse = await fetch(`${API_URL}/api/users/info/`);
-      const avatarResponse = await fetch(`${API_URL}/api/users/avatar/`);
+    // User Data from Backend
+    const userData = await fetchCurrentUser();
+    console.log('userData:', userData);
 
-      return {
-        ...(await infoResponse.json()),
-        avatar: (await avatarResponse.json()).avatar,
-      };
-    };
-
-    const userData = await fetchUserData();
     if (userData.avatar && avatarPreviewEl) {
       avatarPreviewEl.src = userData.avatar;
     }
@@ -50,7 +62,7 @@ const SettingsUserPage = new Page({
     });
 
     const updateUserInfo = async (email: string) => {
-      return fetch(`${API_URL}/api/users/`, {
+      return fetch(`${API_URL}/api/users/me`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
@@ -58,7 +70,7 @@ const SettingsUserPage = new Page({
     };
 
     const updateAvatar = async (avatar: string) => {
-      return fetch(`${API_URL}/api/users/avatar/`, {
+      return fetch(`${API_URL}/api/users/me/avatar/`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ avatar }),
@@ -94,7 +106,7 @@ const SettingsUserPage = new Page({
 
         window.location.href = '/profile';
       } catch (error) {
-        alert('更新に失敗しました。');
+        alert('Failed to update user information.');
       }
     });
   },
