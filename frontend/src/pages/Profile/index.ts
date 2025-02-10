@@ -32,13 +32,8 @@ const ProfilePage = new Page({
 
       // User Data from Backend
       const userData = await fetchCurrentUser();
-      console.log('userData:', userData);
 
-      const avatarUrl = userData.avatar;
-      const username = userData.username;
-      const email = userData.email;
-      const experience = userData.experience;
-      const level = userData.level;
+      const { avatar, username, email, experience, level } = userData
       const tournamentHistory: ITournamentHistory[] = [
         { date: '2025-01-01', result: 'Won' },
         { date: '2025-01-05', result: 'Lost' },
@@ -50,7 +45,7 @@ const ProfilePage = new Page({
 
       // Update Front HTML elements
       if (avatarEl) {
-        avatarEl.src = avatarUrl || '/src/layouts/common/avatar.png';
+        avatarEl.src = avatar || '/src/layouts/common/avatar.png';
       }
       if (usernameEl) usernameEl.textContent = username;
       if (emailEl) emailEl.textContent = email;

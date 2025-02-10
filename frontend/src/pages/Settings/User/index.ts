@@ -1,7 +1,6 @@
-import { API_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import backHomeLayout from '@/layouts/backhome/index';
-import { fetchCurrentUser } from '@/models/User/repository';
+import { fetchCurrentUser, updateAvatar, updateUserInfo } from '@/models/User/repository';
 
 interface IUserData {
   display_name: string;
@@ -25,7 +24,6 @@ const SettingsUserPage = new Page({
 
     try {
       const userData: IUserData = await fetchCurrentUser();
-      console.log('userData:', userData);
 
       if (userData.avatar && avatarPreviewEl) {
         avatarPreviewEl.src = userData.avatar;
@@ -49,31 +47,6 @@ const SettingsUserPage = new Page({
       };
       reader.readAsDataURL(file);
     });
-
-    // ユーザー情報（メール）の更新
-    const updateUserInfo = async (email: string) => {
-      return fetch(`${API_URL}/api/users/me/`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Token ${token}`,
-        },
-        body: JSON.stringify({ email }),
-      });
-    };
-
-    // アバター画像の更新（FormData を利用）
-    const updateAvatar = async (file: File) => {
-      const formData = new FormData();
-      formData.append('avatar', file);
-      return fetch(`${API_URL}/api/users/me/avatar/`, {
-        method: 'PATCH',
-        headers: {
-          Authorization: `Token ${token}`,
-        },
-        body: formData,
-      });
-    };
 
     // フォーム送信時の処理
     form.addEventListener('submit', async (event) => {
