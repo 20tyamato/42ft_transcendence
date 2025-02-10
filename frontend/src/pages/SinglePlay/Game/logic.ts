@@ -43,7 +43,7 @@ export function initGame() {
   paddle2.position.z = -FIELD_LENGTH / 2;
   scene.add(paddle2);
 
-  ball = new Ball(scene, 30, new THREE.Vector3(0, 30, 0), aiLevel);
+  ball = new Ball();
 
   setupLighting();
   setupPauseMenu();
