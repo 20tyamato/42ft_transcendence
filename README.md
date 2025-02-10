@@ -122,6 +122,8 @@ make up
     - ユーザー登録ページ
   - `http://localhost:3001/login`
     - ログインページ
+    - username: `sample`
+    - password: `password`
   - `http://localhost:3001/profile`
     - ユーザープロフィールページ
   - `http://localhost:3001/modes`
@@ -147,6 +149,8 @@ make up
 - [Backend](http://127.0.0.1:8001/)
 
   - `http://127.0.0.1:8001/admin/`
+    - username: `sample`
+    - password: `password`
   - `http://127.0.0.1:8001/api/users/`
   - `http://127.0.0.1:8001/api/games/`
 
