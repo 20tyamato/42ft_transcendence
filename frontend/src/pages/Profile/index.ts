@@ -68,7 +68,7 @@ const ProfilePage = new Page({
 
       // Update Front HTML elements
       if (avatarEl) {
-        avatarEl.src = avatarUrl || '/src/layouts/common/avator.png';
+        avatarEl.src = avatarUrl || '/src/layouts/common/avatar.png';
       }
       if (usernameEl) usernameEl.textContent = username;
       if (emailEl) emailEl.textContent = email;

@@ -5,7 +5,7 @@ from .views import (
     GameListCreateView, GameRetrieveUpdateDestroyView,
     TournamentListCreateView, TournamentRetrieveUpdateDestroyView,
     BlockchainScoreListCreateView, BlockchainScoreRetrieveUpdateDestroyView,
-    CurrentUserRetrieveView, UserAvatarUpdateView,
+    UserAvatarUpdateView, CurrentUserRetrieveUpdateView, 
     LoginView
 )
 
@@ -20,7 +20,7 @@ urlpatterns = [
     path('users/<int:pk>/avatar/', UserRetrieveUpdateDestroyView.as_view(), name='user-avatar'),
 
     # Current User
-    path('users/me/', CurrentUserRetrieveView.as_view(), name='current-user-detail'),
+    path('users/me/', CurrentUserRetrieveUpdateView.as_view(), name='current-user-detail'),
     path('users/me/avatar/', UserAvatarUpdateView.as_view(), name='current-user-avatar'),
 
     # Login
