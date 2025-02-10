@@ -37,7 +37,7 @@ loaddata:
 	docker exec -it $(API_CONTAINER) python manage.py loaddata initial_data
 
 ruff:
-	docker exec -it $(API_CONTAINER) poetry run ruff check . --fix
+	docker exec -it $(API_CONTAINER) poetry run ruff check . --fix && docker exec -it $(API_CONTAINER) poetry run ruff format .
 
 super_ruff:
 	docker exec -it $(API_CONTAINER) poetry run ruff check .

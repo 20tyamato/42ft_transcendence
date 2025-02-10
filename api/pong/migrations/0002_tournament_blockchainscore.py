@@ -5,31 +5,62 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('pong', '0001_initial'),
+        ("pong", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Tournament',
+            name="Tournament",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('blockchain_score_hash', models.CharField(blank=True, max_length=256, null=True)),
-                ('games', models.ManyToManyField(related_name='tournaments', to='pong.game')),
-                ('participants', models.ManyToManyField(related_name='tournaments', to='pong.user')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "blockchain_score_hash",
+                    models.CharField(blank=True, max_length=256, null=True),
+                ),
+                (
+                    "games",
+                    models.ManyToManyField(related_name="tournaments", to="pong.game"),
+                ),
+                (
+                    "participants",
+                    models.ManyToManyField(related_name="tournaments", to="pong.user"),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='BlockchainScore',
+            name="BlockchainScore",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('transaction_id', models.CharField(max_length=256)),
-                ('blockchain_address', models.CharField(max_length=256)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('tournament', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='blockchain_score', to='pong.tournament')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("transaction_id", models.CharField(max_length=256)),
+                ("blockchain_address", models.CharField(max_length=256)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "tournament",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="blockchain_score",
+                        to="pong.tournament",
+                    ),
+                ),
             ],
         ),
     ]

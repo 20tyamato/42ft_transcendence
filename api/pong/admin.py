@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import User, Game, Tournament, BlockchainScore
 
+
 class CustomUserAdmin(UserAdmin):
     list_display = (
         "id",
@@ -19,19 +20,26 @@ class CustomUserAdmin(UserAdmin):
     list_filter = ("is_staff", "is_superuser", "is_active", "level")
 
     fieldsets = (
-        (None, {
-            "fields": ("username", "password")
-        }),
-        ("Personal info", {
-            "fields": ("display_name", "avatar", "email", "level", "experience")
-        }),
-        ("Permissions", {
-            "fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions")
-        }),
-        ("Important dates", {
-            "fields": ("last_login", "date_joined")
-        }),
+        (None, {"fields": ("username", "password")}),
+        (
+            "Personal info",
+            {"fields": ("display_name", "avatar", "email", "level", "experience")},
+        ),
+        (
+            "Permissions",
+            {
+                "fields": (
+                    "is_active",
+                    "is_staff",
+                    "is_superuser",
+                    "groups",
+                    "user_permissions",
+                )
+            },
+        ),
+        ("Important dates", {"fields": ("last_login", "date_joined")}),
     )
+
 
 @admin.register(Game)
 class GameAdmin(admin.ModelAdmin):
@@ -49,6 +57,7 @@ class GameAdmin(admin.ModelAdmin):
     list_filter = ("is_ai_opponent", "winner", "start_time")
     search_fields = ("player1__display_name", "player2__display_name")
 
+
 @admin.register(Tournament)
 class TournamentAdmin(admin.ModelAdmin):
     list_display = (
@@ -60,6 +69,7 @@ class TournamentAdmin(admin.ModelAdmin):
     search_fields = ("name",)
     filter_horizontal = ("participants", "games")
 
+
 @admin.register(BlockchainScore)
 class BlockchainScoreAdmin(admin.ModelAdmin):
     list_display = (
@@ -70,5 +80,6 @@ class BlockchainScoreAdmin(admin.ModelAdmin):
         "created_at",
     )
     search_fields = ("transaction_id", "blockchain_address")
+
 
 admin.site.register(User, CustomUserAdmin)

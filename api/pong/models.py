@@ -1,9 +1,12 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+
 class User(AbstractUser):
     display_name = models.CharField(max_length=50, unique=True)
-    avatar = models.ImageField(upload_to="avatars/", null=True, blank=True, default="default_avatar.png")
+    avatar = models.ImageField(
+        upload_to="avatars/", null=True, blank=True, default="default_avatar.png"
+    )
     level = models.IntegerField(default=1)
     experience = models.IntegerField(default=0)
 
@@ -37,12 +40,23 @@ class User(AbstractUser):
     def total_games_lost(self):
         return self.total_games_played - self.total_games_won
 
+
 class Game(models.Model):
-    player1 = models.ForeignKey(User, related_name="games_as_player1", on_delete=models.CASCADE)
-    player2 = models.ForeignKey(User, related_name="games_as_player2", null=True, blank=True, on_delete=models.CASCADE)
+    player1 = models.ForeignKey(
+        User, related_name="games_as_player1", on_delete=models.CASCADE
+    )
+    player2 = models.ForeignKey(
+        User,
+        related_name="games_as_player2",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+    )
     start_time = models.DateTimeField(auto_now_add=True)
     end_time = models.DateTimeField(null=True, blank=True)
-    winner = models.ForeignKey(User, related_name="games_won", null=True, blank=True, on_delete=models.SET_NULL)
+    winner = models.ForeignKey(
+        User, related_name="games_won", null=True, blank=True, on_delete=models.SET_NULL
+    )
     score_player1 = models.IntegerField(default=0)
     score_player2 = models.IntegerField(default=0)
     is_ai_opponent = models.BooleanField(default=False)
@@ -51,6 +65,7 @@ class Game(models.Model):
     def __str__(self):
         player2_name = "AI" if self.is_ai_opponent else self.player2.display_name
         return f"Game {self.id} - {self.player1.display_name} vs {player2_name}"
+
 
 class Tournament(models.Model):
     name = models.CharField(max_length=100)
@@ -62,8 +77,11 @@ class Tournament(models.Model):
     def __str__(self):
         return self.name
 
+
 class BlockchainScore(models.Model):
-    tournament = models.OneToOneField(Tournament, on_delete=models.CASCADE, related_name="blockchain_score")
+    tournament = models.OneToOneField(
+        Tournament, on_delete=models.CASCADE, related_name="blockchain_score"
+    )
     transaction_id = models.CharField(max_length=256)
     blockchain_address = models.CharField(max_length=256)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -71,16 +89,21 @@ class BlockchainScore(models.Model):
     def __str__(self):
         return f"Blockchain Score for Tournament {self.tournament.name}"
 
+
 class GameSession(models.Model):
     STATUS_CHOICES = [
-        ('WAITING', 'Waiting'),
-        ('IN_PROGRESS', 'In Progress'),
-        ('COMPLETED', 'Completed'),
+        ("WAITING", "Waiting"),
+        ("IN_PROGRESS", "In Progress"),
+        ("COMPLETED", "Completed"),
     ]
 
-    player1 = models.ForeignKey(User, related_name='sessions_as_player1', on_delete=models.CASCADE)
-    player2 = models.ForeignKey(User, related_name='sessions_as_player2', on_delete=models.CASCADE, null=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='WAITING')
+    player1 = models.ForeignKey(
+        User, related_name="sessions_as_player1", on_delete=models.CASCADE
+    )
+    player2 = models.ForeignKey(
+        User, related_name="sessions_as_player2", on_delete=models.CASCADE, null=True
+    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="WAITING")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
