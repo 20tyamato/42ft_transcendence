@@ -2,7 +2,7 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .models import User, Game, Tournament, BlockchainScore
 from .serializers import UserSerializer, LoginSerializer, GameSerializer, TournamentSerializer, BlockchainScoreSerializer, UserAvatarSerializer
-from .permissions import IsOwnerOfUserProfile, IsPlayerOrReadOnly, IsOwnerOfTournament, IsOwnerOfBlockchainScore
+from .permissions import IsPlayerOrReadOnly, IsOwnerOfTournament, IsOwnerOfBlockchainScore
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status

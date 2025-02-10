@@ -5,7 +5,7 @@ from .views import (
     GameListCreateView, GameRetrieveUpdateDestroyView,
     TournamentListCreateView, TournamentRetrieveUpdateDestroyView,
     BlockchainScoreListCreateView, BlockchainScoreRetrieveUpdateDestroyView,
-    UserAvatarUpdateView, 
+    UserAvatarUpdateView,
     LoginView
 )
 

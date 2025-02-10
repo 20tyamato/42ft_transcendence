@@ -13,7 +13,6 @@ interface IBlockchainScore {
 }
 
 const token = localStorage.getItem('token');
-const username = localStorage.getItem('username');
 
 const fetchCurrentUser = async () => {
   const response = await fetch(`${API_URL}/api/users/me/`, {
