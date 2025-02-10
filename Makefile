@@ -43,7 +43,7 @@ super_ruff:
 	docker exec -it $(API_CONTAINER) poetry run ruff check .
 
 lint:
-	cd frontend && npm run lint
+	cd frontend && npm run lint:fix
 
 api_in:
 	docker exec -it $(API_CONTAINER) bash

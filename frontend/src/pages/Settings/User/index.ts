@@ -1,6 +1,6 @@
 import { Page } from '@/core/Page';
 import backHomeLayout from '@/layouts/backhome/index';
-import { API_URL } from '@/config/config';
+import { fetchCurrentUser, updateAvatar, updateUserInfo } from '@/models/User/repository';
 
 interface IUserData {
   display_name: string;
@@ -14,32 +14,26 @@ const SettingsUserPage = new Page({
     layout: backHomeLayout,
   },
   mounted: async () => {
+    // HTML Elements
     const avatarPreviewEl = document.getElementById('avatarPreview') as HTMLImageElement;
     const avatarUploadInput = document.getElementById('avatarUpload') as HTMLInputElement;
     const emailInput = document.getElementById('emailInput') as HTMLInputElement;
     const form = document.getElementById('userSettingsForm') as HTMLFormElement;
 
-    // ユーザー情報の取得
-    const fetchUserData = async (): Promise<IUserData> => {
-      const infoResponse = await fetch(`${API_URL}/api/users/info/`);
-      const avatarResponse = await fetch(`${API_URL}/api/users/avatar/`);
+    try {
+      const userData: IUserData = await fetchCurrentUser();
 
-      return {
-        ...(await infoResponse.json()),
-        avatar: (await avatarResponse.json()).avatar,
-      };
-    };
-
-    // 初期データのセット
-    const userData = await fetchUserData();
-    if (userData.avatar && avatarPreviewEl) {
-      avatarPreviewEl.src = userData.avatar;
-    }
-    if (userData.email && emailInput) {
-      emailInput.value = userData.email;
+      if (userData.avatar && avatarPreviewEl) {
+        avatarPreviewEl.src = userData.avatar;
+      }
+      if (userData.email && emailInput) {
+        emailInput.value = userData.email;
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
     }
 
-    // アバタープレビュー
+    // アップロードした画像をプレビュー表示
     avatarUploadInput.addEventListener('change', () => {
       if (!avatarUploadInput.files || avatarUploadInput.files.length === 0) return;
       const file = avatarUploadInput.files[0];
@@ -52,41 +46,7 @@ const SettingsUserPage = new Page({
       reader.readAsDataURL(file);
     });
 
-    // ユーザー情報の更新
-    const updateUserInfo = async (email: string) => {
-      return fetch(`${API_URL}/api/users/info/`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-    };
-
-    // アバター更新
-    const updateAvatar = async (avatar: string) => {
-      return fetch(`${API_URL}/api/users/avatar/`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ avatar }),
-      });
-    };
-
-    // ファイルをBase64に変換
-    const fileToBase64 = async (file: File): Promise<string> => {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          if (e.target?.result) {
-            resolve(e.target.result as string);
-          } else {
-            reject('FileReader error');
-          }
-        };
-        reader.onerror = () => reject('FileReader error');
-        reader.readAsDataURL(file);
-      });
-    };
-
-    // フォーム送信
+    // フォーム送信時の処理
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
 
@@ -95,13 +55,14 @@ const SettingsUserPage = new Page({
         await updateUserInfo(newEmail);
 
         if (avatarUploadInput.files?.length) {
-          const base64Avatar = await fileToBase64(avatarUploadInput.files[0]);
-          await updateAvatar(base64Avatar);
+          const file = avatarUploadInput.files[0];
+          await updateAvatar(file);
         }
 
         window.location.href = '/profile';
       } catch (error) {
-        alert('更新に失敗しました。');
+        console.error('Error updating user info:', error);
+        alert('Failed to update user information.');
       }
     });
   },

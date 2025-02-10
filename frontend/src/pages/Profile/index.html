@@ -14,18 +14,19 @@
     <div class="userprofile-container">
       <div class="profile-card">
         <div class="card-inner">
+          <!-- ▼ Front ▼ -->
           <div class="card-front">
             <div class="profile-section">
               <img
                 id="avatar"
-                src="/src/layouts/common/avator.png"
+                src="/src/layouts/common/avatar.png"
                 alt="Avatar"
                 style="cursor: pointer"
               />
               <div class="info">
                 <h1 id="mycard">
                   My Card
-                  <a href="/settings/user"> <i class="far fa-edit"></i></a>
+                  <i id="edit-btn" class="far fa-edit"></i>
                 </h1>
                 <p>Username: <span id="username"></span></p>
                 <p>Email: <span id="email"></span></p>
@@ -33,34 +34,25 @@
                 <p>Level: <span id="level"></span></p>
               </div>
             </div>
-            <p class="tap-hint">タップまたはクリックで裏面を表示</p>
+            <p class="tap-hint">Tap or click to show the back</p>
           </div>
 
-          <!-- ▼ バック面 ▼ -->
+          <!-- ▼ Back ▼ -->
           <div class="card-back">
             <div class="history-section">
               <h2>Tournament History</h2>
-              <ul id="tournamentHistory">
-                <!-- トーナメント履歴が動的に追加される -->
-              </ul>
+              <ul id="tournamentHistory"></ul>
             </div>
             <div class="score-section">
               <h2>Blockchain Scores</h2>
-              <ul id="scoreList">
-                <!-- ブロックチェーン保存のスコアを表示する -->
-              </ul>
+              <ul id="scoreList"></ul>
             </div>
-            <p class="tap-hint">タップまたはクリックで表面に戻る</p>
+            <p class="tap-hint">Tap or click to show the front</p>
           </div>
         </div>
       </div>
-
-      <!-- ▼ アバターアップロード用のinput。ボタンはコメントアウトにしています。 ▼ -->
       <input type="file" id="avatarUpload" accept="image/*" style="display: none" />
-      <!-- <button id="avatarUploadBtn" class="btn btn-secondary">アバターをアップロード</button> -->
     </div>
-
-    <!-- TypeScriptのエントリポイント。ビルド後はindex.jsになる想定 -->
     <script type="module" src="./index.ts"></script>
   </body>
 </html>

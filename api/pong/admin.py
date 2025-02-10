@@ -9,6 +9,7 @@ class CustomUserAdmin(UserAdmin):
         "display_name",
         "email",
         "level",
+        "avatar",
         "experience",
         "is_staff",
         "is_superuser",

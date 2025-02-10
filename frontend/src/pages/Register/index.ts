@@ -1,6 +1,6 @@
+import { API_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
-import { API_URL } from '@/config/config';
 
 const RegisterPage = new Page({
   name: 'Register',

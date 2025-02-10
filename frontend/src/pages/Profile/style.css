@@ -7,7 +7,6 @@
   padding: 0;
 }
 
-/* 背景を黒色、文字を白色に設定 */
 body {
   font-family: 'Poppins', sans-serif;
   background: #000;
@@ -18,7 +17,6 @@ body {
   align-items: center;
 }
 
-/* コンテナの中央寄せ */
 .userprofile-container {
   display: flex;
   flex-direction: column;
@@ -29,16 +27,14 @@ body {
 /* ------------------------------
    フリップカード用スタイル
 ------------------------------ */
-/* カードサイズを大きめに調整 (PC向け) */
 .profile-card {
   width: 500px;
   height: 300px;
-  perspective: 1000px; /* 3Dの奥行き */
+  perspective: 1000px;
   position: relative;
   cursor: pointer;
 }
 
-/* カードに厚みを感じさせるスタイル */
 .card-inner {
   position: relative;
   width: 100%;
@@ -47,12 +43,10 @@ body {
   transition: transform 0.8s ease;
 }
 
-/* カードが反転するときの処理 */
 .card-inner.is-flipped {
   transform: rotateY(180deg);
 }
 
-/* フロントとバック共通のスタイル */
 .card-front,
 .card-back {
   position: absolute;
@@ -62,25 +56,21 @@ body {
   border-radius: 16px;
   padding: 20px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-  /* カードの背景色をダーク系のグラデーションに変更（クールな印象） */
   background: linear-gradient(135deg, #1f1f1f, #3a3a3a);
   color: #fff;
   transform: translateZ(10px);
+  border: 3px solid #000;
 }
 
-/* フロント面の追加装飾があればこちらで */
 .card-front {
-  /* 例: ちょっと濃淡を変える */
   background: linear-gradient(135deg, #2a2a2a, #444);
 }
 
-/* バック面の追加装飾があればこちらで */
 .card-back {
   background: linear-gradient(135deg, #202020, #4e4e4e);
   transform: rotateY(180deg) translateZ(10px);
 }
 
-/* カード全体のホバー効果 */
 .profile-card:hover {
   transform: translateY(-6px);
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
@@ -128,7 +118,7 @@ body {
   transform: translateX(65px);
 }
 
-.profile-section .info a {
+.profile-section #edit-btn {
   color: #fff;
   font-size: 1.5rem;
 }
@@ -157,7 +147,7 @@ body {
 .score-section h2 {
   font-size: 1.2rem;
   margin-bottom: 0.5rem;
-  color: #ff4c60; /* タイトルを目立たせる例 */
+  color: #ff4c60;
 }
 
 /* ------------------------------
@@ -170,16 +160,35 @@ body {
   border: none;
 }
 
-/* 主要ボタン */
 .btn-primary {
   background-color: #ff4c60;
   color: #fff;
 }
 
-/* セカンダリボタン */
 .btn-secondary {
   background-color: #555;
   color: #fff;
 }
 
-/* PC向けのみのため、メディアクエリは削除 or 非対応 */
+/* ------------------------------
+    レベルスタイル
+------------------------------ */
+.level-1-5 {
+  background: linear-gradient(135deg, #2a2a2a, #444);
+}
+
+.level-6-10 {
+  background: linear-gradient(135deg, #0044cc, #0066ff);
+}
+
+.level-11-15 {
+  background: linear-gradient(135deg, #008000, #00cc00);
+}
+
+.level-16-20 {
+  background: linear-gradient(135deg, #cc8800, #ffaa00);
+}
+
+.level-21-25 {
+  background: linear-gradient(135deg, #800080, #cc00cc);
+}

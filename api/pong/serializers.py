@@ -43,6 +43,20 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+class UserAvatarSerializer(serializers.ModelSerializer):
+    avatar_url = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = User
+        fields = ['avatar', 'avatar_url']
+
+    def get_avatar_url(self, obj):
+        request = self.context.get('request')
+        if obj.avatar and hasattr(obj.avatar, 'url'):
+            # 絶対パスにする場合は request.build_absolute_uri を利用
+            return request.build_absolute_uri(obj.avatar.url) if request else obj.avatar.url
+        return None
+
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(required=True)
     password = serializers.CharField(required=True, write_only=True)
