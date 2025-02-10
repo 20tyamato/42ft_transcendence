@@ -68,7 +68,7 @@ const SettingsUserPage = new Page({
     // ユーザー情報（メール）の更新
     const updateUserInfo = async (email: string) => {
       return fetch(`${API_URL}/api/users/me/`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Token ${token}`,
@@ -82,7 +82,7 @@ const SettingsUserPage = new Page({
       const formData = new FormData();
       formData.append('avatar', file);
       return fetch(`${API_URL}/api/users/me/avatar/`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           Authorization: `Token ${token}`,
         },

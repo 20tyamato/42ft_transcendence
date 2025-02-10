@@ -52,7 +52,7 @@ const ProfilePage = new Page({
       const userData = await fetchCurrentUser();
       console.log('userData:', userData);
 
-      const avatarUrl = userData.avatarUrl;
+      const avatarUrl = userData.avatar;
       const username = userData.username;
       const email = userData.email;
       const experience = userData.experience;
