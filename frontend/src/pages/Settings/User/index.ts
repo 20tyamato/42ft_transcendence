@@ -8,8 +8,6 @@ interface IUserData {
   avatar?: string;
 }
 
-const token = localStorage.getItem('token');
-
 const SettingsUserPage = new Page({
   name: 'Settings/User',
   config: {

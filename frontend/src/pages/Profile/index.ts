@@ -33,7 +33,7 @@ const ProfilePage = new Page({
       // User Data from Backend
       const userData = await fetchCurrentUser();
 
-      const { avatar, username, email, experience, level } = userData
+      const { avatar, username, email, experience, level } = userData;
       const tournamentHistory: ITournamentHistory[] = [
         { date: '2025-01-01', result: 'Won' },
         { date: '2025-01-05', result: 'Lost' },
@@ -126,7 +126,6 @@ const ProfilePage = new Page({
           cardInner?.classList.toggle('is-flipped');
         });
       }
-
     } catch (error) {
       console.error('Error in mounted():', error);
     }
