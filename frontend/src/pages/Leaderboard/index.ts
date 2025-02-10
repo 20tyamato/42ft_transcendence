@@ -56,7 +56,7 @@ const LeaderboardPage = new Page({
     }
 
     backBtn?.addEventListener('click', () => {
-      window.location.href = '/';
+      window.location.href = '/modes';
     });
   },
 });

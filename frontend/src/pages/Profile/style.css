@@ -118,7 +118,7 @@ body {
   transform: translateX(65px);
 }
 
-.profile-section .info a {
+.profile-section #edit-btn {
   color: #fff;
   font-size: 1.5rem;
 }

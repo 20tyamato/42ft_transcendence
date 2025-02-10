@@ -112,6 +112,12 @@ const ProfilePage = new Page({
         scoreListEl?.appendChild(li);
       });
 
+      const editBtn = document.getElementById('edit-btn');
+      editBtn?.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent card flip
+        window.location.href = '/settings/user';
+      });
+
       // Add flip effect to profile card
       const profileCard = document.querySelector('.profile-card');
       if (profileCard) {
@@ -120,6 +126,7 @@ const ProfilePage = new Page({
           cardInner?.classList.toggle('is-flipped');
         });
       }
+
     } catch (error) {
       console.error('Error in mounted():', error);
     }
