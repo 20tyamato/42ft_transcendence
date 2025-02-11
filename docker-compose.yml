@@ -14,7 +14,7 @@ services:
       redis:
         condition: service_started
     environment:
-      LOGSTASH_URL: ${LOGSTASH_URL}
+      LOGSTASH_URL: ${BACKEND_LOGSTASH_URL}
       DEBUG: ${DEBUG}
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
@@ -58,7 +58,7 @@ services:
       - ./frontend:/app
       - /app/node_modules
     environment:
-      VITE_LOGSTASH_URL: ${LOGSTASH_URL}
+      VITE_LOGSTASH_URL: ${FRONTEND_LOGSTASH_URL}
     networks:
       - app-network
 
