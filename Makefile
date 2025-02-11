@@ -4,7 +4,7 @@ API_CONTAINER := $(PROJECT_NAME)-api-1
 FRONTEND_CONTAINER := $(PROJECT_NAME)-frontend-1
 DB_CONTAINER := $(PROJECT_NAME)-db-1
 
-all: clean setup upbuild
+all: up
 
 setup: elk-setup
 
@@ -17,13 +17,40 @@ upbuild: elk-upbuild
 down: elk-down 
 	docker compose down
 
-re: down up
+re: clean setup upbuild
 
 clean: down
+	docker volume rm $(shell docker volume ls -q | grep "^ft_transcendence_")
 	docker system prune -f --volumes
 
 fbuild:
 	docker compose build --no-cache && docker compose up
+
+# ------------------------------
+# ELK
+# ------------------------------
+
+elk-setup:
+	docker network create ft_transcendence_app-network || true
+	docker compose -f docker-compose.elk.yml up setup
+
+elk-up:
+	docker compose -f docker-compose.elk.yml up -d
+
+elk-upbuild:
+	docker compose -f docker-compose.elk.yml up --build -d
+
+elk-down:
+	docker compose -f docker-compose.elk.yml down
+
+elk-reload:
+	docker compose -f docker-compose.elk.yml down
+	docker compose -f docker-compose.elk.yml build --no-cache
+	docker compose -f docker-compose.elk.yml up -d
+
+# ------------------------------
+# Utilities
+# ------------------------------
 
 test:
 	docker exec -it $(API_CONTAINER) python manage.py test pong
@@ -59,27 +86,6 @@ api_in:
 front_in:
 	docker exec -it $(FRONTEND_CONTAINER) bash
 
-elk-setup:
-	docker network create ft_transcendence_app-network || true
-	docker compose -f docker-compose.elk.yml up setup
-
-elk-up:
-	docker compose -f docker-compose.elk.yml up -d
-
-elk-upbuild:
-	docker compose -f docker-compose.elk.yml up --build -d
-
-elk-down:
-	docker compose -f docker-compose.elk.yml down
-
-elk-reload:
-	docker compose -f docker-compose.elk.yml down
-	docker compose -f docker-compose.elk.yml build --no-cache
-	docker compose -f docker-compose.elk.yml up -d
-
-
-# .env の HOST_IP を設定
-# NOTE linuxで動くか要確認
 hostip:
 	scripts/setup-host-ip.sh
 
