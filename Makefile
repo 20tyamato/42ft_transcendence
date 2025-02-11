@@ -15,7 +15,7 @@ down:
 re: down up
 
 clean: down
-	docker system prune -af --volumes
+	docker system prune -f --volumes
 
 fbuild:
 	docker compose build --no-cache && docker compose up
