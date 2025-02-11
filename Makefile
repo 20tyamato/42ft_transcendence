@@ -4,19 +4,22 @@ API_CONTAINER := $(PROJECT_NAME)-api-1
 FRONTEND_CONTAINER := $(PROJECT_NAME)-frontend-1
 DB_CONTAINER := $(PROJECT_NAME)-db-1
 
-all: up
+all: clean setup upbuild
 
 setup: elk-setup
 
 up: elk-up
 	docker compose up
 
+upbuild: elk-upbuild
+	docker compose up --build
+
 down: elk-down 
 	docker compose down
 
 re: down up
 
-clean: elk-down down
+clean: down
 	docker system prune -f --volumes
 
 fbuild:
@@ -62,6 +65,9 @@ elk-setup:
 
 elk-up:
 	docker compose -f docker-compose.elk.yml up -d
+
+elk-upbuild:
+	docker compose -f docker-compose.elk.yml up --build -d
 
 elk-down:
 	docker compose -f docker-compose.elk.yml down
