@@ -11,5 +11,6 @@
   "email": "Email",
   "displayName": "Nom d'affichage",
   "loginPrompt": "Vous avez déjà un compte ? <a href=\"./login\">Connectez-vous</a>",
-  "registerSuccess": "Inscription réussie !"
+  "registerSuccess": "Inscription réussie !",
+  "start": "Démarrer"
 }

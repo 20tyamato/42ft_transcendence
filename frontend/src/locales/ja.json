@@ -11,5 +11,6 @@
   "email": "メールアドレス",
   "displayName": "表示名",
   "loginPrompt": "すでにアカウントをお持ちですか？ <a href=\"./login\">ログイン</a>",
-  "registerSuccess": "登録が完了しました！"
+  "registerSuccess": "登録が完了しました！",
+  "start": "開始"
 }

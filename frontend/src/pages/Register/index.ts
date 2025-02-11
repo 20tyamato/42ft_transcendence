@@ -20,8 +20,8 @@ const updateRegisterContent = () => {
   const passwordLabel = document.querySelector('label[for="password"]');
   if (passwordLabel) passwordLabel.textContent = i18next.t('password');
 
-  const loginBtn = document.querySelector('button.btn.btn-primary');
-  if (loginBtn) loginBtn.textContent = i18next.t('register');
+  const registerBtn = document.querySelector('button.btn.btn-primary');
+  if (registerBtn) registerBtn.textContent = i18next.t('register');
 
   const centeredText = document.querySelector('.centered-text');
   if (centeredText) centeredText.innerHTML = i18next.t('loginPrompt');
