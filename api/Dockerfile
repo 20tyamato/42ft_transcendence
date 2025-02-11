@@ -21,10 +21,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY . .
 
 # 依存関係のインストール
-RUN poetry install --no-interaction --no-ansi --no-root
-
-# watchmanのインストール
-RUN pip install watchdog watchdog[watchmedo]
+RUN --mount=type=cache,target=/root/.cache/pip \
+    poetry install --no-interaction --no-ansi --no-root
 
 # エントリーポイントスクリプトに実行権限を付与
 RUN chmod +x entrypoint.sh
