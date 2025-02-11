@@ -1,9 +1,11 @@
-from channels.generic.websocket import AsyncWebsocketConsumer
-import json
-from .game_logic import MultiplayerPongGame
 import asyncio
-from django.utils import timezone
+import json
+
 from channels.db import database_sync_to_async
+from channels.generic.websocket import AsyncWebsocketConsumer
+from django.utils import timezone
+
+from .game_logic import MultiplayerPongGame
 from .models import Game, User
 
 

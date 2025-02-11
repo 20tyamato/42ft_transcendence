@@ -1,5 +1,6 @@
 from django.test import TestCase
-from pong.models import User, Game, Tournament, BlockchainScore
+
+from pong.models import BlockchainScore, Game, Tournament, User
 
 
 class UserModelTests(TestCase):

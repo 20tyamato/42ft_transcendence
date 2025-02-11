@@ -1,7 +1,8 @@
-from pong.models import User, Game
-from rest_framework.test import APITestCase
 from django.utils import timezone
-from pong.serializers import UserSerializer, GameSerializer
+from rest_framework.test import APITestCase
+
+from pong.models import Game, User
+from pong.serializers import GameSerializer, UserSerializer
 
 
 class UserSerializerTests(APITestCase):
