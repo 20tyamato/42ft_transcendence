@@ -24,6 +24,9 @@ COPY . .
 RUN --mount=type=cache,target=/root/.cache/pip \
     poetry install --no-interaction --no-ansi --no-root
 
+# watchmanのインストール
+RUN pip install watchdog watchdog[watchmedo]
+
 # エントリーポイントスクリプトに実行権限を付与
 RUN chmod +x entrypoint.sh
 
