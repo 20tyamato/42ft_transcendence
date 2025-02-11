@@ -4,6 +4,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core.logger import logger
+
 from .models import BlockchainScore, Game, Tournament, User
 from .permissions import (
     IsOwnerOfBlockchainScore,
@@ -24,6 +26,7 @@ class HealthCheckView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
+        logger.info("HealthCheck endpoint accessed")
         return Response({"status": "ok"})
 
 
@@ -184,4 +187,5 @@ class BlockchainScoreListCreateView(generics.ListCreateAPIView):
 class BlockchainScoreRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = BlockchainScore.objects.all()
     serializer_class = BlockchainScoreSerializer
+    permission_classes = [IsAuthenticated, IsOwnerOfBlockchainScore]
     permission_classes = [IsAuthenticated, IsOwnerOfBlockchainScore]

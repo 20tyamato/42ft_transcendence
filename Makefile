@@ -61,7 +61,9 @@ elk-up:
 	docker compose -f docker-compose.elk.yml up -d
 
 elk-reload:
-	docker compose -f docker-compose.elk.yml restart
+	docker compose -f docker-compose.elk.yml down
+	docker compose -f docker-compose.elk.yml build --no-cache
+	docker compose -f docker-compose.elk.yml up -d
 
 
 # .env の HOST_IP を設定
