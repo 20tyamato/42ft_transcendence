@@ -6,7 +6,7 @@ DB_CONTAINER := $(PROJECT_NAME)-db-1
 
 all: up
 
-up: elk-up
+up: elk-up hostip
 	docker compose up
 
 down:
