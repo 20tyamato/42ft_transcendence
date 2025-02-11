@@ -6,5 +6,10 @@
   "loginSuccess": "Connexion réussie !",
   "errorMessage": "Erreur : {{error}}",
   "invalidCredentials": "Identifiants invalides",
-  "unexpectedError": "Une erreur inattendue s'est produite."
+  "unexpectedError": "Une erreur inattendue s'est produite.",
+  "register": "Inscription",
+  "email": "Email",
+  "displayName": "Nom d'affichage",
+  "loginPrompt": "Vous avez déjà un compte ? <a href=\"./login\">Connectez-vous</a>",
+  "registerSuccess": "Inscription réussie !"
 }

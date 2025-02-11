@@ -1,6 +1,41 @@
 import { API_URL } from '@/config/config';
+import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
+
+const updateRegisterContent = () => {
+  const loginTitle = document.querySelector('.register-container h2');
+  if (loginTitle) loginTitle.textContent = i18next.t('register');
+
+  const usernameLabel = document.querySelector('label[for="username"]');
+  if (usernameLabel) usernameLabel.textContent = i18next.t('username');
+
+  const emailLabel = document.querySelector('label[for="email"]');
+  if (emailLabel) emailLabel.textContent = i18next.t('email');
+
+  const displayNameLabel = document.querySelector('label[for="display_name"]');
+  if (displayNameLabel) displayNameLabel.textContent = i18next.t('displayName');
+
+  const passwordLabel = document.querySelector('label[for="password"]');
+  if (passwordLabel) passwordLabel.textContent = i18next.t('password');
+
+  const loginBtn = document.querySelector('button.btn.btn-primary');
+  if (loginBtn) loginBtn.textContent = i18next.t('register');
+
+  const centeredText = document.querySelector('.centered-text');
+  if (centeredText) centeredText.innerHTML = i18next.t('loginPrompt');
+};
+
+const updateActiveLanguageButton = () => {
+  const currentLang = i18next.language;
+  const btnEn = document.getElementById('lang-en');
+  const btnJa = document.getElementById('lang-ja');
+  const btnFr = document.getElementById('lang-fr');
+
+  if (btnEn) btnEn.classList.toggle('active', currentLang === 'en');
+  if (btnJa) btnJa.classList.toggle('active', currentLang === 'ja');
+  if (btnFr) btnFr.classList.toggle('active', currentLang === 'fr');
+};
 
 const RegisterPage = new Page({
   name: 'Register',
@@ -8,6 +43,24 @@ const RegisterPage = new Page({
     layout: CommonLayout,
   },
   mounted: async () => {
+    updateRegisterContent();
+    updateActiveLanguageButton();
+
+    const btnEn = document.getElementById('lang-en');
+    const btnJa = document.getElementById('lang-ja');
+    const btnFr = document.getElementById('lang-fr');
+    btnEn?.addEventListener('click', () => {
+      i18next.changeLanguage('en', updateRegisterContent);
+      updateActiveLanguageButton();
+    });
+    btnJa?.addEventListener('click', () => {
+      i18next.changeLanguage('ja', updateRegisterContent);
+      updateActiveLanguageButton();
+    });
+    btnFr?.addEventListener('click', () => {
+      i18next.changeLanguage('fr', updateRegisterContent);
+      updateActiveLanguageButton();
+    });
     const form = document.getElementById('register-form') as HTMLFormElement | null;
     const responseMessage = document.getElementById('response-message');
 

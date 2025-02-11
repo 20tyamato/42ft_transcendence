@@ -6,5 +6,10 @@
   "loginSuccess": "ログイン成功！",
   "errorMessage": "エラー: {{error}}",
   "invalidCredentials": "無効な認証情報",
-  "unexpectedError": "予期しないエラーが発生しました。"
+  "unexpectedError": "予期しないエラーが発生しました。",
+  "register": "登録",
+  "email": "メールアドレス",
+  "displayName": "表示名",
+  "loginPrompt": "すでにアカウントをお持ちですか？ <a href=\"./login\">ログイン</a>",
+  "registerSuccess": "登録が完了しました！"
 }

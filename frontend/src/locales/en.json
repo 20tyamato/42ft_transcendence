@@ -6,5 +6,10 @@
   "loginSuccess": "Login successful!",
   "errorMessage": "Error: {{error}}",
   "invalidCredentials": "Invalid credentials",
-  "unexpectedError": "An unexpected error occurred."
+  "unexpectedError": "An unexpected error occurred.",
+  "register": "Register",
+  "email": "Email",
+  "displayName": "Display Name",
+  "loginPrompt": "Already have an account? <a href=\"./login\">Login</a>",
+  "registerSuccess": "Registration successful!"
 }
