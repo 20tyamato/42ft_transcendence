@@ -74,6 +74,7 @@ services:
       LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
     networks:
       - elk
+      - app-network
     depends_on:
       - elasticsearch
     restart: unless-stopped
@@ -98,6 +99,9 @@ services:
 networks:
   elk:
     driver: bridge
+  app-network:
+    name: ft_transcendence_app-network
+    external: true
 
 volumes:
   elasticsearch:

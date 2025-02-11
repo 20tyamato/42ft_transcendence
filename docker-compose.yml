@@ -89,4 +89,5 @@ volumes:
 
 networks:
   app-network:
+    name: ft_transcendence_app-network
     driver: bridge

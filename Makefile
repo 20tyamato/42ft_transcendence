@@ -55,6 +55,7 @@ front_in:
 	docker exec -it $(FRONTEND_CONTAINER) bash
 
 elk-setup:
+	docker network create ft_transcendence_app-network || true
 	docker compose -f docker-compose.elk.yml up setup
 
 elk-up:
