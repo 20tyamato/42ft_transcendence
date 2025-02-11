@@ -20,7 +20,7 @@ down: elk-down
 re: clean setup upbuild
 
 clean: down
-	docker volume rm $(shell docker volume ls -q | grep "^ft_transcendence_")
+	docker volume rm $(shell docker volume ls -q | grep "^$(PROJECT_NAME)") || true
 	docker system prune -f --volumes
 
 fbuild:
