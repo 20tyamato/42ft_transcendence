@@ -1,8 +1,9 @@
-from rest_framework.test import APITestCase, APIClient
-from rest_framework import status
-from django.urls import reverse
-from pong.models import User, Game
 from django.contrib.auth import get_user_model
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APIClient, APITestCase
+
+from pong.models import Game, User
 
 
 class UserViewsTest(APITestCase):

@@ -1,16 +1,17 @@
 from django.urls import path
+
 from .views import (
-    HealthCheckView,
-    UserListCreateView,
-    UserRetrieveUpdateView,
-    GameListCreateView,
-    GameRetrieveUpdateDestroyView,
-    TournamentListCreateView,
-    TournamentRetrieveUpdateDestroyView,
     BlockchainScoreListCreateView,
     BlockchainScoreRetrieveUpdateDestroyView,
-    UserAvatarUpdateView,
+    GameListCreateView,
+    GameRetrieveUpdateDestroyView,
+    HealthCheckView,
     LoginView,
+    TournamentListCreateView,
+    TournamentRetrieveUpdateDestroyView,
+    UserAvatarUpdateView,
+    UserListCreateView,
+    UserRetrieveUpdateView,
 )
 
 app_name = "pong"
