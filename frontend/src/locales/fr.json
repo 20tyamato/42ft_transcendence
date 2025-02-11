@@ -1,0 +1,10 @@
+{
+  "login": "Connexion",
+  "username": "Nom d'utilisateur",
+  "password": "Mot de passe",
+  "registerPrompt": "Vous n'avez pas de compte ? <a href=\"./register\">Inscrivez-vous</a>",
+  "loginSuccess": "Connexion réussie !",
+  "errorMessage": "Erreur : {{error}}",
+  "invalidCredentials": "Identifiants invalides",
+  "unexpectedError": "Une erreur inattendue s'est produite."
+}

@@ -1,0 +1,10 @@
+{
+  "login": "ログイン",
+  "username": "ユーザー名",
+  "password": "パスワード",
+  "registerPrompt": "アカウントをお持ちではありませんか？ <a href=\"./register\">登録</a>",
+  "loginSuccess": "ログイン成功！",
+  "errorMessage": "エラー: {{error}}",
+  "invalidCredentials": "無効な認証情報",
+  "unexpectedError": "予期しないエラーが発生しました。"
+}

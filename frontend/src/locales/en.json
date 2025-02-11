@@ -1,0 +1,10 @@
+{
+  "login": "Login",
+  "username": "Username",
+  "password": "Password",
+  "registerPrompt": "Don't have an account? <a href=\"./register\">Register</a>",
+  "loginSuccess": "Login successful!",
+  "errorMessage": "Error: {{error}}",
+  "invalidCredentials": "Invalid credentials",
+  "unexpectedError": "An unexpected error occurred."
+}
