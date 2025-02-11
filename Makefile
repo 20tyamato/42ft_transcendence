@@ -42,6 +42,9 @@ ruff:
 super_ruff:
 	docker exec -it $(API_CONTAINER) poetry run ruff check .
 
+hash:
+	docker exec -it $(API_CONTAINER) python manage.py create_password_hash $(string)
+
 lint:
 	cd frontend && npm run lint:fix
 
