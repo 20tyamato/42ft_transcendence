@@ -1,24 +1,23 @@
-from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
-from .models import User, Game, Tournament, BlockchainScore
-from .serializers import (
-    UserSerializer,
-    LoginSerializer,
-    GameSerializer,
-    TournamentSerializer,
-    BlockchainScoreSerializer,
-    UserAvatarSerializer,
-)
-from .permissions import (
-    IsPlayerOrReadOnly,
-    IsOwnerOfTournament,
-    IsOwnerOfBlockchainScore,
-)
-from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import generics, status
 from rest_framework.authtoken.models import Token
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from .models import BlockchainScore, Game, Tournament, User
+from .permissions import (
+    IsOwnerOfBlockchainScore,
+    IsOwnerOfTournament,
+    IsPlayerOrReadOnly,
+)
+from .serializers import (
+    BlockchainScoreSerializer,
+    GameSerializer,
+    LoginSerializer,
+    TournamentSerializer,
+    UserAvatarSerializer,
+    UserSerializer,
+)
 
 
 class HealthCheckView(APIView):
