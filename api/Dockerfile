@@ -20,6 +20,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # プロジェクト全体をコピー
 COPY . .
 
+# 依存関係のインストール
+RUN poetry install --no-interaction --no-ansi --no-root
+
 # watchmanのインストール
 RUN pip install watchdog watchdog[watchmedo]
 

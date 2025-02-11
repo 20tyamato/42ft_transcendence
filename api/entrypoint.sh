@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# 依存関係のインストール
-poetry install --no-interaction --no-ansi --no-root
-
 # マイグレーションの実行
 python manage.py migrate
 
