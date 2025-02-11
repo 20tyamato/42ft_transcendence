@@ -1,4 +1,5 @@
 {
+  "extensions.ignoreRecommendations": false,
   "[python]": {
     "editor.defaultFormatter": "charliermarsh.ruff",
     "editor.formatOnSave": true,
