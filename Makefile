@@ -6,15 +6,17 @@ DB_CONTAINER := $(PROJECT_NAME)-db-1
 
 all: up
 
+setup: elk-setup
+
 up: elk-up
 	docker compose up
 
-down:
+down: elk-down 
 	docker compose down
 
 re: down up
 
-clean: down
+clean: elk-down down
 	docker system prune -f --volumes
 
 fbuild:
@@ -55,12 +57,14 @@ front_in:
 	docker exec -it $(FRONTEND_CONTAINER) bash
 
 elk-setup:
-	docker network prune -f
 	docker network create ft_transcendence_app-network || true
 	docker compose -f docker-compose.elk.yml up setup
 
 elk-up:
 	docker compose -f docker-compose.elk.yml up -d
+
+elk-down:
+	docker compose -f docker-compose.elk.yml down
 
 elk-reload:
 	docker compose -f docker-compose.elk.yml down
