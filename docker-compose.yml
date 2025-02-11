@@ -58,6 +58,8 @@ services:
       - /app/node_modules
     environment:
       VITE_LOGSTASH_URL: ${VITE_LOGSTASH_URL}
+      VITE_API_URL: ${VITE_API_URL}
+      VITE_WS_URL: ${VITE_WS_URL}
     networks:
       - app-network
 
