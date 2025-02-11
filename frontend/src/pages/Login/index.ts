@@ -2,6 +2,7 @@ import { API_URL } from '@/config/config';
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
+import { updateActiveLanguageButton } from '@/models/Lang/repository';
 
 const updateLoginContent = () => {
   const loginTitle = document.querySelector('.login-container h1');
@@ -18,17 +19,6 @@ const updateLoginContent = () => {
 
   const centeredText = document.querySelector('.centered-text');
   if (centeredText) centeredText.innerHTML = i18next.t('registerPrompt');
-};
-
-const updateActiveLanguageButton = () => {
-  const currentLang = i18next.language;
-  const btnEn = document.getElementById('lang-en');
-  const btnJa = document.getElementById('lang-ja');
-  const btnFr = document.getElementById('lang-fr');
-
-  if (btnEn) btnEn.classList.toggle('active', currentLang === 'en');
-  if (btnJa) btnJa.classList.toggle('active', currentLang === 'ja');
-  if (btnFr) btnFr.classList.toggle('active', currentLang === 'fr');
 };
 
 const LoginPage = new Page({
