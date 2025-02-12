@@ -1,5 +1,5 @@
 import { Page } from '@/core/Page';
-import backHomeLayout from '@/layouts/backhome/index';
+import CommonLayout from '@/layouts/common/index';
 import { fetchCurrentUser, updateAvatar, updateUserInfo } from '@/models/User/repository';
 
 interface IUserData {
@@ -11,7 +11,7 @@ interface IUserData {
 const SettingsUserPage = new Page({
   name: 'Settings/User',
   config: {
-    layout: backHomeLayout,
+    layout: CommonLayout,
   },
   mounted: async () => {
     // HTML Elements
