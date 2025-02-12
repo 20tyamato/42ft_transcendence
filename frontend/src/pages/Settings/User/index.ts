@@ -3,18 +3,12 @@ import CommonLayout from '@/layouts/common/index';
 import { checkUserAccess } from '@/models/User/auth';
 import {
   fetchCurrentUser,
+  IUserData,
   updateAvatar,
   updateLanguage,
   updateUserInfo,
 } from '@/models/User/repository';
 import i18next from 'i18next';
-
-interface IUserData {
-  display_name: string;
-  email: string;
-  avatar?: string;
-  language?: string;
-}
 
 const updateContent = () => {
   const titleEl = document.querySelector('.settings-title');

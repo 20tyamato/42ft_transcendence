@@ -28,5 +28,7 @@
   "avatarImagePreview": "Aperçu de l'image de l'avatar",
   "enterEmailAddress": "Entrez votre adresse email",
   "language": "Langue",
-  "save": "Sauvegarder"
+  "save": "Sauvegarder",
+  "leaderboard": "Classement",
+  "backToHome": "Retour à l'accueil"
 }

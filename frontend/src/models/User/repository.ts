@@ -1,6 +1,13 @@
 import { API_URL } from '@/config/config';
 import i18next from 'i18next';
 
+interface IUserData {
+  display_name: string;
+  email: string;
+  avatar?: string;
+  language?: string;
+}
+
 const fetchUsers = async () => {
   const token = localStorage.getItem('token');
   if (!token) return;
@@ -125,4 +132,4 @@ const updateLanguage = async (language: string) => {
   }
 };
 
-export { fetchCurrentUser, fetchUsers, updateAvatar, updateLanguage, updateUserInfo };
+export { fetchCurrentUser, fetchUsers, IUserData, updateAvatar, updateLanguage, updateUserInfo };

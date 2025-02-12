@@ -28,5 +28,7 @@
   "avatarImagePreview": "アバター画像プレビュー",
   "enterEmailAddress": "メールアドレスを入力してください",
   "language": "言語",
-  "save": "保存"
+  "save": "保存",
+  "leaderboard": "リーダーボード",
+  "backToHome": "ホームに戻る"
 }
