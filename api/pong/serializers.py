@@ -18,6 +18,7 @@ class UserSerializer(serializers.ModelSerializer):
             "avatar",
             "level",
             "experience",
+            "language",
         ]
         extra_kwargs = {
             "username": {"required": True},
@@ -42,6 +43,7 @@ class UserSerializer(serializers.ModelSerializer):
             avatar=validated_data.get("avatar", ""),
             level=validated_data.get("level", 1),
             experience=validated_data.get("experience", 0),
+            language=validated_data.get("language", "en"),
         )
         user.set_password(validated_data["password"])
         user.save()

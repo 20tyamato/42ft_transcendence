@@ -9,6 +9,7 @@ class User(AbstractUser):
     )
     level = models.IntegerField(default=1)
     experience = models.IntegerField(default=0)
+    language = models.CharField(max_length=10, default="en")
 
     groups = models.ManyToManyField(
         "auth.Group",
