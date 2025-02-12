@@ -1,5 +1,6 @@
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
+import { checkUserAccess } from '@/models/User/auth';
 import {
   fetchCurrentUser,
   updateAvatar,
@@ -20,6 +21,7 @@ const SettingsUserPage = new Page({
     layout: CommonLayout,
   },
   mounted: async () => {
+    checkUserAccess();
     // HTML Elements
     const avatarPreviewEl = document.getElementById('avatarPreview') as HTMLImageElement;
     const avatarUploadInput = document.getElementById('avatarUpload') as HTMLInputElement;

@@ -1,5 +1,6 @@
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
+import { checkUserAccess } from '@/models/User/auth';
 import { fetchCurrentUser } from '@/models/User/repository';
 
 interface ITournamentHistory {
@@ -25,6 +26,7 @@ const ProfilePage = new Page({
   },
   mounted: async () => {
     try {
+      checkUserAccess();
       // Front HTML elements
       const avatarEl = document.getElementById('avatar') as HTMLImageElement;
       const usernameEl = document.getElementById('username') as HTMLElement;

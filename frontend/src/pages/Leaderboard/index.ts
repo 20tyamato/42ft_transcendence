@@ -1,5 +1,6 @@
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
+import { checkUserAccess } from '@/models/User/auth';
 import { fetchUsers } from '@/models/User/repository';
 
 interface IRankingUser {
@@ -13,6 +14,7 @@ const LeaderboardPage = new Page({
     layout: CommonLayout,
   },
   mounted: async () => {
+    checkUserAccess();
     const rankingList = document.getElementById('rankingList');
     const backBtn = document.getElementById('backBtn');
 
