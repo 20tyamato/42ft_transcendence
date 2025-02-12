@@ -30,5 +30,14 @@
   "language": "言語",
   "save": "保存",
   "leaderboard": "リーダーボード",
-  "backToHome": "ホームに戻る"
+  "backToHome": "ホームに戻る",
+  "userProfile": "ユーザープロフィール",
+  "myCard": "マイカード",
+  "currentExperience": "現在の経験値",
+  "level": "レベル",
+  "tapToShowBack": "裏面を表示するにはタップまたはクリック",
+  "tapToShowFront": "表面を表示するにはタップまたはクリック",
+  "tournamentHistory": "トーナメント履歴",
+  "blockchainScores": "ブロックチェーンスコア",
+  "editProfile": "プロフィールを編集"
 }

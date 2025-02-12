@@ -30,5 +30,14 @@
   "language": "Langue",
   "save": "Sauvegarder",
   "leaderboard": "Classement",
-  "backToHome": "Retour à l'accueil"
+  "backToHome": "Retour à l'accueil",
+  "userProfile": "Profil utilisateur",
+  "myCard": "Ma carte",
+  "currentExperience": "Expérience actuelle",
+  "level": "Niveau",
+  "tapToShowBack": "Appuyez ou cliquez pour montrer le dos",
+  "tapToShowFront": "Appuyez ou cliquez pour montrer le devant",
+  "tournamentHistory": "Historique des tournois",
+  "blockchainScores": "Scores blockchain",
+  "editProfile": "Modifier le profil"
 }

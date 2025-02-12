@@ -2,6 +2,7 @@ import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { checkUserAccess } from '@/models/User/auth';
 import { fetchCurrentUser } from '@/models/User/repository';
+import i18next from 'i18next';
 
 interface ITournamentHistory {
   date: string;
@@ -17,6 +18,60 @@ const languageNames = {
   en: 'English',
   ja: '日本語',
   fr: 'Français',
+};
+
+const updateContent = () => {
+  const titleTag = document.querySelector('title');
+  if (titleTag) {
+    titleTag.textContent = i18next.t('userProfile');
+  }
+
+  const myCardEl = document.getElementById('mycard');
+  if (myCardEl) {
+    for (const node of myCardEl.childNodes) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        node.textContent = i18next.t('myCard') + ' ';
+        break;
+      }
+    }
+  }
+
+  const updateLabel = (spanId: string, translationKey: string) => {
+    const spanEl = document.getElementById(spanId);
+    if (spanEl && spanEl.parentElement) {
+      spanEl.parentElement.innerHTML = `${i18next.t(translationKey)}: <span id="${spanId}"></span>`;
+    }
+  };
+
+  updateLabel('username', 'username');
+  updateLabel('email', 'emailAddress');
+  updateLabel('experience', 'currentExperience');
+  updateLabel('level', 'level');
+  updateLabel('language', 'language');
+
+  const tapHints = document.querySelectorAll('.tap-hint');
+  if (tapHints.length > 0) {
+    if (tapHints[0]) {
+      tapHints[0].textContent = i18next.t('tapToShowBack');
+    }
+    if (tapHints[1]) {
+      tapHints[1].textContent = i18next.t('tapToShowFront');
+    }
+  }
+
+  const tournamentHeading = document.querySelector('.history-section h2');
+  if (tournamentHeading) {
+    tournamentHeading.textContent = i18next.t('tournamentHistory');
+  }
+  const scoresHeading = document.querySelector('.score-section h2');
+  if (scoresHeading) {
+    scoresHeading.textContent = i18next.t('blockchainScores');
+  }
+
+  const editBtn = document.getElementById('edit-btn');
+  if (editBtn) {
+    editBtn.title = i18next.t('editProfile');
+  }
 };
 
 const ProfilePage = new Page({
@@ -41,6 +96,10 @@ const ProfilePage = new Page({
 
       // User Data from Backend
       const userData = await fetchCurrentUser();
+      if (userData.language) {
+        document.documentElement.lang = userData.language;
+        i18next.changeLanguage(userData.language, updateContent);
+      }
 
       const { avatar, username, email, experience, level, language } = userData as {
         avatar: string;

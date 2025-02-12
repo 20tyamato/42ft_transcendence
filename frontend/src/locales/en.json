@@ -30,5 +30,14 @@
   "language": "Language",
   "save": "Save",
   "leaderboard": "Leaderboard",
-  "backToHome": "Back to Home"
+  "backToHome": "Back to Home",
+  "userProfile": "User Profile",
+  "myCard": "My Card",
+  "currentExperience": "Current Experience",
+  "level": "Level",
+  "tapToShowBack": "Tap or click to show the back",
+  "tapToShowFront": "Tap or click to show the front",
+  "tournamentHistory": "Tournament History",
+  "blockchainScores": "Blockchain Scores",
+  "editProfile": "Edit Profile"
 }
