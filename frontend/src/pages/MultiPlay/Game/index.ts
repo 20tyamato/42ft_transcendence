@@ -49,36 +49,37 @@ const GamePage = new Page({
       wsConnected = true;
     };
 
-    socket.onmessage = (event) => {
+    socket.onmessage = async (event) => {  // async を追加
       try {
         const data = JSON.parse(event.data);
         if (data.type === 'state_update') {
           renderer.updateState(data.state);
           updateScoreBoard(data.state.score);
           
-          // ここから追加する処理
-          if (data.state.game_over) {
-            // セッションIDからプレイヤー名を取得
-            const [player1Name, player2Name] = sessionId?.replace('game_', '').split('_') || [];
-            const opponent = username === player1Name ? player2Name : player1Name;
+          if (!data.state.is_active) {
+            // 確実にデータを処理するため、Promise を使用
+            await new Promise<void>(resolve => {
+              const [player1Name, player2Name] = sessionId?.replace('game_', '').split('_') || [];
+              const opponent = username === player1Name ? player2Name : player1Name;
     
-            const finalScore = {
-              player1: data.state.score[username],
-              player2: data.state.score[opponent],
-              opponent: opponent  // 対戦相手の名前を保存
-            };
-            
-            localStorage.setItem('finalScore', JSON.stringify(finalScore));
-            localStorage.setItem('gameMode', 'multiplayer');
-            
-            // リザルト画面への遷移
-            setTimeout(() => {
-              window.location.href = '/result';
-            }, 1000);
+              const finalScore = {
+                player1: data.state.score[username],
+                player2: data.state.score[opponent],
+                opponent: opponent
+              };
+              
+              localStorage.setItem('finalScore', JSON.stringify(finalScore));
+              localStorage.setItem('gameMode', 'multiplayer');
+              
+              setTimeout(() => {
+                resolve();
+                window.location.href = '/result';
+              }, 1000);
+            });
           }
         }
       } catch (e) {
-        console.error('Error processing game message:', e);
+        console.error('Error in WebSocket message handler:', e);
       }
     };
 
