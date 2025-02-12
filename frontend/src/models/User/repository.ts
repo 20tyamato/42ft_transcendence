@@ -1,60 +1,102 @@
 import { API_URL } from '@/config/config';
-
-const token = localStorage.getItem('token');
+import i18next from 'i18next';
 
 const fetchUsers = async () => {
-  const response = await fetch(`${API_URL}/api/users/`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Token ${token}`,
-    },
-  });
+  const token = localStorage.getItem('token');
+  if (!token) return;
 
-  if (!response.ok) {
-    throw new Error('Failed to fetch user data');
+  try {
+    const response = await fetch(`${API_URL}/api/users/`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      console.error('Failed to fetch users:', await response.text());
+      return;
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching users:', error);
   }
-  return response.json();
 };
 
 const fetchCurrentUser = async () => {
-  const response = await fetch(`${API_URL}/api/users/me/`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Token ${token}`,
-    },
-  });
+  const token = localStorage.getItem('token');
+  if (!token) return;
 
-  if (!response.ok) {
-    throw new Error('Failed to fetch user data');
+  try {
+    const response = await fetch(`${API_URL}/api/users/me/`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      console.error('Failed to fetch current user:', await response.text());
+      return;
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching current user:', error);
   }
-  return response.json();
 };
 
 // アバター画像の更新（FormData を利用）
 const updateAvatar = async (file: File) => {
+  const token = localStorage.getItem('token');
+  if (!token) return;
+
   const formData = new FormData();
   formData.append('avatar', file);
-  return fetch(`${API_URL}/api/users/me/avatar/`, {
-    method: 'PATCH',
-    headers: {
-      Authorization: `Token ${token}`,
-    },
-    body: formData,
-  });
+
+  try {
+    const response = await fetch(`${API_URL}/api/users/me/avatar/`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      console.error('Failed to update avatar:', await response.text());
+      return;
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error updating avatar:', error);
+  }
 };
 
 // ユーザー情報（メール）の更新
 const updateUserInfo = async (email: string) => {
-  return fetch(`${API_URL}/api/users/me/`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Token ${token}`,
-    },
-    body: JSON.stringify({ email }),
-  });
+  const token = localStorage.getItem('token');
+  if (!token) return;
+
+  try {
+    const response = await fetch(`${API_URL}/api/users/me/`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${token}`,
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    if (!response.ok) {
+      console.error('Failed to update user info:', await response.text());
+      return;
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error updating user info:', error);
+  }
 };
 
 const updateLanguage = async (language: string) => {
@@ -73,6 +115,9 @@ const updateLanguage = async (language: string) => {
 
     if (!response.ok) {
       console.error('Language update failed:', await response.text());
+    } else {
+      localStorage.setItem('language', language);
+      i18next.changeLanguage(language);
     }
   } catch (err) {
     console.error('Error updating language:', err);

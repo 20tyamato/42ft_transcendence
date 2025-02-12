@@ -12,6 +12,12 @@ interface IBlockchainScore {
   score: number;
 }
 
+const languageNames = {
+  en: 'English',
+  ja: '日本語',
+  fr: 'Français',
+};
+
 const ProfilePage = new Page({
   name: 'Profile',
   config: {
@@ -25,6 +31,7 @@ const ProfilePage = new Page({
       const emailEl = document.getElementById('email') as HTMLElement;
       const experienceEl = document.getElementById('experience') as HTMLElement;
       const levelEl = document.getElementById('level') as HTMLElement;
+      const languageEl = document.getElementById('language') as HTMLElement;
 
       // Back HTML elements
       const tournamentHistoryEl = document.getElementById('tournamentHistory');
@@ -33,7 +40,14 @@ const ProfilePage = new Page({
       // User Data from Backend
       const userData = await fetchCurrentUser();
 
-      const { avatar, username, email, experience, level } = userData;
+      const { avatar, username, email, experience, level, language } = userData as {
+        avatar: string;
+        username: string;
+        email: string;
+        experience: number;
+        level: number;
+        language: keyof typeof languageNames;
+      };
       const tournamentHistory: ITournamentHistory[] = [
         { date: '2025-01-01', result: 'Won' },
         { date: '2025-01-05', result: 'Lost' },
@@ -51,6 +65,7 @@ const ProfilePage = new Page({
       if (emailEl) emailEl.textContent = email;
       if (experienceEl) experienceEl.textContent = experience.toString();
       if (levelEl) levelEl.textContent = level.toString();
+      if (languageEl) languageEl.textContent = languageNames[language];
 
       // Change color of card based on level
       const cardBack = document.querySelector('.card-back') as HTMLElement;
