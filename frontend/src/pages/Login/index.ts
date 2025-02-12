@@ -75,7 +75,8 @@ const LoginPage = new Page({
           const result = await response.json();
           localStorage.setItem('token', result.token);
           localStorage.setItem('username', result.username);
-          updateLanguage(i18next.language);
+          i18next.changeLanguage(result.language);
+          await updateLanguage('en');
 
           responseMessage!.textContent = i18next.t('loginSuccess');
           responseMessage!.style.color = 'green';
