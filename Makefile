@@ -17,7 +17,7 @@ re: down up
 clean: down
 	docker system prune -af --volumes
 
-fbuild:
+fbuild: hostip
 	docker compose build --no-cache && docker compose up
 
 test:
