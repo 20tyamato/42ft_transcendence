@@ -6,12 +6,12 @@ import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass.js';
 import Experience from '../Game/Experience';
 
 export default class Renderer {
-  private experience: Experience;
+  public static instance: Experience;
   private canvas: HTMLCanvasElement;
   private sizes: { width: number; height: number };
   private scene: THREE.Scene;
   private camera: THREE.PerspectiveCamera;
-  private instance: THREE.WebGLRenderer;
+  public instance: THREE.WebGLRenderer;
   private composer: EffectComposer;
   private bloomPass: UnrealBloomPass;
   private filmPass: FilmPass;
@@ -21,13 +21,14 @@ export default class Renderer {
     this.canvas = this.experience.canvas;
     this.sizes = { width: window.innerWidth, height: window.innerHeight };
     this.scene = this.experience.scene;
-    this.camera = this.experience.camera;
+    this.camera = this.experience.camera as THREE.PerspectiveCamera;
 
     this.instance = new THREE.WebGLRenderer({
       canvas: this.canvas,
       antialias: true,
       alpha: false,
     });
+    this.instance.setSize(window.innerWidth, window.innerHeight);
 
     this.instance.setSize(this.sizes.width, this.sizes.height);
     this.composer = new EffectComposer(this.instance);
@@ -39,6 +40,10 @@ export default class Renderer {
 
     this.filmPass = new FilmPass(0.35, false);
     this.composer.addPass(this.filmPass);
+  }
+
+  public resize(): void {
+    this.instance.setSize(window.innerWidth, window.innerHeight);
   }
 
   update(): void {
