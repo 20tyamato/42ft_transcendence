@@ -1,5 +1,5 @@
 import { Page } from '@/core/Page';
-import backHomeLayout from '@/layouts/backhome/index';
+import CommonLayout from '@/layouts/common/index';
 import { fetchCurrentUser } from '@/models/User/repository';
 
 interface ITournamentHistory {
@@ -15,7 +15,7 @@ interface IBlockchainScore {
 const ProfilePage = new Page({
   name: 'Profile',
   config: {
-    layout: backHomeLayout,
+    layout: CommonLayout,
   },
   mounted: async () => {
     try {

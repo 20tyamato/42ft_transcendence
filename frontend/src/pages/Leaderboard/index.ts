@@ -1,23 +1,6 @@
-import { API_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
-
-const token = localStorage.getItem('token');
-
-const fetchUsers = async () => {
-  const response = await fetch(`${API_URL}/api/users/`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Token ${token}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch user data');
-  }
-  return response.json();
-};
+import { fetchUsers } from '@/models/User/repository';
 
 interface IRankingUser {
   username: string;

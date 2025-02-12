@@ -61,7 +61,6 @@ class Game(models.Model):
     score_player2 = models.IntegerField(default=0)
     is_ai_opponent = models.BooleanField(default=False)
 
-    # FIXME: display_name削除してusernameに統一したい...
     def __str__(self):
         player2_name = "AI" if self.is_ai_opponent else self.player2.display_name
         return f"Game {self.id} - {self.player1.display_name} vs {player2_name}"
@@ -72,12 +71,14 @@ class Tournament(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     participants = models.ManyToManyField(User, related_name="tournaments")
     games = models.ManyToManyField(Game, related_name="tournaments")
+    # Don't need anymore
     blockchain_score_hash = models.CharField(max_length=256, null=True, blank=True)
 
     def __str__(self):
         return self.name
 
 
+# Don't need anymore
 class BlockchainScore(models.Model):
     tournament = models.OneToOneField(
         Tournament, on_delete=models.CASCADE, related_name="blockchain_score"

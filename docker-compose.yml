@@ -58,6 +58,8 @@ services:
       - /app/node_modules
     environment:
       VITE_LOGSTASH_URL: ${VITE_LOGSTASH_URL}
+      VITE_API_URL: http://${HOST_IP}:8001
+      VITE_WS_URL: http://${HOST_IP}:8001
     networks:
       - app-network
 

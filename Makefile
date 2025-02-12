@@ -6,7 +6,7 @@ DB_CONTAINER := $(PROJECT_NAME)-db-1
 
 all: up
 
-up: elk-up
+up: elk-up hostip
 	docker compose up
 
 down:
@@ -17,7 +17,7 @@ re: down up
 clean: down
 	docker system prune -af --volumes
 
-fbuild:
+fbuild: hostip
 	docker compose build --no-cache && docker compose up
 
 test:
