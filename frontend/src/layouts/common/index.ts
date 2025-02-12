@@ -1,6 +1,7 @@
 import { Layout } from '@/core/Layout';
 import logoPic from './42_logo.svg';
 import avatarPic from './avatar.png';
+import logout from './logout.png';
 
 const CommonLayout = new Layout({
   name: 'common',
@@ -38,4 +39,4 @@ window.addEventListener('load', checkScreenSize);
 window.addEventListener('resize', checkScreenSize);
 
 export default CommonLayout;
-export { avatarPic, checkScreenSize, logoPic };
+export { avatarPic, checkScreenSize, logoPic, logout };
