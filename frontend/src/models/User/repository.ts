@@ -41,4 +41,5 @@ const updateUserInfo = async (email: string) => {
     body: JSON.stringify({ email }),
   });
 };
+
 export { fetchCurrentUser, updateAvatar, updateUserInfo };

@@ -1,0 +1,21 @@
+{
+  "login": "Connexion",
+  "username": "Nom d'utilisateur",
+  "password": "Mot de passe",
+  "registerPrompt": "Vous n'avez pas de compte ? <a href=\"./register\">Inscrivez-vous</a>",
+  "loginSuccess": "Connexion réussie !",
+  "errorMessage": "Erreur : {{error}}",
+  "invalidCredentials": "Identifiants invalides",
+  "unexpectedError": "Une erreur inattendue s'est produite.",
+  "register": "Inscription",
+  "email": "Email",
+  "displayName": "Nom d'affichage",
+  "confirmPassword": "Confirmer le mot de passe",
+  "loginPrompt": "Vous avez déjà un compte ? <a href=\"./login\">Connectez-vous</a>",
+  "registerSuccess": "Inscription réussie !",
+  "allFieldsRequired": "Tous les champs sont requis",
+  "validEmail": "Veuillez entrer une adresse email valide",
+  "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+  "somethingWentWrong": "Quelque chose s'est mal passé",
+  "start": "Démarrer"
+}

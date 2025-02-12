@@ -3,7 +3,10 @@ import HomePage from '@/pages/Home/index';
 import LeaderboardPage from '@/pages/Leaderboard/index';
 import LoginPage from '@/pages/Login/index';
 import ModesPage from '@/pages/Modes/index';
+import GamePage from '@/pages/MultiPlay/Game/index';
 import MultiPlayPage from '@/pages/MultiPlay/index';
+import WebSocketTestPage from '@/pages/MultiPlay/Test/index';
+import WaitingPage from '@/pages/MultiPlay/Waiting/index';
 import ProfilePage from '@/pages/Profile/index';
 import RegisterPage from '@/pages/Register/index';
 import SinglePlayPage from '@/pages/SinglePlay/Game/index';
@@ -11,9 +14,6 @@ import SinglePlaySelectPage from '@/pages/SinglePlay/Select/index';
 import TournamentPage from '@/pages/Tournament/index';
 import ResultPage from './pages/Result/index';
 import SettingsUserPage from './pages/Settings/User/index';
-import WebSocketTestPage from '@/pages/MultiPlay/Test/index';
-import WaitingPage from '@/pages/MultiPlay/Waiting/index';
-import GamePage from '@/pages/MultiPlay/Game/index';
 
 import { Page } from './core/Page';
 

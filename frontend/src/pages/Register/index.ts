@@ -1,6 +1,34 @@
 import { API_URL } from '@/config/config';
+import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
+import { updateActiveLanguageButton } from '@/models/Lang/repository';
+
+const updateRegisterContent = () => {
+  const loginTitle = document.querySelector('.register-container h2');
+  if (loginTitle) loginTitle.textContent = i18next.t('register');
+
+  const usernameLabel = document.querySelector('label[for="username"]');
+  if (usernameLabel) usernameLabel.textContent = i18next.t('username');
+
+  const emailLabel = document.querySelector('label[for="email"]');
+  if (emailLabel) emailLabel.textContent = i18next.t('email');
+
+  const displayNameLabel = document.querySelector('label[for="display_name"]');
+  if (displayNameLabel) displayNameLabel.textContent = i18next.t('displayName');
+
+  const passwordLabel = document.querySelector('label[for="password"]');
+  if (passwordLabel) passwordLabel.textContent = i18next.t('password');
+
+  const passwordConfirmLabel = document.querySelector('label[for="password_confirm"]');
+  if (passwordConfirmLabel) passwordConfirmLabel.textContent = i18next.t('confirmPassword');
+
+  const registerBtn = document.querySelector('button.btn.btn-primary');
+  if (registerBtn) registerBtn.textContent = i18next.t('register');
+
+  const centeredText = document.querySelector('.centered-text');
+  if (centeredText) centeredText.innerHTML = i18next.t('loginPrompt');
+};
 
 const RegisterPage = new Page({
   name: 'Register',
@@ -8,6 +36,24 @@ const RegisterPage = new Page({
     layout: CommonLayout,
   },
   mounted: async () => {
+    updateRegisterContent();
+    updateActiveLanguageButton();
+
+    const btnEn = document.getElementById('lang-en');
+    const btnJa = document.getElementById('lang-ja');
+    const btnFr = document.getElementById('lang-fr');
+    btnEn?.addEventListener('click', () => {
+      i18next.changeLanguage('en', updateRegisterContent);
+      updateActiveLanguageButton();
+    });
+    btnJa?.addEventListener('click', () => {
+      i18next.changeLanguage('ja', updateRegisterContent);
+      updateActiveLanguageButton();
+    });
+    btnFr?.addEventListener('click', () => {
+      i18next.changeLanguage('fr', updateRegisterContent);
+      updateActiveLanguageButton();
+    });
     const form = document.getElementById('register-form') as HTMLFormElement | null;
     const responseMessage = document.getElementById('response-message');
 
@@ -25,7 +71,7 @@ const RegisterPage = new Page({
 
       if (!username || !email || !display_name || !password || !password_confirm) {
         if (responseMessage) {
-          responseMessage.textContent = 'All fields are required';
+          responseMessage.textContent = i18next.t('allFieldsRequired');
           responseMessage.style.color = 'red';
         }
         return;
@@ -34,7 +80,7 @@ const RegisterPage = new Page({
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
         if (responseMessage) {
-          responseMessage.textContent = 'Please enter a valid email address';
+          responseMessage.textContent = i18next.t('validEmail');
           responseMessage.style.color = 'red';
         }
         return;
@@ -42,7 +88,7 @@ const RegisterPage = new Page({
 
       if (password !== password_confirm) {
         if (responseMessage) {
-          responseMessage.textContent = 'Passwords do not match';
+          responseMessage.textContent = i18next.t('passwordsDoNotMatch');
           responseMessage.style.color = 'red';
         }
         return;
@@ -69,18 +115,20 @@ const RegisterPage = new Page({
           const result = await response.json();
           localStorage.setItem('token', result.token);
           localStorage.setItem('username', result.username);
-          responseMessage!.textContent = 'Registration successful!';
+          responseMessage!.textContent = i18next.t('registerSuccess');
           responseMessage!.style.color = 'green';
           console.log(result);
           window.location.href = '/login';
         } else {
           const error = await response.json();
-          responseMessage!.textContent = `Error: ${error.message || 'Something went wrong'}`;
+          responseMessage!.textContent = i18next.t('errorMessage', {
+            error: error.message || i18next.t('somethingWentWrong'),
+          });
           responseMessage!.style.color = 'red';
         }
       } catch (error) {
         console.error(error);
-        responseMessage!.textContent = 'An unexpected error occurred.';
+        responseMessage!.textContent = i18next.t('unexpectedError');
         responseMessage!.style.color = 'red';
       }
     });

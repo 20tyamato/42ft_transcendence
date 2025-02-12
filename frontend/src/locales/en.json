@@ -1,0 +1,21 @@
+{
+  "login": "Login",
+  "username": "Username",
+  "password": "Password",
+  "registerPrompt": "Don't have an account? <a href=\"./register\">Register</a>",
+  "loginSuccess": "Login successful!",
+  "errorMessage": "Error: {{error}}",
+  "invalidCredentials": "Invalid credentials",
+  "unexpectedError": "An unexpected error occurred.",
+  "register": "Register",
+  "email": "Email",
+  "displayName": "Display Name",
+  "confirmPassword": "Confirm Password",
+  "loginPrompt": "Already have an account? <a href=\"./login\">Login</a>",
+  "registerSuccess": "Registration successful!",
+  "allFieldsRequired": "All fields are required",
+  "validEmail": "Please enter a valid email address",
+  "passwordsDoNotMatch": "Passwords do not match",
+  "somethingWentWrong": "Something went wrong",
+  "start": "Start"
+}
