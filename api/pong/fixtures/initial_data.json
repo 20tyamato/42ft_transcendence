@@ -118,5 +118,75 @@
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$F76o8VRowp1bNYaqda7XjU$bXJyyOv96MR7ZfgHIzWuNl9dAR2kADKwO6hr9X7JLts="
     }
+  },
+  {
+    "model": "pong.game",
+    "pk": 1,
+    "fields": {
+      "player1": 1,
+      "player2": 2,
+      "player1_score": 15,
+      "player2_score": 9,
+      "winner": 1,
+      "start_time": "2021-01-01T00:00:00Z",
+      "end_time": "2021-01-01T00:10:00Z",
+      "is_ai_opponent": false
+    }
+  },
+  {
+    "model": "pong.game",
+    "pk": 2,
+    "fields": {
+      "player1": 3,
+      "player2": 4,
+      "player1_score": 15,
+      "player2_score": 9,
+      "winner": 3,
+      "start_time": "2021-01-01T00:00:00Z",
+      "end_time": "2021-01-01T00:10:00Z",
+      "is_ai_opponent": false
+    }
+  },
+  {
+    "model": "pong.game",
+    "pk": 3,
+    "fields": {
+      "player1": 5,
+      "player2": 6,
+      "player1_score": 15,
+      "player2_score": 9,
+      "winner": 5,
+      "start_time": "2021-01-01T00:00:00Z",
+      "end_time": "2021-01-01T00:10:00Z",
+      "is_ai_opponent": false
+    }
+  },
+  {
+    "model": "pong.game",
+    "pk": 4,
+    "fields": {
+      "player1": 7,
+      "player2": 8,
+      "player1_score": 15,
+      "player2_score": 9,
+      "winner": 7,
+      "start_time": "2021-01-01T00:00:00Z",
+      "end_time": "2021-01-01T00:10:00Z",
+      "is_ai_opponent": false
+    }
+  },
+  {
+    "model": "pong.game",
+    "pk": 5,
+    "fields": {
+      "player1": 9,
+      "player2": 10,
+      "player1_score": 15,
+      "player2_score": 9,
+      "winner": 9,
+      "start_time": "2021-01-01T00:00:00Z",
+      "end_time": "2021-01-01T00:10:00Z",
+      "is_ai_opponent": false
+    }
   }
 ]

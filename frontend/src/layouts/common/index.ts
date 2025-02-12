@@ -6,6 +6,7 @@ const CommonLayout = new Layout({
   name: 'common',
 });
 
+// TODO: change to env
 const MIN_WIDTH = 1024;
 const MIN_HEIGHT = 768;
 const DESIRED_RATIO = 16 / 9;
