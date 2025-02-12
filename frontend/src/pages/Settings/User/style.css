@@ -63,6 +63,14 @@ body {
   font-size: 1rem;
 }
 
+/* セレクトボックス用スタイル */
+.form-group select {
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: none;
+  font-size: 1rem;
+}
+
 /* ------------------------------
    アバター画像プレビュー
 ------------------------------ */

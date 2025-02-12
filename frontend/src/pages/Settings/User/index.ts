@@ -1,11 +1,17 @@
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
-import { fetchCurrentUser, updateAvatar, updateUserInfo } from '@/models/User/repository';
+import {
+  fetchCurrentUser,
+  updateAvatar,
+  updateLanguage,
+  updateUserInfo,
+} from '@/models/User/repository';
 
 interface IUserData {
   display_name: string;
   email: string;
   avatar?: string;
+  language?: string;
 }
 
 const SettingsUserPage = new Page({
@@ -18,6 +24,7 @@ const SettingsUserPage = new Page({
     const avatarPreviewEl = document.getElementById('avatarPreview') as HTMLImageElement;
     const avatarUploadInput = document.getElementById('avatarUpload') as HTMLInputElement;
     const emailInput = document.getElementById('emailInput') as HTMLInputElement;
+    const languageSelect = document.getElementById('languageSelect') as HTMLSelectElement;
     const form = document.getElementById('userSettingsForm') as HTMLFormElement;
 
     try {
@@ -28,6 +35,9 @@ const SettingsUserPage = new Page({
       }
       if (userData.email && emailInput) {
         emailInput.value = userData.email;
+      }
+      if (userData.language && languageSelect) {
+        languageSelect.value = userData.language;
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -52,7 +62,9 @@ const SettingsUserPage = new Page({
 
       try {
         const newEmail = emailInput.value.trim();
+        const newLanguage = languageSelect.value;
         await updateUserInfo(newEmail);
+        await updateLanguage(newLanguage);
 
         if (avatarUploadInput.files?.length) {
           const file = avatarUploadInput.files[0];

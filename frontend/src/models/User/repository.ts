@@ -56,4 +56,27 @@ const updateUserInfo = async (email: string) => {
     body: JSON.stringify({ email }),
   });
 };
-export { fetchCurrentUser, fetchUsers, updateAvatar, updateUserInfo };
+
+const updateLanguage = async (language: string) => {
+  const token = localStorage.getItem('token');
+  if (!token) return;
+
+  try {
+    const response = await fetch(`${API_URL}/api/users/me/`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${token}`,
+      },
+      body: JSON.stringify({ language }),
+    });
+
+    if (!response.ok) {
+      console.error('Language update failed:', await response.text());
+    }
+  } catch (err) {
+    console.error('Error updating language:', err);
+  }
+};
+
+export { fetchCurrentUser, fetchUsers, updateAvatar, updateLanguage, updateUserInfo };
