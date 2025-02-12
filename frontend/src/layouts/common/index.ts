@@ -9,8 +9,8 @@ const CommonLayout = new Layout({
 // TODO: change to env
 const MIN_WIDTH = 1024;
 const MIN_HEIGHT = 768;
-const DESIRED_RATIO = 16 / 9;
-const RATIO_TOLERANCE = 0.1;
+// const DESIRED_RATIO = 16 / 9;
+// const RATIO_TOLERANCE = 0.1;
 
 function checkScreenSize() {
   const errorOverlay = document.getElementById('screen-error');
@@ -21,16 +21,16 @@ function checkScreenSize() {
 
   const currentWidth = window.innerWidth;
   const currentHeight = window.innerHeight;
-  const currentRatio = currentWidth / currentHeight;
   if (currentWidth < MIN_WIDTH || currentHeight < MIN_HEIGHT) {
     errorOverlay.classList.add('active');
     return;
   }
-  const ratioDifference = Math.abs(currentRatio - DESIRED_RATIO) / DESIRED_RATIO;
-  if (ratioDifference > RATIO_TOLERANCE) {
-    errorOverlay.classList.add('active');
-    return;
-  }
+  // const currentRatio = currentWidth / currentHeight;
+  // const ratioDifference = Math.abs(currentRatio - DESIRED_RATIO) / DESIRED_RATIO;
+  // if (ratioDifference > RATIO_TOLERANCE) {
+  //   errorOverlay.classList.add('active');
+  //   return;
+  // }
   errorOverlay.classList.remove('active');
 }
 
