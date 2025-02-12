@@ -19,5 +19,8 @@
   "somethingWentWrong": "Something went wrong",
   "start": "Start",
   "logout": "Logout",
-  "logoutMessage": "You have been logged out successfully."
+  "logoutMessage": "You have been logged out successfully.",
+  "singleMode": "SINGLE MODE",
+  "multiMode": "MULTI MODE",
+  "tournamentMode": "TOURNAMENT MODE"
 }

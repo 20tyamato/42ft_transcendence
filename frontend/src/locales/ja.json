@@ -19,5 +19,8 @@
   "somethingWentWrong": "何か問題が発生しました",
   "start": "開始",
   "logout": "ログアウト",
-  "logoutMessage": "正常にログアウトしました。"
+  "logoutMessage": "正常にログアウトしました。",
+  "singleMode": "シングルモード",
+  "multiMode": "マルチモード",
+  "tournamentMode": "トーナメントモード"
 }

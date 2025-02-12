@@ -19,5 +19,8 @@
   "somethingWentWrong": "Quelque chose s'est mal passé",
   "start": "Démarrer",
   "logout": "Déconnexion",
-  "logoutMessage": "Vous avez été déconnecté avec succès."
+  "logoutMessage": "Vous avez été déconnecté avec succès.",
+  "modeSolo": "MODE SOLO",
+  "modeMulti": "MODE MULTI",
+  "modeTournoi": "MODE TOURNOI"
 }
