@@ -2,6 +2,7 @@ import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { updateActiveLanguageButton } from '@/models/Lang/repository';
+import { isLoggedIn } from '@/models/User/auth';
 import * as THREE from 'three';
 
 const updateHomeContent = () => {
@@ -113,7 +114,11 @@ const HomePage = new Page({
     const loginBtn = document.querySelector('a[href="/login"]');
     loginBtn?.addEventListener('click', (event) => {
       event.preventDefault();
-      window.location.href = '/login';
+      if (isLoggedIn()) {
+        window.location.href = '/modes';
+      } else {
+        window.location.href = '/login';
+      }
     });
 
     // Three.js 初期化
