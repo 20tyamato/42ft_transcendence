@@ -1,6 +1,4 @@
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-
 import Sizes from '../Utils/Sizez';
 import Time from '../Utils/Time';
 import Camera from '../World/Camera';
@@ -9,111 +7,119 @@ import World from '../World/World';
 import Loaders from '../Utils/Loaders';
 import CameraLerp from '../World/CameraLerp';
 import sources from '../Utils/sources';
-import Field from './Field';
-import Paddle from './Paddle';
-import Ball from './Ball';
-import Walls from './Wall';
+import Field from '../Game/Field';
+import Paddle from '../Game/Paddle';
+import Ball from '../Game/Ball';
+import Walls from '../Game/Wall';
 import LocalGame from '../Game/LocalGame';
 
-export default class Experience {
-  public canvas: HTMLCanvasElement;
-  public scene: THREE.Scene;
-  public camera: THREE.PerspectiveCamera;
-  public renderer: THREE.WebGLRenderer;
-  public controls: OrbitControls;
-  private clock: THREE.Clock;
-  private animationFrameId: number | null = null;
+// Window 型拡張
+declare global {
+  interface Window {
+    experience?: Experience;
+    incorrectDevice?: boolean;
+  }
+}
 
-  public FIELD_WIDTH: number = 1200;
+export default class Experience {
+  public static instance: Experience | null = null;
+
+  public WIDTH: number = window.innerWidth;
+  public HEIGHT: number = window.innerHeight;
+  public VIEW_ANGLE: number = 45;
+  public ASPECT: number = this.WIDTH / this.HEIGHT;
+  public NEAR: number = 0.1;
+  public FAR: number = 10000;
+  public FIELD_WIDTH: number = 900;
   public FIELD_LENGTH: number = 3000;
+  public BALL_RADIUS: number = 20;
   public PADDLE_WIDTH: number = 200;
   public PADDLE_HEIGHT: number = 30;
-  public BALL_RADIUS: number = 20;
 
-  constructor(canvas: HTMLCanvasElement) {
+  public canvas: HTMLCanvasElement;
+  public sizes: Sizes;
+  public time: Time;
+  public scene: THREE.Scene;
+  public resources: Loaders;
+  public camera: Camera;
+  public renderer: Renderer;
+  public world: World;
+  public cameraLerp: CameraLerp;
+
+  public field: Field;
+  public paddle: Paddle;
+  public ball: Ball;
+  public walls: Walls;
+  public localGame: LocalGame;
+
+  private localGameStarted: boolean = false;
+
+  private constructor(canvas: HTMLCanvasElement) {
+    if (Experience.instance) {
+      return Experience.instance;
+    }
+
+    Experience.instance = this;
+    window.experience = this;
+    window.incorrectDevice = false;
+
     this.canvas = canvas;
+    this.sizes = new Sizes();
+    this.time = new Time();
     this.scene = new THREE.Scene();
-    this.clock = new THREE.Clock();
+    this.resources = new Loaders(sources);
+    this.camera = new Camera(canvas);
+    this.renderer = new Renderer(canvas);
+    this.world = new World(canvas);
+    this.cameraLerp = new CameraLerp(canvas);
 
-    this.camera = this.createCamera(); // カメラの初期化
-    this.renderer = this.createRenderer(); // レンダラーの初期化
-    this.controls = this.createControls(); // コントロールの初期化
-    this.createLighting();
+    this.field = new Field(canvas);
+    this.paddle = new Paddle(canvas);
+    this.ball = new Ball(canvas);
+    this.walls = new Walls(canvas);
+    this.localGame = new LocalGame(canvas);
 
-    this.startRenderingLoop();
+    this.sizes.on('resize', () => this.resize());
+    this.time.on('tick', () => this.update());
   }
 
-  private createCamera(): THREE.PerspectiveCamera {
-    const camera = new THREE.PerspectiveCamera(
-      75,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      10000
-    );
-    camera.position.set(0, 200, this.FIELD_LENGTH / 2 + 1000);
-    this.scene.add(camera);
-    return camera;
+  private resize(): void {
+    this.camera.resize();
+    this.renderer.resize();
   }
 
-  private createRenderer(): THREE.WebGLRenderer {
-    const renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    return renderer;
-  }
-
-  private createControls(): OrbitControls {
-    const controls = new OrbitControls(this.camera, this.canvas);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.25;
-    controls.enableZoom = true;
-    return controls;
-  }
-
-  private createLighting(): void {
-    const ambientLight = new THREE.AmbientLight(0xffffff, 2);
-    this.scene.add(ambientLight);
-
-    const pointLight = new THREE.PointLight(0xffffff, 1.5);
-    pointLight.position.set(0, 500, 0);
-    this.scene.add(pointLight);
-
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
-    directionalLight.position.set(0, 1, 1).normalize();
-    this.scene.add(directionalLight);
-
-    const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.5);
-    hemisphereLight.position.set(0, 200, 0);
-    this.scene.add(hemisphereLight);
-  }
-
-  private startRenderingLoop(): void {
-    const animate = () => {
-      this.animationFrameId = requestAnimationFrame(animate);
-      this.update();
-      this.render();
-    };
-    animate();
-  }
-
-  public update(): void {
-    this.controls.update();
-  }
-
-  public render(): void {
-    this.renderer.render(this.scene, this.camera);
-  }
-
-  public stop(): void {
-    if (this.animationFrameId !== null) {
-      cancelAnimationFrame(this.animationFrameId);
-      this.animationFrameId = null;
+  private update(): void {
+    this.camera.update();
+    this.world.update();
+    this.renderer.update();
+    this.cameraLerp.update();
+    this.ball.update();
+    this.field.update();
+    this.paddle.update();
+    if (this.localGameStarted) {
+      this.localGame.update();
     }
   }
 
   public destroy(): void {
-    this.stop();
-    this.controls.dispose();
-    this.renderer.dispose();
-    this.scene.clear();
-  }
-}
+    this.sizes.off('resize');
+    this.time.off('tick');
+
+    this.scene.traverse((child) => {
+      if (child instanceof THREE.Mesh) {
+        child.geometry.dispose();
+        if (Array.isArray(child.material)) {
+          child.material.forEach((material) => material.dispose());
+        } else {
+          child.material.dispose();
+        }
+      }
+    });
+
+  public static getInstance(canvas: HTMLCanvasElement): Experience {
+    if (!Experience.instance) {
+      Experience.instance = new Experience(canvas);
+    }
+    return Experience.instance;
+  }}
+};
