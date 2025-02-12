@@ -1,6 +1,7 @@
 import { API_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
+import { checkUserAccess } from '@/models/User/auth';
 
 interface GameScore {
   player1: number;
@@ -11,11 +12,6 @@ async function sendGameResult(score: GameScore) {
   try {
     const token = localStorage.getItem('token');
     const username = localStorage.getItem('username');
-
-    if (!token || !username) {
-      console.error('User not authenticated');
-      return;
-    }
 
     const gameData = {
       player1: username,
@@ -59,6 +55,7 @@ const ResultPage = new Page({
     layout: CommonLayout,
   },
   mounted: async () => {
+    checkUserAccess();
     const storedScore = localStorage.getItem('finalScore');
     const difficulty = localStorage.getItem('selectedLevel');
     const username = localStorage.getItem('username');

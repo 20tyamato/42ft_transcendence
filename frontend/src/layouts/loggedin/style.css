@@ -58,6 +58,31 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
 }
 
+.logout-icon {
+  width: 60px;
+  height: 60px;
+  margin-right: 10px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1f1c2c, #ff4e50);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.logout-icon img {
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+}
+
+.logout-icon:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
+}
+
 .content {
   padding: 100px 20px;
   color: #ffffff; /* 白文字でダーク背景に映えるように */

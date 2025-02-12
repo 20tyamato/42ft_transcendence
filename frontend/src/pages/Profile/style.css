@@ -86,8 +86,8 @@ body {
 }
 
 .profile-section img {
-  width: 150px;
-  height: 150px;
+  width: 120px;
+  height: 120px;
   object-fit: cover;
   border-radius: 50%;
   margin-bottom: 12px;
@@ -132,7 +132,7 @@ body {
   opacity: 0.8;
   text-align: center;
   color: #fff;
-  transform: translateY(50px);
+  transform: translateY(25px);
 }
 
 /* ------------------------------

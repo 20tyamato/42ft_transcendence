@@ -2,6 +2,18 @@ import { Page } from '@/core/Page';
 import LoggedInLayout from '@/layouts/loggedin/index';
 import { checkUserAccess } from '@/models/User/auth';
 import { fetchCurrentUser } from '@/models/User/repository';
+import i18next from 'i18next';
+
+const updateModeContent = () => {
+  const singleModeButton = document.querySelector('.single-mode');
+  if (singleModeButton) singleModeButton.textContent = i18next.t('singleMode');
+
+  const multiModeButton = document.querySelector('.multi-mode');
+  if (multiModeButton) multiModeButton.textContent = i18next.t('multiMode');
+
+  const tournamentModeButton = document.querySelector('.tournament-mode');
+  if (tournamentModeButton) tournamentModeButton.textContent = i18next.t('tournamentMode');
+};
 
 const ModesPage = new Page({
   name: 'Modes',
@@ -12,6 +24,12 @@ const ModesPage = new Page({
     try {
       checkUserAccess();
       const userData = await fetchCurrentUser();
+      if (userData.language) {
+        document.documentElement.lang = userData.language;
+        i18next.changeLanguage(userData.language, updateModeContent);
+      } else {
+        console.error('Language not found in user data');
+      }
 
       const avatarEl = document.getElementById('avatar') as HTMLImageElement;
       if (avatarEl) {

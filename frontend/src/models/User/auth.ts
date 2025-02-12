@@ -7,4 +7,8 @@ function checkUserAccess(): string {
   return token;
 }
 
-export { checkUserAccess };
+function isLoggedIn(): boolean {
+  return !!localStorage.getItem('token');
+}
+
+export { checkUserAccess, isLoggedIn };

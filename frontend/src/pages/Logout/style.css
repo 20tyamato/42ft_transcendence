@@ -1,0 +1,66 @@
+body,
+html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: 'Arial', sans-serif;
+  overflow: hidden;
+  color: #f8fafc;
+}
+
+.language-switcher {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.language-switcher button {
+  background-color: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: #fff;
+  padding: 8px 12px;
+  margin-left: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+.language-switcher button:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+.language-switcher button.active {
+  background-color: rgba(255, 255, 255, 0.8);
+  color: #000;
+}
+
+.logout-container {
+  max-width: 400px;
+  margin: 200px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.logout-container h1 {
+  margin-bottom: 20px;
+}
+
+.logout-container p {
+  margin-bottom: 20px;
+}
+
+#response-message {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.centered-text {
+  text-align: center;
+}
