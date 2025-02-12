@@ -1,4 +1,4 @@
-export function checkUserAccess(): string {
+function checkUserAccess(): string {
   const token = localStorage.getItem('token');
   if (!token) {
     window.location.href = '/login';
@@ -6,3 +6,5 @@ export function checkUserAccess(): string {
   }
   return token;
 }
+
+export { checkUserAccess };
