@@ -8,7 +8,7 @@
   "invalidCredentials": "Identifiants invalides",
   "unexpectedError": "Une erreur inattendue s'est produite.",
   "register": "Inscription",
-  "email": "Email",
+  "emailAddress": "Adresse email",
   "displayName": "Nom d'affichage",
   "confirmPassword": "Confirmer le mot de passe",
   "loginPrompt": "Vous avez déjà un compte ? <a href=\"./login\">Connectez-vous</a>",
@@ -20,7 +20,13 @@
   "start": "Démarrer",
   "logout": "Déconnexion",
   "logoutMessage": "Vous avez été déconnecté avec succès.",
-  "modeSolo": "MODE SOLO",
-  "modeMulti": "MODE MULTI",
-  "modeTournoi": "MODE TOURNOI"
+  "singleMode": "MODE SOLO",
+  "multiMode": "MODE MULTI",
+  "tournamentMode": "MODE TOURNOI",
+  "userSettings": "Paramètres utilisateur",
+  "avatarImage": "Image de l'avatar",
+  "avatarImagePreview": "Aperçu de l'image de l'avatar",
+  "enterEmailAddress": "Entrez votre adresse email",
+  "language": "Langue",
+  "save": "Sauvegarder"
 }

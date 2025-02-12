@@ -7,6 +7,7 @@ import {
   updateLanguage,
   updateUserInfo,
 } from '@/models/User/repository';
+import i18next from 'i18next';
 
 interface IUserData {
   display_name: string;
@@ -15,6 +16,29 @@ interface IUserData {
   language?: string;
 }
 
+const updateContent = () => {
+  const titleEl = document.querySelector('.settings-title');
+  if (titleEl) titleEl.textContent = i18next.t('userSettings');
+
+  const avatarLabel = document.querySelector('label[for="avatarUpload"]');
+  if (avatarLabel) avatarLabel.textContent = i18next.t('avatarImage');
+
+  const avatarPreviewEl = document.getElementById('avatarPreview') as HTMLImageElement;
+  if (avatarPreviewEl) avatarPreviewEl.alt = i18next.t('avatarImagePreview');
+
+  const emailLabel = document.querySelector('label[for="emailInput"]');
+  if (emailLabel) emailLabel.textContent = i18next.t('emailAddress');
+
+  const emailInput = document.getElementById('emailInput') as HTMLInputElement;
+  if (emailInput) emailInput.placeholder = i18next.t('enterEmailAddress');
+
+  const languageLabel = document.querySelector('label[for="languageSelect"]');
+  if (languageLabel) languageLabel.textContent = i18next.t('language');
+
+  const saveButton = document.querySelector('button[type="submit"]');
+  if (saveButton) saveButton.textContent = i18next.t('save');
+};
+
 const SettingsUserPage = new Page({
   name: 'Settings/User',
   config: {
@@ -22,6 +46,7 @@ const SettingsUserPage = new Page({
   },
   mounted: async () => {
     checkUserAccess();
+
     // HTML Elements
     const avatarPreviewEl = document.getElementById('avatarPreview') as HTMLImageElement;
     const avatarUploadInput = document.getElementById('avatarUpload') as HTMLInputElement;
@@ -31,6 +56,10 @@ const SettingsUserPage = new Page({
 
     try {
       const userData: IUserData = await fetchCurrentUser();
+      if (userData.language) {
+        document.documentElement.lang = userData.language;
+        i18next.changeLanguage(userData.language, updateContent);
+      }
 
       if (userData.avatar && avatarPreviewEl) {
         avatarPreviewEl.src = userData.avatar;

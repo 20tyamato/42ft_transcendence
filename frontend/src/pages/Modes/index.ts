@@ -27,6 +27,8 @@ const ModesPage = new Page({
       if (userData.language) {
         document.documentElement.lang = userData.language;
         i18next.changeLanguage(userData.language, updateModeContent);
+      } else {
+        console.error('Language not found in user data');
       }
 
       const avatarEl = document.getElementById('avatar') as HTMLImageElement;

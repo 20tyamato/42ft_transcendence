@@ -12,7 +12,7 @@ const updateRegisterContent = () => {
   if (usernameLabel) usernameLabel.textContent = i18next.t('username');
 
   const emailLabel = document.querySelector('label[for="email"]');
-  if (emailLabel) emailLabel.textContent = i18next.t('email');
+  if (emailLabel) emailLabel.textContent = i18next.t('emailAddress');
 
   const displayNameLabel = document.querySelector('label[for="display_name"]');
   if (displayNameLabel) displayNameLabel.textContent = i18next.t('displayName');

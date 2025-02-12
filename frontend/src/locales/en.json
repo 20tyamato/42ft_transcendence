@@ -8,7 +8,7 @@
   "invalidCredentials": "Invalid credentials",
   "unexpectedError": "An unexpected error occurred.",
   "register": "Register",
-  "email": "Email",
+  "emailAddress": "Email Address",
   "displayName": "Display Name",
   "confirmPassword": "Confirm Password",
   "loginPrompt": "Already have an account? <a href=\"./login\">Login</a>",
@@ -22,5 +22,11 @@
   "logoutMessage": "You have been logged out successfully.",
   "singleMode": "SINGLE MODE",
   "multiMode": "MULTI MODE",
-  "tournamentMode": "TOURNAMENT MODE"
+  "tournamentMode": "TOURNAMENT MODE",
+  "userSettings": "User Settings",
+  "avatarImage": "Avatar Image",
+  "avatarImagePreview": "Avatar Image Preview",
+  "enterEmailAddress": "Enter your email address",
+  "language": "Language",
+  "save": "Save"
 }

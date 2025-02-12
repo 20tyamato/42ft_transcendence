@@ -8,7 +8,7 @@
   "invalidCredentials": "無効な認証情報",
   "unexpectedError": "予期しないエラーが発生しました。",
   "register": "登録",
-  "email": "メールアドレス",
+  "emailAddress": "メールアドレス",
   "displayName": "表示名",
   "confirmPassword": "パスワードの確認",
   "loginPrompt": "すでにアカウントをお持ちですか？ <a href=\"./login\">ログイン</a>",
@@ -22,5 +22,11 @@
   "logoutMessage": "正常にログアウトしました。",
   "singleMode": "シングルモード",
   "multiMode": "マルチモード",
-  "tournamentMode": "トーナメントモード"
+  "tournamentMode": "トーナメントモード",
+  "userSettings": "ユーザー設定",
+  "avatarImage": "アバター画像",
+  "avatarImagePreview": "アバター画像プレビュー",
+  "enterEmailAddress": "メールアドレスを入力してください",
+  "language": "言語",
+  "save": "保存"
 }
