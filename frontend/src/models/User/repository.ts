@@ -2,6 +2,21 @@ import { API_URL } from '@/config/config';
 
 const token = localStorage.getItem('token');
 
+const fetchUsers = async () => {
+  const response = await fetch(`${API_URL}/api/users/`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Token ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch user data');
+  }
+  return response.json();
+};
+
 const fetchCurrentUser = async () => {
   const response = await fetch(`${API_URL}/api/users/me/`, {
     method: 'GET',
@@ -41,5 +56,4 @@ const updateUserInfo = async (email: string) => {
     body: JSON.stringify({ email }),
   });
 };
-
-export { fetchCurrentUser, updateAvatar, updateUserInfo };
+export { fetchCurrentUser, fetchUsers, updateAvatar, updateUserInfo };
