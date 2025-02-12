@@ -82,6 +82,13 @@ const ProfilePage = new Page({
   mounted: async () => {
     try {
       checkUserAccess();
+      // User Data from Backend
+      const userData = await fetchCurrentUser();
+      if (userData.language) {
+        document.documentElement.lang = userData.language;
+        i18next.changeLanguage(userData.language, updateContent);
+      }
+
       // Front HTML elements
       const avatarEl = document.getElementById('avatar') as HTMLImageElement;
       const usernameEl = document.getElementById('username') as HTMLElement;
@@ -93,13 +100,6 @@ const ProfilePage = new Page({
       // Back HTML elements
       const tournamentHistoryEl = document.getElementById('tournamentHistory');
       const scoreListEl = document.getElementById('scoreList');
-
-      // User Data from Backend
-      const userData = await fetchCurrentUser();
-      if (userData.language) {
-        document.documentElement.lang = userData.language;
-        i18next.changeLanguage(userData.language, updateContent);
-      }
 
       const { avatar, username, email, experience, level, language } = userData as {
         avatar: string;
