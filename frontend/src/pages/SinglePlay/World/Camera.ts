@@ -3,7 +3,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import Experience from '../Game/Experience';
 
 export default class Camera {
-  private experience: Experience;
+  public experience: Experience;
   private scene: THREE.Scene;
   private canvas: HTMLCanvasElement;
   private instance: THREE.PerspectiveCamera;

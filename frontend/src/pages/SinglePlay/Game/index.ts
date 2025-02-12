@@ -2,6 +2,10 @@ import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import Experience from './Experience';
 import Ball from './Ball';
+import Field from './Field';
+import Paddle from './Paddle';
+import Wall from './Wall';
+import LocalGame from './LocalGame';
 
 let running = true; // ゲームの状態管理
 
@@ -55,6 +59,7 @@ const SinglePlayPage = new Page({
     const canvas = document.getElementById('gl') as HTMLCanvasElement;
     const experience = new Experience(canvas);
     const ball = new Ball(canvas);
+    const field = new Field(canvas);
 
     // ゲームループを開始
     function animate() {
