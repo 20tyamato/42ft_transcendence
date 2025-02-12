@@ -17,5 +17,7 @@
   "validEmail": "Veuillez entrer une adresse email valide",
   "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
   "somethingWentWrong": "Quelque chose s'est mal passé",
-  "start": "Démarrer"
+  "start": "Démarrer",
+  "logout": "Déconnexion",
+  "logoutMessage": "Vous avez été déconnecté avec succès."
 }

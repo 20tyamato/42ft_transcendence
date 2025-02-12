@@ -12,6 +12,7 @@ import RegisterPage from '@/pages/Register/index';
 import SinglePlayPage from '@/pages/SinglePlay/Game/index';
 import SinglePlaySelectPage from '@/pages/SinglePlay/Select/index';
 import TournamentPage from '@/pages/Tournament/index';
+import LogoutPage from './pages/Logout';
 import ResultPage from './pages/Result/index';
 import SettingsUserPage from './pages/Settings/User/index';
 
@@ -25,6 +26,7 @@ const routes: Record<string, Page> = {
   '/404': NotFoundPage,
   '/register': RegisterPage,
   '/login': LoginPage,
+  '/logout': LogoutPage,
   '/profile': ProfilePage,
   '/modes': ModesPage,
   // '/settings/game': SettingsGamePage,

@@ -17,5 +17,7 @@
   "validEmail": "有効なメールアドレスを入力してください",
   "passwordsDoNotMatch": "パスワードが一致しません",
   "somethingWentWrong": "何か問題が発生しました",
-  "start": "開始"
+  "start": "開始",
+  "logout": "ログアウト",
+  "logoutMessage": "正常にログアウトしました。"
 }

@@ -17,5 +17,7 @@
   "validEmail": "Please enter a valid email address",
   "passwordsDoNotMatch": "Passwords do not match",
   "somethingWentWrong": "Something went wrong",
-  "start": "Start"
+  "start": "Start",
+  "logout": "Logout",
+  "logoutMessage": "You have been logged out successfully."
 }
