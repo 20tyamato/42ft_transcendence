@@ -40,7 +40,6 @@ export default class Camera {
     const camera = new THREE.PerspectiveCamera(this.VIEW_ANGLE, this.ASPECT, this.NEAR, this.FAR);
     camera.position.set(0, 0, this.FIELD_LENGTH / 2);
     this.scene.add(camera);
-    return camera;
   }
 
   private createControls(): OrbitControls {
