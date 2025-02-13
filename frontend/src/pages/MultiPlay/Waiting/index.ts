@@ -18,6 +18,17 @@ const WaitingPage = new Page({
     const statusElement = document.getElementById('connection-status');
     const cancelButton = document.getElementById('cancel-button');
 
+    // WebSocketの切断と遷移を行う関数
+    const handleNavigation = () => {
+      if (socket) {
+        socket.close();
+        socket = null;
+      }
+    };
+
+    // ブラウザの戻る/進むボタン対応
+    window.addEventListener('popstate', handleNavigation);
+
     function initWebSocket() {
       console.log('Initializing WebSocket...');
       socket = new WebSocket(`${WS_URL}/ws/matchmaking/`);
@@ -82,9 +93,7 @@ const WaitingPage = new Page({
     // キャンセルボタンのイベントリスナー
     if (cancelButton) {
       cancelButton.addEventListener('click', () => {
-        if (socket) {
-          socket.close();
-        }
+        handleNavigation();
         window.location.href = '/multiplay';
       });
     }
@@ -94,10 +103,8 @@ const WaitingPage = new Page({
 
     // クリーンアップ
     return () => {
-      if (socket) {
-        socket.close();
-        socket = null;
-      }
+      handleNavigation();
+      window.removeEventListener('popstate', handleNavigation);
     };
   },
 });
