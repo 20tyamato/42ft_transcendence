@@ -9,7 +9,7 @@ export default class World {
   private model?: Model;
 
   constructor(canvas: HTMLCanvasElement) {
-    this.experience = new Experience(canvas);
+    this.experience = Experience.getInstance(canvas);
     this.scene = this.experience.scene;
 
     this.model = new Model(canvas);

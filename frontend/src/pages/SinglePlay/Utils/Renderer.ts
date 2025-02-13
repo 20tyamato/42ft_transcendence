@@ -5,8 +5,8 @@ import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPa
 import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass.js';
 import Experience from '../Game/Experience';
 
-export default class Renderer {
-  public static instance: Experience;
+export default class Renderer extends THREE.WebGLRenderer {
+  static instance: Experience;
   private canvas: HTMLCanvasElement;
   private sizes: { width: number; height: number };
   private scene: THREE.Scene;
@@ -17,7 +17,7 @@ export default class Renderer {
   private filmPass: FilmPass;
 
   constructor(canvas: HTMLCanvasElement) {
-    this.experience = new Experience(canvas);
+    this.experience = Experience.getInstance(canvas);
     this.canvas = this.experience.canvas;
     this.sizes = { width: window.innerWidth, height: window.innerHeight };
     this.scene = this.experience.scene;

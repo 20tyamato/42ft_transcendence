@@ -3,7 +3,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import Experience from '../Game/Experience';
 
 export default class Camera {
-  public experience: Experience;
+  private experience: Experience;
+  private renderer: THREE.WebGLRenderer;
   private scene: THREE.Scene;
   private canvas: HTMLCanvasElement;
   private instance: THREE.PerspectiveCamera;
@@ -17,7 +18,8 @@ export default class Camera {
   private FIELD_LENGTH: number;
 
   constructor(canvas: HTMLCanvasElement) {
-    this.experience = new Experience(canvas);
+    this.experience = Experience.getInstance(canvas); // 先に割り当てる
+    this.renderer = this.experience.renderer as THREE.WebGLRenderer; // 型アサーションを追加
     this.scene = this.experience.scene;
     this.canvas = this.experience.canvas;
 
@@ -35,10 +37,9 @@ export default class Camera {
   }
 
   private createCamera(): THREE.PerspectiveCamera {
-    const camera = new THREE.PerspectiveCamera(this.VIEW_ANGLE, this.ASPECT, this.NEAR, this.FAR);
+    const camera = new THREE.Camera();
     camera.position.set(0, 200, this.FIELD_LENGTH / 2 + 1000);
     this.scene.add(camera);
-    return camera;
   }
 
   private createControls(): OrbitControls {
@@ -60,6 +61,11 @@ export default class Camera {
 
       this.experience.renderer.setSize(this.WIDTH, this.HEIGHT);
     });
+  }
+
+  public resize(): void {
+    this.instance.aspect = window.innerWidth / window.innerHeight;
+    this.instance.updateProjectionMatrix();
   }
 
   public update(): void {
