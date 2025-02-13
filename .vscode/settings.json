@@ -16,6 +16,10 @@
     "editor.tabSize": 2,
     "editor.insertSpaces": true
   },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+  },
   "html.format.enable": true,
   "html.format.indentInnerHtml": true,
   "html.format.wrapLineLength": 120,

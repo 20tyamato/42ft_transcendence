@@ -1,6 +1,26 @@
+import { API_URL } from '@/config/config';
+import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
-import { API_URL } from '@/config/config';
+import { updateActiveLanguageButton } from '@/models/Lang/repository';
+import { updateLanguage } from '@/models/User/repository';
+
+const updateLoginContent = () => {
+  const loginTitle = document.querySelector('.login-container h1');
+  if (loginTitle) loginTitle.textContent = i18next.t('login');
+
+  const usernameLabel = document.querySelector('label[for="username"]');
+  if (usernameLabel) usernameLabel.textContent = i18next.t('username');
+
+  const passwordLabel = document.querySelector('label[for="password"]');
+  if (passwordLabel) passwordLabel.textContent = i18next.t('password');
+
+  const loginBtn = document.querySelector('button.btn.btn-primary');
+  if (loginBtn) loginBtn.textContent = i18next.t('login');
+
+  const centeredText = document.querySelector('.centered-text');
+  if (centeredText) centeredText.innerHTML = i18next.t('registerPrompt');
+};
 
 const LoginPage = new Page({
   name: 'Login',
@@ -8,6 +28,25 @@ const LoginPage = new Page({
     layout: CommonLayout,
   },
   mounted: async () => {
+    updateLoginContent();
+    updateActiveLanguageButton();
+
+    const btnEn = document.getElementById('lang-en');
+    const btnJa = document.getElementById('lang-ja');
+    const btnFr = document.getElementById('lang-fr');
+    btnEn?.addEventListener('click', () => {
+      i18next.changeLanguage('en', updateLoginContent);
+      updateActiveLanguageButton();
+    });
+    btnJa?.addEventListener('click', () => {
+      i18next.changeLanguage('ja', updateLoginContent);
+      updateActiveLanguageButton();
+    });
+    btnFr?.addEventListener('click', () => {
+      i18next.changeLanguage('fr', updateLoginContent);
+      updateActiveLanguageButton();
+    });
+
     const form = document.getElementById('login-form') as HTMLFormElement | null;
     const responseMessage = document.getElementById('response-message');
 
@@ -17,7 +56,6 @@ const LoginPage = new Page({
       event.preventDefault();
 
       const formData = new FormData(form);
-
       const loginData = {
         username: formData.get('username'),
         password: formData.get('password'),
@@ -37,18 +75,23 @@ const LoginPage = new Page({
           const result = await response.json();
           localStorage.setItem('token', result.token);
           localStorage.setItem('username', result.username);
-          responseMessage!.textContent = 'Login successful!';
+          i18next.changeLanguage(result.language);
+          await updateLanguage('en');
+
+          responseMessage!.textContent = i18next.t('loginSuccess');
           responseMessage!.style.color = 'green';
           console.log(result);
           window.location.href = '/modes';
         } else {
           const error = await response.json();
-          responseMessage!.textContent = `Error: ${error.message || 'Invalid credentials'}`;
+          responseMessage!.textContent = i18next.t('errorMessage', {
+            error: error.message || i18next.t('invalidCredentials'),
+          });
           responseMessage!.style.color = 'red';
         }
       } catch (error) {
         console.error(error);
-        responseMessage!.textContent = 'An unexpected error occurred.';
+        responseMessage!.textContent = i18next.t('unexpectedError');
         responseMessage!.style.color = 'red';
       }
     });

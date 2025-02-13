@@ -1,28 +1,21 @@
-import { API_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
-
-const token = localStorage.getItem('token');
-
-const fetchUsers = async () => {
-  const response = await fetch(`${API_URL}/api/users/`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Token ${token}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch user data');
-  }
-  return response.json();
-};
+import { checkUserAccess } from '@/models/User/auth';
+import { fetchCurrentUser, fetchUsers, IUserData } from '@/models/User/repository';
+import i18next from 'i18next';
 
 interface IRankingUser {
   username: string;
   level: number;
 }
+
+const updateContent = () => {
+  const titleEl = document.querySelector('.ranking-container h1');
+  if (titleEl) titleEl.textContent = i18next.t('leaderboard');
+
+  const saveButton = document.querySelector('.btn');
+  if (saveButton) saveButton.textContent = i18next.t('backToHome');
+};
 
 const LeaderboardPage = new Page({
   name: 'Leaderboard',
@@ -30,10 +23,17 @@ const LeaderboardPage = new Page({
     layout: CommonLayout,
   },
   mounted: async () => {
+    checkUserAccess();
     const rankingList = document.getElementById('rankingList');
     const backBtn = document.getElementById('backBtn');
 
     try {
+      const userData: IUserData = await fetchCurrentUser();
+      if (userData.language) {
+        document.documentElement.lang = userData.language;
+        i18next.changeLanguage(userData.language, updateContent);
+      }
+
       const users: IRankingUser[] = await fetchUsers();
       const sortedUsers = users.sort((a, b) => b.level - a.level).slice(0, 10);
 

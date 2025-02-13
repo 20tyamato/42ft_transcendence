@@ -8,7 +8,7 @@ all: up
 
 setup: elk-setup
 
-up: elk-up
+up: elk-up hostip
 	docker compose up
 
 upbuild: elk-upbuild
@@ -23,7 +23,7 @@ clean: down
 	docker volume rm $(shell docker volume ls -q | grep "^$(PROJECT_NAME)") || true
 	docker system prune -f --volumes
 
-fbuild:
+fbuild: hostip
 	docker compose build --no-cache && docker compose up
 
 # ------------------------------

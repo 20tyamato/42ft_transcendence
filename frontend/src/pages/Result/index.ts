@@ -1,6 +1,7 @@
 import { API_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
+import { checkUserAccess } from '@/models/User/auth';
 
 interface GameScore {
   player1: number;
@@ -11,11 +12,6 @@ async function sendGameResult(score: GameScore) {
   try {
     const token = localStorage.getItem('token');
     const username = localStorage.getItem('username');
-
-    if (!token || !username) {
-      console.error('User not authenticated');
-      return;
-    }
 
     const gameData = {
       player1: username,
@@ -59,43 +55,45 @@ const ResultPage = new Page({
     layout: CommonLayout,
   },
   mounted: async () => {
+    checkUserAccess();
     const storedScore = localStorage.getItem('finalScore');
-    const difficulty = localStorage.getItem('selectedLevel');
+    const gameMode = localStorage.getItem('gameMode');
     const username = localStorage.getItem('username');
 
-    if (storedScore && difficulty) {
+    if (storedScore && gameMode === 'multiplayer') {
       const score = JSON.parse(storedScore);
 
       // スコアの表示を更新
       const playerScoreElement = document.getElementById('playerScore');
-      const cpuScoreElement = document.getElementById('cpuScore');
+      const opponentScoreElement = document.getElementById('cpuScore');
       const resultMessage = document.getElementById('result-message');
       const playerNameElement = document.getElementById('playerName');
+      const opponentNameElement = document.querySelector('.cpu-side .player-name');
 
-      // プレイヤー名の表示を更新
       if (playerNameElement && username) {
         playerNameElement.textContent = username;
       }
 
-      if (playerScoreElement) playerScoreElement.textContent = String(score.player1);
-      if (cpuScoreElement) cpuScoreElement.textContent = String(score.player2);
+      if (opponentNameElement && score.opponent) {
+        opponentNameElement.textContent = score.opponent;
+      }
 
-      // 勝敗メッセージの設定
+      if (playerScoreElement) playerScoreElement.textContent = String(score.player1);
+      if (opponentScoreElement) opponentScoreElement.textContent = String(score.player2);
+
       if (resultMessage) {
         if (score.player1 > score.player2) {
           resultMessage.textContent = 'You Win!';
           resultMessage.className = 'result-message win';
         } else {
-          resultMessage.textContent = 'CPU Wins!';
+          resultMessage.textContent = 'Opponent Wins!';
           resultMessage.className = 'result-message lose';
         }
       }
 
-      // 結果をバックエンドに送信
-      await sendGameResult(score);
-
-      // スコアをクリア
+      // ストレージのクリア
       localStorage.removeItem('finalScore');
+      localStorage.removeItem('gameMode');
     }
 
     const exitBtn = document.getElementById('exitBtn');

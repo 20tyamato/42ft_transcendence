@@ -36,46 +36,23 @@ html {
   color: #000;
 }
 
-.login-container {
+.logout-container {
   max-width: 400px;
-  margin: 50px auto;
+  margin: 200px auto;
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.6);
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+  text-align: center;
 }
 
-.login-container h1 {
-  text-align: center;
+.logout-container h1 {
   margin-bottom: 20px;
 }
 
-.login-container label {
-  display: block;
-  margin: 10px 0 5px;
-}
-
-.login-container input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.login-container .btn {
-  width: 100%;
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.login-container .btn:hover {
-  background-color: #0056b3;
+.logout-container p {
+  margin-bottom: 20px;
 }
 
 #response-message {
@@ -86,35 +63,4 @@ html {
 
 .centered-text {
   text-align: center;
-}
-
-.password-field {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.password-field input {
-  width: 100%;
-  padding-right: 40px;
-}
-
-.password-field button {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-70%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  outline: none;
-}
-
-.password-field i {
-  font-size: 1.2rem;
-  color: #ccc;
-}
-
-.password-field button:hover i {
-  color: #007bff;
 }

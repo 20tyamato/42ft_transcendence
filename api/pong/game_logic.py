@@ -156,6 +156,26 @@ class MultiplayerPongGame:
             return self.player2_name
         return None
 
+    def handle_disconnection(self, disconnected_player: str) -> None:
+        """
+        プレイヤーの切断時の処理
+        Args:
+            disconnected_player (str): 切断したプレイヤーのユーザー名
+        """
+        # 残ったプレイヤーの勝利が確定するようにスコアを設定
+        winning_player = (
+            self.player2_name
+            if disconnected_player == self.player1_name
+            else self.player1_name
+        )
+        self.score[winning_player] = self.WINNING_SCORE
+        self.score[disconnected_player] = min(
+            self.score[disconnected_player], self.WINNING_SCORE - 1
+        )
+
+        # ゲームを終了状態に
+        self.is_active = False
+
     # 以下、プライベートメソッド
     def _handle_wall_collision(self) -> None:
         if abs(self.ball.x) > self.FIELD_WIDTH / 2:
