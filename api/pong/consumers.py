@@ -129,16 +129,13 @@ class GameConsumer(AsyncWebsocketConsumer):
         if self.session_id in self.games:
             game = self.games[self.session_id]
             game.handle_disconnection(self.username)
-            
+
             # 残ったプレイヤーに切断を通知
             await self.channel_layer.group_send(
                 self.game_group_name,
-                {
-                    "type": "player_disconnected",
-                    "disconnected_player": self.username
-                }
+                {"type": "player_disconnected", "disconnected_player": self.username},
             )
-            
+
             # ゲーム状態を保存して終了
             await self.save_game_state(game)
             del self.games[self.session_id]
@@ -147,10 +144,14 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     async def player_disconnected(self, event):
         """切断通知をクライアントに送信"""
-        await self.send(text_data=json.dumps({
-            "type": "player_disconnected",
-            "disconnected_player": event["disconnected_player"]
-        }))
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "type": "player_disconnected",
+                    "disconnected_player": event["disconnected_player"],
+                }
+            )
+        )
 
     @database_sync_to_async
     def save_game_state(self, game):
