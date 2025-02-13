@@ -8,7 +8,7 @@ export default class Model {
   private model!: THREE.Object3D;
 
   constructor(canvas: HTMLCanvasElement) {
-    this.experience = new Experience(canvas);
+    this.experience = Experience.getInstance(canvas);
     this.scene = this.experience.scene;
     this.resources = this.experience.scene;
     this.loadModel();

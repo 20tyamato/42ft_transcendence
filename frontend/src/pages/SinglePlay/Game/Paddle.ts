@@ -9,11 +9,11 @@ export default class Paddle {
   private FIELD_LENGTH: number;
   private paddleGeometry: THREE.BoxGeometry;
   private paddleMaterial: THREE.MeshBasicMaterial;
-  private paddleOne: THREE.Mesh;
-  private paddleTwo: THREE.Mesh;
+  public paddleOne: THREE.Mesh;
+  public paddleTwo: THREE.Mesh;
 
   constructor(canvas: HTMLCanvasElement) {
-    this.experience = new Experience(canvas);
+    this.experience = Experience.getInstance(canvas);
     this.scene = this.experience.scene;
     this.PADDLE_WIDTH = this.experience.PADDLE_WIDTH;
     this.PADDLE_HEIGHT = this.experience.PADDLE_HEIGHT;

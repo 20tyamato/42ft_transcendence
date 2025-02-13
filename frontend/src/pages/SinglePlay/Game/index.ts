@@ -57,7 +57,7 @@ const SinglePlayPage = new Page({
 
     // Three.js の Experience を初期化
     const canvas = document.getElementById('gl') as HTMLCanvasElement;
-    const experience = new Experience(canvas);
+    const experience = Experience.getInstance(canvas);
     const ball = new Ball(canvas);
     const field = new Field(canvas);
 

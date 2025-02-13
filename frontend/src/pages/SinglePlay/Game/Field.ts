@@ -1,8 +1,9 @@
 import Experience from './Experience';
 import * as THREE from 'three';
+// import Camera from '../World/Camera';
 
 export default class Walls {
-  private experience: Experience;
+  public experience: Experience;
   private scene: THREE.Scene;
   private camera: THREE.Camera;
   private FIELD_WIDTH: number;
@@ -13,11 +14,16 @@ export default class Walls {
   private wallLeft: THREE.Mesh;
 
   constructor(canvas: HTMLCanvasElement) {
-    this.experience = new Experience(canvas);
-    this.scene = this.experience.scene;
-    this.camera = this.experience.camera;
-    this.FIELD_WIDTH = this.experience.FIELD_WIDTH;
-    this.FIELD_LENGTH = this.experience.FIELD_LENGTH;
+    this.experience = Experience.getInstance(canvas);
+    this.scene = new THREE.Scene();
+    this.camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+    this.FIELD_WIDTH = 900;
+    this.FIELD_LENGTH = 3000;
 
     this.wallGeometry = new THREE.BoxGeometry(10, 10, 3800, 5, 5, 500);
     this.wallMaterial = new THREE.MeshBasicMaterial({

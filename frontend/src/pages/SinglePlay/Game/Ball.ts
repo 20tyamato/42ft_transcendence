@@ -9,11 +9,11 @@ export default class Experience {
   public controls: OrbitControls;
   public sizes: { width: number; height: number };
   public time: THREE.Clock;
-  public field: THREE.Mesh;
-  public ball: THREE.Mesh;
-  public ballMaterial: THREE.Material;
-  public paddleTwo: THREE.Mesh;
-  public paddleOne: THREE.Mesh;
+  public field: THREE.Mesh = new THREE.Mesh();
+  public ball: THREE.Mesh = new THREE.Mesh();
+  public ballMaterial: THREE.Material = new THREE.Material();
+  public paddleTwo: THREE.Mesh = new THREE.Mesh();
+  public paddleOne: THREE.Mesh = new THREE.Mesh();
   public WIDTH: number;
   public HEIGHT: number;
   public VIEW_ANGLE: number;

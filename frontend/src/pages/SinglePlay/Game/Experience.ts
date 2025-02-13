@@ -22,7 +22,7 @@ declare global {
 }
 
 export default class Experience {
-  public static instance: Experience | null = null;
+  private static instance: Experience | null = null;
 
   public WIDTH: number = window.innerWidth;
   public HEIGHT: number = window.innerHeight;
@@ -36,21 +36,21 @@ export default class Experience {
   public PADDLE_WIDTH: number = 200;
   public PADDLE_HEIGHT: number = 30;
 
-  public canvas: HTMLCanvasElement;
-  public sizes: Sizes;
-  public time: Time;
-  public scene: THREE.Scene;
-  public resources: Loaders;
-  public camera: Camera;
-  public renderer: Renderer;
-  public world: World;
-  public cameraLerp: CameraLerp;
+  public canvas!: HTMLCanvasElement;
+  public sizes!: Sizes;
+  public time: Time = new Time();
+  public scene: THREE.Scene = new THREE.Scene();
+  public resources: Loaders = new Loaders(sources);
+  public camera: Camera = new Camera(this.canvas);
+  public renderer: THREE.WebGLRenderer = new Renderer(this.canvas);
+  public world: World = new World(this.canvas);
+  public cameraLerp: CameraLerp = new CameraLerp(this.canvas);
 
-  public field: Field;
-  public paddle: Paddle;
-  public ball: Ball;
-  public walls: Walls;
-  public localGame: LocalGame;
+  public field: Field = new Field(this.canvas);
+  public paddle: Paddle = new Paddle(this.canvas);
+  public ball: Ball = new Ball(this.canvas);
+  public walls: Walls = new Walls(this.canvas);
+  public localGame: LocalGame = new LocalGame(this.canvas);
 
   private localGameStarted: boolean = false;
 
@@ -83,15 +83,22 @@ export default class Experience {
     this.time.on('tick', () => this.update());
   }
 
-  private resize(): void {
-    this.camera.resize();
-    this.renderer.resize();
+  static getInstance(canvas: HTMLCanvasElement): Experience {
+    if (!Experience.instance) {
+      Experience.instance = Experience.getInstance(canvas);
+    }
+    return Experience.instance;
   }
 
-  private update(): void {
+  private resize(): void {
+    this.camera.resize();
+    this.renderer.setSize(this.sizes.width, this.sizes.height);
+  }
+
+  public update(): void {
     this.camera.update();
     this.world.update();
-    this.renderer.update();
+    // this.renderer.update(); // Removed because WebGLRenderer does not have an update method
     this.cameraLerp.update();
     this.ball.update();
     this.field.update();
@@ -115,11 +122,5 @@ export default class Experience {
         }
       }
     });
-
-  public static getInstance(canvas: HTMLCanvasElement): Experience {
-    if (!Experience.instance) {
-      Experience.instance = new Experience(canvas);
-    }
-    return Experience.instance;
-  }}
-};
+  }
+}

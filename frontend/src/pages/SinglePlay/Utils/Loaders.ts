@@ -1,5 +1,6 @@
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import EventEmitter from './EventEmitter';
+import Source from './sources';
 
 interface Source {
   name: string;
