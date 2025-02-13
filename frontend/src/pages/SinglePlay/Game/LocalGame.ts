@@ -23,12 +23,12 @@ export default class LocalGame {
 
   constructor(canvas: HTMLCanvasElement) {
     /* ゲームエンジンのインスタンスを取得 */
-    this.experience = new Experience(canvas);
+    this.experience = Experience.getInstance(canvas);
     this.canvas = canvas;
     this.time = new THREE.Clock();
     this.scene = this.experience.scene;
-    this.camera = this.experience.camera;
-    this.field = this.experience.field;
+    this.camera = this.experience.camera as unknown as HREE.PerspectiveCamera;
+    this.field = this.experience.field as unknown as THREE.Mesh; // Assuming 'field' is of type THREE.Mesh
     this.ball = this.experience.ball.ball;
     this.ballMaterial = this.experience.ball.ballMaterial;
     this.paddleTwo = this.experience.paddle.paddleTwo;

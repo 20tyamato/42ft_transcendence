@@ -4,7 +4,7 @@ import * as THREE from 'three';
 export default class Walls {
   private experience: Experience;
   private scene: THREE.Scene;
-  private camera: THREE.Camera;
+  public camera: THREE.Camera;
   private FIELD_WIDTH: number;
   private FIELD_LENGTH: number;
   private wallGeometry: THREE.BoxGeometry;
@@ -13,7 +13,7 @@ export default class Walls {
   private wallLeft: THREE.Mesh;
 
   constructor(canvas: HTMLCanvasElement) {
-    this.experience = new Experience(canvas);
+    this.experience = Experience.getInstance(canvas);
     this.scene = this.experience.scene;
     this.camera = this.experience.camera;
     this.FIELD_WIDTH = this.experience.FIELD_WIDTH;

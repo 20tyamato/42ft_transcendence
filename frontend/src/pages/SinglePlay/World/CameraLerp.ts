@@ -1,4 +1,5 @@
 import Experience from '../Game/Experience';
+import * as THREE from 'three';
 
 export default class CameraLerp {
   private experience: Experience;
@@ -11,8 +12,8 @@ export default class CameraLerp {
   private windowHalfY: number = window.innerHeight / 2;
   private lerpActive: boolean = true;
 
-  constructor() {
-    this.experience = new Experience();
+  constructor(canvas: HTMLCanvasElement) {
+    this.experience = Experience.getInstance(canvas);
     this.scene = this.experience.scene;
 
     this.setupMouseEvents();
