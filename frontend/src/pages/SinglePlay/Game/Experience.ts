@@ -85,7 +85,7 @@ export default class Experience {
 
   static getInstance(canvas: HTMLCanvasElement): Experience {
     if (!Experience.instance) {
-      Experience.instance = Experience.getInstance(canvas);
+      Experience.instance = new Experience(canvas);
     }
     return Experience.instance;
   }
