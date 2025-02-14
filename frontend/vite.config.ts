@@ -18,6 +18,7 @@ export default defineConfig({
       port: 24678,
       clientPort: 24678,
       host: '0.0.0.0',
+      protocol: 'ws',
     },
     port: 3001,
     host: '0.0.0.0',
