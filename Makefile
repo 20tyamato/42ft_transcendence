@@ -8,13 +8,13 @@ all: up
 
 setup: elk-setup
 
-up: clear-localstorage elk-up hostip
+up: elk-up hostip
 	docker compose up
 
-upbuild: clear-localstorage elk-upbuild
+upbuild: elk-upbuild
 	docker compose up --build
 
-down: elk-down 
+down: elk-down clear-localstorage
 	docker compose down
 
 re: clean setup upbuild
@@ -23,7 +23,7 @@ clean: down
 	docker volume rm $(shell docker volume ls -q | grep "^$(PROJECT_NAME)") || true
 	docker system prune -f --volumes
 
-fbuild: clear-localstorage hostip
+fbuild: hostip
 	docker compose build --no-cache && docker compose up
 
 # ------------------------------
