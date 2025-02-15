@@ -9,6 +9,11 @@ html {
   color: #f8fafc;
 }
 
+.highlight {
+  color: #38bdf8;
+  font-family: 'Orbitron', sans-serif;
+}
+
 .language-switcher {
   position: absolute;
   top: 20px;
