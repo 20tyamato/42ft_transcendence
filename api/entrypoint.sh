@@ -6,7 +6,6 @@ python manage.py migrate
 # 初期データの読み込み
 python manage.py loaddata initial_data
 
-
 # 開発環境用のホットリロード設定
 if [ "$DJANGO_ENV" = "development" ]; then
     # watchdogを使用してファイル変更を監視

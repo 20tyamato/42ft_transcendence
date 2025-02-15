@@ -122,8 +122,8 @@ make up
     - ユーザー登録ページ
   - `http://localhost:3001/login`
     - ログインページ
-    - username: `sample`
-    - password: `password`
+    - username: `sample1`
+    - password: `password1`
   - `http://localhost:3001/profile`
     - ユーザープロフィールページ
   - `http://localhost:3001/modes`

@@ -68,15 +68,13 @@ services:
       - ./ELK/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro,Z
       - ./ELK/logstash/pipeline:/usr/share/logstash/pipeline:ro,Z
     ports:
-      - 5044:5044
-      - 50000:50000/tcp
-      - 50000:50000/udp
-      - 9600:9600
+      - "50000:50000"
     environment:
-      LS_JAVA_OPTS: -Xms256m -Xmx256m
+      LS_JAVA_OPTS: "-Xms256m -Xmx512m -XX:+HeapDumpOnOutOfMemoryError"
       LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
     networks:
       - elk
+      - app-network
     depends_on:
       - elasticsearch
     restart: unless-stopped
@@ -101,6 +99,9 @@ services:
 networks:
   elk:
     driver: bridge
+  app-network:
+    name: ft_transcendence_app-network
+    external: true
 
 volumes:
   elasticsearch:

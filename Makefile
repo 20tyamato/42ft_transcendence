@@ -6,19 +6,51 @@ DB_CONTAINER := $(PROJECT_NAME)-db-1
 
 all: up
 
+setup: elk-setup
+
 up: elk-up hostip
 	docker compose up
 
-down:
+upbuild: elk-upbuild
+	docker compose up --build
+
+down: elk-down 
 	docker compose down
 
-re: down up
+re: clean setup upbuild
 
 clean: down
-	docker system prune -af --volumes
+	docker volume rm $(shell docker volume ls -q | grep "^$(PROJECT_NAME)") || true
+	docker system prune -f --volumes
 
 fbuild: hostip
 	docker compose build --no-cache && docker compose up
+
+# ------------------------------
+# ELK
+# ------------------------------
+
+elk-setup:
+	docker network create ft_transcendence_app-network || true
+	docker compose -f docker-compose.elk.yml up setup
+
+elk-up:
+	docker compose -f docker-compose.elk.yml up -d
+
+elk-upbuild:
+	docker compose -f docker-compose.elk.yml up --build -d
+
+elk-down:
+	docker compose -f docker-compose.elk.yml down
+
+elk-reload:
+	docker compose -f docker-compose.elk.yml down
+	docker compose -f docker-compose.elk.yml build --no-cache
+	docker compose -f docker-compose.elk.yml up -d
+
+# ------------------------------
+# Utilities
+# ------------------------------
 
 test:
 	docker exec -it $(API_CONTAINER) python manage.py test pong
@@ -54,18 +86,6 @@ api_in:
 front_in:
 	docker exec -it $(FRONTEND_CONTAINER) bash
 
-elk-setup:
-	docker compose -f docker-compose.elk.yml up setup
-
-elk-up:
-	docker compose -f docker-compose.elk.yml up -d
-
-elk-reload:
-	docker compose -f docker-compose.elk.yml restart
-
-
-# .env の HOST_IP を設定
-# NOTE linuxで動くか要確認
 hostip:
 	scripts/setup-host-ip.sh
 

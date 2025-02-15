@@ -1,11 +1,11 @@
-version: '3.9'
+version: "3.9"
 services:
   api:
     build:
       context: ./api
       dockerfile: Dockerfile
     ports:
-      - '8001:8001'
+      - "8001:8001"
     volumes:
       - ./api:/code
     depends_on:
@@ -14,6 +14,7 @@ services:
       redis:
         condition: service_started
     environment:
+      LOGSTASH_URL: ${BACKEND_LOGSTASH_URL}
       DEBUG: ${DEBUG}
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
@@ -37,11 +38,11 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     ports:
-      - '5432:5432'
+      - "5432:5432"
     networks:
       - app-network
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER}']
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -51,13 +52,13 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - '3001:3001'
-      - '24678:24678'
+      - "3001:3001"
+      - "24678:24678"
     volumes:
       - ./frontend:/app
       - /app/node_modules
     environment:
-      VITE_LOGSTASH_URL: ${VITE_LOGSTASH_URL}
+      VITE_LOGSTASH_URL: ${FRONTEND_LOGSTASH_URL}
       VITE_API_URL: http://${HOST_IP}:8001
       VITE_WS_URL: http://${HOST_IP}:8001
     networks:
@@ -66,7 +67,7 @@ services:
   redis:
     image: redis:7
     ports:
-      - '6380:6379'
+      - "6380:6379"
     volumes:
       - redis_data:/data
     networks:
@@ -75,7 +76,7 @@ services:
   pgweb:
     image: sosedoff/pgweb
     ports:
-      - '5433:8081'
+      - "5433:8081"
     environment:
       DATABASE_URL: postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}?sslmode=disable
     depends_on:
@@ -90,4 +91,5 @@ volumes:
 
 networks:
   app-network:
-    driver: bridge
+    name: ft_transcendence_app-network
+    external: true
