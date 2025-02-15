@@ -1,7 +1,16 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 
-from .models import Game, User
+from .models import (
+    Game, 
+    User,
+    TournamentGameSession,
+    TournamentMatch,
+    TournamentParticipant,
+    # TODO: RM
+    Tournament,
+    BlockchainScore,
+)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -169,3 +178,48 @@ class GameSerializer(serializers.ModelSerializer):
             "score_player2",
             "is_ai_opponent",
         ]
+
+class TournamentGameSessionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TournamentGameSession
+        fields = [
+            'id',
+            'name',
+            'status',
+            'created_at',
+            'started_at',
+            'completed_at',
+            'min_players',
+            'max_players',
+            'current_round'
+        ]
+
+class TournamentMatchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TournamentMatch
+        fields = [
+            'id',
+            'tournament',
+            'game',
+            'round_number',
+            'match_number',
+            'player1',
+            'player2',
+            'next_match'
+        ]
+        read_only_fields = ['id']
+
+class TournamentParticipantSerializer(serializers.ModelSerializer):
+    user_display_name = serializers.CharField(source='user.display_name', read_only=True)
+
+    class Meta:
+        model = TournamentParticipant
+        fields = [
+            'id',
+            'tournament',
+            'user',
+            'user_display_name',
+            'joined_at',
+            'seed'
+        ]
+        read_only_fields = ['id', 'joined_at']
