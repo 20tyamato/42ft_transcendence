@@ -204,6 +204,22 @@ const ProfilePage = new Page({
           cardInner?.classList.toggle('is-flipped');
         });
       }
+
+      const frontCloseBtn = document.querySelector('.card-front .close-btn');
+      if (frontCloseBtn) {
+        frontCloseBtn.addEventListener('click', (e) => {
+          e.stopPropagation(); // Prevent card flip
+          window.location.href = '/modes';
+        });
+      }
+
+      const backCloseBtn = document.querySelector('.card-back .close-btn');
+      if (backCloseBtn) {
+        backCloseBtn.addEventListener('click', (e) => {
+          e.stopPropagation(); // Prevent card flip
+          window.location.href = '/modes';
+        });
+      }
     } catch (error) {
       console.error('Error in mounted():', error);
     }

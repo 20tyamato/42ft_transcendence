@@ -8,10 +8,10 @@ all: up
 
 setup: elk-setup
 
-up: elk-up hostip
+up: clear-localstorage elk-up hostip
 	docker compose up
 
-upbuild: elk-upbuild
+upbuild: clear-localstorage elk-upbuild
 	docker compose up --build
 
 down: elk-down 
@@ -23,7 +23,7 @@ clean: down
 	docker volume rm $(shell docker volume ls -q | grep "^$(PROJECT_NAME)") || true
 	docker system prune -f --volumes
 
-fbuild: hostip
+fbuild: clear-localstorage hostip
 	docker compose build --no-cache && docker compose up
 
 # ------------------------------
@@ -87,7 +87,10 @@ front_in:
 	docker exec -it $(FRONTEND_CONTAINER) bash
 
 hostip:
-	scripts/setup-host-ip.sh
+	@scripts/setup-host-ip.sh
+
+clear-localstorage:
+	@scripts/clear-localstorage.sh
 
 db_in:
 	docker exec -it $(DB_CONTAINER) bash
