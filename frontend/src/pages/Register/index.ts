@@ -14,7 +14,7 @@ const updateRegisterContent = () => {
   const emailLabel = document.querySelector('label[for="email"]');
   if (emailLabel) emailLabel.textContent = i18next.t('emailAddress');
 
-  const displayNameLabel = document.querySelector('label[for="display_name"]');
+  const displayNameLabel = document.querySelector('label[for="displayName"]');
   if (displayNameLabel) displayNameLabel.textContent = i18next.t('displayName');
 
   const passwordLabel = document.querySelector('label[for="password"]');
@@ -65,11 +65,11 @@ const RegisterPage = new Page({
       const formData = new FormData(form);
       const username = formData.get('username') as string;
       const email = formData.get('email') as string;
-      const display_name = formData.get('display_name') as string;
+      const displayName = formData.get('displayName') as string;
       const password = formData.get('password') as string;
       const password_confirm = formData.get('password_confirm') as string;
 
-      if (!username || !email || !display_name || !password || !password_confirm) {
+      if (!username || !email || !displayName || !password || !password_confirm) {
         if (responseMessage) {
           responseMessage.textContent = i18next.t('allFieldsRequired');
           responseMessage.style.color = 'red';
@@ -97,7 +97,7 @@ const RegisterPage = new Page({
       const userData = {
         username,
         email,
-        display_name,
+        displayName,
         password,
       };
 

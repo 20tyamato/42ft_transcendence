@@ -10,11 +10,14 @@
   "register": "Register",
   "emailAddress": "Email Address",
   "displayName": "Display Name",
+  "enterDisplayName": "Enter your display name",
   "confirmPassword": "Confirm Password",
   "loginPrompt": "Already have an account? <a href=\"./login\">Login</a>",
   "registerSuccess": "Registration successful!",
   "allFieldsRequired": "All fields are required",
   "validEmail": "Please enter a valid email address",
+  "emptyDisplayName": "Please enter a display name",
+  "validLanguage": "Please enter a valid language",
   "passwordsDoNotMatch": "Passwords do not match",
   "somethingWentWrong": "Something went wrong",
   "start": "Start",
@@ -39,5 +42,6 @@
   "tapToShowFront": "Tap or click to show the front",
   "tournamentHistory": "Tournament History",
   "blockchainScores": "Blockchain Scores",
-  "editProfile": "Edit Profile"
+  "editProfile": "Edit Profile",
+  "settingsSaved": "Settings saved successfully!"
 }

@@ -10,11 +10,14 @@
   "register": "登録",
   "emailAddress": "メールアドレス",
   "displayName": "表示名",
+  "enterDisplayName": "表示名を入力してください",
   "confirmPassword": "パスワードの確認",
   "loginPrompt": "すでにアカウントをお持ちですか？ <a href=\"./login\">ログイン</a>",
   "registerSuccess": "登録が完了しました！",
   "allFieldsRequired": "すべての項目は必須です",
   "validEmail": "有効なメールアドレスを入力してください",
+  "emptyDisplayName": "表示名を入力してください",
+  "validLanguage": "有効な言語を入力してください",
   "passwordsDoNotMatch": "パスワードが一致しません",
   "somethingWentWrong": "何か問題が発生しました",
   "start": "開始",
@@ -39,5 +42,6 @@
   "tapToShowFront": "表面を表示するにはタップまたはクリック",
   "tournamentHistory": "トーナメント履歴",
   "blockchainScores": "ブロックチェーンスコア",
-  "editProfile": "プロフィールを編集"
+  "editProfile": "プロフィールを編集",
+  "settingsSaved": "設定が正常に保存されました！"
 }

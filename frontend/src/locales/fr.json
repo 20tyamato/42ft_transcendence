@@ -10,11 +10,14 @@
   "register": "Inscription",
   "emailAddress": "Adresse email",
   "displayName": "Nom d'affichage",
+  "enterDisplayName": "Entrez votre nom d'affichage",
   "confirmPassword": "Confirmer le mot de passe",
   "loginPrompt": "Vous avez déjà un compte ? <a href=\"./login\">Connectez-vous</a>",
   "registerSuccess": "Inscription réussie !",
   "allFieldsRequired": "Tous les champs sont requis",
   "validEmail": "Veuillez entrer une adresse email valide",
+  "emptyDisplayName": "Veuillez entrer un nom d'affichage valide",
+  "validLanguage": "Veuillez entrer une langue valide",
   "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
   "somethingWentWrong": "Quelque chose s'est mal passé",
   "start": "Démarrer",
@@ -39,5 +42,6 @@
   "tapToShowFront": "Appuyez ou cliquez pour montrer le devant",
   "tournamentHistory": "Historique des tournois",
   "blockchainScores": "Scores blockchain",
-  "editProfile": "Modifier le profil"
+  "editProfile": "Modifier le profil",
+  "settingsSaved": "Paramètres enregistrés avec succès !"
 }

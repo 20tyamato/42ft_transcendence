@@ -81,8 +81,8 @@ const updateAvatar = async (file: File) => {
   }
 };
 
-// ユーザー情報（メール）の更新
-const updateUserInfo = async (email: string) => {
+// ユーザー情報（メールと表示名）の更新
+const updateUserInfo = async (email: string, displayName: string) => {
   const token = localStorage.getItem('token');
   if (!token) return;
 
@@ -93,7 +93,7 @@ const updateUserInfo = async (email: string) => {
         'Content-Type': 'application/json',
         Authorization: `Token ${token}`,
       },
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({ email, displayName }),
     });
 
     if (!response.ok) {

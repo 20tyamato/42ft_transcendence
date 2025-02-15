@@ -34,6 +34,12 @@ body {
   margin-bottom: 1rem;
 }
 
+#response-message {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
+}
+
 /* ------------------------------
    フォーム全体
 ------------------------------ */

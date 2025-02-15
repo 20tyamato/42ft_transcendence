@@ -47,6 +47,7 @@ const updateContent = () => {
 
   updateLabel('username', 'username');
   updateLabel('email', 'emailAddress');
+  updateLabel('displayName', 'displayName');
   updateLabel('experience', 'currentExperience');
   updateLabel('level', 'level');
   updateLabel('language', 'language');
@@ -95,6 +96,7 @@ const ProfilePage = new Page({
       const avatarEl = document.getElementById('avatar') as HTMLImageElement;
       const usernameEl = document.getElementById('username') as HTMLElement;
       const emailEl = document.getElementById('email') as HTMLElement;
+      const displayNameEl = document.getElementById('displayName') as HTMLElement;
       const experienceEl = document.getElementById('experience') as HTMLElement;
       const levelEl = document.getElementById('level') as HTMLElement;
       const languageEl = document.getElementById('language') as HTMLElement;
@@ -103,10 +105,11 @@ const ProfilePage = new Page({
       const tournamentHistoryEl = document.getElementById('tournamentHistory');
       const scoreListEl = document.getElementById('scoreList');
 
-      const { avatar, username, email, experience, level, language } = userData as {
+      const { avatar, username, display_name, email, experience, level, language } = userData as {
         avatar: string;
         username: string;
         email: string;
+        display_name: string;
         experience: number;
         level: number;
         language: keyof typeof languageNames;
@@ -126,6 +129,7 @@ const ProfilePage = new Page({
       }
       if (usernameEl) usernameEl.textContent = username;
       if (emailEl) emailEl.textContent = email;
+      if (displayNameEl) displayNameEl.textContent = display_name;
       if (experienceEl) experienceEl.textContent = experience.toString();
       if (levelEl) levelEl.textContent = level.toString();
       if (languageEl) languageEl.textContent = languageNames[language];

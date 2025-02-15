@@ -139,12 +139,11 @@ body {
    タップヒントのスタイル
 ------------------------------ */
 .tap-hint {
-  margin-top: 1rem;
+  margin-top: 0.5rem;
   font-size: 0.85rem;
   opacity: 0.8;
   text-align: center;
   color: #fff;
-  transform: translateY(25px);
 }
 
 /* ------------------------------
