@@ -3,6 +3,7 @@ import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { updateActiveLanguageButton } from '@/models/Lang/repository';
 import { isLoggedIn } from '@/models/User/auth';
+import { updateLanguage } from '@/models/User/repository';
 import createThreeScene from '@/pages/Home/scene';
 
 const updateHomeContent = () => {
@@ -40,6 +41,8 @@ const HomePage = new Page({
     loginBtn?.addEventListener('click', (event) => {
       event.preventDefault();
       if (isLoggedIn()) {
+        i18next.changeLanguage(i18next.language);
+        updateLanguage(i18next.language);
         window.location.href = '/modes';
       } else {
         window.location.href = '/login';
