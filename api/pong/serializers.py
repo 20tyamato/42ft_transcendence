@@ -194,6 +194,36 @@ class TournamentGameSessionSerializer(serializers.ModelSerializer):
             'current_round'
         ]
 
+    def validate_min_players(self, value):
+        """
+        Check that min_players is at least 2
+        """
+        if value < 2:
+            raise serializers.ValidationError("Minimum number of players must be at least 2")
+        return value
+
+    def validate_max_players(self, value):
+        """
+        Check that max_players is at most 8
+        """
+        if value > 8:
+            raise serializers.ValidationError("Maximum number of players cannot exceed 8")
+        return value
+
+    def validate(self, data):
+        """
+        Check that max_players is greater than or equal to min_players
+        """
+        min_players = data.get('min_players', self.instance.min_players if self.instance else 2)
+        max_players = data.get('max_players', self.instance.max_players if self.instance else 8)
+        
+        if max_players < min_players:
+            raise serializers.ValidationError({
+                "max_players": "Maximum players must be greater than or equal to minimum players"
+            })
+        return data
+
+
 class TournamentMatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = TournamentMatch
@@ -209,6 +239,38 @@ class TournamentMatchSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['id']
 
+    def validate_round_number(self, value):
+        """
+        Check that round_number is positive
+        """
+        if value < 1:
+            raise serializers.ValidationError("Round number must be greater than 0")
+        return value
+
+    def validate_match_number(self, value):
+        """
+        Check that match_number is positive
+        """
+        if value < 1:
+            raise serializers.ValidationError("Match number must be greater than 0")
+        return value
+    
+    def validate(self, data):
+        """
+        Custom validation for match data
+        """
+        player1 = data.get('player1')
+        player2 = data.get('player2')
+        
+        # Ensure players are different if both are specified
+        if player1 and player2 and player1 == player2:
+            raise serializers.ValidationError({
+                "player2": "Players must be different"
+            })
+            
+        return data
+
+
 class TournamentParticipantSerializer(serializers.ModelSerializer):
     user_display_name = serializers.CharField(source='user.display_name', read_only=True)
 
@@ -223,3 +285,34 @@ class TournamentParticipantSerializer(serializers.ModelSerializer):
             'seed'
         ]
         read_only_fields = ['id', 'joined_at']
+
+    def validate_seed(self, value):
+        """
+        Check that seed is positive if provided
+        """
+        if value is not None and value < 1:
+            raise serializers.ValidationError("Seed number must be greater than 0 if provided")
+        return value
+
+    def validate(self, data):
+        """
+        Check for duplicate participation
+        """
+        tournament = data.get('tournament')
+        user = data.get('user')
+        
+        # Skip validation if either tournament or user is not provided
+        if not tournament or not user:
+            return data
+            
+        # When creating a new participant
+        if not self.instance:
+            if TournamentParticipant.objects.filter(
+                tournament=tournament,
+                user=user
+            ).exists():
+                raise serializers.ValidationError({
+                    "user": "This user is already participating in this tournament"
+                })
+        
+        return data
