@@ -95,10 +95,10 @@ const RegisterPage = new Page({
       }
 
       const userData = {
-        username,
-        email,
-        displayName,
-        password,
+        username: username,
+        email: email,
+        display_name: displayName,
+        password: password,
       };
 
       try {
@@ -121,9 +121,22 @@ const RegisterPage = new Page({
           window.location.href = '/login';
         } else {
           const error = await response.json();
-          responseMessage!.textContent = i18next.t('errorMessage', {
-            error: error.message || i18next.t('somethingWentWrong'),
-          });
+          console.log(error);
+        
+          let errorMessage = i18next.t('somethingWentWrong');
+          if (error.username) {
+            errorMessage = i18next.t('usernameExists');
+          } else if (error.display_name) {
+            errorMessage = i18next.t('displayNameExists');
+          } else if (error.email) {
+            errorMessage = i18next.t('emailExists');
+          } else if (error.password) {
+            errorMessage = error.password[0];
+          } else if (error.non_field_errors) {
+            errorMessage = error.non_field_errors[0];
+          }
+        
+          responseMessage!.textContent = errorMessage;
           responseMessage!.style.color = 'red';
         }
       } catch (error) {

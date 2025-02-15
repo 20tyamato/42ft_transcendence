@@ -119,11 +119,3 @@ html {
 .password-field button:hover i {
   color: #007bff;
 }
-
-/* スピナー（クルクル）のスタイル */
-.spinner {
-  margin-left: 10px;
-  display: none;
-  font-size: 1.2rem;
-  color: #fff;
-}

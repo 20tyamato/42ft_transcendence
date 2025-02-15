@@ -43,5 +43,8 @@
   "tournamentHistory": "Historique des tournois",
   "blockchainScores": "Scores blockchain",
   "editProfile": "Modifier le profil",
-  "settingsSaved": "Paramètres enregistrés avec succès !"
+  "settingsSaved": "Paramètres enregistrés avec succès !",
+  "usernameExists": "Le nom d'utilisateur existe déjà",
+  "displayNameExists": "Le nom d'affichage existe déjà",
+  "emailExists": "L'adresse email existe déjà"
 }

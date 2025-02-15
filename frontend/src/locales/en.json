@@ -43,5 +43,8 @@
   "tournamentHistory": "Tournament History",
   "blockchainScores": "Blockchain Scores",
   "editProfile": "Edit Profile",
-  "settingsSaved": "Settings saved successfully!"
+  "settingsSaved": "Settings saved successfully!",
+  "usernameExists": "Username already exists",
+  "displayNameExists": "Display name already exists",
+  "emailExists": "Email address already exists"
 }
