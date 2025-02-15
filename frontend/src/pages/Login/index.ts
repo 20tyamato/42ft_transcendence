@@ -80,8 +80,10 @@ const LoginPage = new Page({
 
           responseMessage!.textContent = i18next.t('loginSuccess');
           responseMessage!.style.color = 'green';
-          console.log(result);
-          window.location.href = '/modes';
+
+          setTimeout(() => {
+            window.location.href = '/modes';
+          }, 1000);
         } else {
           const error = await response.json();
           responseMessage!.textContent = i18next.t('errorMessage', {

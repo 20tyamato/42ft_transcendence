@@ -117,11 +117,12 @@ const RegisterPage = new Page({
           localStorage.setItem('username', result.username);
           responseMessage!.textContent = i18next.t('registerSuccess');
           responseMessage!.style.color = 'green';
-          console.log(result);
-          window.location.href = '/login';
+          
+          setTimeout(() => {
+            window.location.href = '/login';
+          }, 1000);
         } else {
           const error = await response.json();
-          console.log(error);
         
           let errorMessage = i18next.t('somethingWentWrong');
           if (error.username) {

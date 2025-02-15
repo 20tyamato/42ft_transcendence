@@ -34,7 +34,7 @@ const createThreeScene = () => {
 
       // 文字のサイズはキャンバスの 30% 程度に設定
       const fontSize = size * 0.3;
-      ctx.font = `bold ${fontSize}px Arial`;
+      ctx.font = `${fontSize}px sans-serif`;
       ctx.fillStyle = textColor;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';

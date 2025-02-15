@@ -55,6 +55,7 @@ const LogoutPage = new Page({
 
     localStorage.removeItem('token');
     localStorage.removeItem('username');
+    localStorage.clear();
 
     const logoutBtn = document.getElementById('logout-btn');
     logoutBtn?.addEventListener('click', () => {
