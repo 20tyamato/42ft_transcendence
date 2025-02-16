@@ -14,7 +14,7 @@ up: elk-up hostip
 upbuild: elk-upbuild
 	docker compose up --build
 
-down: elk-down clear-localstorage
+down: elk-down
 	docker compose down
 
 re: clean setup upbuild
@@ -88,9 +88,6 @@ front_in:
 
 hostip:
 	@scripts/setup-host-ip.sh
-
-clear-localstorage:
-	@scripts/clear-localstorage.sh
 
 db_in:
 	docker exec -it $(DB_CONTAINER) bash
