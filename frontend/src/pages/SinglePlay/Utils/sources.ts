@@ -1,6 +1,6 @@
 export type Source = {
   name: string;
-  type: 'gltfModel' | 'texture' | 'cubeTexture'; // すべてのタイプを受け付けるようにする
+  type: 'gltfModel' | 'texture' | 'cubeTexture';
   path: string;
 };
 
@@ -8,13 +8,7 @@ const sources: Source[] = [
   {
     name: 'exampleModel',
     type: 'gltfModel',
-    path: '/models/example.glb',
-  },
-  {
-    name: 'exampleTexture',
-    type: 'texture',
-    path: '/textures/example.jpg',
+    path: '/models/scene.glb',
   },
 ];
-
 export default sources;

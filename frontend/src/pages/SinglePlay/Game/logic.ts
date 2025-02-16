@@ -47,7 +47,7 @@ export function initGame() {
   paddle2.position.z = -FIELD_LENGTH / 2;
   scene.add(paddle2);
 
-  ball = new Ball();
+  ball = new Ball(scene, 30, new THREE.Vector3(0, 30, 0), aiLevel);
 
   setupLighting();
   setupPauseMenu();
@@ -118,7 +118,7 @@ export function startGameLoop(onGameEnd: () => void) {
 
     updatePaddlePosition();
     // updateBallPosition();
-    ball.update(); // Ball クラスの update を使用
+    // ball.update(); // Ball クラスの update を使用
     processCpuPaddle();
     if (checkScore()) {
       running = false;
