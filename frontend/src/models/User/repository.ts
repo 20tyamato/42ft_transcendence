@@ -124,8 +124,8 @@ const updateLanguage = async (language: string) => {
       console.error('Language update failed:', await response.text());
     } else {
       localStorage.setItem('language', language);
-      i18next.changeLanguage(language);
-      console.log('Language updated successfully to ', language);
+      i18next.changeLanguage(i18next.language);
+      console.log('Language updated successfully to ', i18next.language);
     }
   } catch (err) {
     console.error('Error updating language:', err);
