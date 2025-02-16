@@ -3,9 +3,7 @@ import * as THREE from 'three';
 const createThreeScene = () => {
   // シーン、カメラ、レンダラーの初期設定
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(
-    75, window.innerWidth / window.innerHeight, 0.1, 1000
-  );
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setClearColor(0x000000, 0); // 背景を透過
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -65,18 +63,18 @@ const createThreeScene = () => {
   ball4.position.set(-1.5, ballRadius + 0.01, 0);
 
   // テクスチャの「中央」が赤道にくるため、数字が正面に来るよう少し回転
-  ball4.rotation.y = -Math.PI * 1 / 2;
-  ball4.rotation.x = -Math.PI * 1 / 8;
+  ball4.rotation.y = (-Math.PI * 1) / 2;
+  ball4.rotation.x = (-Math.PI * 1) / 8;
   scene.add(ball4);
 
   const ball2 = new THREE.Mesh(ballGeometry, ball2Material);
   ball2.position.set(1.5, ballRadius + 0.01, 0);
   ball2.rotation.y = -Math.PI / 2;
-  ball2.rotation.x = -Math.PI * 1 / 8;
+  ball2.rotation.x = (-Math.PI * 1) / 8;
   scene.add(ball2);
 
   // ■ バウンス用の物理パラメーター
-  const gravity = -9.8;   // 重力加速度
+  const gravity = -9.8; // 重力加速度
   const restitution = 1.0; // 反発係数（エネルギー損失なし）
 
   // 各ボールの物理情報

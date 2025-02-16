@@ -117,13 +117,13 @@ const RegisterPage = new Page({
           localStorage.setItem('username', result.username);
           responseMessage!.textContent = i18next.t('registerSuccess');
           responseMessage!.style.color = 'green';
-          
+
           setTimeout(() => {
             window.location.href = '/login';
           }, 1000);
         } else {
           const error = await response.json();
-        
+
           let errorMessage = i18next.t('somethingWentWrong');
           if (error.username) {
             errorMessage = i18next.t('usernameExists');
@@ -136,7 +136,7 @@ const RegisterPage = new Page({
           } else if (error.non_field_errors) {
             errorMessage = error.non_field_errors[0];
           }
-        
+
           responseMessage!.textContent = errorMessage;
           responseMessage!.style.color = 'red';
         }
