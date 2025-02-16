@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import Sizes from '../Utils/Sizez';
 import Time from '../Utils/Time';
 import Camera from '../World/Camera';
-// import Renderer from '../Utils/Renderer';
+import Renderer from '../Utils/Renderer';
 import World from '../World/World';
 import Loaders from '../Utils/Loaders';
 import CameraLerp from '../World/CameraLerp';
@@ -65,7 +65,8 @@ export default class Experience {
     this.scene = new THREE.Scene();
     this.resources = new Loaders(sources);
     this.camera = new Camera(canvas);
-    this.renderer = new THREE.WebGLRenderer();
+    // this.renderer = new THREE.WebGLRenderer();
+    this.initializeRenderer(canvas);
     this.world = new World(canvas);
     this.cameraLerp = new CameraLerp(canvas);
 

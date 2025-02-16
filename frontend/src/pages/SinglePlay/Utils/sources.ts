@@ -1,14 +1,12 @@
-export type Source = {
+export interface Source {
   name: string;
-  type: 'gltfModel' | 'texture' | 'cubeTexture';
+  type: 'gltfModel' | 'texture';
   path: string;
-};
+}
 
 const sources: Source[] = [
-  {
-    name: 'exampleModel',
-    type: 'gltfModel',
-    path: '/models/scene.glb',
-  },
+  { name: 'scene', type: 'gltfModel', path: '/models/scene.glb' },
+  { name: 'texture1', type: 'texture', path: '/textures/texture1.jpg' },
 ];
+
 export default sources;
