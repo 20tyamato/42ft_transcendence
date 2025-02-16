@@ -27,7 +27,7 @@ export default class LocalGame {
     this.canvas = canvas;
     this.time = new THREE.Clock();
     this.scene = this.experience.scene;
-    this.camera = this.experience.camera as unknown as HREE.PerspectiveCamera;
+    this.camera = this.experience.camera as unknown as THREE.PerspectiveCamera;
     this.field = this.experience.field as unknown as THREE.Mesh; // Assuming 'field' is of type THREE.Mesh
     this.ball = this.experience.ball.ball;
     this.ballMaterial = this.experience.ball.ballMaterial;

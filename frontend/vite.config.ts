@@ -22,8 +22,10 @@ export default defineConfig({
     },
     port: 3001,
     host: '0.0.0.0',
+    cors: true,
   },
   optimizeDeps: {
     include: ['gsap'],
   },
+  publicDir: 'public', // public ディレクトリを Vite でサーバーに公開
 });

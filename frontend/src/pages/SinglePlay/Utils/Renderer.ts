@@ -5,8 +5,25 @@ import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPa
 import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass.js';
 import Experience from '../Game/Experience';
 
-export default class Renderer extends THREE.WebGLRenderer {
-  static instance: Experience;
+export default class Renderer {
+  private static instance: THREE.WebGLRenderer | null = null;
+
+  static getInstance(canvas: HTMLCanvasElement): THREE.WebGLRenderer {
+    if (!Renderer.instance) {
+      Renderer.instance = new THREE.WebGLRenderer({ canvas, antialias: true });
+      Renderer.instance.setSize(window.innerWidth, window.innerHeight);
+    }
+    return Renderer.instance;
+  }
+
+  static dispose(): void {
+    if (Renderer.instance) {
+      Renderer.instance.dispose();
+      Renderer.instance = null;
+    }
+  }
+
+  private experience: Experience;
   private canvas: HTMLCanvasElement;
   private sizes: { width: number; height: number };
   private scene: THREE.Scene;
@@ -21,7 +38,7 @@ export default class Renderer extends THREE.WebGLRenderer {
     this.canvas = this.experience.canvas;
     this.sizes = { width: window.innerWidth, height: window.innerHeight };
     this.scene = this.experience.scene;
-    this.camera = this.experience.camera as THREE.PerspectiveCamera;
+    this.camera = this.experience.camera as unknown as THREE.PerspectiveCamera;
 
     this.instance = new THREE.WebGLRenderer({
       canvas: this.canvas,
@@ -44,6 +61,11 @@ export default class Renderer extends THREE.WebGLRenderer {
 
   public resize(): void {
     this.instance.setSize(window.innerWidth, window.innerHeight);
+  }
+
+  public setSize(width: number, height: number) {
+    this.instance.setSize(width, height);
+    this.instance.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   }
 
   update(): void {

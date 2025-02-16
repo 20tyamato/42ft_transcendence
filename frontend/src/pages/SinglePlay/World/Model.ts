@@ -10,8 +10,10 @@ export default class Model {
   constructor(canvas: HTMLCanvasElement) {
     this.experience = Experience.getInstance(canvas);
     this.scene = this.experience.scene;
-    this.resources = this.experience.scene;
-    this.loadModel();
+    this.resources = this.experience.resources;
+    this.experience.resources.on('ready', () => {
+      this.loadModel();
+    });
   }
 
   private loadModel(): void {

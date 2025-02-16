@@ -15,7 +15,13 @@ export default class Walls {
   constructor(canvas: HTMLCanvasElement) {
     this.experience = Experience.getInstance(canvas);
     this.scene = this.experience.scene;
-    this.camera = this.experience.camera;
+    this.camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+
     this.FIELD_WIDTH = this.experience.FIELD_WIDTH;
     this.FIELD_LENGTH = this.experience.FIELD_LENGTH;
 

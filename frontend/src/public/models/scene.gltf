@@ -1,0 +1,211 @@
+{
+  "accessors": [
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 8130,
+      "max": [1.0, 3.0, 0.5466583967208862],
+      "min": [-1.0, -1.0, 0.0],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 97560,
+      "componentType": 5126,
+      "count": 8130,
+      "max": [0.9487764239311218, 0.9440357685089111, 1.0],
+      "min": [-0.9675167798995972, -0.9440357089042664, 0.15463055670261383],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 8130,
+      "max": [1.0, 1.0],
+      "min": [0.0, 0.0],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 12288,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 195120,
+      "componentType": 5126,
+      "count": 65524,
+      "max": [1.0008525848388672, 3.0007643699645996, 0.547654390335083],
+      "min": [-1.000885009765625, -1.0007643699645996, 0.0],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 981408,
+      "componentType": 5126,
+      "count": 65524,
+      "max": [0.9999899864196777, 0.999999463558197, 0.9998142719268799],
+      "min": [-0.9999993443489075, -0.999999463558197, -0.9980747699737549],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 65040,
+      "componentType": 5126,
+      "count": 65524,
+      "max": [1.0, 1.0],
+      "min": [0.0, 0.0],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 49152,
+      "componentType": 5125,
+      "count": 98304,
+      "type": "SCALAR"
+    }
+  ],
+  "asset": {
+    "extras": {
+      "author": "Omer Bhatti (https://sketchfab.com/OmerBhatti)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/synthwave-80s-retro-style-foreground-5184125634af45a4b1a657b7d51c3d6e",
+      "title": "Synthwave | 80s retro style foreground"
+    },
+    "generator": "Sketchfab-12.67.0",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 442368,
+      "name": "floatBufferViews",
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 589232,
+      "byteOffset": 442368,
+      "byteStride": 8,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 1767696,
+      "byteOffset": 1031600,
+      "byteStride": 12,
+      "name": "floatBufferViews",
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 2799296,
+      "uri": "scene.bin"
+    }
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "name": "Material.001",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [0.0, 0.0, 0.0, 1.0],
+        "metallicFactor": 0.0,
+        "roughnessFactor": 0.6097273650353562
+      }
+    },
+    {
+      "doubleSided": true,
+      "emissiveFactor": [0.0, 0.01092914053108459, 1.0],
+      "name": "Material",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [0.0, 0.0, 0.0, 1.0],
+        "metallicFactor": 0.0
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Floor_Material.001_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 0,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "Wireframe_Material_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 5,
+            "POSITION": 4,
+            "TEXCOORD_0": 6
+          },
+          "indices": 7,
+          "material": 1,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [1],
+      "matrix": [
+        1.0, 0.0, 0.0, 0.0, 0.0, 2.220446049250313e-16, -1.0, 0.0, 0.0, 1.0, 2.220446049250313e-16,
+        0.0, 0.0, 0.0, 0.0, 1.0
+      ],
+      "name": "Sketchfab_model"
+    },
+    {
+      "children": [2],
+      "matrix": [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
+      "name": "114eec6038d847a4b960902b8b79bd69.fbx"
+    },
+    {
+      "children": [3, 5],
+      "name": "RootNode"
+    },
+    {
+      "children": [4],
+      "matrix": [
+        100.0, 0.0, 0.0, 0.0, 0.0, -1.629206793918314e-5, -99.99999999999868, 0.0, 0.0,
+        99.99999999999868, -1.629206793918314e-5, 0.0, 0.0, 0.0, 0.0, 1.0
+      ],
+      "name": "Floor"
+    },
+    {
+      "mesh": 0,
+      "name": "Floor_Material.001_0"
+    },
+    {
+      "children": [6],
+      "matrix": [
+        100.0, 0.0, 0.0, 0.0, 0.0, -1.629206793918314e-5, -99.99999999999868, 0.0, 0.0,
+        99.99999999999868, -1.629206793918314e-5, 0.0, 0.0, 0.0, 0.0, 1.0
+      ],
+      "name": "Wireframe"
+    },
+    {
+      "mesh": 1,
+      "name": "Wireframe_Material_0"
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Sketchfab_Scene",
+      "nodes": [0]
+    }
+  ]
+}

@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import Sizes from '../Utils/Sizez';
 import Time from '../Utils/Time';
 import Camera from '../World/Camera';
-import Renderer from '../Utils/Renderer';
+// import Renderer from '../Utils/Renderer';
 import World from '../World/World';
 import Loaders from '../Utils/Loaders';
 import CameraLerp from '../World/CameraLerp';
@@ -41,24 +41,20 @@ export default class Experience {
   public time: Time = new Time();
   public scene: THREE.Scene = new THREE.Scene();
   public resources: Loaders = new Loaders(sources);
-  public camera: Camera = new Camera(this.canvas);
-  public renderer: THREE.WebGLRenderer = new Renderer(this.canvas);
-  public world: World = new World(this.canvas);
-  public cameraLerp: CameraLerp = new CameraLerp(this.canvas);
+  public camera!: Camera;
+  public renderer!: THREE.WebGLRenderer;
+  public world!: World;
+  public cameraLerp!: CameraLerp;
 
-  public field: Field = new Field(this.canvas);
-  public paddle: Paddle = new Paddle(this.canvas);
-  public ball: Ball = new Ball(this.canvas);
-  public walls: Walls = new Walls(this.canvas);
-  public localGame: LocalGame = new LocalGame(this.canvas);
+  public field!: Field;
+  public paddle!: Paddle;
+  public ball!: Ball;
+  public walls!: Walls;
+  public localGame!: LocalGame;
 
   private localGameStarted: boolean = false;
 
   private constructor(canvas: HTMLCanvasElement) {
-    if (Experience.instance) {
-      return Experience.instance;
-    }
-
     Experience.instance = this;
     window.experience = this;
     window.incorrectDevice = false;
@@ -69,7 +65,7 @@ export default class Experience {
     this.scene = new THREE.Scene();
     this.resources = new Loaders(sources);
     this.camera = new Camera(canvas);
-    this.renderer = new Renderer(canvas);
+    this.renderer = new THREE.WebGLRenderer();
     this.world = new World(canvas);
     this.cameraLerp = new CameraLerp(canvas);
 
@@ -98,7 +94,6 @@ export default class Experience {
   public update(): void {
     this.camera.update();
     this.world.update();
-    // this.renderer.update(); // Removed because WebGLRenderer does not have an update method
     this.cameraLerp.update();
     this.ball.update();
     this.field.update();
@@ -122,5 +117,9 @@ export default class Experience {
         }
       }
     });
+  }
+  public initializeRenderer(canvas: HTMLCanvasElement): void {
+    this.renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+    this.renderer.setSize(this.WIDTH, this.HEIGHT);
   }
 }

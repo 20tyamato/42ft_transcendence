@@ -19,7 +19,7 @@ export default class Camera {
 
   constructor(canvas: HTMLCanvasElement) {
     this.experience = Experience.getInstance(canvas); // 先に割り当てる
-    this.renderer = this.experience.renderer as THREE.WebGLRenderer; // 型アサーションを追加
+    this.renderer = new THREE.WebGLRenderer({ canvas });
     this.scene = this.experience.scene;
     this.canvas = this.experience.canvas;
 
@@ -35,11 +35,11 @@ export default class Camera {
     this.controls = this.createControls();
     this.addResizeListener();
   }
-
   private createCamera(): THREE.PerspectiveCamera {
-    const camera = new THREE.Camera();
+    const camera = new THREE.PerspectiveCamera(this.VIEW_ANGLE, this.ASPECT, this.NEAR, this.FAR);
     camera.position.set(0, 200, this.FIELD_LENGTH / 2 + 1000);
     this.scene.add(camera);
+    return camera;
   }
 
   private createControls(): OrbitControls {
