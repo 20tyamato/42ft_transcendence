@@ -20,6 +20,12 @@ const updateContent = () => {
   const avatarPreviewEl = document.getElementById('avatarPreview') as HTMLImageElement;
   if (avatarPreviewEl) avatarPreviewEl.alt = i18next.t('avatarImagePreview');
 
+  const displayNameLabel = document.querySelector('label[for="displayNameInput"]');
+  if (displayNameLabel) displayNameLabel.textContent = i18next.t('displayName');
+
+  const displayNameInput = document.getElementById('displayNameInput') as HTMLInputElement;
+  if (displayNameInput) displayNameInput.placeholder = i18next.t('enterDisplayName');
+
   const emailLabel = document.querySelector('label[for="emailInput"]');
   if (emailLabel) emailLabel.textContent = i18next.t('emailAddress');
 
@@ -44,9 +50,11 @@ const SettingsUserPage = new Page({
     // HTML Elements
     const avatarPreviewEl = document.getElementById('avatarPreview') as HTMLImageElement;
     const avatarUploadInput = document.getElementById('avatarUpload') as HTMLInputElement;
+    const displayNameInput = document.getElementById('displayNameInput') as HTMLInputElement;
     const emailInput = document.getElementById('emailInput') as HTMLInputElement;
     const languageSelect = document.getElementById('languageSelect') as HTMLSelectElement;
     const form = document.getElementById('userSettingsForm') as HTMLFormElement;
+    const responseMessage = document.getElementById('response-message');
 
     try {
       const userData: IUserData = await fetchCurrentUser();
@@ -58,6 +66,9 @@ const SettingsUserPage = new Page({
       if (userData.avatar && avatarPreviewEl) {
         avatarPreviewEl.src = userData.avatar;
       }
+      if (userData.display_name && displayNameInput) {
+        displayNameInput.value = userData.display_name;
+      }
       if (userData.email && emailInput) {
         emailInput.value = userData.email;
       }
@@ -68,7 +79,7 @@ const SettingsUserPage = new Page({
       console.error('Error fetching user data:', error);
     }
 
-    // アップロードした画像をプレビュー表示
+    // Preview uploaded avatar image
     avatarUploadInput.addEventListener('change', () => {
       if (!avatarUploadInput.files || avatarUploadInput.files.length === 0) return;
       const file = avatarUploadInput.files[0];
@@ -81,19 +92,50 @@ const SettingsUserPage = new Page({
       reader.readAsDataURL(file);
     });
 
-    // フォーム送信時の処理
+    // Form submission handling
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
 
       try {
         const newEmail = emailInput.value.trim();
+        const newDisplayName = displayNameInput.value.trim();
         const newLanguage = languageSelect.value;
-        await updateUserInfo(newEmail);
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(newEmail)) {
+          if (responseMessage) {
+            responseMessage.textContent = i18next.t('validEmail');
+            responseMessage.style.color = 'red';
+          }
+          return;
+        }
+
+        if (!newDisplayName) {
+          if (responseMessage) {
+            responseMessage.textContent = i18next.t('validDisplayName');
+            responseMessage.style.color = 'red';
+          }
+          return;
+        }
+
+        if (newLanguage !== 'en' && newLanguage !== 'ja' && newLanguage !== 'fr') {
+          if (responseMessage) {
+            responseMessage.textContent = i18next.t('validLanguage');
+            responseMessage.style.color = 'red';
+          }
+          return;
+        }
+
+        await updateUserInfo(newEmail, newDisplayName);
         await updateLanguage(newLanguage);
 
         if (avatarUploadInput.files?.length) {
           const file = avatarUploadInput.files[0];
           await updateAvatar(file);
+        }
+        if (responseMessage) {
+          responseMessage.textContent = i18next.t('settingsSaved');
+          responseMessage.style.color = 'green';
         }
 
         window.location.href = '/profile';

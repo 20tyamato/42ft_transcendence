@@ -14,7 +14,7 @@ const updateRegisterContent = () => {
   const emailLabel = document.querySelector('label[for="email"]');
   if (emailLabel) emailLabel.textContent = i18next.t('emailAddress');
 
-  const displayNameLabel = document.querySelector('label[for="display_name"]');
+  const displayNameLabel = document.querySelector('label[for="displayName"]');
   if (displayNameLabel) displayNameLabel.textContent = i18next.t('displayName');
 
   const passwordLabel = document.querySelector('label[for="password"]');
@@ -65,11 +65,11 @@ const RegisterPage = new Page({
       const formData = new FormData(form);
       const username = formData.get('username') as string;
       const email = formData.get('email') as string;
-      const display_name = formData.get('display_name') as string;
+      const displayName = formData.get('displayName') as string;
       const password = formData.get('password') as string;
       const password_confirm = formData.get('password_confirm') as string;
 
-      if (!username || !email || !display_name || !password || !password_confirm) {
+      if (!username || !email || !displayName || !password || !password_confirm) {
         if (responseMessage) {
           responseMessage.textContent = i18next.t('allFieldsRequired');
           responseMessage.style.color = 'red';
@@ -95,10 +95,10 @@ const RegisterPage = new Page({
       }
 
       const userData = {
-        username,
-        email,
-        display_name,
-        password,
+        username: username,
+        email: email,
+        display_name: displayName,
+        password: password,
       };
 
       try {
@@ -117,13 +117,27 @@ const RegisterPage = new Page({
           localStorage.setItem('username', result.username);
           responseMessage!.textContent = i18next.t('registerSuccess');
           responseMessage!.style.color = 'green';
-          console.log(result);
-          window.location.href = '/login';
+
+          setTimeout(() => {
+            window.location.href = '/login';
+          }, 1000);
         } else {
           const error = await response.json();
-          responseMessage!.textContent = i18next.t('errorMessage', {
-            error: error.message || i18next.t('somethingWentWrong'),
-          });
+
+          let errorMessage = i18next.t('somethingWentWrong');
+          if (error.username) {
+            errorMessage = i18next.t('usernameExists');
+          } else if (error.display_name) {
+            errorMessage = i18next.t('displayNameExists');
+          } else if (error.email) {
+            errorMessage = i18next.t('emailExists');
+          } else if (error.password) {
+            errorMessage = error.password[0];
+          } else if (error.non_field_errors) {
+            errorMessage = error.non_field_errors[0];
+          }
+
+          responseMessage!.textContent = errorMessage;
           responseMessage!.style.color = 'red';
         }
       } catch (error) {

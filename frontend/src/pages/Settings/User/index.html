@@ -23,6 +23,16 @@
           <input type="file" id="avatarUpload" accept="image/*" />
         </div>
         <div class="form-group">
+          <label for="displayNameInput">Display Name</label>
+          <input
+            type="text"
+            id="displayNameInput"
+            name="displayNameInput"
+            placeholder="Enter your display name"
+            required
+          />
+        </div>
+        <div class="form-group">
           <label for="emailInput">Email Address</label>
           <input
             type="email"
@@ -43,6 +53,7 @@
         <button type="submit" class="btn btn-primary">Save</button>
       </form>
     </div>
+    <div id="response-message"></div>
     <script type="module" src="./index.ts"></script>
   </body>
 </html>

@@ -30,7 +30,6 @@ make up
   - yamato
   - fukuhara
   - akamite
-  - tatashir
   - hrinka
 
 ### GitHub 具体的な方法

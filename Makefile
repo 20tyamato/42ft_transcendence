@@ -14,7 +14,7 @@ up: elk-up hostip
 upbuild: elk-upbuild
 	docker compose up --build
 
-down: elk-down 
+down: elk-down
 	docker compose down
 
 re: clean setup upbuild
@@ -87,7 +87,7 @@ front_in:
 	docker exec -it $(FRONTEND_CONTAINER) bash
 
 hostip:
-	scripts/setup-host-ip.sh
+	@scripts/setup-host-ip.sh
 
 db_in:
 	docker exec -it $(DB_CONTAINER) bash

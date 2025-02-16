@@ -4,6 +4,8 @@ import { checkUserAccess } from '@/models/User/auth';
 import { fetchCurrentUser } from '@/models/User/repository';
 import i18next from 'i18next';
 
+// Will change this file
+
 interface ITournamentHistory {
   date: string;
   result: string;
@@ -45,6 +47,7 @@ const updateContent = () => {
 
   updateLabel('username', 'username');
   updateLabel('email', 'emailAddress');
+  updateLabel('displayName', 'displayName');
   updateLabel('experience', 'currentExperience');
   updateLabel('level', 'level');
   updateLabel('language', 'language');
@@ -93,6 +96,7 @@ const ProfilePage = new Page({
       const avatarEl = document.getElementById('avatar') as HTMLImageElement;
       const usernameEl = document.getElementById('username') as HTMLElement;
       const emailEl = document.getElementById('email') as HTMLElement;
+      const displayNameEl = document.getElementById('displayName') as HTMLElement;
       const experienceEl = document.getElementById('experience') as HTMLElement;
       const levelEl = document.getElementById('level') as HTMLElement;
       const languageEl = document.getElementById('language') as HTMLElement;
@@ -101,10 +105,11 @@ const ProfilePage = new Page({
       const tournamentHistoryEl = document.getElementById('tournamentHistory');
       const scoreListEl = document.getElementById('scoreList');
 
-      const { avatar, username, email, experience, level, language } = userData as {
+      const { avatar, username, display_name, email, experience, level, language } = userData as {
         avatar: string;
         username: string;
         email: string;
+        display_name: string;
         experience: number;
         level: number;
         language: keyof typeof languageNames;
@@ -124,6 +129,7 @@ const ProfilePage = new Page({
       }
       if (usernameEl) usernameEl.textContent = username;
       if (emailEl) emailEl.textContent = email;
+      if (displayNameEl) displayNameEl.textContent = display_name;
       if (experienceEl) experienceEl.textContent = experience.toString();
       if (levelEl) levelEl.textContent = level.toString();
       if (languageEl) languageEl.textContent = languageNames[language];
@@ -200,6 +206,22 @@ const ProfilePage = new Page({
         profileCard.addEventListener('click', () => {
           const cardInner = profileCard.querySelector('.card-inner');
           cardInner?.classList.toggle('is-flipped');
+        });
+      }
+
+      const frontCloseBtn = document.querySelector('.card-front .close-btn');
+      if (frontCloseBtn) {
+        frontCloseBtn.addEventListener('click', (e) => {
+          e.stopPropagation(); // Prevent card flip
+          window.location.href = '/modes';
+        });
+      }
+
+      const backCloseBtn = document.querySelector('.card-back .close-btn');
+      if (backCloseBtn) {
+        backCloseBtn.addEventListener('click', (e) => {
+          e.stopPropagation(); // Prevent card flip
+          window.location.href = '/modes';
         });
       }
     } catch (error) {

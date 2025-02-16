@@ -49,28 +49,29 @@ const GamePage = new Page({
       wsConnected = true;
     };
 
-    socket.onmessage = async (event) => {  // async を追加
+    socket.onmessage = async (event) => {
+      // async を追加
       try {
         const data = JSON.parse(event.data);
         if (data.type === 'state_update') {
           renderer.updateState(data.state);
           updateScoreBoard(data.state.score);
-          
+
           if (!data.state.is_active) {
             // 確実にデータを処理するため、Promise を使用
-            await new Promise<void>(resolve => {
+            await new Promise<void>((resolve) => {
               const [player1Name, player2Name] = sessionId?.replace('game_', '').split('_') || [];
               const opponent = username === player1Name ? player2Name : player1Name;
-    
+
               const finalScore = {
                 player1: data.state.score[username],
                 player2: data.state.score[opponent],
-                opponent: opponent
+                opponent: opponent,
               };
-              
+
               localStorage.setItem('finalScore', JSON.stringify(finalScore));
               localStorage.setItem('gameMode', 'multiplayer');
-              
+
               setTimeout(() => {
                 resolve();
                 window.location.href = '/result';
@@ -79,22 +80,22 @@ const GamePage = new Page({
           }
         } else if (data.type === 'player_disconnected') {
           // 相手の切断を検知したら少し待ってからリザルト画面に遷移
-          await new Promise<void>(resolve => {
+          await new Promise<void>((resolve) => {
             const [player1Name, player2Name] = sessionId?.replace('game_', '').split('_') || [];
             const opponent = username === player1Name ? player2Name : player1Name;
-            
+
             // 切断情報を含めた最終スコアを保存
             const finalScore = {
               player1: data.state?.score?.[username] ?? 15, // 切断時は残ったプレイヤーが15点
               player2: data.state?.score?.[opponent] ?? 0,
               opponent: opponent,
               disconnected: true, // 切断による終了を示すフラグ
-              disconnectedPlayer: data.disconnected_player
+              disconnectedPlayer: data.disconnected_player,
             };
-            
+
             localStorage.setItem('finalScore', JSON.stringify(finalScore));
             localStorage.setItem('gameMode', 'multiplayer');
-            
+
             // 少し待ってからリザルト画面に遷移
             setTimeout(() => {
               resolve();
@@ -115,22 +116,22 @@ const GamePage = new Page({
     socket.onclose = () => {
       console.log('Game WebSocket closed');
       wsConnected = false;
-    
+
       // 自分が切断された場合（ネットワークエラーなど）の処理
       const [player1Name, player2Name] = sessionId?.replace('game_', '').split('_') || [];
       const opponent = username === player1Name ? player2Name : player1Name;
-      
+
       const finalScore = {
-        player1: 0,  // 切断したプレイヤーは敗北
+        player1: 0, // 切断したプレイヤーは敗北
         player2: 15, // 相手が勝利
         opponent: opponent,
         disconnected: true,
-        disconnectedPlayer: username // 自分が切断したプレイヤー
+        disconnectedPlayer: username, // 自分が切断したプレイヤー
       };
-      
+
       localStorage.setItem('finalScore', JSON.stringify(finalScore));
       localStorage.setItem('gameMode', 'multiplayer');
-      
+
       // リザルト画面に遷移
       window.location.href = '/result';
     };

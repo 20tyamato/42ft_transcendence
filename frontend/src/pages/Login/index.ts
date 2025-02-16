@@ -75,13 +75,15 @@ const LoginPage = new Page({
           const result = await response.json();
           localStorage.setItem('token', result.token);
           localStorage.setItem('username', result.username);
-          i18next.changeLanguage(result.language);
-          await updateLanguage('en');
+          i18next.changeLanguage(i18next.language);
+          updateLanguage(i18next.language);
 
           responseMessage!.textContent = i18next.t('loginSuccess');
           responseMessage!.style.color = 'green';
-          console.log(result);
-          window.location.href = '/modes';
+
+          setTimeout(() => {
+            window.location.href = '/modes';
+          }, 1000);
         } else {
           const error = await response.json();
           responseMessage!.textContent = i18next.t('errorMessage', {
