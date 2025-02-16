@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import Sizes from '../Utils/Sizez';
 import Time from '../Utils/Time';
 import Camera from '../World/Camera';
-import Renderer from '../Utils/Renderer';
+// import Renderer from '../Utils/Renderer';
 import World from '../World/World';
 import Loaders from '../Utils/Loaders';
 import CameraLerp from '../World/CameraLerp';
@@ -56,10 +56,6 @@ export default class Experience {
   private localGameStarted: boolean = false;
 
   private constructor(canvas: HTMLCanvasElement) {
-    if (Experience.instance) {
-      return Experience.instance;
-    }
-
     Experience.instance = this;
     window.experience = this;
     window.incorrectDevice = false;
