@@ -1,63 +1,58 @@
-import Experience from './Experience';
+// Field.ts
 import * as THREE from 'three';
-// import Camera from '../World/Camera';
+import Experience from './Experience'; // 実際のパスに合わせてください
 
-export default class Walls {
-  public experience: Experience;
+export default class Field {
+  // --- クラスプロパティの型定義 ---
+  private experience: Experience;
   private scene: THREE.Scene;
-  private camera: THREE.Camera;
   private FIELD_WIDTH: number;
   private FIELD_LENGTH: number;
-  private wallGeometry: THREE.BoxGeometry;
-  private wallMaterial: THREE.MeshBasicMaterial;
-  private wallRight: THREE.Mesh;
-  private wallLeft: THREE.Mesh;
 
-  constructor(canvas: HTMLCanvasElement) {
+  private fieldGeometry!: THREE.BoxGeometry;
+  private fieldMaterial!: THREE.MeshBasicMaterial;
+  private field!: THREE.Mesh<THREE.BoxGeometry, THREE.MeshBasicMaterial>;
+
+  constructor(private canvas: HTMLCanvasElement) {
+    // Experience シングルトンを取得
     this.experience = Experience.getInstance(canvas);
-    this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(
-      75,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      1000
-    );
-    this.FIELD_WIDTH = 900;
-    this.FIELD_LENGTH = 3000;
 
-    this.wallGeometry = new THREE.BoxGeometry(10, 10, 3800, 5, 5, 500);
-    this.wallMaterial = new THREE.MeshBasicMaterial({
-      color: 0x1f44ff,
+    // Experience 内の scene, FIELD_WIDTH, FIELD_LENGTH などを利用
+    this.scene = this.experience.scene;
+    this.FIELD_WIDTH = this.experience.FIELD_WIDTH;
+    this.FIELD_LENGTH = this.experience.FIELD_LENGTH;
+
+    this.setField();
+  }
+
+  private setField() {
+    // BoxGeometry(幅, 高さ, 奥行き, 幅方向の分割数, 高さ方向の分割数, 奥行き方向の分割数)
+    this.fieldGeometry = new THREE.BoxGeometry(
+      this.FIELD_WIDTH,
+      1500,
+      this.FIELD_LENGTH,
+      50,
+      50,
+      50
+    );
+
+    // wireframe オプションで枠線表示のみなど
+    this.fieldMaterial = new THREE.MeshBasicMaterial({
+      color: 0x000aff,
       wireframe: true,
       transparent: true,
       opacity: 0.0,
     });
 
-    this.wallLeft = this.createWall(-450, 0, -550);
-    this.wallRight = this.createWall(450, 0, -550);
+    this.field = new THREE.Mesh(this.fieldGeometry, this.fieldMaterial);
+    this.field.position.set(0, -50, 0);
 
-    this.setWallsRight();
-    this.setWallsLeft();
+    // シーンに追加
+    this.scene.add(this.field);
   }
 
-  private createWall(x: number, y: number, z: number): THREE.Mesh {
-    const wall = new THREE.Mesh(this.wallGeometry, this.wallMaterial);
-    wall.position.set(x, y, z);
-    this.scene.add(wall);
-    return wall;
+  // 毎フレーム呼び出される更新メソッドが必要なら
+  public update() {
+    // 必要に応じて実装
   }
-
-  private setWallsRight(): void {
-    this.wallRight = new THREE.Mesh(this.wallGeometry, this.wallMaterial);
-    this.wallRight.position.set(450, 0, -550);
-    this.scene.add(this.wallRight);
-  }
-
-  private setWallsLeft(): void {
-    this.wallLeft = new THREE.Mesh(this.wallGeometry, this.wallMaterial);
-    this.wallLeft.position.set(-450, 0, -550);
-    this.scene.add(this.wallLeft);
-  }
-
-  public update(): void {}
 }

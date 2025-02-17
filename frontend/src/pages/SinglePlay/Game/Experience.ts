@@ -40,8 +40,13 @@ export default class Experience {
   public sizes!: Sizes;
   public time: Time = new Time();
   public scene: THREE.Scene = new THREE.Scene();
-  public resources: Loaders = new Loaders(sources);
-  public camera!: Camera;
+  public resources: Loaders;
+  public camera = new THREE.PerspectiveCamera(
+    75,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+  );
   public renderer!: THREE.WebGLRenderer;
   public world!: World;
   public cameraLerp!: CameraLerp;
@@ -64,8 +69,7 @@ export default class Experience {
     this.time = new Time();
     this.scene = new THREE.Scene();
     this.resources = new Loaders(sources);
-    this.camera = new Camera(canvas);
-    // this.renderer = new THREE.WebGLRenderer();
+    this.camera = new THREE.PerspectiveCamera();
     this.initializeRenderer(canvas);
     this.world = new World(canvas);
     this.cameraLerp = new CameraLerp(canvas);
@@ -88,12 +92,12 @@ export default class Experience {
   }
 
   private resize(): void {
-    this.camera.resize();
+    this.camera.aspect = window.innerWidth / window.innerHeight;
+    this.camera.updateProjectionMatrix();
     this.renderer.setSize(this.sizes.width, this.sizes.height);
   }
 
   public update(): void {
-    this.camera.update();
     this.world.update();
     this.cameraLerp.update();
     this.ball.update();

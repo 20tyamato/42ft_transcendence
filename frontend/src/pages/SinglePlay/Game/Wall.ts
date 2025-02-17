@@ -4,7 +4,7 @@ import * as THREE from 'three';
 export default class Walls {
   private experience: Experience;
   private scene: THREE.Scene;
-  public camera: THREE.Camera;
+  public camera: THREE.PerspectiveCamera;
   private FIELD_WIDTH: number;
   private FIELD_LENGTH: number;
   private wallGeometry: THREE.BoxGeometry;
