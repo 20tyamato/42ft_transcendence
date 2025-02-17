@@ -27,5 +27,6 @@ export default defineConfig({
   optimizeDeps: {
     include: ['gsap'],
   },
-  publicDir: 'public', // public ディレクトリを Vite でサーバーに公開
+  publicDir: 'public',
+  base: './',
 });
