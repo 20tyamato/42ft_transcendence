@@ -1,9 +1,0 @@
-{
-  "dependencies": {
-    "gsap": "^3.12.7"
-  },
-  "devDependencies": {
-    "@types/gsap": "^1.20.2",
-    "@types/three": "^0.173.0"
-  }
-}
