@@ -1,69 +1,118 @@
 import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
-export default class Ball {
-  private ball: THREE.Mesh;
-  private velocity: THREE.Vector3;
+export default class Experience {
+  public canvas: HTMLCanvasElement;
+  public scene: THREE.Scene;
+  public camera: THREE.PerspectiveCamera;
+  public renderer: THREE.WebGLRenderer;
+  public controls: OrbitControls;
+  public sizes: { width: number; height: number };
+  public time: THREE.Clock;
+  public field: THREE.Mesh = new THREE.Mesh();
+  public ball: THREE.Mesh = new THREE.Mesh();
+  public ballMaterial: THREE.Material = new THREE.Material();
+  public paddleTwo: THREE.Mesh = new THREE.Mesh();
+  public paddleOne: THREE.Mesh = new THREE.Mesh();
+  public WIDTH: number;
+  public HEIGHT: number;
+  public VIEW_ANGLE: number;
+  private animationFrameId: number | null = null;
 
-  constructor(scene: THREE.Scene, radius: number, position: THREE.Vector3, aiLevel: number) {
-    const speed = aiLevel * 5; // AIレベルに応じた速度を設定
-    this.velocity = new THREE.Vector3(speed, 0, -speed); // 初期速度をAIレベルに依存
+  public FIELD_WIDTH: number = 1200;
+  public FIELD_LENGTH: number = 3000;
+  public PADDLE_WIDTH: number = 200;
+  public PADDLE_HEIGHT: number = 30;
+  public BALL_RADIUS: number = 20;
 
-    const ballGeometry = new THREE.SphereGeometry(radius, 32, 32);
-    const ballMaterial = new THREE.MeshStandardMaterial({
-      color: 0xffffff,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.8,
-    });
-    this.ball = new THREE.Mesh(ballGeometry, ballMaterial);
-    this.ball.position.copy(position);
-    scene.add(this.ball);
+  constructor(canvas: HTMLCanvasElement) {
+    this.canvas = canvas;
+    this.scene = new THREE.Scene();
+    this.time = new THREE.Clock();
+    this.sizes = { width: window.innerWidth, height: window.innerHeight };
+    this.WIDTH = window.innerWidth;
+    this.HEIGHT = window.innerHeight;
+    this.VIEW_ANGLE = 75;
+
+    this.camera = this.createCamera();
+    this.renderer = this.createRenderer();
+    this.controls = this.createControls();
+    this.createLighting();
+
+    this.startRenderingLoop();
   }
 
-  update(paddle1: THREE.Mesh, paddle2: THREE.Mesh) {
-    // ボールの移動
-    this.ball.position.add(this.velocity);
-
-    // 壁での反射
-    if (this.ball.position.x < -600 || this.ball.position.x > 600) {
-      this.velocity.x *= -1;
-    }
-
-    // パドルでの反射
-    if (this.checkPaddleCollision(paddle1) || this.checkPaddleCollision(paddle2)) {
-      this.velocity.z *= -1;
-      this.velocity.x += Math.random() * 2 - 1; // ランダム性を追加
-    }
-  }
-
-  private checkPaddleCollision(paddle: THREE.Mesh): boolean {
-    const paddleBounds = {
-      xMin: paddle.position.x - 100,
-      xMax: paddle.position.x + 100,
-      zMin: paddle.position.z - 10,
-      zMax: paddle.position.z + 10,
-    };
-
-    return (
-      this.ball.position.x > paddleBounds.xMin &&
-      this.ball.position.x < paddleBounds.xMax &&
-      this.ball.position.z > paddleBounds.zMin &&
-      this.ball.position.z < paddleBounds.zMax
+  private createCamera(): THREE.PerspectiveCamera {
+    const camera = new THREE.PerspectiveCamera(
+      this.VIEW_ANGLE,
+      this.WIDTH / this.HEIGHT,
+      0.1,
+      10000
     );
+    camera.position.set(0, 200, this.FIELD_LENGTH / 2 + 1000);
+    this.scene.add(camera);
+    return camera;
   }
 
-  // ボールの位置を取得
-  getPosition(): THREE.Vector3 {
-    return this.ball.position.clone();
+  private createRenderer(): THREE.WebGLRenderer {
+    const renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true });
+    renderer.setSize(this.WIDTH, this.HEIGHT);
+    return renderer;
   }
 
-  // ボールの位置を設定
-  setPosition(position: THREE.Vector3) {
-    this.ball.position.copy(position);
+  private createControls(): OrbitControls {
+    const controls = new OrbitControls(this.camera, this.canvas);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.25;
+    controls.enableZoom = true;
+    return controls;
   }
 
-  // ボールの速度をリセット
-  resetVelocity() {
-    this.velocity.set(5, 0, -10);
+  private createLighting(): void {
+    const ambientLight = new THREE.AmbientLight(0xffffff, 2);
+    this.scene.add(ambientLight);
+
+    const pointLight = new THREE.PointLight(0xffffff, 1.5);
+    pointLight.position.set(0, 500, 0);
+    this.scene.add(pointLight);
+
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    directionalLight.position.set(0, 1, 1).normalize();
+    this.scene.add(directionalLight);
+
+    const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.5);
+    hemisphereLight.position.set(0, 200, 0);
+    this.scene.add(hemisphereLight);
+  }
+
+  private startRenderingLoop(): void {
+    const animate = () => {
+      this.animationFrameId = requestAnimationFrame(animate);
+      this.update();
+      this.render();
+    };
+    animate();
+  }
+
+  public update(): void {
+    this.controls.update();
+  }
+
+  public render(): void {
+    this.renderer.render(this.scene, this.camera);
+  }
+
+  public stop(): void {
+    if (this.animationFrameId !== null) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
+    }
+  }
+
+  public destroy(): void {
+    this.stop();
+    this.controls.dispose();
+    this.renderer.dispose();
+    this.scene.clear();
   }
 }

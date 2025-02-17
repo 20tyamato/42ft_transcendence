@@ -1,14 +1,44 @@
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
-import {
-  getFinalScore,
-  initGame,
-  resetGame,
-  setAILevel,
-  // togglePause,
-  setupPauseMenu,
-  startGameLoop,
-} from './logic';
+import Experience from './Experience';
+import Ball from './Ball';
+import Field from './Field';
+import Paddle from './Paddle';
+import Wall from './Wall';
+import LocalGame from './LocalGame';
+
+let running = true; // ゲームの状態管理
+
+// Pause メニューのセットアップ関数
+export function setupPauseMenu() {
+  const pauseBtn = document.getElementById('pauseBtn');
+  const pauseOverlay = document.getElementById('pauseOverlay');
+  const resumeBtn = document.getElementById('resumeBtn');
+  const retryBtn = document.getElementById('retryBtn');
+  const exitBtn = document.getElementById('exitBtn');
+
+  if (!pauseBtn || !pauseOverlay || !resumeBtn || !retryBtn || !exitBtn) {
+    console.warn('Pause menu elements are missing.');
+    return;
+  }
+  pauseBtn.addEventListener('click', () => {
+    running = false;
+    pauseOverlay.style.display = 'flex';
+  });
+
+  resumeBtn.addEventListener('click', () => {
+    running = true;
+    pauseOverlay.style.display = 'none';
+  });
+
+  retryBtn.addEventListener('click', () => {
+    window.location.reload();
+  });
+
+  exitBtn.addEventListener('click', () => {
+    window.location.href = '/singleplay/select';
+  });
+}
 
 const SinglePlayPage = new Page({
   name: 'SinglePlay/Game',
@@ -16,45 +46,35 @@ const SinglePlayPage = new Page({
     layout: CommonLayout,
   },
   mounted: async () => {
-    const selectedLevel = localStorage.getItem('selectedLevel');
-    console.log(`Retrieved selected level: ${selectedLevel}`); // 取得値を確認
-    const retryBtn = document.getElementById('retryBtn') as HTMLButtonElement;
-    const exitBtn = document.getElementById('exitBtn') as HTMLButtonElement;
-    const resumeBtn = document.getElementById('resumeBtn') as HTMLButtonElement;
-    const pauseBtn = document.getElementById('pauseBtn') as HTMLButtonElement;
-    const pauseOverlay = document.getElementById('pauseOverlay') as HTMLDivElement;
+    // ヘッダーと背景を非表示にする
+    const header = document.querySelector('.header');
+    const background = document.getElementById('background');
+    if (header) header.classList.add('none');
+    if (background) background.classList.add('none');
 
-    if (selectedLevel) {
-      setAILevel(Number(selectedLevel));
-      initGame();
-      startGameLoop(() => {
-        localStorage.setItem('finalScore', JSON.stringify(getFinalScore()));
-        window.location.href = '/result';
-      });
-    } else {
-      alert('No level selected. Returning to level selection.');
-      window.location.href = '/singleplay/select';
+    const selectedLevel = localStorage.getItem('selectedLevel');
+    console.log(`Retrieved selected level: ${selectedLevel}`);
+
+    // Three.js の Experience を初期化
+    const canvas = document.getElementById('gl') as HTMLCanvasElement;
+    const experience = Experience.getInstance(canvas);
+    experience.initializeRenderer(document.querySelector('canvas')!); // ✅ `canvas` を渡して Renderer を遅延初期化
+    const ball = new Ball(canvas);
+    const field = new Field(canvas);
+
+    // ゲームループを開始
+    function animate() {
+      if (running) {
+        experience.update();
+        ball.update();
+      }
+      requestAnimationFrame(animate);
     }
+    animate();
     setupPauseMenu();
 
-    retryBtn?.addEventListener('click', () => {
-      resetGame();
-      window.location.reload();
-    });
-
-    exitBtn?.addEventListener('click', () => {
-      window.location.href = '/singleplay/select';
-    });
-
-    resumeBtn?.addEventListener('click', () => {
-      pauseOverlay.classList.add('hidden');
-      // ゲームを再開するロジックを追加
-    });
-
-    pauseBtn?.addEventListener('click', () => {
-      pauseOverlay.classList.remove('hidden');
-      // ゲームを一時停止するロジックを追加
-    });
+    // Before unload event
+    window.addEventListener('beforeunload', () => experience.destroy());
   },
 });
 

@@ -7,7 +7,6 @@ let ball: Ball, paddle1: THREE.Mesh, paddle2: THREE.Mesh;
 let renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera;
 const FIELD_WIDTH = 1200,
   FIELD_LENGTH = 3000;
-// BALL_RADIUS = 20;
 
 const keysPressed: { ArrowLeft: boolean; ArrowRight: boolean } = {
   ArrowLeft: false,
@@ -34,7 +33,7 @@ export function initGame() {
 
   // フィールド追加
   const fieldGeometry = new THREE.BoxGeometry(FIELD_WIDTH, 5, FIELD_LENGTH);
-  const fieldMaterial = new THREE.MeshLambertMaterial({ color: 0x003300 });
+  const fieldMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff, wireframe: true });
   const field = new THREE.Mesh(fieldGeometry, fieldMaterial);
   field.position.set(0, -50, 0);
   scene.add(field);
@@ -119,7 +118,7 @@ export function startGameLoop(onGameEnd: () => void) {
 
     updatePaddlePosition();
     // updateBallPosition();
-    ball.update(paddle1, paddle2); // Ball クラスの update を使用
+    // ball.update(); // Ball クラスの update を使用
     processCpuPaddle();
     if (checkScore()) {
       running = false;
@@ -199,7 +198,7 @@ window.addEventListener('keyup', handleKeyUp);
 
 function createPaddle() {
   const geometry = new THREE.BoxGeometry(200, 30, 10);
-  const material = new THREE.MeshLambertMaterial({ color: 0xcccccc });
+  const material = new THREE.MeshLambertMaterial({ color: 0xcccccc, wireframe: true });
   return new THREE.Mesh(geometry, material);
 }
 

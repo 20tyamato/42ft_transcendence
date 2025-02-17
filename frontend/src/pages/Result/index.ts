@@ -91,7 +91,10 @@ const ResultPage = new Page({
         }
       }
 
-      // ストレージのクリア
+      // 結果をバックエンドに送信
+      await sendGameResult(score);
+
+      // スコアをクリア
       localStorage.removeItem('finalScore');
       localStorage.removeItem('gameMode');
     }
