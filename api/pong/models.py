@@ -15,7 +15,6 @@ class User(AbstractUser):
         "self",
         symmetrical=True,
         blank=True,
-        related_name="friends_set",
         help_text="The friends of this user.",
     )
 

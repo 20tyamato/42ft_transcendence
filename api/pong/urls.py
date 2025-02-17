@@ -1,10 +1,13 @@
 from django.urls import path
 
 from .views import (
+    AddFriendView,
+    FriendListView,
     GameListCreateView,
     GameRetrieveUpdateDestroyView,
     HealthCheckView,
     LoginView,
+    RemoveFriendView,
     UserAvatarUpdateView,
     UserListCreateView,
     UserRetrieveUpdateView,
@@ -30,6 +33,10 @@ urlpatterns = [
     path(
         "games/<int:pk>/", GameRetrieveUpdateDestroyView.as_view(), name="game-detail"
     ),
+    # Friend endpoints
+    path("friends/", FriendListView.as_view(), name="friend-list"),
+    path("friends/add/", AddFriendView.as_view(), name="friend-add"),
+    path("friends/<int:friend_id>/", RemoveFriendView.as_view(), name="friend-remove"),
     # Tournament
     # TODO: add Tournament frontend
 ]

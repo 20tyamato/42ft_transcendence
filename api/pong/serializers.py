@@ -4,6 +4,12 @@ from rest_framework import serializers
 from .models import Game, User
 
 
+class FriendSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("id", "username", "is_online")
+
+
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True)
 
@@ -34,7 +40,6 @@ class UserSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     {field: "This field may not be blank."}
                 )
-
         return super().validate(attrs)
 
     def create(self, validated_data):
@@ -47,7 +52,6 @@ class UserSerializer(serializers.ModelSerializer):
             experience=validated_data.get("experience", 0),
             language=validated_data.get("language", "en"),
             is_online=validated_data.get("is_online", False),
-            friends=validated_data.get("friends", []),
         )
         user.set_password(validated_data["password"])
         user.save()
@@ -131,7 +135,6 @@ class GameSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     "Player2 is required for non-AI games"
                 )
-
         return data
 
     def create(self, validated_data):

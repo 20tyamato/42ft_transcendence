@@ -1,0 +1,105 @@
+/* 全体の基本設定 */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f2f5;
+  margin: 0;
+  padding: 0;
+}
+
+/* コンテナ */
+.container {
+  width: 90%;
+  max-width: 600px;
+  margin: 30px auto;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 見出し */
+h1, h2 {
+  text-align: center;
+  color: #333;
+}
+
+/* フレンド追加エリア */
+.friend-add {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+#username-input {
+  width: 70%;
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+#add-friend-btn {
+  margin-left: 10px;
+  padding: 8px 16px;
+  font-size: 16px;
+  border: none;
+  background-color: #4CAF50;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#add-friend-btn:hover {
+  background-color: #45a049;
+}
+
+/* フレンド一覧 */
+.friend-list ul {
+  list-style: none;
+  padding: 0;
+}
+
+.friend-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.friend-item:last-child {
+  border-bottom: none;
+}
+
+/* フレンド情報 */
+.friend-info {
+  display: flex;
+  align-items: center;
+}
+
+.status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.friend-username {
+  font-size: 16px;
+  color: #333;
+}
+
+/* 削除ボタン */
+.delete-btn {
+  padding: 5px 10px;
+  background-color: #ff4d4f;
+  border: none;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background-color: #e60000;
+}

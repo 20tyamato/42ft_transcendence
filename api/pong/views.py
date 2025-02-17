@@ -11,6 +11,7 @@ from .permissions import (
     IsPlayerOrReadOnly,
 )
 from .serializers import (
+    FriendSerializer,
     GameSerializer,
     LoginSerializer,
     UserAvatarSerializer,
@@ -133,6 +134,90 @@ class UpdateUserInfoView(APIView):
     def get(self, request):
         user = request.user
         return Response({"display_name": user.display_name, "email": user.email})
+
+
+class FriendListView(APIView):
+    """
+    現在のユーザーのフレンド一覧を返す
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        friends = user.friends.all()  # symmetricalなので、両側の関係が反映される
+        serializer = FriendSerializer(friends, many=True, context={"request": request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AddFriendView(APIView):
+    """
+    ユーザー名でフレンドを追加する
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        username = request.data.get("username", "").strip()
+        if not username:
+            return Response(
+                {"error": "Username is required"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        try:
+            friend = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return Response(
+                {"error": "User not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        # 自分自身をフレンドに追加するのは不可
+        if friend == request.user:
+            return Response(
+                {"error": "You cannot add yourself as a friend"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # 既にフレンドの場合はエラー
+        if friend in request.user.friends.all():
+            return Response(
+                {"error": "User is already your friend"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        request.user.friends.add(friend)
+        # symmetrical=True のため、friend側にも自動的に追加される
+
+        serializer = FriendSerializer(friend, context={"request": request})
+        return Response(
+            {"message": "Friend added successfully", "friend": serializer.data},
+            status=status.HTTP_201_CREATED,
+        )
+
+
+class RemoveFriendView(APIView):
+    """
+    フレンドを削除する
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, friend_id):
+        try:
+            friend = User.objects.get(id=friend_id)
+        except User.DoesNotExist:
+            return Response(
+                {"error": "Friend not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        if friend not in request.user.friends.all():
+            return Response(
+                {"error": "User is not your friend"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        request.user.friends.remove(friend)
+        return Response(
+            {"message": "Friend removed successfully"}, status=status.HTTP_200_OK
+        )
 
 
 class GameListCreateView(generics.ListCreateAPIView):
