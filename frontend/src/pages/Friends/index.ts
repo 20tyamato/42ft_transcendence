@@ -13,11 +13,12 @@ const friendsContainer = document.getElementById("friends-container") as HTMLULi
 const usernameInput = document.getElementById("username-input") as HTMLInputElement;
 const addFriendBtn = document.getElementById("add-friend-btn") as HTMLButtonElement;
 const token = localStorage.getItem('token');
+console.log('token:', token);
 
 async function loadFriends(): Promise<void> {
   try {
-    const response = await fetch(`${API_URL}/users/me/friends/`, {
-      method: "GET",
+    const response = await fetch(`${API_URL}/api/users/me/friends/`, {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Token ${token}`,
@@ -29,6 +30,7 @@ async function loadFriends(): Promise<void> {
     }
     const friends: Friend[] = await response.json();
     renderFriends(friends);
+    console.log("Friends loaded successfully");
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error loading friends:", error.message);
@@ -39,6 +41,17 @@ async function loadFriends(): Promise<void> {
 }
 
 function renderFriends(friends: Friend[]): void {
+  if (!friendsContainer) {
+    console.error("Element with ID 'friends-container' not found in the DOM.");
+    return;
+  }
+  
+  if (!friends.length) {
+    friendsContainer.innerHTML = "<li>フレンドがいません</li>";
+    return;
+  }
+  
+  friendsContainer.innerHTML = "";
   friendsContainer.innerHTML = "";
   friends.forEach((friend) => {
     const li = document.createElement("li");
@@ -78,7 +91,7 @@ function renderFriends(friends: Friend[]): void {
 
 async function addFriend(username: string): Promise<void> {
   try {
-    const response = await fetch(`${API_URL}/users/me/friends/add/`, {
+    const response = await fetch(`${API_URL}/api/users/me/friends/add/`, {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',
@@ -92,6 +105,7 @@ async function addFriend(username: string): Promise<void> {
     }
     await loadFriends();
     usernameInput.value = "";
+    console.log("Friend added successfully");
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error adding friend:", error.message);
@@ -103,7 +117,7 @@ async function addFriend(username: string): Promise<void> {
 
 async function deleteFriend(friendId: number): Promise<void> {
   try {
-    const response = await fetch(`${API_URL}/users/me/friends/${friendId}/`, {
+    const response = await fetch(`${API_URL}/api/users/me/friends/${friendId}/`, {
       method: "DELETE",
       headers: {
         'Content-Type': 'application/json',
@@ -115,6 +129,7 @@ async function deleteFriend(friendId: number): Promise<void> {
       throw new Error(`Failed to delete friend: ${errorMsg}`);
     }
     await loadFriends();
+    console.log("Friend deleted successfully");
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error deleting friend:", error.message);
@@ -132,24 +147,29 @@ const FriendsPage = new Page({
   mounted: async () => {
     // ユーザーのアクセス権を確認（必要な場合は非同期処理として await する）
     checkUserAccess();
-
+    console.log('check1');
     // フレンド追加ボタンのクリックイベント
-    addFriendBtn.addEventListener("click", () => {
+    addFriendBtn?.addEventListener('click', () => {
+      console.log('addFriendBtn clicked');
       const username = usernameInput.value.trim();
       if (username) {
         addFriend(username);
       }
     });
 
-    // Enter キーでもフレンド追加できるようにする
-    usernameInput.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") {
-        const username = usernameInput.value.trim();
-        if (username) {
-          addFriend(username);
-        }
-      }
-    });
+    console.log('check2');
+
+    // // Enter キーでもフレンド追加できるようにする
+    // usernameInput.addEventListener("keydown", (event) => {
+    //   if (event.key === "Enter") {
+    //     const username = usernameInput.value.trim();
+    //     if (username) {
+    //       addFriend(username);
+    //     }
+    //   }
+    // });
+    
+    console.log('check3');
     
     // ページロード時にフレンド一覧を読み込み
     loadFriends();
