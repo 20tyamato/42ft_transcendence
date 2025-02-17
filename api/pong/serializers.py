@@ -19,6 +19,8 @@ class UserSerializer(serializers.ModelSerializer):
             "level",
             "experience",
             "language",
+            "is_online",
+            "friends",
         ]
         extra_kwargs = {
             "username": {"required": True},
@@ -44,6 +46,8 @@ class UserSerializer(serializers.ModelSerializer):
             level=validated_data.get("level", 1),
             experience=validated_data.get("experience", 0),
             language=validated_data.get("language", "en"),
+            is_online=validated_data.get("is_online", False),
+            friends=validated_data.get("friends", []),
         )
         user.set_password(validated_data["password"])
         user.save()
