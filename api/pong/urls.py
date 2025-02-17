@@ -1,14 +1,10 @@
 from django.urls import path
 
 from .views import (
-    BlockchainScoreListCreateView,
-    BlockchainScoreRetrieveUpdateDestroyView,
     GameListCreateView,
     GameRetrieveUpdateDestroyView,
     HealthCheckView,
     LoginView,
-    TournamentListCreateView,
-    TournamentRetrieveUpdateDestroyView,
     UserAvatarUpdateView,
     UserListCreateView,
     UserRetrieveUpdateView,
@@ -35,25 +31,5 @@ urlpatterns = [
         "games/<int:pk>/", GameRetrieveUpdateDestroyView.as_view(), name="game-detail"
     ),
     # Tournament
-    path(
-        "tournaments/",
-        TournamentListCreateView.as_view(),
-        name="tournament-list-create",
-    ),
-    path(
-        "tournaments/<int:pk>/",
-        TournamentRetrieveUpdateDestroyView.as_view(),
-        name="tournament-detail",
-    ),
-    # BlockchainScore
-    path(
-        "blockchain-scores/",
-        BlockchainScoreListCreateView.as_view(),
-        name="blockchainscore-list-create",
-    ),
-    path(
-        "blockchain-scores/<int:pk>/",
-        BlockchainScoreRetrieveUpdateDestroyView.as_view(),
-        name="blockchainscore-detail",
-    ),
+    # TODO: add Tournament frontend
 ]

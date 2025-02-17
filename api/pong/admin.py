@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import BlockchainScore, Game, Tournament, User
+from .models import Game, User
 
 
 class CustomUserAdmin(UserAdmin):
@@ -57,30 +57,6 @@ class GameAdmin(admin.ModelAdmin):
     )
     list_filter = ("is_ai_opponent", "winner", "start_time")
     search_fields = ("player1__display_name", "player2__display_name")
-
-
-@admin.register(Tournament)
-class TournamentAdmin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "name",
-        "created_at",
-        "blockchain_score_hash",
-    )
-    search_fields = ("name",)
-    filter_horizontal = ("participants", "games")
-
-
-@admin.register(BlockchainScore)
-class BlockchainScoreAdmin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "tournament",
-        "transaction_id",
-        "blockchain_address",
-        "created_at",
-    )
-    search_fields = ("transaction_id", "blockchain_address")
 
 
 admin.site.register(User, CustomUserAdmin)
