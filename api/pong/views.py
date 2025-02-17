@@ -6,17 +6,13 @@ from rest_framework.views import APIView
 
 from core.logger import logger
 
-from .models import BlockchainScore, Game, Tournament, User
+from .models import Game, User
 from .permissions import (
-    IsOwnerOfBlockchainScore,
-    IsOwnerOfTournament,
     IsPlayerOrReadOnly,
 )
 from .serializers import (
-    BlockchainScoreSerializer,
     GameSerializer,
     LoginSerializer,
-    TournamentSerializer,
     UserAvatarSerializer,
     UserSerializer,
 )
@@ -164,28 +160,3 @@ class GameRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
     permission_classes = [IsAuthenticated, IsPlayerOrReadOnly]
-
-
-class TournamentListCreateView(generics.ListCreateAPIView):
-    queryset = Tournament.objects.all()
-    serializer_class = TournamentSerializer
-    permission_classes = [IsAuthenticated]
-
-
-class TournamentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Tournament.objects.all()
-    serializer_class = TournamentSerializer
-    permission_classes = [IsAuthenticated, IsOwnerOfTournament]
-
-
-class BlockchainScoreListCreateView(generics.ListCreateAPIView):
-    queryset = BlockchainScore.objects.all()
-    serializer_class = BlockchainScoreSerializer
-    permission_classes = [IsAuthenticated]
-
-
-class BlockchainScoreRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = BlockchainScore.objects.all()
-    serializer_class = BlockchainScoreSerializer
-    permission_classes = [IsAuthenticated, IsOwnerOfBlockchainScore]
-    permission_classes = [IsAuthenticated, IsOwnerOfBlockchainScore]

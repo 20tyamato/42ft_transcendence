@@ -11,7 +11,6 @@ import ProfilePage from '@/pages/Profile/index';
 import RegisterPage from '@/pages/Register/index';
 import SinglePlayPage from '@/pages/SinglePlay/Game/index';
 import SinglePlaySelectPage from '@/pages/SinglePlay/Select/index';
-import TournamentPage from '@/pages/Tournament/index';
 import LogoutPage from './pages/Logout';
 import ResultPage from './pages/Result/index';
 import SettingsUserPage from './pages/Settings/User/index';
@@ -39,7 +38,7 @@ const routes: Record<string, Page> = {
   '/multiplay/game': GamePage,
   // '/games/:id/results': GameResultsPage,
   '/result': ResultPage,
-  '/tournament': TournamentPage,
+  // '/tournament': TournamentPage,
   // '/tournament/:id': TournamentPage,
   '/leaderboard': LeaderboardPage,
 };

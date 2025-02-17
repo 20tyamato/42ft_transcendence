@@ -11,6 +11,8 @@ interface ITournamentHistory {
   result: string;
 }
 
+// TODO: ブロックチェーンスコア機能の廃止
+// NOTE: バックエンドは削除済 
 interface IBlockchainScore {
   txHash: string;
   score: number;

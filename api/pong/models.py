@@ -67,31 +67,6 @@ class Game(models.Model):
         return f"Game {self.id} - {self.player1.display_name} vs {player2_name}"
 
 
-class Tournament(models.Model):
-    name = models.CharField(max_length=100)
-    created_at = models.DateTimeField(auto_now_add=True)
-    participants = models.ManyToManyField(User, related_name="tournaments")
-    games = models.ManyToManyField(Game, related_name="tournaments")
-    # Don't need anymore
-    blockchain_score_hash = models.CharField(max_length=256, null=True, blank=True)
-
-    def __str__(self):
-        return self.name
-
-
-# Don't need anymore
-class BlockchainScore(models.Model):
-    tournament = models.OneToOneField(
-        Tournament, on_delete=models.CASCADE, related_name="blockchain_score"
-    )
-    transaction_id = models.CharField(max_length=256)
-    blockchain_address = models.CharField(max_length=256)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Blockchain Score for Tournament {self.tournament.name}"
-
-
 class GameSession(models.Model):
     STATUS_CHOICES = [
         ("WAITING", "Waiting"),
