@@ -51,16 +51,16 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    environment:
-      VITE_LOGSTASH_URL: ${FRONTEND_LOGSTASH_URL}
-      VITE_API_URL: http://${HOST_IP}:8001
-      VITE_WS_URL: http://${HOST_IP}:8001
     ports:
       - "3001:3001"
       - "24678:24678"
     volumes:
       - ./frontend:/app
       - /app/node_modules
+    environment:
+      VITE_LOGSTASH_URL: ${FRONTEND_LOGSTASH_URL}
+      VITE_API_URL: http://${HOST_IP}:8001
+      VITE_WS_URL: http://${HOST_IP}:8001
     networks:
       - app-network
 
