@@ -30,7 +30,9 @@ class HealthCheckView(APIView):
 class UserListCreateView(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    # debug purpose
+    permission_classes = [AllowAny]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -139,13 +141,20 @@ class UpdateUserInfoView(APIView):
 class FriendListView(APIView):
     """
     現在のユーザーのフレンド一覧を返す
+
+    URLにpkが指定されている場合、そのpkが現在のユーザーと一致している必要があります。
     """
 
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        user = request.user
-        friends = user.friends.all()  # symmetricalなので、両側の関係が反映される
+    def get(self, request, *args, **kwargs):
+        pk = kwargs.get("pk")
+        if pk is not None and pk != request.user.id:
+            return Response(
+                {"error": "他ユーザーのフレンド一覧は閲覧できません。"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        friends = request.user.friends.all()
         serializer = FriendSerializer(friends, many=True, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -153,39 +162,49 @@ class FriendListView(APIView):
 class AddFriendView(APIView):
     """
     ユーザー名でフレンドを追加する
+
+    URLにpkが指定されている場合、そのpkが現在のユーザーと一致している必要があります。
     """
 
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
+        pk = kwargs.get("pk")
+        if pk is not None and pk != request.user.id:
+            return Response(
+                {"error": "他ユーザーのフレンド追加は行えません。"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         username = request.data.get("username", "").strip()
         if not username:
             return Response(
-                {"error": "Username is required"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Username is required"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
         try:
             friend = User.objects.get(username=username)
         except User.DoesNotExist:
             return Response(
-                {"error": "User not found"}, status=status.HTTP_404_NOT_FOUND
+                {"error": "User not found"},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
-        # 自分自身をフレンドに追加するのは不可
+        # 自分自身をフレンドに追加できない
         if friend == request.user:
             return Response(
-                {"error": "You cannot add yourself as a friend"},
+                {"error": "自分自身はフレンドに追加できません。"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         # 既にフレンドの場合はエラー
         if friend in request.user.friends.all():
             return Response(
-                {"error": "User is already your friend"},
+                {"error": "指定のユーザーは既にフレンドです。"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         request.user.friends.add(friend)
-        # symmetrical=True のため、friend側にも自動的に追加される
+        # ManyToManyFieldのsymmetrical=Trueにより相互追加される
 
         serializer = FriendSerializer(friend, context={"request": request})
         return Response(
@@ -197,26 +216,37 @@ class AddFriendView(APIView):
 class RemoveFriendView(APIView):
     """
     フレンドを削除する
+
+    URLにpkが指定されている場合、そのpkが現在のユーザーと一致している必要があります。
     """
 
     permission_classes = [IsAuthenticated]
 
-    def delete(self, request, friend_id):
+    def delete(self, request, friend_id, *args, **kwargs):
+        pk = kwargs.get("pk")
+        if pk is not None and pk != request.user.id:
+            return Response(
+                {"error": "他ユーザーのフレンド削除は行えません。"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         try:
             friend = User.objects.get(id=friend_id)
         except User.DoesNotExist:
             return Response(
-                {"error": "Friend not found"}, status=status.HTTP_404_NOT_FOUND
+                {"error": "Friend not found"},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
         if friend not in request.user.friends.all():
             return Response(
-                {"error": "User is not your friend"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "指定のユーザーはあなたのフレンドではありません。"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         request.user.friends.remove(friend)
         return Response(
-            {"message": "Friend removed successfully"}, status=status.HTTP_200_OK
+            {"message": "Friend removed successfully"},
+            status=status.HTTP_200_OK,
         )
 
 
