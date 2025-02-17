@@ -18,6 +18,9 @@ urlpatterns = [
     path("users/", UserListCreateView.as_view(), name="user-list-create"),
     path("users/<int:pk>/", UserRetrieveUpdateView.as_view(), name="user-detail"),
     path("users/<int:pk>/avatar/", UserAvatarUpdateView.as_view(), name="user-avatar"),
+    path(
+        "users/<int:pk>/friends/", UserRetrieveUpdateView.as_view(), name="user-friends"
+    ),
     # Current User
     path("users/me/", UserRetrieveUpdateView.as_view(), name="current-user-detail"),
     path(
