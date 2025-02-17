@@ -45,5 +45,6 @@
   "settingsSaved": "設定が正常に保存されました！",
   "usernameExists": "ユーザー名はすでに存在します",
   "displayNameExists": "表示名はすでに存在します",
-  "emailExists": "メールアドレスはすでに存在します"
+  "emailExists": "メールアドレスはすでに存在します",
+  "onlineStatus": "オンラインステータス"
 }

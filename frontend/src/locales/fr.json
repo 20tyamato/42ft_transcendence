@@ -45,5 +45,6 @@
   "settingsSaved": "Paramètres enregistrés avec succès !",
   "usernameExists": "Le nom d'utilisateur existe déjà",
   "displayNameExists": "Le nom d'affichage existe déjà",
-  "emailExists": "L'adresse email existe déjà"
+  "emailExists": "L'adresse email existe déjà",
+  "onlineStatus": "Statut en ligne"
 }

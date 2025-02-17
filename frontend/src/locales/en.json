@@ -45,5 +45,6 @@
   "settingsSaved": "Settings saved successfully!",
   "usernameExists": "Username already exists",
   "displayNameExists": "Display name already exists",
-  "emailExists": "Email address already exists"
+  "emailExists": "Email address already exists",
+  "onlineStatus": "Online Status"
 }

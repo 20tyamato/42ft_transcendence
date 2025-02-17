@@ -125,12 +125,17 @@ body {
 
 .profile-section .info p {
   margin: 4px 0;
-  font-size: 1rem;
+  font-size: 0.9rem;
   text-align: left;
   transform: translateX(65px);
 }
 
 .profile-section #edit-btn {
+  color: #fff;
+  font-size: 1.5rem;
+}
+
+.profile-section #friend-btn {
   color: #fff;
   font-size: 1.5rem;
 }

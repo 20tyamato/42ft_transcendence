@@ -53,6 +53,7 @@ const updateContent = () => {
   updateLabel('experience', 'currentExperience');
   updateLabel('level', 'level');
   updateLabel('language', 'language');
+  updateLabel('onlineStatus', 'onlineStatus');
 
   const tapHints = document.querySelectorAll('.tap-hint');
   if (tapHints.length > 0) {
@@ -102,12 +103,13 @@ const ProfilePage = new Page({
       const experienceEl = document.getElementById('experience') as HTMLElement;
       const levelEl = document.getElementById('level') as HTMLElement;
       const languageEl = document.getElementById('language') as HTMLElement;
+      const onlineStatusEl = document.getElementById('onlineStatus') as HTMLElement;
 
       // Back HTML elements
       const tournamentHistoryEl = document.getElementById('tournamentHistory');
       const scoreListEl = document.getElementById('scoreList');
 
-      const { avatar, username, display_name, email, experience, level, language } = userData as {
+      const { avatar, username, display_name, email, experience, level, language , is_online} = userData as {
         avatar: string;
         username: string;
         email: string;
@@ -115,6 +117,7 @@ const ProfilePage = new Page({
         experience: number;
         level: number;
         language: keyof typeof languageNames;
+        is_online: boolean;
       };
       const tournamentHistory: ITournamentHistory[] = [
         { date: '2025-01-01', result: 'Won' },
@@ -135,6 +138,7 @@ const ProfilePage = new Page({
       if (experienceEl) experienceEl.textContent = experience.toString();
       if (levelEl) levelEl.textContent = level.toString();
       if (languageEl) languageEl.textContent = languageNames[language];
+      if (onlineStatusEl) onlineStatusEl.textContent = is_online ? 'Online' : 'Offline';
 
       // Change color of card based on level
       const cardBack = document.querySelector('.card-back') as HTMLElement;
@@ -200,6 +204,12 @@ const ProfilePage = new Page({
       editBtn?.addEventListener('click', (e) => {
         e.stopPropagation(); // Prevent card flip
         window.location.href = '/settings/user';
+      });
+
+      const friendBtn = document.getElementById('friend-btn');
+      friendBtn?.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent card flip
+        window.location.href = '/friends';
       });
 
       // Add flip effect to profile card

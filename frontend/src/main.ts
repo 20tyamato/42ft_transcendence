@@ -11,6 +11,7 @@ import ProfilePage from '@/pages/Profile/index';
 import RegisterPage from '@/pages/Register/index';
 import SinglePlayPage from '@/pages/SinglePlay/Game/index';
 import SinglePlaySelectPage from '@/pages/SinglePlay/Select/index';
+import FriendsPage from './pages/Friends/index';
 import LogoutPage from './pages/Logout';
 import ResultPage from './pages/Result/index';
 import SettingsUserPage from './pages/Settings/User/index';
@@ -41,6 +42,7 @@ const routes: Record<string, Page> = {
   // '/tournament': TournamentPage,
   // '/tournament/:id': TournamentPage,
   '/leaderboard': LeaderboardPage,
+  '/friends': FriendsPage,
 };
 
 async function router(path: string) {
