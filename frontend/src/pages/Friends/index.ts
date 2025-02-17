@@ -25,7 +25,7 @@ async function loadFriends(): Promise<void> {
     });
     if (!response.ok) {
       const errorMsg = await response.text();
-      throw new Error(`フレンドの取得に失敗しました: ${errorMsg}`);
+      throw new Error(`Failed to load friends: ${errorMsg}`);
     }
     const friends: Friend[] = await response.json();
     renderFriends(friends);
@@ -88,7 +88,7 @@ async function addFriend(username: string): Promise<void> {
     });
     if (!response.ok) {
       const errorMsg = await response.text();
-      throw new Error(`フレンドの追加に失敗しました: ${errorMsg}`);
+      throw new Error(`Failed to add friend: ${errorMsg}`);
     }
     await loadFriends();
     usernameInput.value = "";
@@ -112,7 +112,7 @@ async function deleteFriend(friendId: number): Promise<void> {
     });
     if (!response.ok) {
       const errorMsg = await response.text();
-      throw new Error(`フレンドの削除に失敗しました: ${errorMsg}`);
+      throw new Error(`Failed to delete friend: ${errorMsg}`);
     }
     await loadFriends();
   } catch (error: unknown) {
