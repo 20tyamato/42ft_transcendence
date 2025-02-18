@@ -10,7 +10,6 @@ interface Friend {
 }
 
 const token = localStorage.getItem('token');
-console.log('token:', token);
 
 async function loadFriends(): Promise<void> {
   try {
@@ -27,7 +26,6 @@ async function loadFriends(): Promise<void> {
     }
     const friends: Friend[] = await response.json();
     renderFriends(friends);
-    console.log('Friends loaded successfully');
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error('Error loading friends:', error.message);
@@ -102,7 +100,6 @@ async function addFriend(username: string): Promise<void> {
       throw new Error(`Failed to add friend: ${errorMsg}`);
     }
     await loadFriends();
-    console.log('Friend added successfully');
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error('Error adding friend:', error.message);
@@ -126,7 +123,6 @@ async function deleteFriend(friendId: number): Promise<void> {
       throw new Error(`Failed to delete friend: ${errorMsg}`);
     }
     await loadFriends();
-    console.log('Friend deleted successfully');
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error('Error deleting friend:', error.message);
@@ -143,15 +139,9 @@ const FriendsPage = new Page({
   },
   mounted: async () => {
     checkUserAccess();
-    console.log('check1');
-
-    console.log('check2');
-    console.log('check3');
-
     loadFriends();
 
     const usernameInput = document.getElementById('username-input') as HTMLInputElement;
-
     usernameInput?.addEventListener('keydown', (event) => {
       if (event.key === 'Enter') {
         const username = usernameInput.value.trim();
