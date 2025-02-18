@@ -193,38 +193,14 @@ class TournamentGameSessionSerializer(serializers.ModelSerializer):
             'created_at',
             'started_at',
             'completed_at',
-            'min_players',
-            'max_players',
             'current_round'
         ]
 
-    def validate_min_players(self, value):
-        """
-        Check that min_players is at least 2
-        """
-        if value < 2:
-            raise serializers.ValidationError("Minimum number of players must be at least 2")
-        return value
-
-    def validate_max_players(self, value):
-        """
-        Check that max_players is at most 8
-        """
-        if value > 8:
-            raise serializers.ValidationError("Maximum number of players cannot exceed 8")
-        return value
-
     def validate(self, data):
-        """
-        Check that max_players is greater than or equal to min_players
-        """
-        min_players = data.get('min_players', self.instance.min_players if self.instance else 2)
-        max_players = data.get('max_players', self.instance.max_players if self.instance else 8)
-
-        if max_players < min_players:
-            raise serializers.ValidationError({
-                "max_players": "Maximum players must be greater than or equal to minimum players"
-            })
+        if self.instance and self.instance.status != 'WAITING_PLAYERS':
+            # 進行中・完了済みトーナメントの編集を防止
+            raise serializers.ValidationError("Cannot modify tournament after it has started")
+            
         return data
 
 

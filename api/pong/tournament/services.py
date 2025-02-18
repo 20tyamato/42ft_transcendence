@@ -21,12 +21,10 @@ class TournamentService:
             "participants": [],
             "current_round": 0,
             "matches": [],
-            "countdown_task": None
         }
         return True
 
     async def add_participant(self, tournament_id: int, username: str) -> bool:
-        """参加者の追加"""
         tournament_state = self.active_tournaments.get(tournament_id)
         if not tournament_state:
             return False
@@ -39,11 +37,9 @@ class TournamentService:
         # メモリ上の状態更新
         tournament_state["participants"].append(username)
         
-        # 参加者数チェックとトーナメント開始判断
-        if len(tournament_state["participants"]) >= 8:
+        # 4人集まったら即開始
+        if len(tournament_state["participants"]) == 4:
             await self.start_tournament(tournament_id)
-        elif len(tournament_state["participants"]) >= 2:
-            await self.start_countdown(tournament_id)
 
         return True
 
@@ -52,11 +48,6 @@ class TournamentService:
         tournament_state = self.active_tournaments.get(tournament_id)
         if not tournament_state or tournament_state["status"] != "WAITING_PLAYERS":
             return
-
-        # カウントダウンタスクのキャンセル（存在する場合）
-        if tournament_state["countdown_task"]:
-            tournament_state["countdown_task"].cancel()
-            tournament_state["countdown_task"] = None
 
         # ステータス更新
         tournament_state["status"] = "IN_PROGRESS"
@@ -103,23 +94,17 @@ class TournamentService:
             await self.complete_tournament(tournament_id)
 
     async def handle_participant_disconnection(self, tournament_id: int, username: str) -> None:
-        """参加者の切断処理"""
         tournament_state = self.active_tournaments.get(tournament_id)
         if not tournament_state:
             return
 
         if tournament_state["status"] == "WAITING_PLAYERS":
-            if tournament_state["countdown_task"]:
-                # カウントダウン中の切断は参加キャンセルとして扱う
-                tournament_state["participants"].remove(username)
-                if len(tournament_state["participants"]) < 2:
-                    tournament_state["countdown_task"].cancel()
-                    tournament_state["countdown_task"] = None
+            # 待機中の切断は参加キャンセルとして扱う
+            tournament_state["participants"].remove(username)
         else:
             # 試合中の切断は敗北として処理
             current_match = await TournamentRepository.get_current_match(tournament_id, username)
             if current_match:
-                # 対戦相手を勝者として記録
                 opponent_username = (
                     current_match.player2.username 
                     if username == current_match.player1.username 
@@ -172,30 +157,3 @@ class TournamentService:
 
         # メモリ上の状態をクリア
         del self.active_tournaments[tournament_id]
-
-    async def start_countdown(self, tournament_id: int) -> None:
-        """開始カウントダウンの開始"""
-        tournament_state = self.active_tournaments.get(tournament_id)
-        if not tournament_state or tournament_state["status"] != "WAITING_PLAYERS":
-            return
-
-        if tournament_state["countdown_task"]:
-            tournament_state["countdown_task"].cancel()
-
-        tournament_state["countdown_task"] = asyncio.create_task(
-            self._countdown(tournament_id)
-        )
-
-    async def _countdown(self, tournament_id: int) -> None:
-        """60秒カウントダウンの実行"""
-        try:
-            for _ in range(60):
-                tournament_state = self.active_tournaments.get(tournament_id)
-                if not tournament_state or len(tournament_state["participants"]) < 2:
-                    return
-                await asyncio.sleep(1)
-
-            await self.start_tournament(tournament_id)
-            
-        except asyncio.CancelledError:
-            pass

@@ -67,33 +67,39 @@ class TournamentRepository:
 
     @classmethod
     @transaction.atomic
-    async def create_tournament_brackets(cls, tournament_id: int, participants: List[User]) -> List[TournamentMatch]:
-        """トーナメントブラケットの生成"""
+    async def create_tournament_brackets(cls, tournament_id: int, participants: List[str]) -> List[TournamentMatch]:
+        """4人トーナメントのブラケット生成
+        
+        Args:
+            tournament_id (int): トーナメントID
+            participants (List[str]): 参加者のユーザーネームリスト（4人固定）
+        
+        Returns:
+            List[TournamentMatch]: 生成されたマッチのリスト
+        """
         tournament = await TournamentGameSession.objects.aget(id=tournament_id)
         matches = []
-        
-        # 参加者数に基づいてブラケットを生成
-        num_players = len(participants)
-        num_first_round = num_players - 1
-        
-        # まず決勝戦を作成
+
+        # 決勝戦の作成（match_number: 3）
         final_match = await TournamentMatch.objects.acreate(
             tournament=tournament,
-            round_number=1,
-            match_number=num_first_round
+            round_number=2,  # 決勝は2回戦目
+            match_number=3   # 最後のマッチ
         )
         matches.append(final_match)
-        
-        # 残りのマッチを生成
-        for i in range(num_first_round - 1):
-            match = await TournamentMatch.objects.acreate(
+
+        # 準決勝の作成（match_number: 1, 2）
+        for i in range(2):
+            semi_match = await TournamentMatch.objects.acreate(
                 tournament=tournament,
-                round_number=1,
-                match_number=i + 1,
-                next_match=final_match
+                round_number=1,          # 1回戦目
+                match_number=i + 1,      # 1 or 2
+                next_match=final_match,  # 勝者は決勝へ
+                player1=await User.objects.aget(username=participants[i*2]),      # 0,2番目の参加者
+                player2=await User.objects.aget(username=participants[i*2 + 1])   # 1,3番目の参加者
             )
-            matches.append(match)
-        
+            matches.append(semi_match)
+
         return matches
 
     @classmethod

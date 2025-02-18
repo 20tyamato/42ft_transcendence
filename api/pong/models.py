@@ -97,7 +97,6 @@ class GameSession(models.Model):
 class TournamentGameSession(models.Model):
     STATUS_CHOICES = [
         ('WAITING_PLAYERS', 'Waiting for Players'),
-        ('READY', 'Ready to Start'),
         ('IN_PROGRESS', 'Tournament in Progress'),
         ('COMPLETED', 'Tournament Completed'),
         ('CANCELLED', 'Tournament Cancelled'),
@@ -108,8 +107,6 @@ class TournamentGameSession(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     started_at = models.DateTimeField(null=True, blank=True)
     completed_at = models.DateTimeField(null=True, blank=True)
-    min_players = models.IntegerField(default=2)
-    max_players = models.IntegerField(default=8)
     current_round = models.IntegerField(default=0)
 
     def __str__(self):
