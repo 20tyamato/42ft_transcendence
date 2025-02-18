@@ -78,7 +78,7 @@ hash:
 	docker exec -it $(API_CONTAINER) python manage.py create_password_hash $(string)
 
 lint:
-	cd frontend && npm run lint:fix
+	docker exec -it $(FRONTEND_CONTAINER) npm run lint:fix
 
 api_in:
 	docker exec -it $(API_CONTAINER) bash

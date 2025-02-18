@@ -12,7 +12,7 @@ interface ITournamentHistory {
 }
 
 // TODO: ブロックチェーンスコア機能の廃止
-// NOTE: バックエンドは削除済 
+// NOTE: バックエンドは削除済
 interface IBlockchainScore {
   txHash: string;
   score: number;
@@ -109,16 +109,17 @@ const ProfilePage = new Page({
       const tournamentHistoryEl = document.getElementById('tournamentHistory');
       const scoreListEl = document.getElementById('scoreList');
 
-      const { avatar, username, display_name, email, experience, level, language , is_online} = userData as {
-        avatar: string;
-        username: string;
-        email: string;
-        display_name: string;
-        experience: number;
-        level: number;
-        language: keyof typeof languageNames;
-        is_online: boolean;
-      };
+      const { avatar, username, display_name, email, experience, level, language, is_online } =
+        userData as {
+          avatar: string;
+          username: string;
+          email: string;
+          display_name: string;
+          experience: number;
+          level: number;
+          language: keyof typeof languageNames;
+          is_online: boolean;
+        };
       const tournamentHistory: ITournamentHistory[] = [
         { date: '2025-01-01', result: 'Won' },
         { date: '2025-01-05', result: 'Lost' },

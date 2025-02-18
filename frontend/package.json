@@ -8,8 +8,8 @@
     "dev": "vite --force",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "format": "prettier --write \"src/**/*.{ts}\""
   },
   "devDependencies": {

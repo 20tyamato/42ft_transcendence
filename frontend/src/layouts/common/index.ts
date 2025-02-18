@@ -8,7 +8,7 @@ const CommonLayout = new Layout({
 });
 
 function checkScreenSize() {
-  console.log("Dummy checkScreenSize");
+  console.log('Dummy checkScreenSize');
 }
 
 // TODO: change to env

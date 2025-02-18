@@ -5,20 +5,23 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('pong', '0007_remove_tournament_games_and_more'),
+        ("pong", "0007_remove_tournament_games_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='friends',
-            field=models.ManyToManyField(blank=True, help_text='The friends of this user.', to=settings.AUTH_USER_MODEL),
+            model_name="user",
+            name="friends",
+            field=models.ManyToManyField(
+                blank=True,
+                help_text="The friends of this user.",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AddField(
-            model_name='user',
-            name='is_online',
+            model_name="user",
+            name="is_online",
             field=models.BooleanField(default=False),
         ),
     ]
