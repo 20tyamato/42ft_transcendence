@@ -1,5 +1,5 @@
 from typing import Optional, List
-from django.db import transaction
+from django.db import transaction, models
 from django.utils import timezone
 from ..models import (
     TournamentGameSession,
