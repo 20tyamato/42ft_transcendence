@@ -11,6 +11,7 @@ from .permissions import (
     IsPlayerOrReadOnly,
 )
 from .serializers import (
+    FriendSerializer,
     GameSerializer,
     LoginSerializer,
     UserAvatarSerializer,
@@ -29,6 +30,8 @@ class HealthCheckView(APIView):
 class UserListCreateView(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    # permission_classes = [IsAuthenticated]
+    # debug purpose
     permission_classes = [AllowAny]
 
     def create(self, request, *args, **kwargs):
@@ -60,6 +63,14 @@ class LoginView(APIView):
         return Response(
             {"token": token.key, "user_id": user.id, "username": user.username}
         )
+
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        request.user.auth_token.delete()
+        return Response({"message": "Logout successful"})
 
 
 class UserRetrieveUpdateView(generics.RetrieveUpdateAPIView):
@@ -133,6 +144,97 @@ class UpdateUserInfoView(APIView):
     def get(self, request):
         user = request.user
         return Response({"display_name": user.display_name, "email": user.email})
+
+
+class FriendListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        pk = kwargs.get("pk")
+        if pk is not None and pk != request.user.id:
+            return Response(
+                {"error": "You cannot view other users' friend lists."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        friends = request.user.friends.all()
+        serializer = FriendSerializer(friends, many=True, context={"request": request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AddFriendView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        pk = kwargs.get("pk")
+        if pk is not None and pk != request.user.id:
+            return Response(
+                {"error": "You cannot add friends to other users."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        username = request.data.get("username", "").strip()
+        if not username:
+            return Response(
+                {"error": "Username is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        try:
+            friend = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return Response(
+                {"error": "User not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if friend == request.user:
+            return Response(
+                {"error": "You cannot add yourself as a friend"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if friend in request.user.friends.all():
+            return Response(
+                {"error": "User is already your friend"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        request.user.friends.add(friend)
+
+        serializer = FriendSerializer(friend, context={"request": request})
+        return Response(
+            {"message": "Friend added successfully", "friend": serializer.data},
+            status=status.HTTP_201_CREATED,
+        )
+
+
+class RemoveFriendView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, friend_id, *args, **kwargs):
+        pk = kwargs.get("pk")
+        if pk is not None and pk != request.user.id:
+            return Response(
+                {"error": "You cannot remove friends from other users."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        try:
+            friend = User.objects.get(id=friend_id)
+        except User.DoesNotExist:
+            return Response(
+                {"error": "Friend not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if friend not in request.user.friends.all():
+            return Response(
+                {"error": "User is not your friend"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        request.user.friends.remove(friend)
+        return Response(
+            {"message": "Friend removed successfully"},
+            status=status.HTTP_200_OK,
+        )
 
 
 class GameListCreateView(generics.ListCreateAPIView):

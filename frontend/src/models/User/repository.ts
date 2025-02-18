@@ -132,4 +132,37 @@ const updateLanguage = async (language: string) => {
   }
 };
 
-export { fetchCurrentUser, fetchUsers, IUserData, updateAvatar, updateLanguage, updateUserInfo };
+const updateOnlineStatus = async (is_online: boolean) => {
+  const token = localStorage.getItem('token');
+  if (!token) return;
+
+  try {
+    const response = await fetch(`${API_URL}/api/users/me/`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${token}`,
+      },
+      body: JSON.stringify({ is_online }),
+    });
+
+    if (!response.ok) {
+      console.error('Failed to update online status:', await response.text());
+      return;
+    }
+    console.log('Online status updated successfully');
+    return await response.json();
+  } catch (error) {
+    console.error('Error updating online status:', error);
+  }
+};
+
+export {
+  fetchCurrentUser,
+  fetchUsers,
+  IUserData,
+  updateAvatar,
+  updateLanguage,
+  updateOnlineStatus,
+  updateUserInfo,
+};

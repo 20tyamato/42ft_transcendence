@@ -45,5 +45,14 @@
   "settingsSaved": "Settings saved successfully!",
   "usernameExists": "Username already exists",
   "displayNameExists": "Display name already exists",
-  "emailExists": "Email address already exists"
+  "emailExists": "Email address already exists",
+  "onlineStatus": "Online Status",
+  "myFriends": "My Friends",
+  "addFriend": "Add Friend",
+  "friendList": "Friend List",
+  "enterUsername": "Enter your friend's username",
+  "noFriends": "You have no friends yet.",
+  "delete": "Delete",
+  "online": "Online",
+  "offline": "Offline"
 }

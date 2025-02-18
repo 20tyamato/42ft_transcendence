@@ -4,24 +4,23 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('pong', '0006_user_language'),
+        ("pong", "0006_user_language"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='tournament',
-            name='games',
+            model_name="tournament",
+            name="games",
         ),
         migrations.RemoveField(
-            model_name='tournament',
-            name='participants',
+            model_name="tournament",
+            name="participants",
         ),
         migrations.DeleteModel(
-            name='BlockchainScore',
+            name="BlockchainScore",
         ),
         migrations.DeleteModel(
-            name='Tournament',
+            name="Tournament",
         ),
     ]

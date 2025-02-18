@@ -7,6 +7,11 @@ const CommonLayout = new Layout({
   name: 'common',
 });
 
+// For dev purpose
+// function checkScreenSize() {
+//   console.log('Dummy checkScreenSize');
+// }
+
 // TODO: change to env
 const MIN_WIDTH = 1024;
 const MIN_HEIGHT = 768;

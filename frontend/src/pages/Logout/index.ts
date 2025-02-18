@@ -3,6 +3,7 @@ import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { updateActiveLanguageButton } from '@/models/Lang/repository';
+import { updateOnlineStatus } from '@/models/User/repository';
 
 const updateLogoutContent = () => {
   const logoutTitle = document.querySelector('.logout-container h1');
@@ -40,7 +41,7 @@ const LogoutPage = new Page({
       updateActiveLanguageButton();
     });
 
-    // TODO: Logout API call
+    updateOnlineStatus(false);
     try {
       await fetch(`${API_URL}/api/logout/`, {
         method: 'POST',

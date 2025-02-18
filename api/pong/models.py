@@ -10,6 +10,13 @@ class User(AbstractUser):
     level = models.IntegerField(default=1)
     experience = models.IntegerField(default=0)
     language = models.CharField(max_length=10, default="en")
+    is_online = models.BooleanField(default=False)
+    friends = models.ManyToManyField(
+        "self",
+        symmetrical=True,
+        blank=True,
+        help_text="The friends of this user.",
+    )
 
     groups = models.ManyToManyField(
         "auth.Group",

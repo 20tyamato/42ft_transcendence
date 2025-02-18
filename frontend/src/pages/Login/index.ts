@@ -3,7 +3,7 @@ import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { updateActiveLanguageButton } from '@/models/Lang/repository';
-import { updateLanguage } from '@/models/User/repository';
+import { updateLanguage, updateOnlineStatus } from '@/models/User/repository';
 
 const updateLoginContent = () => {
   const loginTitle = document.querySelector('.login-container h1');
@@ -77,6 +77,7 @@ const LoginPage = new Page({
           localStorage.setItem('username', result.username);
           i18next.changeLanguage(i18next.language);
           updateLanguage(i18next.language);
+          updateOnlineStatus(true);
 
           responseMessage!.textContent = i18next.t('loginSuccess');
           responseMessage!.style.color = 'green';

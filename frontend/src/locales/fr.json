@@ -45,5 +45,14 @@
   "settingsSaved": "Paramètres enregistrés avec succès !",
   "usernameExists": "Le nom d'utilisateur existe déjà",
   "displayNameExists": "Le nom d'affichage existe déjà",
-  "emailExists": "L'adresse email existe déjà"
+  "emailExists": "L'adresse email existe déjà",
+  "onlineStatus": "Statut en ligne",
+  "myFriends": "Mes amis",
+  "addFriend": "Ajouter un ami",
+  "friendList": "Liste d'amis",
+  "enterUsername": "Entrez le nom d'utilisateur de votre ami",
+  "noFriends": "Vous n'avez pas encore d'amis.",
+  "delete": "Supprimer",
+  "online": "En ligne",
+  "offline": "Hors ligne"
 }
