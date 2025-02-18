@@ -9,9 +9,6 @@ interface Friend {
   is_online: boolean;
 }
 
-const friendsContainer = document.getElementById("friends-container") as HTMLUListElement;
-const usernameInput = document.getElementById("username-input") as HTMLInputElement;
-const addFriendBtn = document.getElementById("add-friend-btn") as HTMLButtonElement;
 const token = localStorage.getItem('token');
 console.log('token:', token);
 
@@ -41,6 +38,7 @@ async function loadFriends(): Promise<void> {
 }
 
 function renderFriends(friends: Friend[]): void {
+  const friendsContainer = document.getElementById("friends-container") as HTMLUListElement;
   if (!friendsContainer) {
     console.error("Element with ID 'friends-container' not found in the DOM.");
     return;
@@ -104,7 +102,6 @@ async function addFriend(username: string): Promise<void> {
       throw new Error(`Failed to add friend: ${errorMsg}`);
     }
     await loadFriends();
-    usernameInput.value = "";
     console.log("Friend added successfully");
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -145,10 +142,28 @@ const FriendsPage = new Page({
     layout: CommonLayout,
   },
   mounted: async () => {
-    // ユーザーのアクセス権を確認（必要な場合は非同期処理として await する）
     checkUserAccess();
     console.log('check1');
-    // フレンド追加ボタンのクリックイベント
+
+    console.log('check2');
+    console.log('check3');
+  
+    loadFriends();
+
+    const usernameInput = document.getElementById("username-input") as HTMLInputElement;
+
+    usernameInput?.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        const username = usernameInput.value.trim();
+        if (username) {
+          addFriend(username);
+          usernameInput.value = "";
+        }
+      }
+    });
+    
+
+    const addFriendBtn = document.getElementById("add-friend-btn") as HTMLButtonElement;
     addFriendBtn?.addEventListener('click', () => {
       console.log('addFriendBtn clicked');
       const username = usernameInput.value.trim();
@@ -156,23 +171,6 @@ const FriendsPage = new Page({
         addFriend(username);
       }
     });
-
-    console.log('check2');
-
-    // // Enter キーでもフレンド追加できるようにする
-    // usernameInput.addEventListener("keydown", (event) => {
-    //   if (event.key === "Enter") {
-    //     const username = usernameInput.value.trim();
-    //     if (username) {
-    //       addFriend(username);
-    //     }
-    //   }
-    // });
-    
-    console.log('check3');
-    
-    // ページロード時にフレンド一覧を読み込み
-    loadFriends();
   },
 });
 

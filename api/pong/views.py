@@ -139,19 +139,13 @@ class UpdateUserInfoView(APIView):
 
 
 class FriendListView(APIView):
-    """
-    現在のユーザーのフレンド一覧を返す
-
-    URLにpkが指定されている場合、そのpkが現在のユーザーと一致している必要があります。
-    """
-
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         pk = kwargs.get("pk")
         if pk is not None and pk != request.user.id:
             return Response(
-                {"error": "他ユーザーのフレンド一覧は閲覧できません。"},
+                {"error": "You cannot view other users' friend lists."},
                 status=status.HTTP_403_FORBIDDEN,
             )
         friends = request.user.friends.all()
@@ -160,19 +154,13 @@ class FriendListView(APIView):
 
 
 class AddFriendView(APIView):
-    """
-    ユーザー名でフレンドを追加する
-
-    URLにpkが指定されている場合、そのpkが現在のユーザーと一致している必要があります。
-    """
-
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         pk = kwargs.get("pk")
         if pk is not None and pk != request.user.id:
             return Response(
-                {"error": "他ユーザーのフレンド追加は行えません。"},
+                {"error": "You cannot add friends to other users."},
                 status=status.HTTP_403_FORBIDDEN,
             )
         username = request.data.get("username", "").strip()
@@ -189,22 +177,19 @@ class AddFriendView(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        # 自分自身をフレンドに追加できない
         if friend == request.user:
             return Response(
-                {"error": "自分自身はフレンドに追加できません。"},
+                {"error": "You cannot add yourself as a friend"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # 既にフレンドの場合はエラー
         if friend in request.user.friends.all():
             return Response(
-                {"error": "指定のユーザーは既にフレンドです。"},
+                {"error": "User is already your friend"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         request.user.friends.add(friend)
-        # ManyToManyFieldのsymmetrical=Trueにより相互追加される
 
         serializer = FriendSerializer(friend, context={"request": request})
         return Response(
@@ -214,19 +199,13 @@ class AddFriendView(APIView):
 
 
 class RemoveFriendView(APIView):
-    """
-    フレンドを削除する
-
-    URLにpkが指定されている場合、そのpkが現在のユーザーと一致している必要があります。
-    """
-
     permission_classes = [IsAuthenticated]
 
     def delete(self, request, friend_id, *args, **kwargs):
         pk = kwargs.get("pk")
         if pk is not None and pk != request.user.id:
             return Response(
-                {"error": "他ユーザーのフレンド削除は行えません。"},
+                {"error": "You cannot remove friends from other users."},
                 status=status.HTTP_403_FORBIDDEN,
             )
         try:
@@ -239,7 +218,7 @@ class RemoveFriendView(APIView):
 
         if friend not in request.user.friends.all():
             return Response(
-                {"error": "指定のユーザーはあなたのフレンドではありません。"},
+                {"error": "User is not your friend"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
