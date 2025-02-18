@@ -49,5 +49,10 @@
   "onlineStatus": "Online Status",
   "myFriends": "My Friends",
   "addFriend": "Add Friend",
-  "friendList": "Friend List"
+  "friendList": "Friend List",
+  "enterUsername": "Enter your username",
+  "noFriends": "You have no friends yet.",
+  "delete": "Delete",
+  "online": "Online",
+  "offline": "Offline"
 }

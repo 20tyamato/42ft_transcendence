@@ -49,5 +49,10 @@
   "onlineStatus": "Statut en ligne",
   "myFriends": "Mes amis",
   "addFriend": "Ajouter un ami",
-  "friendList": "Liste d'amis"
+  "friendList": "Liste d'amis",
+  "enterUsername": "Entrez votre nom d'utilisateur",
+  "noFriends": "Vous n'avez pas encore d'amis.",
+  "delete": "Supprimer",
+  "online": "En ligne",
+  "offline": "Hors ligne"
 }

@@ -49,5 +49,10 @@
   "onlineStatus": "オンラインステータス",
   "myFriends": "マイ友達",
   "addFriend": "友達を追加",
-  "friendList": "友達リスト"
+  "friendList": "友達リスト",
+  "enterUsername": "ユーザー名を入力してください",
+  "noFriends": "まだ友達がいません。",
+  "delete": "削除",
+  "online": "オンライン",
+  "offline": "オフライン"
 }

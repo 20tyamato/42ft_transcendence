@@ -14,14 +14,19 @@ interface Friend {
 const token = localStorage.getItem('token');
 
 const updateContent = () => {
-  const singleModeButton = document.querySelector('.container h1');
-  if (singleModeButton) singleModeButton.textContent = i18next.t('myFriends');
+  document.title = i18next.t('myFriends');
 
-  const multiModeButton = document.querySelector('#add-friend-btn');
-  if (multiModeButton) multiModeButton.textContent = i18next.t('addFriend');
+  const header = document.querySelector('.container h1');
+  if (header) header.textContent = i18next.t('myFriends');
 
-  const tournamentModeButton = document.querySelector('.friend-list h2');
-  if (tournamentModeButton) tournamentModeButton.textContent = i18next.t('friendList');
+  const usernameInput = document.getElementById('username-input') as HTMLInputElement;
+  if (usernameInput) usernameInput.placeholder = i18next.t('enterUsername');
+
+  const addFriendButton = document.getElementById('add-friend-btn');
+  if (addFriendButton) addFriendButton.textContent = i18next.t('addFriend');
+
+  const friendListHeader = document.querySelector('.friend-list h2');
+  if (friendListHeader) friendListHeader.textContent = i18next.t('friendList');
 };
 
 async function loadFriends(): Promise<void> {
@@ -56,11 +61,10 @@ function renderFriends(friends: Friend[]): void {
   }
 
   if (!friends.length) {
-    friendsContainer.innerHTML = '<li>フレンドがいません</li>';
+    friendsContainer.innerHTML = `<li>${i18next.t('noFriends')}</li>`;
     return;
   }
 
-  friendsContainer.innerHTML = '';
   friendsContainer.innerHTML = '';
   friends.forEach((friend) => {
     const li = document.createElement('li');
@@ -74,7 +78,7 @@ function renderFriends(friends: Friend[]): void {
     const statusIndicator = document.createElement('span');
     statusIndicator.className = 'status-indicator';
     statusIndicator.style.backgroundColor = friend.is_online ? 'green' : 'red';
-    statusIndicator.title = friend.is_online ? 'オンライン' : 'オフライン';
+    statusIndicator.title = friend.is_online ? i18next.t('online') : i18next.t('offline');
 
     // ユーザー名表示
     const usernameSpan = document.createElement('span');
@@ -87,7 +91,7 @@ function renderFriends(friends: Friend[]): void {
 
     // 削除ボタン
     const deleteBtn = document.createElement('button');
-    deleteBtn.textContent = '削除';
+    deleteBtn.textContent = i18next.t('delete');
     deleteBtn.className = 'delete-btn';
     deleteBtn.addEventListener('click', () => {
       deleteFriend(friend.id);
@@ -174,7 +178,6 @@ const FriendsPage = new Page({
 
     const addFriendBtn = document.getElementById('add-friend-btn') as HTMLButtonElement;
     addFriendBtn?.addEventListener('click', () => {
-      console.log('addFriendBtn clicked');
       const username = usernameInput.value.trim();
       if (username) {
         addFriend(username);
