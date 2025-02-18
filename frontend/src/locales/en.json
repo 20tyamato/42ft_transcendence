@@ -46,5 +46,8 @@
   "usernameExists": "Username already exists",
   "displayNameExists": "Display name already exists",
   "emailExists": "Email address already exists",
-  "onlineStatus": "Online Status"
+  "onlineStatus": "Online Status",
+  "myFriends": "My Friends",
+  "addFriend": "Add Friend",
+  "friendList": "Friend List"
 }

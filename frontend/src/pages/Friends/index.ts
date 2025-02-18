@@ -2,6 +2,8 @@ import { API_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { checkUserAccess } from '@/models/User/auth';
+import { fetchCurrentUser } from '@/models/User/repository';
+import i18next from 'i18next';
 
 interface Friend {
   id: number;
@@ -10,6 +12,17 @@ interface Friend {
 }
 
 const token = localStorage.getItem('token');
+
+const updateContent = () => {
+  const singleModeButton = document.querySelector('.container h1');
+  if (singleModeButton) singleModeButton.textContent = i18next.t('myFriends');
+
+  const multiModeButton = document.querySelector('#add-friend-btn');
+  if (multiModeButton) multiModeButton.textContent = i18next.t('addFriend');
+
+  const tournamentModeButton = document.querySelector('.friend-list h2');
+  if (tournamentModeButton) tournamentModeButton.textContent = i18next.t('friendList');
+};
 
 async function loadFriends(): Promise<void> {
   try {
@@ -139,6 +152,13 @@ const FriendsPage = new Page({
   },
   mounted: async () => {
     checkUserAccess();
+    const userData = await fetchCurrentUser();
+    if (userData.language) {
+      document.documentElement.lang = userData.language;
+      i18next.changeLanguage(userData.language, updateContent);
+    } else {
+      console.error('Language not found in user data');
+    }
     loadFriends();
 
     const usernameInput = document.getElementById('username-input') as HTMLInputElement;

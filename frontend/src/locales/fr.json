@@ -46,5 +46,8 @@
   "usernameExists": "Le nom d'utilisateur existe déjà",
   "displayNameExists": "Le nom d'affichage existe déjà",
   "emailExists": "L'adresse email existe déjà",
-  "onlineStatus": "Statut en ligne"
+  "onlineStatus": "Statut en ligne",
+  "myFriends": "Mes amis",
+  "addFriend": "Ajouter un ami",
+  "friendList": "Liste d'amis"
 }

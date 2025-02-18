@@ -46,5 +46,8 @@
   "usernameExists": "ユーザー名はすでに存在します",
   "displayNameExists": "表示名はすでに存在します",
   "emailExists": "メールアドレスはすでに存在します",
-  "onlineStatus": "オンラインステータス"
+  "onlineStatus": "オンラインステータス",
+  "myFriends": "マイ友達",
+  "addFriend": "友達を追加",
+  "friendList": "友達リスト"
 }
