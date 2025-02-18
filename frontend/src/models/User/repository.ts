@@ -155,6 +155,14 @@ const updateOnlineStatus = async (is_online: boolean) => {
   } catch (error) {
     console.error('Error updating online status:', error);
   }
-}
+};
 
-export { fetchCurrentUser, fetchUsers, IUserData, updateAvatar, updateLanguage, updateOnlineStatus, updateUserInfo };
+export {
+  fetchCurrentUser,
+  fetchUsers,
+  IUserData,
+  updateAvatar,
+  updateLanguage,
+  updateOnlineStatus,
+  updateUserInfo,
+};
