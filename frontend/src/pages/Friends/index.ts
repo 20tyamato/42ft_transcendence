@@ -62,7 +62,7 @@ function renderFriends(friends: Friend[]): void {
     // オンライン状態インジケータ
     const statusIndicator = document.createElement('span');
     statusIndicator.className = 'status-indicator';
-    statusIndicator.style.backgroundColor = friend.is_online ? 'green' : 'gray';
+    statusIndicator.style.backgroundColor = friend.is_online ? 'green' : 'red';
     statusIndicator.title = friend.is_online ? 'オンライン' : 'オフライン';
 
     // ユーザー名表示
