@@ -7,6 +7,7 @@ from .views import (
     GameRetrieveUpdateDestroyView,
     HealthCheckView,
     LoginView,
+    LogoutView,
     RemoveFriendView,
     UserAvatarUpdateView,
     UserListCreateView,
@@ -42,6 +43,8 @@ urlpatterns = [
     ),
     # Login
     path("login/", LoginView.as_view(), name="login"),
+    # Logout
+    path("logout/", LogoutView.as_view(), name="logout"),
     # Game
     path("games/", GameListCreateView.as_view(), name="game-list-create"),
     path(
