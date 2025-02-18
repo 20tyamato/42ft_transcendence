@@ -38,7 +38,7 @@ export default class LocalGame {
   }
 
   private startBallMovement() {
-    let direction = Math.random() > 0.5 ? -1 : 1;
+    const direction = Math.random() > 0.5 ? -1 : 1;
     this.ballVelocity = { x: 0, z: direction * 0.2 };
     this.ballStopped = false;
   }

@@ -94,16 +94,19 @@ class GameSession(models.Model):
     def __str__(self):
         return f"Game Session {self.id}: {self.player1.display_name} vs {self.player2.display_name if self.player2 else 'Waiting'}"
 
+
 class TournamentGameSession(models.Model):
     STATUS_CHOICES = [
-        ('WAITING_PLAYERS', 'Waiting for Players'),
-        ('IN_PROGRESS', 'Tournament in Progress'),
-        ('COMPLETED', 'Tournament Completed'),
-        ('CANCELLED', 'Tournament Cancelled'),
+        ("WAITING_PLAYERS", "Waiting for Players"),
+        ("IN_PROGRESS", "Tournament in Progress"),
+        ("COMPLETED", "Tournament Completed"),
+        ("CANCELLED", "Tournament Cancelled"),
     ]
 
     name = models.CharField(max_length=100)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='WAITING_PLAYERS')
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default="WAITING_PLAYERS"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     started_at = models.DateTimeField(null=True, blank=True)
     completed_at = models.DateTimeField(null=True, blank=True)
@@ -112,23 +115,43 @@ class TournamentGameSession(models.Model):
     def __str__(self):
         return f"Tournament: {self.name} ({self.status})"
 
+
 class TournamentMatch(models.Model):
-    tournament = models.ForeignKey(TournamentGameSession, related_name='matches', on_delete=models.CASCADE)
+    tournament = models.ForeignKey(
+        TournamentGameSession, related_name="matches", on_delete=models.CASCADE
+    )
     game = models.OneToOneField(Game, null=True, blank=True, on_delete=models.SET_NULL)
     round_number = models.IntegerField()
     match_number = models.IntegerField()
-    player1 = models.ForeignKey(User, related_name='tournament_matches_as_player1', null=True, on_delete=models.SET_NULL)
-    player2 = models.ForeignKey(User, related_name='tournament_matches_as_player2', null=True, on_delete=models.SET_NULL)
-    next_match = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL)
+    player1 = models.ForeignKey(
+        User,
+        related_name="tournament_matches_as_player1",
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+    player2 = models.ForeignKey(
+        User,
+        related_name="tournament_matches_as_player2",
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+    next_match = models.ForeignKey(
+        "self", null=True, blank=True, on_delete=models.SET_NULL
+    )
 
     class Meta:
-        unique_together = [('tournament', 'round_number', 'match_number')]
+        unique_together = [("tournament", "round_number", "match_number")]
+
 
 class TournamentParticipant(models.Model):
-    tournament = models.ForeignKey(TournamentGameSession, related_name='participants', on_delete=models.CASCADE)
-    user = models.ForeignKey(User, related_name='tournament_participations', on_delete=models.CASCADE)
+    tournament = models.ForeignKey(
+        TournamentGameSession, related_name="participants", on_delete=models.CASCADE
+    )
+    user = models.ForeignKey(
+        User, related_name="tournament_participations", on_delete=models.CASCADE
+    )
     joined_at = models.DateTimeField(auto_now_add=True)
     seed = models.IntegerField(null=True, blank=True)
 
     class Meta:
-        unique_together = [('tournament', 'user')]
+        unique_together = [("tournament", "user")]

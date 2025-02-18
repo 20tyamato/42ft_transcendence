@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate
 from rest_framework import serializers
 
 from .models import (
-    Game, 
+    Game,
     User,
     TournamentGameSession,
     TournamentMatch,
@@ -183,24 +183,27 @@ class GameSerializer(serializers.ModelSerializer):
             "is_ai_opponent",
         ]
 
+
 class TournamentGameSessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = TournamentGameSession
         fields = [
-            'id',
-            'name',
-            'status',
-            'created_at',
-            'started_at',
-            'completed_at',
-            'current_round'
+            "id",
+            "name",
+            "status",
+            "created_at",
+            "started_at",
+            "completed_at",
+            "current_round",
         ]
 
     def validate(self, data):
-        if self.instance and self.instance.status != 'WAITING_PLAYERS':
+        if self.instance and self.instance.status != "WAITING_PLAYERS":
             # 進行中・完了済みトーナメントの編集を防止
-            raise serializers.ValidationError("Cannot modify tournament after it has started")
-            
+            raise serializers.ValidationError(
+                "Cannot modify tournament after it has started"
+            )
+
         return data
 
 
@@ -208,16 +211,16 @@ class TournamentMatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = TournamentMatch
         fields = [
-            'id',
-            'tournament',
-            'game',
-            'round_number',
-            'match_number',
-            'player1',
-            'player2',
-            'next_match'
+            "id",
+            "tournament",
+            "game",
+            "round_number",
+            "match_number",
+            "player1",
+            "player2",
+            "next_match",
         ]
-        read_only_fields = ['id']
+        read_only_fields = ["id"]
 
     def validate_round_number(self, value):
         """
@@ -239,47 +242,42 @@ class TournamentMatchSerializer(serializers.ModelSerializer):
         """
         Custom validation for match data
         """
-        player1 = data.get('player1')
-        player2 = data.get('player2')
+        player1 = data.get("player1")
+        player2 = data.get("player2")
 
         # Ensure players are different if both are specified
         if player1 and player2 and player1 == player2:
-            raise serializers.ValidationError({
-                "player2": "Players must be different"
-            })
+            raise serializers.ValidationError({"player2": "Players must be different"})
 
         return data
 
 
 class TournamentParticipantSerializer(serializers.ModelSerializer):
-    user_display_name = serializers.CharField(source='user.display_name', read_only=True)
+    user_display_name = serializers.CharField(
+        source="user.display_name", read_only=True
+    )
 
     class Meta:
         model = TournamentParticipant
-        fields = [
-            'id',
-            'tournament',
-            'user',
-            'user_display_name',
-            'joined_at',
-            'seed'
-        ]
-        read_only_fields = ['id', 'joined_at']
+        fields = ["id", "tournament", "user", "user_display_name", "joined_at", "seed"]
+        read_only_fields = ["id", "joined_at"]
 
     def validate_seed(self, value):
         """
         Check that seed is positive if provided
         """
         if value is not None and value < 1:
-            raise serializers.ValidationError("Seed number must be greater than 0 if provided")
+            raise serializers.ValidationError(
+                "Seed number must be greater than 0 if provided"
+            )
         return value
 
     def validate(self, data):
         """
         Check for duplicate participation
         """
-        tournament = data.get('tournament')
-        user = data.get('user')
+        tournament = data.get("tournament")
+        user = data.get("user")
 
         # Skip validation if either tournament or user is not provided
         if not tournament or not user:
@@ -288,11 +286,10 @@ class TournamentParticipantSerializer(serializers.ModelSerializer):
         # When creating a new participant
         if not self.instance:
             if TournamentParticipant.objects.filter(
-                tournament=tournament,
-                user=user
+                tournament=tournament, user=user
             ).exists():
-                raise serializers.ValidationError({
-                    "user": "This user is already participating in this tournament"
-                })
+                raise serializers.ValidationError(
+                    {"user": "This user is already participating in this tournament"}
+                )
 
         return data

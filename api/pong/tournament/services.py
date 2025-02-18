@@ -1,13 +1,15 @@
-from typing import Dict, Optional, List
+from typing import Dict
 import asyncio
-from django.utils import timezone
 from .repositories import TournamentRepository
+
 
 class TournamentService:
     """トーナメントの進行を管理するサービスクラス"""
-    
+
     def __init__(self):
-        self.active_tournaments: Dict[int, dict] = {}  # tournament_id -> tournament_state
+        self.active_tournaments: Dict[
+            int, dict
+        ] = {}  # tournament_id -> tournament_state
         self.game_tasks: Dict[int, asyncio.Task] = {}  # tournament_id -> update_task
 
     async def initialize_tournament(self, tournament_id: int) -> bool:
@@ -30,13 +32,15 @@ class TournamentService:
             return False
 
         # 参加者の追加（データベース）
-        participant = await TournamentRepository.add_participant(tournament_id, username)
+        participant = await TournamentRepository.add_participant(
+            tournament_id, username
+        )
         if not participant:
             return False
 
         # メモリ上の状態更新
         tournament_state["participants"].append(username)
-        
+
         # 4人集まったら即開始
         if len(tournament_state["participants"]) == 4:
             await self.start_tournament(tournament_id)
@@ -53,15 +57,12 @@ class TournamentService:
         tournament_state["status"] = "IN_PROGRESS"
         tournament_state["current_round"] = 1
         await TournamentRepository.update_tournament_status(
-            tournament_id, 
-            "IN_PROGRESS", 
-            current_round=1
+            tournament_id, "IN_PROGRESS", current_round=1
         )
 
         # ブラケットの生成
         matches = await TournamentRepository.create_tournament_brackets(
-            tournament_id,
-            tournament_state["participants"]
+            tournament_id, tournament_state["participants"]
         )
         tournament_state["matches"] = matches
 
@@ -70,9 +71,10 @@ class TournamentService:
             self.monitor_tournament_progress(tournament_id)
         )
 
-    async def handle_match_result(self, tournament_id: int, match_id: int, winner_username: str, scores: dict) -> None:
+    async def handle_match_result(
+        self, tournament_id: int, match_id: int, winner_username: str, scores: dict
+    ) -> None:
         """試合結果の処理
-        
         Args:
             tournament_id (int): トーナメントID
             match_id (int): 試合ID
@@ -85,10 +87,7 @@ class TournamentService:
 
         # 試合結果の記録
         game = await TournamentRepository.record_match_result(
-            match_id,
-            winner_username,
-            scores["player1"],
-            scores["player2"]
+            match_id, winner_username, scores["player1"], scores["player2"]
         )
         if not game:
             return
@@ -97,23 +96,25 @@ class TournamentService:
         match = next((m for m in tournament_state["matches"] if m.id == match_id), None)
         if not match:
             return
-            
+
         # 準決勝の場合、勝者を決勝戦に進出させる
         if match.round_number == 1:  # 準決勝
-            next_match = await TournamentRepository.advance_winner(match_id, winner_username)
+            next_match = await TournamentRepository.advance_winner(
+                match_id, winner_username
+            )
             if next_match:
                 # 決勝戦の準備が整ったかチェック
                 if next_match.player1 and next_match.player2:
                     tournament_state["current_round"] = 2
                     await TournamentRepository.update_tournament_status(
-                        tournament_id, 
-                        "IN_PROGRESS",
-                        current_round=2
+                        tournament_id, "IN_PROGRESS", current_round=2
                     )
         else:  # 決勝戦
             await self.complete_tournament(tournament_id)
 
-    async def handle_participant_disconnection(self, tournament_id: int, username: str) -> None:
+    async def handle_participant_disconnection(
+        self, tournament_id: int, username: str
+    ) -> None:
         tournament_state = self.active_tournaments.get(tournament_id)
         if not tournament_state:
             return
@@ -123,11 +124,13 @@ class TournamentService:
             tournament_state["participants"].remove(username)
         else:
             # 試合中の切断は敗北として処理
-            current_match = await TournamentRepository.get_current_match(tournament_id, username)
+            current_match = await TournamentRepository.get_current_match(
+                tournament_id, username
+            )
             if current_match:
                 opponent_username = (
-                    current_match.player2.username 
-                    if username == current_match.player1.username 
+                    current_match.player2.username
+                    if username == current_match.player1.username
                     else current_match.player1.username
                 )
                 await self.handle_match_result(
@@ -135,9 +138,13 @@ class TournamentService:
                     current_match.id,
                     opponent_username,
                     {
-                        "player1": 0 if username == current_match.player1.username else 15,
-                        "player2": 15 if username == current_match.player1.username else 0
-                    }
+                        "player1": 0
+                        if username == current_match.player1.username
+                        else 15,
+                        "player2": 15
+                        if username == current_match.player1.username
+                        else 0,
+                    },
                 )
 
     async def monitor_tournament_progress(self, tournament_id: int) -> None:
@@ -149,7 +156,9 @@ class TournamentService:
                     break
 
                 # 完了チェック
-                if await TournamentRepository.check_tournament_completion(tournament_id):
+                if await TournamentRepository.check_tournament_completion(
+                    tournament_id
+                ):
                     await self.complete_tournament(tournament_id)
                     break
 
@@ -180,10 +189,8 @@ class TournamentService:
 
     async def get_tournament_state(self, tournament_id: int) -> dict:
         """トーナメントの現在の状態を取得
-        
         Args:
             tournament_id (int): トーナメントID
-            
         Returns:
             dict: トーナメントの状態
             {
@@ -210,11 +217,11 @@ class TournamentService:
             tournament = await TournamentRepository.get_tournament(tournament_id)
             if not tournament:
                 return None
-            
+
             # 過去のトーナメント情報を構築
             matches = await TournamentRepository.get_tournament_matches(tournament_id)
             participants = await TournamentRepository.get_participants(tournament_id)
-            
+
             return {
                 "status": tournament.status,
                 "current_round": tournament.current_round,
@@ -226,16 +233,18 @@ class TournamentService:
                         "match_number": match.match_number,
                         "player1": match.player1.username if match.player1 else None,
                         "player2": match.player2.username if match.player2 else None,
-                        "winner": match.game.winner.username if match.game and match.game.winner else None,
+                        "winner": match.game.winner.username
+                        if match.game and match.game.winner
+                        else None,
                         "scores": {
                             "player1": match.game.score_player1 if match.game else 0,
-                            "player2": match.game.score_player2 if match.game else 0
-                        }
+                            "player2": match.game.score_player2 if match.game else 0,
+                        },
                     }
                     for match in matches
-                ]
+                ],
             }
-        
+
         # アクティブなトーナメントの状態を返す
         return {
             "status": tournament_state["status"],
@@ -248,12 +257,14 @@ class TournamentService:
                     "match_number": match.match_number,
                     "player1": match.player1.username if match.player1 else None,
                     "player2": match.player2.username if match.player2 else None,
-                    "winner": match.game.winner.username if match.game and match.game.winner else None,
+                    "winner": match.game.winner.username
+                    if match.game and match.game.winner
+                    else None,
                     "scores": {
                         "player1": match.game.score_player1 if match.game else 0,
-                        "player2": match.game.score_player2 if match.game else 0
-                    }
+                        "player2": match.game.score_player2 if match.game else 0,
+                    },
                 }
                 for match in tournament_state["matches"]
-            ]
+            ],
         }

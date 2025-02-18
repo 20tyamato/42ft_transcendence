@@ -4,11 +4,11 @@ from django.db import IntegrityError
 from pong.models import (
     User,
     Game,
-    GameSession,
     TournamentGameSession,
     TournamentMatch,
     TournamentParticipant,
 )
+
 
 class UserModelTests(TestCase):
     def test_create_user(self):
@@ -133,22 +133,21 @@ class GameModelTests(TestCase):
         human_game.save()
         self.assertEqual(human_game.winner, self.player2)
 
+
 class TournamentGameSessionTests(TestCase):
     def setUp(self):
         self.user1 = User.objects.create_user(
             username="tournament_player1",
             password="test123",
-            display_name="Tournament Player 1"
+            display_name="Tournament Player 1",
         )
         self.user2 = User.objects.create_user(
             username="tournament_player2",
             password="test123",
-            display_name="Tournament Player 2"
+            display_name="Tournament Player 2",
         )
         self.tournament = TournamentGameSession.objects.create(
-            name="Test Tournament",
-            min_players=2,
-            max_players=4
+            name="Test Tournament", min_players=2, max_players=4
         )
 
     def test_create_tournament_session(self):
@@ -167,41 +166,35 @@ class TournamentGameSessionTests(TestCase):
         """Test tournament status transitions"""
         # Initial state
         self.assertEqual(self.tournament.status, "WAITING_PLAYERS")
-        
+
         # Change to READY
         self.tournament.status = "READY"
         self.tournament.save()
         self.assertEqual(self.tournament.status, "READY")
-        
+
         # Change to IN_PROGRESS
         self.tournament.status = "IN_PROGRESS"
         self.tournament.save()
         self.assertEqual(self.tournament.status, "IN_PROGRESS")
-        
+
         # Change to COMPLETED
         self.tournament.status = "COMPLETED"
         self.tournament.save()
         self.assertEqual(self.tournament.status, "COMPLETED")
 
+
 class TournamentMatchTests(TestCase):
     def setUp(self):
         self.user1 = User.objects.create_user(
-            username="match_player1",
-            password="test123",
-            display_name="Match Player 1"
+            username="match_player1", password="test123", display_name="Match Player 1"
         )
         self.user2 = User.objects.create_user(
-            username="match_player2",
-            password="test123",
-            display_name="Match Player 2"
+            username="match_player2", password="test123", display_name="Match Player 2"
         )
         self.tournament = TournamentGameSession.objects.create(
             name="Match Test Tournament"
         )
-        self.game = Game.objects.create(
-            player1=self.user1,
-            player2=self.user2
-        )
+        self.game = Game.objects.create(player1=self.user1, player2=self.user2)
 
     def test_create_tournament_match(self):
         """Test tournament match creation"""
@@ -211,9 +204,9 @@ class TournamentMatchTests(TestCase):
             match_number=1,
             player1=self.user1,
             player2=self.user2,
-            game=self.game
+            game=self.game,
         )
-        
+
         self.assertEqual(match.round_number, 1)
         self.assertEqual(match.match_number, 1)
         self.assertEqual(match.player1, self.user1)
@@ -228,56 +221,45 @@ class TournamentMatchTests(TestCase):
             round_number=1,
             match_number=1,
             player1=self.user1,
-            player2=self.user2
+            player2=self.user2,
         )
-        
+
         match2 = TournamentMatch.objects.create(
-            tournament=self.tournament,
-            round_number=2,
-            match_number=1
+            tournament=self.tournament, round_number=2, match_number=1
         )
-        
+
         match1.next_match = match2
         match1.save()
-        
+
         self.assertEqual(match1.next_match, match2)
 
     def test_unique_match_in_tournament(self):
         """Test uniqueness constraint of round and match numbers in tournament"""
         TournamentMatch.objects.create(
-            tournament=self.tournament,
-            round_number=1,
-            match_number=1
+            tournament=self.tournament, round_number=1, match_number=1
         )
-        
+
         with self.assertRaises(IntegrityError):
             TournamentMatch.objects.create(
-                tournament=self.tournament,
-                round_number=1,
-                match_number=1
+                tournament=self.tournament, round_number=1, match_number=1
             )
+
 
 class TournamentParticipantTests(TestCase):
     def setUp(self):
         self.tournament = TournamentGameSession.objects.create(
-            name="Participant Test Tournament",
-            min_players=2,
-            max_players=4
+            name="Participant Test Tournament", min_players=2, max_players=4
         )
         self.user1 = User.objects.create_user(
-            username="participant1",
-            password="test123",
-            display_name="Participant 1"
+            username="participant1", password="test123", display_name="Participant 1"
         )
 
     def test_create_participant(self):
         """Test participant creation"""
         participant = TournamentParticipant.objects.create(
-            tournament=self.tournament,
-            user=self.user1,
-            seed=1
+            tournament=self.tournament, user=self.user1, seed=1
         )
-        
+
         self.assertEqual(participant.tournament, self.tournament)
         self.assertEqual(participant.user, self.user1)
         self.assertEqual(participant.seed, 1)
@@ -285,12 +267,10 @@ class TournamentParticipantTests(TestCase):
     def test_unique_participant_in_tournament(self):
         """Test that a user can't join the same tournament twice"""
         TournamentParticipant.objects.create(
-            tournament=self.tournament,
-            user=self.user1
+            tournament=self.tournament, user=self.user1
         )
-        
+
         with self.assertRaises(IntegrityError):
             TournamentParticipant.objects.create(
-                tournament=self.tournament,
-                user=self.user1
+                tournament=self.tournament, user=self.user1
             )
