@@ -71,7 +71,14 @@ class TournamentService:
         )
 
     async def handle_match_result(self, tournament_id: int, match_id: int, winner_username: str, scores: dict) -> None:
-        """試合結果の処理"""
+        """試合結果の処理
+        
+        Args:
+            tournament_id (int): トーナメントID
+            match_id (int): 試合ID
+            winner_username (str): 勝者のユーザー名
+            scores (dict): 試合のスコア {"player1": int, "player2": int}
+        """
         tournament_state = self.active_tournaments.get(tournament_id)
         if not tournament_state or tournament_state["status"] != "IN_PROGRESS":
             return
@@ -86,11 +93,24 @@ class TournamentService:
         if not game:
             return
 
-        # Userモデルへの直接アクセスを避け、Repositoryを通じて勝者を次の試合に進める
-        next_match = await TournamentRepository.advance_winner(match_id, winner_username)
-
-        # トーナメント完了チェック
-        if await TournamentRepository.check_tournament_completion(tournament_id):
+        # 現在のマッチ情報を取得して状態を更新
+        match = next((m for m in tournament_state["matches"] if m.id == match_id), None)
+        if not match:
+            return
+            
+        # 準決勝の場合、勝者を決勝戦に進出させる
+        if match.round_number == 1:  # 準決勝
+            next_match = await TournamentRepository.advance_winner(match_id, winner_username)
+            if next_match:
+                # 決勝戦の準備が整ったかチェック
+                if next_match.player1 and next_match.player2:
+                    tournament_state["current_round"] = 2
+                    await TournamentRepository.update_tournament_status(
+                        tournament_id, 
+                        "IN_PROGRESS",
+                        current_round=2
+                    )
+        else:  # 決勝戦
             await self.complete_tournament(tournament_id)
 
     async def handle_participant_disconnection(self, tournament_id: int, username: str) -> None:

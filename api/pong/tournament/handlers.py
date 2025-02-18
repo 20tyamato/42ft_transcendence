@@ -6,7 +6,6 @@ from .services import TournamentService
 class TournamentWebSocketHandler(AsyncWebsocketConsumer):
     """トーナメントのWebSocket通信を管理するハンドラー"""
 
-    # シングルトンとしてサービスインスタンスを保持
     _service: Optional[TournamentService] = None
 
     @classmethod
@@ -38,8 +37,6 @@ class TournamentWebSocketHandler(AsyncWebsocketConsumer):
         """WebSocket切断時の処理"""
         service = self.get_service()
         await service.handle_participant_disconnection(self.tournament_id, self.username)
-        
-        # グループから離脱
         await self.channel_layer.group_discard(self.tournament_group, self.channel_name)
 
     async def receive(self, text_data):
@@ -50,14 +47,13 @@ class TournamentWebSocketHandler(AsyncWebsocketConsumer):
 
             handlers = {
                 "join_tournament": self.handle_join_tournament,
-                "start_match": self.handle_start_match,
                 "match_result": self.handle_match_result,
             }
 
             handler = handlers.get(message_type)
             if handler:
                 await handler(data)
-
+            
         except json.JSONDecodeError:
             await self.send_error("Invalid message format")
 
@@ -75,22 +71,11 @@ class TournamentWebSocketHandler(AsyncWebsocketConsumer):
         else:
             await self.send_error("Failed to join tournament")
 
-    async def handle_start_match(self, data):
-        """試合開始リクエストの処理"""
-        match_id = data.get("match_id")
-        if not match_id:
-            await self.send_error("Match ID is required")
-            return
-
-        # 試合情報の取得と通知は Service に委譲
-        service = self.get_service()
-        await service.start_match(self.tournament_id, match_id)
-
     async def handle_match_result(self, data):
         """試合結果の処理"""
         match_id = data.get("match_id")
         winner = data.get("winner")
-        scores = data.get("scores")
+        scores = data.get("scores", {})
 
         if not all([match_id, winner, scores]):
             await self.send_error("Missing required match result data")
@@ -106,7 +91,6 @@ class TournamentWebSocketHandler(AsyncWebsocketConsumer):
         # 結果を全参加者に通知
         await self.broadcast_tournament_state()
 
-    # ブロードキャストメソッド
     async def broadcast_tournament_state(self):
         """トーナメントの状態を全参加者に通知"""
         service = self.get_service()
@@ -120,29 +104,11 @@ class TournamentWebSocketHandler(AsyncWebsocketConsumer):
             }
         )
 
-    async def broadcast_match_update(self, match_data):
-        """マッチの更新を関係者に通知"""
-        await self.channel_layer.group_send(
-            self.tournament_group,
-            {
-                "type": "match_state_update",
-                "match_data": match_data
-            }
-        )
-
-    # メッセージ送信メソッド
     async def tournament_state_update(self, event):
         """トーナメント状態更新の送信"""
         await self.send_json({
             "type": "tournament_state",
             "state": event["state"]
-        })
-
-    async def match_state_update(self, event):
-        """マッチ状態更新の送信"""
-        await self.send_json({
-            "type": "match_update",
-            "data": event["match_data"]
         })
 
     async def send_error(self, message: str):
@@ -155,12 +121,3 @@ class TournamentWebSocketHandler(AsyncWebsocketConsumer):
     async def send_json(self, data: dict):
         """JSON形式でメッセージを送信"""
         await self.send(text_data=json.dumps(data))
-
-    # ユーティリティメソッド
-    def get_tournament_group_name(self, tournament_id: int) -> str:
-        """トーナメントのグループ名を取得"""
-        return f"tournament_{tournament_id}"
-
-    def get_match_group_name(self, match_id: int) -> str:
-        """マッチのグループ名を取得"""
-        return f"match_{match_id}"
