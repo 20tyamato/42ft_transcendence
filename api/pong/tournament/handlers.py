@@ -14,6 +14,16 @@ class TournamentWebSocketHandler(AsyncWebsocketConsumer):
             cls._service = TournamentService()
         return cls._service
 
+    async def send_tournament_state(self):
+        """現在のトーナメント状態をクライアントに送信"""
+        service = self.get_service()
+        state = await service.get_tournament_state(self.tournament_id)
+        
+        await self.send_json({
+            "type": "tournament_state",
+            "state": state
+        })
+
     async def connect(self):
         """WebSocket接続時の処理"""
         self.tournament_id = int(self.scope["url_route"]["kwargs"]["tournament_id"])

@@ -185,3 +185,36 @@ class TournamentRepository:
         ).aexists()
         
         return not incomplete_matches
+
+    @classmethod
+    async def get_tournament_matches(cls, tournament_id: int) -> List[TournamentMatch]:
+        """トーナメントの全マッチを取得
+        
+        Args:
+            tournament_id (int): トーナメントID
+        
+        Returns:
+            List[TournamentMatch]: マッチのリスト（準決勝2試合、決勝1試合）
+        """
+        return [
+            match async for match 
+            in TournamentMatch.objects.filter(tournament_id=tournament_id)
+            .select_related('player1', 'player2', 'game', 'game__winner')
+            .order_by('round_number', 'match_number')
+        ]
+
+    @classmethod
+    async def get_tournaments(cls, status: Optional[str] = None, limit: int = 10) -> List[TournamentGameSession]:
+        """トーナメント一覧を取得
+        
+        Args:
+            status (Optional[str]): フィルタリングするステータス
+            limit (int): 取得する最大数
+            
+        Returns:
+            List[TournamentGameSession]: トーナメントのリスト
+        """
+        queryset = TournamentGameSession.objects.order_by('-created_at')
+        if status:
+            queryset = queryset.filter(status=status)
+        return [tournament async for tournament in queryset[:limit]]

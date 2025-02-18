@@ -177,3 +177,83 @@ class TournamentService:
 
         # メモリ上の状態をクリア
         del self.active_tournaments[tournament_id]
+
+    async def get_tournament_state(self, tournament_id: int) -> dict:
+        """トーナメントの現在の状態を取得
+        
+        Args:
+            tournament_id (int): トーナメントID
+            
+        Returns:
+            dict: トーナメントの状態
+            {
+                "status": str,  # WAITING_PLAYERS, IN_PROGRESS, COMPLETED
+                "current_round": int,  # 0: 待機中, 1: 準決勝, 2: 決勝
+                "participants": List[str],  # 参加者のユーザーネームリスト
+                "matches": [
+                    {
+                        "id": int,
+                        "round": int,
+                        "match_number": int,  # 1,2: 準決勝, 3: 決勝
+                        "player1": str | None,
+                        "player2": str | None,
+                        "winner": str | None,
+                        "scores": dict  # {"player1": int, "player2": int}
+                    },
+                    ...
+                ]
+            }
+        """
+        tournament_state = self.active_tournaments.get(tournament_id)
+        if not tournament_state:
+            # DBから情報を取得
+            tournament = await TournamentRepository.get_tournament(tournament_id)
+            if not tournament:
+                return None
+            
+            # 過去のトーナメント情報を構築
+            matches = await TournamentRepository.get_tournament_matches(tournament_id)
+            participants = await TournamentRepository.get_participants(tournament_id)
+            
+            return {
+                "status": tournament.status,
+                "current_round": tournament.current_round,
+                "participants": [p.user.username for p in participants],
+                "matches": [
+                    {
+                        "id": match.id,
+                        "round": match.round_number,
+                        "match_number": match.match_number,
+                        "player1": match.player1.username if match.player1 else None,
+                        "player2": match.player2.username if match.player2 else None,
+                        "winner": match.game.winner.username if match.game and match.game.winner else None,
+                        "scores": {
+                            "player1": match.game.score_player1 if match.game else 0,
+                            "player2": match.game.score_player2 if match.game else 0
+                        }
+                    }
+                    for match in matches
+                ]
+            }
+        
+        # アクティブなトーナメントの状態を返す
+        return {
+            "status": tournament_state["status"],
+            "current_round": tournament_state["current_round"],
+            "participants": tournament_state["participants"],
+            "matches": [
+                {
+                    "id": match.id,
+                    "round": match.round_number,
+                    "match_number": match.match_number,
+                    "player1": match.player1.username if match.player1 else None,
+                    "player2": match.player2.username if match.player2 else None,
+                    "winner": match.game.winner.username if match.game and match.game.winner else None,
+                    "scores": {
+                        "player1": match.game.score_player1 if match.game else 0,
+                        "player2": match.game.score_player2 if match.game else 0
+                    }
+                }
+                for match in tournament_state["matches"]
+            ]
+        }
