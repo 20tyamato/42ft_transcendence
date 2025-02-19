@@ -2,39 +2,9 @@ import { API_URL } from '@/config/config';
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
-import { initLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
+import { registerLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
+import { registerTogglePassword } from '@/utils/togglePassword';
 import { updateInnerHTML, updateText } from '@/utils/updateElements';
-
-const updatePageContent = (): void => {
-  updateText('title', i18next.t('register'));
-  updateText('.register-container h2', i18next.t('register'));
-  updateText('label[for="username"]', i18next.t('username'));
-  updateText('label[for="email"]', i18next.t('emailAddress'));
-  updateText('label[for="displayName"]', i18next.t('displayName'));
-  updateText('label[for="password"]', i18next.t('password'));
-  updateText('label[for="password_confirm"]', i18next.t('confirmPassword'));
-  updateText('button.btn.btn-primary', i18next.t('register'));
-  updateInnerHTML('.centered-text', i18next.t('loginPrompt'));
-};
-
-const initTogglePassword = (toggleBtnId: string, fieldId: string, iconId: string): void => {
-  const toggleBtn = document.getElementById(toggleBtnId);
-  const passwordField = document.getElementById(fieldId) as HTMLInputElement | null;
-  const passwordIcon = document.getElementById(iconId);
-  if (toggleBtn && passwordField && passwordIcon) {
-    toggleBtn.addEventListener('click', () => {
-      if (passwordField.type === 'password') {
-        passwordField.type = 'text';
-        passwordIcon.classList.remove('fa-eye');
-        passwordIcon.classList.add('fa-eye-slash');
-      } else {
-        passwordField.type = 'password';
-        passwordIcon.classList.remove('fa-eye-slash');
-        passwordIcon.classList.add('fa-eye');
-      }
-    });
-  }
-};
 
 const handleRegistrationSubmit = async (
   form: HTMLFormElement,
@@ -128,18 +98,30 @@ const initRegisterForm = (): void => {
   });
 };
 
+const updatePageContent = (): void => {
+  updateText('title', i18next.t('register'));
+  updateText('.register-container h2', i18next.t('register'));
+  updateText('label[for="username"]', i18next.t('username'));
+  updateText('label[for="email"]', i18next.t('emailAddress'));
+  updateText('label[for="displayName"]', i18next.t('displayName'));
+  updateText('label[for="password"]', i18next.t('password'));
+  updateText('label[for="password_confirm"]', i18next.t('confirmPassword'));
+  updateText('button.btn.btn-primary', i18next.t('register'));
+  updateInnerHTML('.centered-text', i18next.t('loginPrompt'));
+};
+
 const RegisterPage = new Page({
   name: 'Register',
   config: { layout: CommonLayout },
   mounted: async ({ pg }: { pg: Page }) => {
     updatePageContent();
     updateActiveLanguageButton();
-    initLanguageSwitchers(updatePageContent);
 
+    registerLanguageSwitchers(updatePageContent);
     initRegisterForm();
 
-    initTogglePassword('toggle-password', 'password', 'password-icon');
-    initTogglePassword('toggle-password-confirm', 'password-confirm', 'password-confirm-icon');
+    registerTogglePassword('toggle-password', 'password', 'password-icon');
+    registerTogglePassword('toggle-password-confirm', 'password-confirm', 'password-confirm-icon');
 
     pg.logger.info('RegisterPage mounted!');
   },

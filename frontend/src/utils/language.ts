@@ -37,7 +37,7 @@ export const registerLanguageButton = (
   button.addEventListener('click', () => changeLanguage(language, updatePageContent));
 };
 
-export const initLanguageSwitchers = (updatePageContent: () => void): void => {
+export const registerLanguageSwitchers = (updatePageContent: () => void): void => {
   registerLanguageButton('lang-en', 'en', updatePageContent);
   registerLanguageButton('lang-ja', 'ja', updatePageContent);
   registerLanguageButton('lang-fr', 'fr', updatePageContent);

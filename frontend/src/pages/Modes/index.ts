@@ -2,10 +2,12 @@ import { Page } from '@/core/Page';
 import LoggedInLayout from '@/layouts/loggedin/index';
 import { checkUserAccess } from '@/models/User/auth';
 import { fetchCurrentUser } from '@/models/User/repository';
-import { resetTimer } from '@/models/Window/repository';
+import { initResetTimerListeners, resetTimer } from '@/models/Window/repository';
 import { setUserLanguage } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
 import i18next from 'i18next';
+
+const DEFAULT_AVATAR_SRC = '/src/resources/avatar.png';
 
 const updatePageContent = (): void => {
   updateText('title', i18next.t('modes'));
@@ -14,30 +16,28 @@ const updatePageContent = (): void => {
   updateText('.tournament-mode', i18next.t('tournamentMode'));
 };
 
-const initNavigationButtons = (): void => {
+const registerNavigationButtons = (): void => {
   const navigateTo = (path: string): void => {
     console.log(`Navigating to ${path}`);
     window.location.href = path;
   };
 
-  const navConfig: { selector: string; path: string }[] = [
-    { selector: '.single-mode', path: '/singleplay/select' },
-    { selector: '.multi-mode', path: '/multiplay' },
-    { selector: '.tournament-mode', path: '/tournament' },
-  ];
-
-  navConfig.forEach(({ selector, path }) => {
+  const bindNavigationButton = (selector: string, path: string): void => {
     const button = document.querySelector(selector);
     if (button) {
       button.addEventListener('click', () => navigateTo(path));
     }
-  });
+  };
+
+  bindNavigationButton('.single-mode', '/singleplay/select');
+  bindNavigationButton('.multi-mode', '/multiplay');
+  bindNavigationButton('.tournament-mode', '/tournament');
 };
 
 const updateUserAvatar = (avatar?: string): void => {
   const avatarEl = document.getElementById('avatar') as HTMLImageElement | null;
   if (avatarEl) {
-    avatarEl.src = avatar || '/src/resources/avatar.png';
+    avatarEl.src = avatar || DEFAULT_AVATAR_SRC;
   }
 };
 
@@ -50,18 +50,16 @@ const ModesPage = new Page({
     try {
       resetTimer();
       checkUserAccess();
+
       const userData = await fetchCurrentUser();
 
       setUserLanguage(userData.language, updatePageContent);
       updateUserAvatar(userData.avatar);
-
-      initNavigationButtons();
+      registerNavigationButtons();
+      
+      initResetTimerListeners();
 
       pg.logger.info('ModesPage mounted!');
-
-      ['mousemove', 'keydown', 'click', 'scroll'].forEach((event) => {
-        window.addEventListener(event, resetTimer);
-      });
     } catch (error) {
       console.error(error);
     }

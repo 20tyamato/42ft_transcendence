@@ -2,7 +2,7 @@ import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { updateLanguage } from '@/models/User/repository';
-import { initLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
+import { registerLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
 
 const registerHomeLink = (): void => {
@@ -30,7 +30,7 @@ const NotFoundPage = new Page({
     updatePageContent();
     updateActiveLanguageButton();
 
-    initLanguageSwitchers(updatePageContent);
+    registerLanguageSwitchers(updatePageContent);
     registerHomeLink();
 
     pg.logger.info('NotFoundPage mounted!');
