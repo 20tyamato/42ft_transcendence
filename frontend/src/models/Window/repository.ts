@@ -1,5 +1,15 @@
-// グローバルにタイマーIDを保持する変数を定義
+import { API_URL } from '@/config/config';
+import { updateOnlineStatus } from '@/models/User/repository';
+
+const clearUserSession = (): void => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('username');
+  localStorage.clear();
+};
+
+// idleTimer をモジュールスコープで保持
 let idleTimer: number | null = null;
+
 
 export const resetTimer = () => {
   const idleTimeout = 10000; // 10秒
@@ -9,14 +19,21 @@ export const resetTimer = () => {
     clearTimeout(idleTimer);
   }
 
-  // 新たにタイマーをセットする
+  // 新たなタイマーをセットする
   idleTimer = window.setTimeout(() => {
-    fetch('/logout/', { method: 'POST', credentials: 'include' })
-      .then(response => {
-        if (response.ok) {
-          window.location.href = '/login/';
-        }
-      })
-      .catch(error => console.error('Logout error:', error));
+    try {
+      updateOnlineStatus(false);
+      fetch(`${API_URL}/api/logout/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+      clearUserSession();
+      window.location.href = '/login';
+    } catch (error) {
+      console.error('Logout API call failed:', error);
+    }
   }, idleTimeout);
 };

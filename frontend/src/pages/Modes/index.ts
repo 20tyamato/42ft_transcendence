@@ -1,46 +1,14 @@
-import { API_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import LoggedInLayout from '@/layouts/loggedin/index';
 import { checkUserAccess } from '@/models/User/auth';
-import { fetchCurrentUser, updateOnlineStatus } from '@/models/User/repository';
+import { fetchCurrentUser } from '@/models/User/repository';
+import { resetTimer } from '@/models/window/repository';
 import { setUserLanguage } from '@/utils/language';
 import i18next from 'i18next';
-
-const clearUserSession = (): void => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('username');
-  localStorage.clear();
-};
 
 // idleTimer をモジュールスコープで保持
 let idleTimer: number | null = null;
 
-const resetTimer = () => {
-  const idleTimeout = 10000; // 10秒
-
-  // 既にタイマーが設定されている場合はクリアする
-  if (idleTimer !== null) {
-    clearTimeout(idleTimer);
-  }
-
-  // 新たなタイマーをセットする
-  idleTimer = window.setTimeout(() => {
-    try {
-      updateOnlineStatus(false);
-      fetch(`${API_URL}/api/logout/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-      });
-      clearUserSession();
-      window.location.href = '/login';
-    } catch (error) {
-      console.error('Logout API call failed:', error);
-    }
-  }, idleTimeout);
-};
 
 const updatePageContent = (): void => {
   const modeTextMap: { selector: string; translationKey: string }[] = [
