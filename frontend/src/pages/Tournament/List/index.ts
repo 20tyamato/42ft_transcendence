@@ -45,8 +45,11 @@ const TournamentListPage = new Page({
             throw new Error(`Failed to create tournament: ${response.status} ${errorText}`);
           }
           
-          // 作成後、一覧を再取得
-          fetchTournaments();
+          // レスポンスからトーナメントIDを取得
+          const tournament = await response.json();
+          
+          // 待機室へ遷移
+          window.location.href = `/tournament/waiting?id=${tournament.id}`;
         } catch (error) {
           console.error('Tournament creation catch error:', error);
           showError(`Failed to create tournament: ${error.message}`);

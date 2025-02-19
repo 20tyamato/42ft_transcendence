@@ -1,14 +1,8 @@
 // frontend/src/pages/Tournament/Waiting/index.ts
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
-import { WebSocketManager, WebSocketMessage } from '@/core/WebSocketManager';
-
-interface TournamentState {
-  status: 'WAITING_PLAYERS' | 'IN_PROGRESS' | 'COMPLETED';
-  participants: string[];
-  current_round: number;
-  matches: any[];
-}
+import { WS_URL } from '@/config/config';
+import { TournamentState } from '@/types/tournament';
 
 const TournamentWaitingPage = new Page({
   name: 'Tournament/Waiting',
@@ -16,8 +10,9 @@ const TournamentWaitingPage = new Page({
     layout: CommonLayout,
   },
   mounted: async ({ pg }) => {
-    const wsManager = new WebSocketManager();
+    // TODO: tournamentIdがundefinedになっているので取得方法がおかしい
     const tournamentId = new URLSearchParams(window.location.search).get('id');
+    let socket: WebSocket | null = null;
     
     if (!tournamentId) {
       showError('Tournament ID is missing');
@@ -29,45 +24,76 @@ const TournamentWaitingPage = new Page({
     const leaveButton = document.getElementById('leave-tournament');
     if (leaveButton instanceof HTMLElement) {
       leaveButton.addEventListener('click', () => {
-        wsManager.disconnect();
+        handleNavigation();
         window.location.href = '/tournament';
       });
     }
 
-    // WebSocket event handlers
-    wsManager.on('connected', () => {
-      wsManager.send({ type: 'join_tournament' });
-    });
-
-    wsManager.on('tournament_state', (message: WebSocketMessage) => {
-      const state = message.state as TournamentState;
-      updateWaitingRoom(state);
-
-      // トーナメントが開始されたら試合ページへ遷移
-      if (state.status === 'IN_PROGRESS') {
-        window.location.href = `/tournament/game?id=${tournamentId}`;
+    // WebSocketの切断と遷移を行う関数
+    const handleNavigation = () => {
+      if (socket) {
+        socket.close();
+        socket = null;
       }
-    });
+    };
 
-    wsManager.on('error', (message: string) => {
-      showError(message);
-    });
+    function initWebSocket() {
+      const username = localStorage.getItem('username');
+      if (!username) {
+        showError('User is not logged in');
+        window.location.href = '/login';
+        return;
+      }
 
-    // Connect to WebSocket
-    // TODO: 実際のユーザー名を使用
-    const username = localStorage.getItem('username');
-    if (!username) {
-      showError('User is not logged in');
-      window.location.href = '/login';
-      return;
+      // WebSocket URLの構築
+      const wsUrl = `${WS_URL}/ws/tournament/${tournamentId}/${username}/`;
+      socket = new WebSocket(wsUrl);
+
+      socket.onopen = () => {
+        console.log('WebSocket connected');
+        socket?.send(JSON.stringify({ type: 'join_tournament' }));
+      };
+
+      socket.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          console.log('Received tournament state:', data);
+
+          if (data.type === 'tournament_state') {
+            const state = data.state;
+            updateWaitingRoom(state);
+
+            if (state.status === 'IN_PROGRESS') {
+              window.location.href = `/tournament/game?id=${tournamentId}`;
+            }
+          }
+        } catch (error) {
+          console.error('Error handling message:', error);
+        }
+      };
+
+      socket.onerror = (error) => {
+        console.error('WebSocket error:', error);
+        showError('Connection error occurred');
+      };
+
+      socket.onclose = () => {
+        console.log('WebSocket disconnected');
+        // 5秒後に再接続を試みる
+        setTimeout(initWebSocket, 5000);
+      };
     }
-    
-    const wsUrl = `ws://${window.location.host}/ws/tournament/${tournamentId}/${username}/`;
-    wsManager.connect(wsUrl);
 
-    // Cleanup
+    // ブラウザの戻る/進むボタン対応
+    window.addEventListener('popstate', handleNavigation);
+
+    // WebSocket接続開始
+    initWebSocket();
+
+    // クリーンアップ
     return () => {
-      wsManager.disconnect();
+      handleNavigation();
+      window.removeEventListener('popstate', handleNavigation);
     };
 
     function updateWaitingRoom(state: TournamentState) {

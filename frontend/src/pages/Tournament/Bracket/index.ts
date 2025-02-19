@@ -2,26 +2,7 @@
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { WebSocketManager, WebSocketMessage } from '@/core/WebSocketManager';
-
-interface TournamentMatch {
-  id: number;
-  round: number;
-  match_number: number;
-  player1: string | null;
-  player2: string | null;
-  winner: string | null;
-  scores: {
-    player1: number;
-    player2: number;
-  };
-}
-
-interface TournamentState {
-  status: 'WAITING_PLAYERS' | 'IN_PROGRESS' | 'COMPLETED';
-  current_round: number;
-  participants: string[];
-  matches: TournamentMatch[];
-}
+import { TournamentState, TournamentMatch } from '@/types/tournament';
 
 const TournamentBracketPage = new Page({
   name: 'Tournament/Bracket',
