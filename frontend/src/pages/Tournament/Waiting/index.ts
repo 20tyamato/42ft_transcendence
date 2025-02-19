@@ -55,7 +55,13 @@ const TournamentWaitingPage = new Page({
 
     // Connect to WebSocket
     // TODO: 実際のユーザー名を使用
-    const username = 'testuser';
+    const username = localStorage.getItem('username');
+    if (!username) {
+      showError('User is not logged in');
+      window.location.href = '/login';
+      return;
+    }
+    
     const wsUrl = `ws://${window.location.host}/ws/tournament/${tournamentId}/${username}/`;
     wsManager.connect(wsUrl);
 

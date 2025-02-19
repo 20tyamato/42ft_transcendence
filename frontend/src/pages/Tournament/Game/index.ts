@@ -28,14 +28,13 @@ const TournamentGamePage = new Page({
       return;
     }
 
-    // 現在のマッチを取得して、player1かどうかを判定
     try {
+      // 現在のマッチ情報を取得
       const response = await fetch(`/api/tournaments/${tournamentId}/current-match`);
       if (!response.ok) throw new Error('Failed to fetch match info');
       const matchData = await response.json();
-      const isPlayer1 = matchData.player1 === username;
 
-      // GameRendererの初期化（MultiPlayと同じレンダラーを使用）
+      const isPlayer1 = matchData.player1 === username;
       const renderer = new GameRenderer(container, isPlayer1);
       const keyState = {
         ArrowLeft: false,
@@ -54,6 +53,7 @@ const TournamentGamePage = new Page({
       socket.onmessage = async (event) => {
         try {
           const data = JSON.parse(event.data);
+          
           if (data.type === 'state_update') {
             renderer.updateState(data.state);
             updateScoreBoard(data.state.score);
@@ -61,6 +61,7 @@ const TournamentGamePage = new Page({
             if (!data.state.is_active) {
               // 試合終了時の処理
               socket.close();
+              
               const scores = {
                 player1: data.state.score[matchData.player1],
                 player2: data.state.score[matchData.player2],
@@ -68,8 +69,20 @@ const TournamentGamePage = new Page({
               };
               localStorage.setItem('finalScore', JSON.stringify(scores));
 
-              // トーナメントの次の試合または結果ページへ
-              window.location.href = `/tournament/waiting?id=${tournamentId}`;
+              if (matchData.round === 1) {
+                // 準決勝の場合
+                const isWinner = matchData.winner === username;
+                if (isWinner) {
+                  // 勝者は決勝待機室へ
+                  window.location.href = `/tournament/waiting?id=${tournamentId}`;
+                } else {
+                  // 敗者はモード選択画面へ
+                  window.location.href = '/modes';
+                }
+              } else {
+                // 決勝戦の場合は結果画面へ
+                window.location.href = `/tournament/result?id=${tournamentId}`;
+              }
             }
           }
         } catch (error) {
@@ -77,7 +90,7 @@ const TournamentGamePage = new Page({
         }
       };
 
-      // キー入力の処理はMultiPlayと同じ
+      // キー入力の処理
       const handleKeyChange = (e: KeyboardEvent, isPressed: boolean) => {
         if (!wsConnected) return;
 
@@ -105,11 +118,10 @@ const TournamentGamePage = new Page({
         }
       };
 
-      // キーイベントリスナーの設定
       document.addEventListener('keydown', e => handleKeyChange(e, true));
       document.addEventListener('keyup', e => handleKeyChange(e, false));
 
-      // クリーンアップ関数を返す
+      // クリーンアップ
       return () => {
         document.removeEventListener('keydown', e => handleKeyChange(e, true));
         document.removeEventListener('keyup', e => handleKeyChange(e, false));
