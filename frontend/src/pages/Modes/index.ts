@@ -44,7 +44,7 @@ const initNavigationButtons = (): void => {
 const updateUserAvatar = (avatar?: string): void => {
   const avatarEl = document.getElementById('avatar') as HTMLImageElement | null;
   if (avatarEl) {
-    avatarEl.src = avatar || '/src/layouts/common/avatar.png';
+    avatarEl.src = avatar || '/src/resources/avatar.png';
   }
 };
 

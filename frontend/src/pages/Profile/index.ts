@@ -105,7 +105,7 @@ const updateFrontElements = (userData: {
   const onlineStatusEl = document.getElementById('onlineStatus');
 
   if (avatarEl) {
-    avatarEl.src = userData.avatar || '/src/layouts/common/avatar.png';
+    avatarEl.src = userData.avatar || '/src/resources/avatar.png';
   }
   if (usernameEl) {
     usernameEl.textContent = userData.username;
