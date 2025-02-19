@@ -2,13 +2,9 @@ import { Page } from '@/core/Page';
 import LoggedInLayout from '@/layouts/loggedin/index';
 import { checkUserAccess } from '@/models/User/auth';
 import { fetchCurrentUser } from '@/models/User/repository';
-import { resetTimer } from '@/models/window/repository';
+import { resetTimer } from '@/models/Window/repository';
 import { setUserLanguage } from '@/utils/language';
 import i18next from 'i18next';
-
-// idleTimer をモジュールスコープで保持
-let idleTimer: number | null = null;
-
 
 const updatePageContent = (): void => {
   const modeTextMap: { selector: string; translationKey: string }[] = [
