@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from core.logger import logger
-from .models import Game, User
+from .models import Game, User, TournamentGameSession
 from .permissions import IsPlayerOrReadOnly
 from .serializers import (
     FriendSerializer,
@@ -269,12 +269,17 @@ class TournamentListCreateView(generics.ListCreateAPIView):
     serializer_class = TournamentGameSessionSerializer
     permission_classes = [IsAuthenticated]
 
-    async def get_queryset(self):
+    def get_queryset(self):
         """トーナメント一覧を取得"""
         limit = int(self.request.query_params.get("limit", 10))
         status = self.request.query_params.get("status")
-        return await TournamentRepository.get_tournaments(status=status, limit=limit)
+        
+        # 同期的なクエリに変更
+        queryset = TournamentGameSession.objects.order_by("-created_at")
+        if status:
+            queryset = queryset.filter(status=status)
 
+        return queryset[:limit]
     async def perform_create(self, serializer):
         """トーナメントを作成"""
         tournament = await serializer.save()
