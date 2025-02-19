@@ -4,8 +4,6 @@ import { checkUserAccess } from '@/models/User/auth';
 import { fetchCurrentUser } from '@/models/User/repository';
 import i18next from 'i18next';
 
-// Will change this file
-
 interface ITournamentHistory {
   date: string;
   result: string;

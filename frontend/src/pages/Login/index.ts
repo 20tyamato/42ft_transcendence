@@ -4,7 +4,7 @@ import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { updateActiveLanguageButton } from '@/models/Lang/repository';
 import { updateLanguage, updateOnlineStatus } from '@/models/User/repository';
-import { initLanguageSwitchers } from '@/utils/languageSwitcher';
+import { initLanguageSwitchers } from '@/utils/language';
 
 const updatePageContent = () => {
   const loginTitle = document.querySelector('.login-container h1');

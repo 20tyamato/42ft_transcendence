@@ -1,10 +1,16 @@
 import i18next from '@/config/i18n';
 import { updateActiveLanguageButton } from '@/models/Lang/repository';
 
-export const changeLanguage = (
-  language: string,
-  updatePageContent: () => void
-): void => {
+export const setUserLanguage = (language: string, updatePageContent: () => void): void => {
+  if (language) {
+    document.documentElement.lang = language;
+    i18next.changeLanguage(language, updatePageContent);
+  } else {
+    console.error('Language not found in user data');
+  }
+};
+
+export const changeLanguage = (language: string, updatePageContent: () => void): void => {
   i18next.changeLanguage(language, updatePageContent);
   updateActiveLanguageButton();
 };

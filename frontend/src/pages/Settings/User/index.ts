@@ -2,11 +2,11 @@ import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { checkUserAccess } from '@/models/User/auth';
 import {
-    fetchCurrentUser,
-    IUserData,
-    updateAvatar,
-    updateLanguage,
-    updateUserInfo,
+  fetchCurrentUser,
+  IUserData,
+  updateAvatar,
+  updateLanguage,
+  updateUserInfo,
 } from '@/models/User/repository';
 import i18next from 'i18next';
 

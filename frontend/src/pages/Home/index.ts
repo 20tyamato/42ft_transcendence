@@ -5,7 +5,7 @@ import { updateActiveLanguageButton } from '@/models/Lang/repository';
 import { isLoggedIn } from '@/models/User/auth';
 import { updateLanguage } from '@/models/User/repository';
 import createThreeScene from '@/pages/Home/scene';
-import { initLanguageSwitchers } from '@/utils/languageSwitcher';
+import { initLanguageSwitchers } from '@/utils/language';
 
 const updatePageContent = () => {
   const startBtn = document.querySelector('.btn');

@@ -3,7 +3,7 @@ import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { updateActiveLanguageButton } from '@/models/Lang/repository';
 import { updateLanguage } from '@/models/User/repository';
-import { initLanguageSwitchers } from '@/utils/languageSwitcher';
+import { initLanguageSwitchers } from '@/utils/language';
 
 export const registerHomeLink = (): void => {
   const homeLink = document.querySelector('a[href="/"]');
