@@ -219,3 +219,8 @@ LOGGING = {
         },
     },
 }
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+# SESSION_COOKIE_AGE = 1800  # 30分（秒単位）
+SESSION_COOKIE_AGE = 180  # 30分（秒単位）
+SESSION_SAVE_EVERY_REQUEST = True  # 毎リクエストで有効期限を更新
