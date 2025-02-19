@@ -1,9 +1,8 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
-import { updateActiveLanguageButton } from '@/models/Lang/repository';
 import { updateLanguage } from '@/models/User/repository';
-import { initLanguageSwitchers } from '@/utils/language';
+import { initLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
 
 const registerHomeLink = (): void => {
   const homeLink = document.querySelector('a[href="/"]');

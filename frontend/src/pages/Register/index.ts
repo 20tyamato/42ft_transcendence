@@ -2,8 +2,7 @@ import { API_URL } from '@/config/config';
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
-import { updateActiveLanguageButton } from '@/models/Lang/repository';
-import { initLanguageSwitchers } from '@/utils/language';
+import { initLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
 
 const setText = (selector: string, translationKey: string, useInnerHTML = false): void => {
   const element = document.querySelector(selector);

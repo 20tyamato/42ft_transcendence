@@ -1,11 +1,10 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
-import { updateActiveLanguageButton } from '@/models/Lang/repository';
 import { isLoggedIn } from '@/models/User/auth';
 import { updateLanguage } from '@/models/User/repository';
 import createThreeScene from '@/pages/Home/scene';
-import { initLanguageSwitchers } from '@/utils/language';
+import { initLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
 
 const updatePageContent = () => {
   const startBtn = document.querySelector('.btn');
