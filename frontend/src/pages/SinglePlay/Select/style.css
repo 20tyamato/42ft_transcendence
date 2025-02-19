@@ -46,6 +46,10 @@ body {
   background: rgba(255, 255, 255, 0.75);
 }
 
+.secret-level {
+  background: rgba(255, 255, 255, 0.75);
+}
+
 .stars {
   font-size: 3rem;
   color: black;

@@ -5,7 +5,7 @@ import CommonLayout from '@/layouts/common/index';
 import { updateActiveLanguageButton } from '@/models/Lang/repository';
 import { updateOnlineStatus } from '@/models/User/repository';
 
-const updateLogoutContent = () => {
+const updatePageContent = () => {
   const logoutTitle = document.querySelector('.logout-container h1');
   if (logoutTitle) logoutTitle.textContent = i18next.t('logout');
 
@@ -22,22 +22,22 @@ const LogoutPage = new Page({
     layout: CommonLayout,
   },
   mounted: async () => {
-    updateLogoutContent();
+    updatePageContent();
     updateActiveLanguageButton();
 
     const btnEn = document.getElementById('lang-en');
     const btnJa = document.getElementById('lang-ja');
     const btnFr = document.getElementById('lang-fr');
     btnEn?.addEventListener('click', () => {
-      i18next.changeLanguage('en', updateLogoutContent);
+      i18next.changeLanguage('en', updatePageContent);
       updateActiveLanguageButton();
     });
     btnJa?.addEventListener('click', () => {
-      i18next.changeLanguage('ja', updateLogoutContent);
+      i18next.changeLanguage('ja', updatePageContent);
       updateActiveLanguageButton();
     });
     btnFr?.addEventListener('click', () => {
-      i18next.changeLanguage('fr', updateLogoutContent);
+      i18next.changeLanguage('fr', updatePageContent);
       updateActiveLanguageButton();
     });
 

@@ -4,7 +4,7 @@ import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { updateActiveLanguageButton } from '@/models/Lang/repository';
 
-const updateRegisterContent = () => {
+const updatePageContent = () => {
   const loginTitle = document.querySelector('.register-container h2');
   if (loginTitle) loginTitle.textContent = i18next.t('register');
 
@@ -36,22 +36,22 @@ const RegisterPage = new Page({
     layout: CommonLayout,
   },
   mounted: async () => {
-    updateRegisterContent();
+    updatePageContent();
     updateActiveLanguageButton();
 
     const btnEn = document.getElementById('lang-en');
     const btnJa = document.getElementById('lang-ja');
     const btnFr = document.getElementById('lang-fr');
     btnEn?.addEventListener('click', () => {
-      i18next.changeLanguage('en', updateRegisterContent);
+      i18next.changeLanguage('en', updatePageContent);
       updateActiveLanguageButton();
     });
     btnJa?.addEventListener('click', () => {
-      i18next.changeLanguage('ja', updateRegisterContent);
+      i18next.changeLanguage('ja', updatePageContent);
       updateActiveLanguageButton();
     });
     btnFr?.addEventListener('click', () => {
-      i18next.changeLanguage('fr', updateRegisterContent);
+      i18next.changeLanguage('fr', updatePageContent);
       updateActiveLanguageButton();
     });
     const form = document.getElementById('register-form') as HTMLFormElement | null;
