@@ -4,6 +4,7 @@ import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { updateActiveLanguageButton } from '@/models/Lang/repository';
 import { updateOnlineStatus } from '@/models/User/repository';
+import { initLanguageSwitchers } from '@/utils/languageSwitcher';
 
 const updatePageContent = () => {
   const logoutTitle = document.querySelector('.logout-container h1');
@@ -25,21 +26,7 @@ const LogoutPage = new Page({
     updatePageContent();
     updateActiveLanguageButton();
 
-    const btnEn = document.getElementById('lang-en');
-    const btnJa = document.getElementById('lang-ja');
-    const btnFr = document.getElementById('lang-fr');
-    btnEn?.addEventListener('click', () => {
-      i18next.changeLanguage('en', updatePageContent);
-      updateActiveLanguageButton();
-    });
-    btnJa?.addEventListener('click', () => {
-      i18next.changeLanguage('ja', updatePageContent);
-      updateActiveLanguageButton();
-    });
-    btnFr?.addEventListener('click', () => {
-      i18next.changeLanguage('fr', updatePageContent);
-      updateActiveLanguageButton();
-    });
+    initLanguageSwitchers(updatePageContent);
 
     updateOnlineStatus(false);
     try {

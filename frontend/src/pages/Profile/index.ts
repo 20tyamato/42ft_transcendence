@@ -24,7 +24,7 @@ const languageNames = {
   fr: 'Français',
 };
 
-const updateContent = () => {
+const updatePageContent = () => {
   const titleTag = document.querySelector('title');
   if (titleTag) {
     titleTag.textContent = i18next.t('userProfile');
@@ -92,7 +92,7 @@ const ProfilePage = new Page({
       const userData = await fetchCurrentUser();
       if (userData.language) {
         document.documentElement.lang = userData.language;
-        i18next.changeLanguage(userData.language, updateContent);
+        i18next.changeLanguage(userData.language, updatePageContent);
       }
 
       // Front HTML elements

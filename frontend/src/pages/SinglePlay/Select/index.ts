@@ -4,7 +4,7 @@ import { checkUserAccess } from '@/models/User/auth';
 import { fetchCurrentUser } from '@/models/User/repository';
 import i18next from 'i18next';
 
-const updateContent = () => {
+const updatePageContent = () => {
   const easyLevelCard = document.querySelector('.easy-level h1');
   if (easyLevelCard) easyLevelCard.textContent = i18next.t('easyLevel');
 
@@ -29,7 +29,7 @@ const SinglePlaySelectPage = new Page({
     const userData = await fetchCurrentUser();
     if (userData.language) {
       document.documentElement.lang = userData.language;
-      i18next.changeLanguage(userData.language, updateContent);
+      i18next.changeLanguage(userData.language, updatePageContent);
     }
 
     if (userData.level < 5) {

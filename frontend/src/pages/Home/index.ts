@@ -5,6 +5,7 @@ import { updateActiveLanguageButton } from '@/models/Lang/repository';
 import { isLoggedIn } from '@/models/User/auth';
 import { updateLanguage } from '@/models/User/repository';
 import createThreeScene from '@/pages/Home/scene';
+import { initLanguageSwitchers } from '@/utils/languageSwitcher';
 
 const updatePageContent = () => {
   const startBtn = document.querySelector('.btn');
@@ -20,21 +21,7 @@ const HomePage = new Page({
     updatePageContent();
     updateActiveLanguageButton();
 
-    const btnEn = document.getElementById('lang-en');
-    const btnJa = document.getElementById('lang-ja');
-    const btnFr = document.getElementById('lang-fr');
-    btnEn?.addEventListener('click', () => {
-      i18next.changeLanguage('en', updatePageContent);
-      updateActiveLanguageButton();
-    });
-    btnJa?.addEventListener('click', () => {
-      i18next.changeLanguage('ja', updatePageContent);
-      updateActiveLanguageButton();
-    });
-    btnFr?.addEventListener('click', () => {
-      i18next.changeLanguage('fr', updatePageContent);
-      updateActiveLanguageButton();
-    });
+    initLanguageSwitchers(updatePageContent);
 
     pg.logger.info('HomePage mounted!');
     const loginBtn = document.querySelector('a[href="/login"]');
@@ -49,7 +36,6 @@ const HomePage = new Page({
       }
     });
 
-    // Three.js 初期化
     createThreeScene();
   },
 });

@@ -4,6 +4,7 @@ import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { updateActiveLanguageButton } from '@/models/Lang/repository';
 import { updateLanguage, updateOnlineStatus } from '@/models/User/repository';
+import { initLanguageSwitchers } from '@/utils/languageSwitcher';
 
 const updatePageContent = () => {
   const loginTitle = document.querySelector('.login-container h1');
@@ -31,21 +32,7 @@ const LoginPage = new Page({
     updatePageContent();
     updateActiveLanguageButton();
 
-    const btnEn = document.getElementById('lang-en');
-    const btnJa = document.getElementById('lang-ja');
-    const btnFr = document.getElementById('lang-fr');
-    btnEn?.addEventListener('click', () => {
-      i18next.changeLanguage('en', updatePageContent);
-      updateActiveLanguageButton();
-    });
-    btnJa?.addEventListener('click', () => {
-      i18next.changeLanguage('ja', updatePageContent);
-      updateActiveLanguageButton();
-    });
-    btnFr?.addEventListener('click', () => {
-      i18next.changeLanguage('fr', updatePageContent);
-      updateActiveLanguageButton();
-    });
+    initLanguageSwitchers(updatePageContent);
 
     const form = document.getElementById('login-form') as HTMLFormElement | null;
     const responseMessage = document.getElementById('response-message');

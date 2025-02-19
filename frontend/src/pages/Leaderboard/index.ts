@@ -9,7 +9,7 @@ interface IRankingUser {
   level: number;
 }
 
-const updateContent = () => {
+const updatePageContent = () => {
   const titleEl = document.querySelector('.ranking-container h1');
   if (titleEl) titleEl.textContent = i18next.t('leaderboard');
 
@@ -31,7 +31,7 @@ const LeaderboardPage = new Page({
       const userData: IUserData = await fetchCurrentUser();
       if (userData.language) {
         document.documentElement.lang = userData.language;
-        i18next.changeLanguage(userData.language, updateContent);
+        i18next.changeLanguage(userData.language, updatePageContent);
       }
 
       const users: IRankingUser[] = await fetchUsers();

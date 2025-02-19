@@ -13,7 +13,7 @@ interface Friend {
 
 const token = localStorage.getItem('token');
 
-const updateContent = () => {
+const updatePageContent = () => {
   document.title = i18next.t('myFriends');
 
   const header = document.querySelector('.container h1');
@@ -159,7 +159,7 @@ const FriendsPage = new Page({
     const userData = await fetchCurrentUser();
     if (userData.language) {
       document.documentElement.lang = userData.language;
-      i18next.changeLanguage(userData.language, updateContent);
+      i18next.changeLanguage(userData.language, updatePageContent);
     } else {
       console.error('Language not found in user data');
     }

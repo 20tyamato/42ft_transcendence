@@ -2,15 +2,15 @@ import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { checkUserAccess } from '@/models/User/auth';
 import {
-  fetchCurrentUser,
-  IUserData,
-  updateAvatar,
-  updateLanguage,
-  updateUserInfo,
+    fetchCurrentUser,
+    IUserData,
+    updateAvatar,
+    updateLanguage,
+    updateUserInfo,
 } from '@/models/User/repository';
 import i18next from 'i18next';
 
-const updateContent = () => {
+const updatePageContent = () => {
   const titleEl = document.querySelector('.settings-title');
   if (titleEl) titleEl.textContent = i18next.t('userSettings');
 
@@ -60,7 +60,7 @@ const SettingsUserPage = new Page({
       const userData: IUserData = await fetchCurrentUser();
       if (userData.language) {
         document.documentElement.lang = userData.language;
-        i18next.changeLanguage(userData.language, updateContent);
+        i18next.changeLanguage(userData.language, updatePageContent);
       }
 
       if (userData.avatar && avatarPreviewEl) {
