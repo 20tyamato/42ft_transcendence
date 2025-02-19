@@ -2,6 +2,7 @@ import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { checkUserAccess } from '@/models/User/auth';
 import { fetchCurrentUser } from '@/models/User/repository';
+import { setUserLanguage } from '@/utils/language';
 import i18next from 'i18next';
 
 interface ITournamentHistory {
@@ -86,12 +87,9 @@ const ProfilePage = new Page({
   mounted: async () => {
     try {
       checkUserAccess();
-
       const userData = await fetchCurrentUser();
-      if (userData.language) {
-        document.documentElement.lang = userData.language;
-        i18next.changeLanguage(userData.language, updatePageContent);
-      }
+      
+      setUserLanguage(userData.language, updatePageContent);
 
       // Front HTML elements
       const avatarEl = document.getElementById('avatar') as HTMLImageElement;

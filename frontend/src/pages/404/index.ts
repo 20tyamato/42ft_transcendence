@@ -5,7 +5,7 @@ import { updateActiveLanguageButton } from '@/models/Lang/repository';
 import { updateLanguage } from '@/models/User/repository';
 import { initLanguageSwitchers } from '@/utils/language';
 
-export const registerHomeLink = (): void => {
+const registerHomeLink = (): void => {
   const homeLink = document.querySelector('a[href="/"]');
   if (!homeLink) return;
   homeLink.addEventListener('click', (event) => {

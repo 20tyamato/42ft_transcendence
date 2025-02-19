@@ -3,11 +3,11 @@ import CommonLayout from '@/layouts/common/index';
 import { checkUserAccess } from '@/models/User/auth';
 import {
   fetchCurrentUser,
-  IUserData,
   updateAvatar,
   updateLanguage,
-  updateUserInfo,
+  updateUserInfo
 } from '@/models/User/repository';
+import { setUserLanguage } from '@/utils/language';
 import i18next from 'i18next';
 
 const updatePageContent = () => {
@@ -45,8 +45,6 @@ const SettingsUserPage = new Page({
     layout: CommonLayout,
   },
   mounted: async () => {
-    checkUserAccess();
-
     // HTML Elements
     const avatarPreviewEl = document.getElementById('avatarPreview') as HTMLImageElement;
     const avatarUploadInput = document.getElementById('avatarUpload') as HTMLInputElement;
@@ -57,11 +55,10 @@ const SettingsUserPage = new Page({
     const responseMessage = document.getElementById('response-message');
 
     try {
-      const userData: IUserData = await fetchCurrentUser();
-      if (userData.language) {
-        document.documentElement.lang = userData.language;
-        i18next.changeLanguage(userData.language, updatePageContent);
-      }
+      checkUserAccess();
+      const userData = await fetchCurrentUser();
+      
+      setUserLanguage(userData.language, updatePageContent);
 
       if (userData.avatar && avatarPreviewEl) {
         avatarPreviewEl.src = userData.avatar;

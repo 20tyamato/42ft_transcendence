@@ -1,7 +1,8 @@
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { checkUserAccess } from '@/models/User/auth';
-import { fetchCurrentUser, fetchUsers, IUserData } from '@/models/User/repository';
+import { fetchCurrentUser, fetchUsers } from '@/models/User/repository';
+import { setUserLanguage } from '@/utils/language';
 import i18next from 'i18next';
 
 interface IRankingUser {
@@ -22,17 +23,15 @@ const LeaderboardPage = new Page({
   config: {
     layout: CommonLayout,
   },
-  mounted: async () => {
-    checkUserAccess();
+  mounted: async ({ pg }: { pg: Page }) => {
     const rankingList = document.getElementById('rankingList');
     const backBtn = document.getElementById('backBtn');
 
     try {
-      const userData: IUserData = await fetchCurrentUser();
-      if (userData.language) {
-        document.documentElement.lang = userData.language;
-        i18next.changeLanguage(userData.language, updatePageContent);
-      }
+      checkUserAccess();
+      const userData = await fetchCurrentUser();
+      
+      setUserLanguage(userData.language, updatePageContent);
 
       const users: IRankingUser[] = await fetchUsers();
       const sortedUsers = users.sort((a, b) => b.level - a.level).slice(0, 10);
@@ -54,6 +53,8 @@ const LeaderboardPage = new Page({
     backBtn?.addEventListener('click', () => {
       window.location.href = '/modes';
     });
+
+    pg.logger.info('LeaderboardPage mounted!');
   },
 });
 

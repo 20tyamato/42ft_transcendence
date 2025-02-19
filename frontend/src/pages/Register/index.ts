@@ -3,6 +3,7 @@ import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { updateActiveLanguageButton } from '@/models/Lang/repository';
+import { initLanguageSwitchers } from '@/utils/language';
 
 const updatePageContent = () => {
   const loginTitle = document.querySelector('.register-container h2');
@@ -38,22 +39,9 @@ const RegisterPage = new Page({
   mounted: async () => {
     updatePageContent();
     updateActiveLanguageButton();
+    
+    initLanguageSwitchers(updatePageContent);
 
-    const btnEn = document.getElementById('lang-en');
-    const btnJa = document.getElementById('lang-ja');
-    const btnFr = document.getElementById('lang-fr');
-    btnEn?.addEventListener('click', () => {
-      i18next.changeLanguage('en', updatePageContent);
-      updateActiveLanguageButton();
-    });
-    btnJa?.addEventListener('click', () => {
-      i18next.changeLanguage('ja', updatePageContent);
-      updateActiveLanguageButton();
-    });
-    btnFr?.addEventListener('click', () => {
-      i18next.changeLanguage('fr', updatePageContent);
-      updateActiveLanguageButton();
-    });
     const form = document.getElementById('register-form') as HTMLFormElement | null;
     const responseMessage = document.getElementById('response-message');
 

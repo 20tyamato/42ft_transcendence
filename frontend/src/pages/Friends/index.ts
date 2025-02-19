@@ -3,6 +3,7 @@ import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { checkUserAccess } from '@/models/User/auth';
 import { fetchCurrentUser } from '@/models/User/repository';
+import { setUserLanguage } from '@/utils/language';
 import i18next from 'i18next';
 
 interface Friend {
@@ -154,15 +155,11 @@ const FriendsPage = new Page({
   config: {
     layout: CommonLayout,
   },
-  mounted: async () => {
+  mounted: async ({ pg }: { pg: Page }) => {
     checkUserAccess();
     const userData = await fetchCurrentUser();
-    if (userData.language) {
-      document.documentElement.lang = userData.language;
-      i18next.changeLanguage(userData.language, updatePageContent);
-    } else {
-      console.error('Language not found in user data');
-    }
+    
+    setUserLanguage(userData.language, updatePageContent);
     loadFriends();
 
     const usernameInput = document.getElementById('username-input') as HTMLInputElement;
@@ -183,6 +180,7 @@ const FriendsPage = new Page({
         addFriend(username);
       }
     });
+    pg.logger.info('FriendsPage mounted!');
   },
 });
 
