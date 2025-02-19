@@ -6,7 +6,7 @@ import { isLoggedIn } from '@/models/User/auth';
 import { updateLanguage } from '@/models/User/repository';
 import createThreeScene from '@/pages/Home/scene';
 
-const updateHomeContent = () => {
+const updateContent = () => {
   const startBtn = document.querySelector('.btn');
   if (startBtn) startBtn.textContent = i18next.t('start');
 };
@@ -17,22 +17,22 @@ const HomePage = new Page({
     layout: CommonLayout,
   },
   mounted: async ({ pg }: { pg: Page }) => {
-    updateHomeContent();
+    updateContent();
     updateActiveLanguageButton();
 
     const btnEn = document.getElementById('lang-en');
     const btnJa = document.getElementById('lang-ja');
     const btnFr = document.getElementById('lang-fr');
     btnEn?.addEventListener('click', () => {
-      i18next.changeLanguage('en', updateHomeContent);
+      i18next.changeLanguage('en', updateContent);
       updateActiveLanguageButton();
     });
     btnJa?.addEventListener('click', () => {
-      i18next.changeLanguage('ja', updateHomeContent);
+      i18next.changeLanguage('ja', updateContent);
       updateActiveLanguageButton();
     });
     btnFr?.addEventListener('click', () => {
-      i18next.changeLanguage('fr', updateHomeContent);
+      i18next.changeLanguage('fr', updateContent);
       updateActiveLanguageButton();
     });
 

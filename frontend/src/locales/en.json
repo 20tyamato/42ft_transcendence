@@ -58,5 +58,7 @@
   "easyLevel": "Easy",
   "mediumLevel": "Medium",
   "hardLevel": "Hard",
-  "secretLevel": "Oni"
+  "secretLevel": "Oni",
+  "pageNotFound": "Page not found",
+  "backHome": "Back to home"
 }
