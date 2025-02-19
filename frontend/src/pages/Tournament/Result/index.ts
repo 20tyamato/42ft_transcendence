@@ -38,7 +38,7 @@ const TournamentResultPage = new Page({
 
     try {
       // トーナメント結果を取得
-      const response = await fetch(`${API_URL}/tournaments/${tournamentId}/result/`);
+      const response = await fetch(`${API_URL}/api/tournaments/${tournamentId}/result/`);
       if (!response.ok) throw new Error('Failed to fetch tournament result');
       const result: TournamentResult = await response.json();
 

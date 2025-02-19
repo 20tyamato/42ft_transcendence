@@ -22,7 +22,7 @@ const TournamentListPage = new Page({
     if (createButton instanceof HTMLElement) {
       createButton.addEventListener('click', async () => {
         try {
-          const response = await fetch(`${API_URL}/tournaments/`, {
+          const response = await fetch(`${API_URL}/api/tournaments/`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -32,12 +32,23 @@ const TournamentListPage = new Page({
             }),
           });
 
-          if (!response.ok) throw new Error('Failed to create tournament');
+          if (!response.ok) {
+            // エラーレスポンスの本文を取得
+            const errorText = await response.text();
+            console.error('Tournament creation error:', {
+              status: response.status,
+              statusText: response.statusText,
+              errorBody: errorText
+            });
+            
+            throw new Error(`Failed to create tournament: ${response.status} ${errorText}`);
+          }
           
           // 作成後、一覧を再取得
           fetchTournaments();
         } catch (error) {
-          showError('Failed to create tournament');
+          console.error('Tournament creation catch error:', error);
+          showError(`Failed to create tournament: ${error.message}`);
         }
       });
     }
@@ -54,7 +65,7 @@ const TournamentListPage = new Page({
 
     async function fetchTournaments() {
       try {
-        const response = await fetch(`${API_URL}/tournaments/`);
+        const response = await fetch(`${API_URL}/api/tournaments/`);
         if (!response.ok) throw new Error('Failed to fetch tournaments');
         const tournaments = await response.json();
         displayTournaments(tournaments);
@@ -133,7 +144,7 @@ const TournamentListPage = new Page({
 
     async function joinTournament(id: string) {
       try {
-        const response = await fetch(`${API_URL}/tournaments/${id}/join/`, {
+        const response = await fetch(`${API_URL}/api/tournaments/${id}/join/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
