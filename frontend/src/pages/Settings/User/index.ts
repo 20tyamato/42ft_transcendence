@@ -66,7 +66,7 @@ const populateUserData = (
   }
 };
 
-const initAvatarPreview = (
+const registerAvatarPreview = (
   avatarUploadInput: HTMLInputElement,
   avatarPreviewEl: HTMLImageElement
 ): void => {
@@ -152,7 +152,7 @@ const SettingsUserPage = new Page({
     }
 
     // 画像アップロード時のプレビュー表示
-    initAvatarPreview(elements.avatarUploadInput, elements.avatarPreviewEl);
+    registerAvatarPreview(elements.avatarUploadInput, elements.avatarPreviewEl);
 
     // フォーム送信イベントの登録
     elements.form.addEventListener('submit', (event) => handleFormSubmit(event, elements));

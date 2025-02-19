@@ -2,6 +2,7 @@ import { API_URL } from '@/config/config';
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
+import { validateRegistrationForm } from '@/utils/form';
 import { registerLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
 import { registerTogglePassword } from '@/utils/togglePassword';
 import { updateInnerHTML, updateText } from '@/utils/updateElements';
@@ -11,39 +12,20 @@ const handleRegistrationSubmit = async (
   responseMessage: HTMLElement
 ): Promise<void> => {
   const formData = new FormData(form);
-  const username = formData.get('username') as string;
-  const email = formData.get('email') as string;
-  const displayName = formData.get('displayName') as string;
-  const password = formData.get('password') as string;
-  const passwordConfirm = formData.get('password_confirm') as string;
-
-  // 入力必須チェック
-  if (!username || !email || !displayName || !password || !passwordConfirm) {
-    responseMessage.textContent = i18next.t('allFieldsRequired');
-    responseMessage.style.color = 'red';
-    return;
-  }
-
-  // メールアドレスの形式チェック
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    responseMessage.textContent = i18next.t('validEmail');
-    responseMessage.style.color = 'red';
-    return;
-  }
-
-  // パスワード一致チェック
-  if (password !== passwordConfirm) {
-    responseMessage.textContent = i18next.t('passwordsDoNotMatch');
+  
+  // バリデーションチェック
+  const validationError = validateRegistrationForm(formData);
+  if (validationError) {
+    responseMessage.textContent = validationError;
     responseMessage.style.color = 'red';
     return;
   }
 
   const userData = {
-    username: username,
-    email: email,
-    display_name: displayName,
-    password: password,
+    username: formData.get('username') as string,
+    email: formData.get('email') as string,
+    display_name: formData.get('displayName') as string,
+    password: formData.get('password') as string,
   };
 
   try {
