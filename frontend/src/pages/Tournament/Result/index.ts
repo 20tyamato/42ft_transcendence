@@ -1,6 +1,7 @@
 // frontend/src/pages/Tournament/Result/index.ts
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
+import { API_URL } from '@/config/config';
 
 interface TournamentMatch {
   id: number;
@@ -37,7 +38,7 @@ const TournamentResultPage = new Page({
 
     try {
       // トーナメント結果を取得
-      const response = await fetch(`/api/tournaments/${tournamentId}/result`);
+      const response = await fetch(`${API_URL}/tournaments/${tournamentId}/result/`);
       if (!response.ok) throw new Error('Failed to fetch tournament result');
       const result: TournamentResult = await response.json();
 

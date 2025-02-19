@@ -1,5 +1,6 @@
 // frontend/src/pages/Tournament/List/index.ts
 import { Page } from '@/core/Page';
+import { API_URL } from '@/config/config';
 import CommonLayout from '@/layouts/common/index';
 
 interface Tournament {
@@ -21,7 +22,7 @@ const TournamentListPage = new Page({
     if (createButton instanceof HTMLElement) {
       createButton.addEventListener('click', async () => {
         try {
-          const response = await fetch('/api/tournaments', {
+          const response = await fetch(`${API_URL}/tournaments/`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -53,7 +54,7 @@ const TournamentListPage = new Page({
 
     async function fetchTournaments() {
       try {
-        const response = await fetch('/api/tournaments');
+        const response = await fetch(`${API_URL}/tournaments/`);
         if (!response.ok) throw new Error('Failed to fetch tournaments');
         const tournaments = await response.json();
         displayTournaments(tournaments);
@@ -132,7 +133,7 @@ const TournamentListPage = new Page({
 
     async function joinTournament(id: string) {
       try {
-        const response = await fetch(`/api/tournaments/${id}/join`, {
+        const response = await fetch(`${API_URL}/tournaments/${id}/join/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -12,6 +12,8 @@ from .views import (
     UserAvatarUpdateView,
     UserListCreateView,
     UserRetrieveUpdateView,
+    TournamentListCreateView,
+    tournament_status,
 )
 
 app_name = "pong"
@@ -51,5 +53,7 @@ urlpatterns = [
         "games/<int:pk>/", GameRetrieveUpdateDestroyView.as_view(), name="game-detail"
     ),
     # Tournament
-    # TODO: add Tournament frontend
+    path("tournaments/", TournamentListCreateView.as_view(), name="tournament-list-create"),
+    path("tournaments/<int:tournament_id>/status/", tournament_status, name="tournament-status"),
+
 ]

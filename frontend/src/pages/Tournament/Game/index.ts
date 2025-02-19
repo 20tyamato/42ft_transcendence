@@ -3,6 +3,7 @@ import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { GameRenderer } from '@/pages/MultiPlay/Game/game_renderer';
 import { WS_URL } from '@/config/config';
+import { API_URL } from '@/config/config';
 
 const TournamentGamePage = new Page({
   name: 'Tournament/Game',
@@ -30,7 +31,7 @@ const TournamentGamePage = new Page({
 
     try {
       // 現在のマッチ情報を取得
-      const response = await fetch(`/api/tournaments/${tournamentId}/current-match`);
+      const response = await fetch(`${API_URL}/tournaments/${tournamentId}/current-match/`);
       if (!response.ok) throw new Error('Failed to fetch match info');
       const matchData = await response.json();
 
