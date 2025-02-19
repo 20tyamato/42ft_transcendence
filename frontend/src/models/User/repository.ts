@@ -1,14 +1,14 @@
 import { API_URL } from '@/config/config';
 import i18next from 'i18next';
 
-interface IUserData {
+export interface IUserData {
   display_name: string;
   email: string;
   avatar?: string;
   language?: string;
 }
 
-const fetchUsers = async () => {
+export const fetchUsers = async () => {
   const token = localStorage.getItem('token');
   if (!token) return;
 
@@ -31,7 +31,7 @@ const fetchUsers = async () => {
   }
 };
 
-const fetchCurrentUser = async () => {
+export const fetchCurrentUser = async () => {
   const token = localStorage.getItem('token');
   if (!token) return;
 
@@ -55,7 +55,7 @@ const fetchCurrentUser = async () => {
 };
 
 // アバター画像の更新（FormData を利用）
-const updateAvatar = async (file: File) => {
+export const updateAvatar = async (file: File) => {
   const token = localStorage.getItem('token');
   if (!token) return;
 
@@ -82,7 +82,7 @@ const updateAvatar = async (file: File) => {
 };
 
 // ユーザー情報（メールと表示名）の更新
-const updateUserInfo = async (email: string, displayName: string) => {
+export const updateUserInfo = async (email: string, displayName: string) => {
   const token = localStorage.getItem('token');
   if (!token) return;
 
@@ -106,7 +106,7 @@ const updateUserInfo = async (email: string, displayName: string) => {
   }
 };
 
-const updateLanguage = async (language: string) => {
+export const updateLanguage = async (language: string) => {
   const token = localStorage.getItem('token');
   if (!token) return;
 
@@ -132,7 +132,7 @@ const updateLanguage = async (language: string) => {
   }
 };
 
-const updateOnlineStatus = async (is_online: boolean) => {
+export const updateOnlineStatus = async (is_online: boolean) => {
   const token = localStorage.getItem('token');
   if (!token) return;
 
@@ -155,14 +155,4 @@ const updateOnlineStatus = async (is_online: boolean) => {
   } catch (error) {
     console.error('Error updating online status:', error);
   }
-};
-
-export {
-  fetchCurrentUser,
-  fetchUsers,
-  IUserData,
-  updateAvatar,
-  updateLanguage,
-  updateOnlineStatus,
-  updateUserInfo,
 };

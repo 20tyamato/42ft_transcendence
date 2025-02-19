@@ -46,6 +46,10 @@ body {
   background: rgba(255, 255, 255, 0.75);
 }
 
+.secret-level {
+  background: rgba(255, 255, 255, 0.75);
+}
+
 .stars {
   font-size: 3rem;
   color: black;
@@ -114,7 +118,6 @@ body {
   border-color: #fff transparent transparent transparent;
 }
 
-/* 4つのdivをそれぞれ遅延アニメーションさせる */
 .ring-loader div:nth-child(1) {
   animation-delay: -0.45s;
 }
@@ -125,7 +128,6 @@ body {
   animation-delay: -0.15s;
 }
 
-/* スピンアニメーション */
 @keyframes ring-spin {
   0% {
     transform: rotate(0deg);
@@ -135,7 +137,6 @@ body {
   }
 }
 
-/*====== カウントダウンテキスト ======*/
 .loading-text {
   font-size: 1.5rem;
   font-weight: bold;

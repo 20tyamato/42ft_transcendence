@@ -1,14 +1,15 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
-import { updateActiveLanguageButton } from '@/models/Lang/repository';
 import { isLoggedIn } from '@/models/User/auth';
 import { updateLanguage } from '@/models/User/repository';
 import createThreeScene from '@/pages/Home/scene';
+import { initLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
+import { updateText } from '@/utils/updateElements';
 
-const updateHomeContent = () => {
-  const startBtn = document.querySelector('.btn');
-  if (startBtn) startBtn.textContent = i18next.t('start');
+const updatePageContent = () => {
+  updateText('title', i18next.t('home'));
+  updateText('.btn', i18next.t('start'));
 };
 
 const HomePage = new Page({
@@ -17,24 +18,10 @@ const HomePage = new Page({
     layout: CommonLayout,
   },
   mounted: async ({ pg }: { pg: Page }) => {
-    updateHomeContent();
+    updatePageContent();
     updateActiveLanguageButton();
 
-    const btnEn = document.getElementById('lang-en');
-    const btnJa = document.getElementById('lang-ja');
-    const btnFr = document.getElementById('lang-fr');
-    btnEn?.addEventListener('click', () => {
-      i18next.changeLanguage('en', updateHomeContent);
-      updateActiveLanguageButton();
-    });
-    btnJa?.addEventListener('click', () => {
-      i18next.changeLanguage('ja', updateHomeContent);
-      updateActiveLanguageButton();
-    });
-    btnFr?.addEventListener('click', () => {
-      i18next.changeLanguage('fr', updateHomeContent);
-      updateActiveLanguageButton();
-    });
+    initLanguageSwitchers(updatePageContent);
 
     pg.logger.info('HomePage mounted!');
     const loginBtn = document.querySelector('a[href="/login"]');
@@ -49,7 +36,6 @@ const HomePage = new Page({
       }
     });
 
-    // Three.js 初期化
     createThreeScene();
   },
 });

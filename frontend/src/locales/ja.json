@@ -54,5 +54,11 @@
   "noFriends": "まだ友達がいません。",
   "delete": "削除",
   "online": "オンライン",
-  "offline": "オフライン"
+  "offline": "オフライン",
+  "easyLevel": "初級",
+  "mediumLevel": "中級",
+  "hardLevel": "上級",
+  "secretLevel": "鬼",
+  "pageNotFound": "ページが見つかりません",
+  "backHome": "ホームに戻る"
 }

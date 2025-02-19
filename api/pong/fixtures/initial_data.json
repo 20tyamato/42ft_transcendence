@@ -6,6 +6,8 @@
       "username": "sample1",
       "email": "sample1@example.com",
       "display_name": "Sample User 1",
+      "level": 1,
+      "experience": 0,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$d1SVqv6JNn2TJzcHrQlNNM$9KncMxadPq0mDXp14OF/xgQKdlYx9wQ0lDSk1WjVHxo="
@@ -18,6 +20,8 @@
       "username": "sample2",
       "email": "sample2@example.com",
       "display_name": "Sample User 2",
+      "level": 2,
+      "experience": 100,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$Mh9ZxqtXGTgpy5WtGgyLRe$qgnJ8T9LuIF+PoGC5vA+0LpDStfJqx5GwtgSh3eBfxg="
@@ -30,6 +34,8 @@
       "username": "sample3",
       "email": "sample3@example.com",
       "display_name": "Sample User 3",
+      "level": 3,
+      "experience": 200,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$2OHhBX0V5HPXJp9iJt5o9u$ocJdyW7lv3YxNYJppIzFqBLvOZz22vz9U/6FGCLeazw="
@@ -42,6 +48,8 @@
       "username": "sample4",
       "email": "sample4@example.com",
       "display_name": "Sample User 4",
+      "level": 4,
+      "experience": 300,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$4mPN0uBMUn61H9mxA4lqxo$ZCnPpUkOteD8tynoWUvOvHDiy+i833cChRut6A2/3fo="
@@ -54,6 +62,8 @@
       "username": "sample5",
       "email": "sample5@example.com",
       "display_name": "Sample User 5",
+      "level": 5,
+      "experience": 400,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$wfo2dFMu3QH5X1zGsdBPlK$1H1MMytNIhODInX/K9y40uN7Vyso/YslNv0XAGWXRhQ="
@@ -66,6 +76,8 @@
       "username": "sample6",
       "email": "sample6@example.com",
       "display_name": "Sample User 6",
+      "level": 6,
+      "experience": 500,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$KnT3UqtbMfz5ETHpfQZJY2$8w6xolxoILIRkBwaiOsnPcZ/AdF3NRw74I3txJV4v4w="
@@ -78,6 +90,8 @@
       "username": "sample7",
       "email": "sample7@example.com",
       "display_name": "Sample User 7",
+      "level": 7,
+      "experience": 600,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$zK0rCyfPrh8GnIHqADR5jK$JduM2lD9tePPVvNwEZHOFNB88K1kDQp+MHzIyoKsRq0="
@@ -90,6 +104,8 @@
       "username": "sample8",
       "email": "sample8@example.com",
       "display_name": "Sample User 8",
+      "level": 8,
+      "experience": 700,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$Pgh45OC1Umrijzcep0sQgL$8up6nvCxHRbzkof5G0xaqHyNNZzfvKC5yx1IXDVKbuA="
@@ -102,6 +118,8 @@
       "username": "sample9",
       "email": "sample9@example.com",
       "display_name": "Sample User 9",
+      "level": 9,
+      "experience": 800,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$Uuoe8xTRPSOUiOQZeEPRyG$4DlM4JzkP73iALX6oA1H5V6zOZ3PnV/1ABnbPCVivsM="
@@ -114,6 +132,8 @@
       "username": "sample10",
       "email": "sample10@example.com",
       "display_name": "Sample User 10",
+      "level": 10,
+      "experience": 900,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$F76o8VRowp1bNYaqda7XjU$bXJyyOv96MR7ZfgHIzWuNl9dAR2kADKwO6hr9X7JLts="

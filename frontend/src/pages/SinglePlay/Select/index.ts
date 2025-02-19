@@ -1,5 +1,17 @@
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
+import { checkUserAccess } from '@/models/User/auth';
+import { fetchCurrentUser } from '@/models/User/repository';
+import { updateText } from '@/utils/updateElements';
+import i18next from 'i18next';
+
+const updatePageContent = () => {
+  updateText('title', i18next.t('selectLevel'));
+  updateText('.easy-level h1', i18next.t('easyLevel'));
+  updateText('.medium-level h1', i18next.t('mediumLevel'));
+  updateText('.hard-level h1', i18next.t('hardLevel'));
+  updateText('.secret-level h1', i18next.t('secretLevel'));
+};
 
 const SinglePlaySelectPage = new Page({
   name: 'SinglePlay/Select',
@@ -7,6 +19,21 @@ const SinglePlaySelectPage = new Page({
     layout: CommonLayout,
   },
   mounted: async () => {
+    checkUserAccess();
+
+    const userData = await fetchCurrentUser();
+    if (userData.language) {
+      document.documentElement.lang = userData.language;
+      i18next.changeLanguage(userData.language, updatePageContent);
+    }
+
+    if (userData.level < 5) {
+      const secretLevelCard = document.querySelector('.level-card.secret-level');
+      if (secretLevelCard instanceof HTMLElement) {
+        secretLevelCard.style.display = 'none';
+      }
+    }
+
     const levelButtons = document.querySelectorAll('.level-button');
 
     function showLoadingScreen(targetPath: string) {
@@ -34,7 +61,7 @@ const SinglePlaySelectPage = new Page({
       button.addEventListener('click', () => {
         const level = button.getAttribute('data-level');
         if (level) {
-          localStorage.setItem('selectedLevel', level); // レベルを保存
+          localStorage.setItem('selectedLevel', level);
           console.log(`Selected level: ${level}`);
           showLoadingScreen('/singleplay/game');
         } else {
