@@ -84,13 +84,6 @@ const populateUserData = (
   }
 };
 
-/* ============================================================================
-   イベントハンドラー
-   ============================================================================ */
-
-/**
- * アップロードした画像のプレビューを表示する
- */
 const initAvatarPreview = (
   avatarUploadInput: HTMLInputElement,
   avatarPreviewEl: HTMLImageElement
@@ -108,9 +101,6 @@ const initAvatarPreview = (
   });
 };
 
-/**
- * フォーム送信時のバリデーションと更新処理
- */
 const handleFormSubmit = async (event: Event, elements: SettingsElements) => {
   event.preventDefault();
 
@@ -159,16 +149,12 @@ const setResponse = (el: HTMLElement | null, message: string, color: string): vo
   }
 };
 
-/* ============================================================================
-   Page 定義
-   ============================================================================ */
-
 const SettingsUserPage = new Page({
   name: 'Settings/User',
   config: {
     layout: CommonLayout,
   },
-  mounted: async () => {
+  mounted: async ({ pg }: { pg: Page }) => {
     // DOM 要素の取得
     const elements = getSettingsElements();
 
@@ -186,6 +172,7 @@ const SettingsUserPage = new Page({
 
     // フォーム送信イベントの登録
     elements.form.addEventListener('submit', (event) => handleFormSubmit(event, elements));
+    pg.logger.info('SettingsUserPage mounted!');
   },
 });
 

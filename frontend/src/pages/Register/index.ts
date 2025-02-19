@@ -141,7 +141,7 @@ const initRegisterForm = (): void => {
 const RegisterPage = new Page({
   name: 'Register',
   config: { layout: CommonLayout },
-  mounted: async () => {
+  mounted: async ({ pg }: { pg: Page }) => {
     updatePageContent();
     updateActiveLanguageButton();
     initLanguageSwitchers(updatePageContent);
@@ -150,6 +150,8 @@ const RegisterPage = new Page({
 
     initTogglePassword('toggle-password', 'password', 'password-icon');
     initTogglePassword('toggle-password-confirm', 'password-confirm', 'password-confirm-icon');
+
+    pg.logger.info('RegisterPage mounted!');
   },
 });
 

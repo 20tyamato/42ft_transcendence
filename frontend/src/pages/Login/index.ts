@@ -103,13 +103,15 @@ const initTogglePassword = (): void => {
 const LoginPage = new Page({
   name: 'Login',
   config: { layout: CommonLayout },
-  mounted: async () => {
+  mounted: async ({ pg }: { pg: Page }) => {
     updatePageContent();
     updateActiveLanguageButton();
     initLanguageSwitchers(updatePageContent);
 
     initLoginForm();
     initTogglePassword();
+
+    pg.logger.info('LoginPage mounted!');
   },
 });
 

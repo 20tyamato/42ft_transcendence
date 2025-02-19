@@ -52,7 +52,7 @@ const ModesPage = new Page({
   config: {
     layout: LoggedInLayout,
   },
-  mounted: async () => {
+  mounted: async ({ pg }: { pg: Page }) => {
     try {
       checkUserAccess();
       const userData = await fetchCurrentUser();
@@ -61,6 +61,8 @@ const ModesPage = new Page({
       updateUserAvatar(userData.avatar);
 
       initNavigationButtons();
+
+      pg.logger.info('ModesPage mounted!');
     } catch (error) {
       console.error(error);
     }

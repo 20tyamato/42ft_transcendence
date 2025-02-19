@@ -226,7 +226,7 @@ const ProfilePage = new Page({
   config: {
     layout: CommonLayout,
   },
-  mounted: async () => {
+  mounted: async ({ pg }: { pg: Page }) => {
     try {
       checkUserAccess();
       const userData = await fetchCurrentUser();
@@ -282,6 +282,8 @@ const ProfilePage = new Page({
       attachActionButtonHandlers();
       attachCardFlipHandler();
       attachCloseButtonHandlers();
+
+      pg.logger.info('ProfilePage mounted!');
     } catch (error) {
       console.error('Error in mounted():', error);
     }

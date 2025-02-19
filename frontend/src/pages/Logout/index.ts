@@ -49,7 +49,7 @@ const LogoutPage = new Page({
   config: {
     layout: CommonLayout,
   },
-  mounted: async () => {
+  mounted: async ({ pg }: { pg: Page }) => {
     updatePageContent();
     updateActiveLanguageButton();
     initLanguageSwitchers(updatePageContent);
@@ -60,6 +60,8 @@ const LogoutPage = new Page({
     clearUserSession();
     
     registerLogoutButtonHandler();
+
+    pg.logger.info('LogoutPage mounted!');
   },
 });
 
