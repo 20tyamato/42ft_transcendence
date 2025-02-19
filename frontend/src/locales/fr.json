@@ -54,5 +54,9 @@
   "noFriends": "Vous n'avez pas encore d'amis.",
   "delete": "Supprimer",
   "online": "En ligne",
-  "offline": "Hors ligne"
+  "offline": "Hors ligne",
+  "easyLevel": "Facile",
+  "mediumLevel": "Moyen",
+  "hardLevel": "Difficile",
+  "secretLevel": "Oni"
 }

@@ -88,7 +88,7 @@ const ProfilePage = new Page({
   mounted: async () => {
     try {
       checkUserAccess();
-      // User Data from Backend
+
       const userData = await fetchCurrentUser();
       if (userData.language) {
         document.documentElement.lang = userData.language;

@@ -1,5 +1,22 @@
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
+import { checkUserAccess } from '@/models/User/auth';
+import { fetchCurrentUser } from '@/models/User/repository';
+import i18next from 'i18next';
+
+const updateContent = () => {
+  const easyLevelCard = document.querySelector('.easy-level h1');
+  if (easyLevelCard) easyLevelCard.textContent = i18next.t('easyLevel');
+
+  const mediumLevelCard = document.querySelector('.medium-level h1');
+  if (mediumLevelCard) mediumLevelCard.textContent = i18next.t('mediumLevel');
+
+  const hardLevelCard = document.querySelector('.hard-level h1');
+  if (hardLevelCard) hardLevelCard.textContent = i18next.t('hardLevel');
+
+  const secretLevelCard = document.querySelector('.secret-level h1');
+  if (secretLevelCard) secretLevelCard.textContent = i18next.t('secretLevel');
+};
 
 const SinglePlaySelectPage = new Page({
   name: 'SinglePlay/Select',
@@ -7,6 +24,21 @@ const SinglePlaySelectPage = new Page({
     layout: CommonLayout,
   },
   mounted: async () => {
+    checkUserAccess();
+
+    const userData = await fetchCurrentUser();
+    if (userData.language) {
+      document.documentElement.lang = userData.language;
+      i18next.changeLanguage(userData.language, updateContent);
+    }
+
+    if (userData.level < 5) {
+      const secretLevelCard = document.querySelector('.level-card.secret-level');
+      if (secretLevelCard instanceof HTMLElement) {
+        secretLevelCard.style.display = 'none';
+      }
+    }
+
     const levelButtons = document.querySelectorAll('.level-button');
 
     function showLoadingScreen(targetPath: string) {
@@ -34,7 +66,7 @@ const SinglePlaySelectPage = new Page({
       button.addEventListener('click', () => {
         const level = button.getAttribute('data-level');
         if (level) {
-          localStorage.setItem('selectedLevel', level); // レベルを保存
+          localStorage.setItem('selectedLevel', level);
           console.log(`Selected level: ${level}`);
           showLoadingScreen('/singleplay/game');
         } else {

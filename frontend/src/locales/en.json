@@ -54,5 +54,9 @@
   "noFriends": "You have no friends yet.",
   "delete": "Delete",
   "online": "Online",
-  "offline": "Offline"
+  "offline": "Offline",
+  "easyLevel": "Easy",
+  "mediumLevel": "Medium",
+  "hardLevel": "Hard",
+  "secretLevel": "Oni"
 }
