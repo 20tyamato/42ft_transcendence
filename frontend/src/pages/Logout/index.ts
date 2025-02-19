@@ -6,7 +6,7 @@ import { updateActiveLanguageButton } from '@/models/Lang/repository';
 import { updateOnlineStatus } from '@/models/User/repository';
 import { initLanguageSwitchers } from '@/utils/language';
 
-const updatePageContent = () => {
+const updatePageContent = (): void => {
   const logoutTitle = document.querySelector('.logout-container h1');
   if (logoutTitle) logoutTitle.textContent = i18next.t('logout');
 
@@ -17,6 +17,33 @@ const updatePageContent = () => {
   if (logoutBtn) logoutBtn.textContent = i18next.t('login');
 };
 
+const performLogout = async (): Promise<void> => {
+  try {
+    await fetch(`${API_URL}/api/logout/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    });
+  } catch (error) {
+    console.error('Logout API call failed:', error);
+  }
+};
+
+const clearUserSession = (): void => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('username');
+  localStorage.clear();
+};
+
+const registerLogoutButtonHandler = (): void => {
+  const logoutBtn = document.getElementById('logout-btn');
+  logoutBtn?.addEventListener('click', () => {
+    window.location.href = '/login';
+  });
+};
+
 const LogoutPage = new Page({
   name: 'Logout',
   config: {
@@ -25,30 +52,14 @@ const LogoutPage = new Page({
   mounted: async () => {
     updatePageContent();
     updateActiveLanguageButton();
-
     initLanguageSwitchers(updatePageContent);
 
     updateOnlineStatus(false);
-    try {
-      await fetch(`${API_URL}/api/logout/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-      });
-    } catch (error) {
-      console.error('Logout API call failed:', error);
-    }
+    await performLogout();
 
-    localStorage.removeItem('token');
-    localStorage.removeItem('username');
-    localStorage.clear();
-
-    const logoutBtn = document.getElementById('logout-btn');
-    logoutBtn?.addEventListener('click', () => {
-      window.location.href = '/login';
-    });
+    clearUserSession();
+    
+    registerLogoutButtonHandler();
   },
 });
 
