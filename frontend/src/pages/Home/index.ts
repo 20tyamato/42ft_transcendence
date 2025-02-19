@@ -5,10 +5,11 @@ import { isLoggedIn } from '@/models/User/auth';
 import { updateLanguage } from '@/models/User/repository';
 import createThreeScene from '@/pages/Home/scene';
 import { initLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
+import { updateText } from '@/utils/updateElements';
 
 const updatePageContent = () => {
-  const startBtn = document.querySelector('.btn');
-  if (startBtn) startBtn.textContent = i18next.t('start');
+  updateText('title', i18next.t('home'));
+  updateText('.btn', i18next.t('start'));
 };
 
 const HomePage = new Page({

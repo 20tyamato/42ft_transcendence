@@ -3,6 +3,7 @@ import CommonLayout from '@/layouts/common/index';
 import { checkUserAccess } from '@/models/User/auth';
 import { fetchCurrentUser } from '@/models/User/repository';
 import { setUserLanguage } from '@/utils/language';
+import { updateInnerHTML, updateText } from '@/utils/updateElements';
 import i18next from 'i18next';
 
 interface ITournamentHistory {
@@ -23,19 +24,8 @@ const languageNames: { [key: string]: string } = {
   fr: 'Français',
 };
 
-const updateLabel = (spanId: string, translationKey: string): void => {
-  const spanEl = document.getElementById(spanId);
-  if (spanEl && spanEl.parentElement) {
-    spanEl.parentElement.innerHTML = `${i18next.t(translationKey)}: <span id="${spanId}"></span>`;
-  }
-};
-
 const updatePageContent = (): void => {
-  // Update <title>
-  const titleTag = document.querySelector('title');
-  if (titleTag) {
-    titleTag.textContent = i18next.t('userProfile');
-  }
+  updateText('title', i18next.t('userProfile'));
 
   // Update myCard テキスト
   const myCardEl = document.getElementById('mycard');
@@ -48,14 +38,13 @@ const updatePageContent = (): void => {
     }
   }
 
-  // Update 各ラベル
-  updateLabel('username', 'username');
-  updateLabel('email', 'emailAddress');
-  updateLabel('displayName', 'displayName');
-  updateLabel('experience', 'currentExperience');
-  updateLabel('level', 'level');
-  updateLabel('language', 'language');
-  updateLabel('onlineStatus', 'onlineStatus');
+  updateInnerHTML('username', i18next.t('username'));
+  updateInnerHTML('email', i18next.t('emailAddress'));
+  updateInnerHTML('displayName', i18next.t('displayName'));
+  updateInnerHTML('experience', i18next.t('currentExperience'));
+  updateInnerHTML('level', i18next.t('level'));
+  updateInnerHTML('language', i18next.t('language'));
+  updateInnerHTML('onlineStatus', i18next.t('onlineStatus'));
 
   // Update tap hints
   const tapHints = document.querySelectorAll('.tap-hint');
@@ -69,14 +58,8 @@ const updatePageContent = (): void => {
   }
 
   // Update セクション見出し
-  const tournamentHeading = document.querySelector('.history-section h2');
-  if (tournamentHeading) {
-    tournamentHeading.textContent = i18next.t('tournamentHistory');
-  }
-  const scoresHeading = document.querySelector('.score-section h2');
-  if (scoresHeading) {
-    scoresHeading.textContent = i18next.t('blockchainScores');
-  }
+  updateText('.history-section h2', i18next.t('tournamentHistory'));
+  updateText('.score-section h2', i18next.t('blockchainScores'));
 
   // Update 編集ボタン
   const editBtn = document.getElementById('edit-btn');
@@ -235,25 +218,17 @@ const ProfilePage = new Page({
       setUserLanguage(userData.language, updatePageContent);
 
       // フロント側の更新
-      const {
-        avatar,
-        username,
-        email,
-        display_name,
-        experience,
-        level,
-        language,
-        is_online,
-      } = userData as {
-        avatar: string;
-        username: string;
-        email: string;
-        display_name: string;
-        experience: number;
-        level: number;
-        language: keyof typeof languageNames;
-        is_online: boolean;
-      };
+      const { avatar, username, email, display_name, experience, level, language, is_online } =
+        userData as {
+          avatar: string;
+          username: string;
+          email: string;
+          display_name: string;
+          experience: number;
+          level: number;
+          language: keyof typeof languageNames;
+          is_online: boolean;
+        };
 
       updateFrontElements({
         avatar,

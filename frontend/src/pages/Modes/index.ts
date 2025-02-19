@@ -4,21 +4,14 @@ import { checkUserAccess } from '@/models/User/auth';
 import { fetchCurrentUser } from '@/models/User/repository';
 import { resetTimer } from '@/models/Window/repository';
 import { setUserLanguage } from '@/utils/language';
+import { updateText } from '@/utils/updateElements';
 import i18next from 'i18next';
 
 const updatePageContent = (): void => {
-  const modeTextMap: { selector: string; translationKey: string }[] = [
-    { selector: '.single-mode', translationKey: 'singleMode' },
-    { selector: '.multi-mode', translationKey: 'multiMode' },
-    { selector: '.tournament-mode', translationKey: 'tournamentMode' },
-  ];
-
-  modeTextMap.forEach(({ selector, translationKey }) => {
-    const element = document.querySelector(selector);
-    if (element) {
-      element.textContent = i18next.t(translationKey);
-    }
-  });
+  updateText('title', i18next.t('modes'));
+  updateText('.single-mode', i18next.t('singleMode'));
+  updateText('.multi-mode', i18next.t('multiMode'));
+  updateText('.tournament-mode', i18next.t('tournamentMode'));
 };
 
 const initNavigationButtons = (): void => {
@@ -66,7 +59,7 @@ const ModesPage = new Page({
 
       pg.logger.info('ModesPage mounted!');
 
-      ['mousemove', 'keydown', 'click', 'scroll'].forEach(event => {
+      ['mousemove', 'keydown', 'click', 'scroll'].forEach((event) => {
         window.addEventListener(event, resetTimer);
       });
     } catch (error) {

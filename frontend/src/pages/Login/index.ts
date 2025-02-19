@@ -4,22 +4,15 @@ import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { updateLanguage, updateOnlineStatus } from '@/models/User/repository';
 import { initLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
+import { updateInnerHTML, updateText } from '@/utils/updateElements';
 
 const updatePageContent = (): void => {
-  const loginTitle = document.querySelector('.login-container h1');
-  if (loginTitle) loginTitle.textContent = i18next.t('login');
-
-  const usernameLabel = document.querySelector('label[for="username"]');
-  if (usernameLabel) usernameLabel.textContent = i18next.t('username');
-
-  const passwordLabel = document.querySelector('label[for="password"]');
-  if (passwordLabel) passwordLabel.textContent = i18next.t('password');
-
-  const loginBtn = document.querySelector('button.btn.btn-primary');
-  if (loginBtn) loginBtn.textContent = i18next.t('login');
-
-  const centeredText = document.querySelector('.centered-text');
-  if (centeredText) centeredText.innerHTML = i18next.t('registerPrompt');
+  updateText('title', i18next.t('login'));
+  updateText('.login-container h1', i18next.t('login'));
+  updateText('label[for="username"]', i18next.t('username'));
+  updateText('label[for="password"]', i18next.t('password'));
+  updateText('button.btn.btn-primary', i18next.t('login'));
+  updateInnerHTML('.centered-text', i18next.t('registerPrompt'));
 };
 
 const handleLoginSubmit = async (

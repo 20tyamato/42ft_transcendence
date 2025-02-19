@@ -4,6 +4,7 @@ import CommonLayout from '@/layouts/common/index';
 import { checkUserAccess } from '@/models/User/auth';
 import { fetchCurrentUser } from '@/models/User/repository';
 import { setUserLanguage } from '@/utils/language';
+import { updatePlaceholder, updateText } from '@/utils/updateElements';
 import i18next from 'i18next';
 
 interface Friend {
@@ -14,48 +15,12 @@ interface Friend {
 
 const token = localStorage.getItem('token');
 
-/* ============================================================================
-   ページ文言の更新処理
-   ============================================================================ */
-
 const updatePageContent = (): void => {
-  updateDocumentTitle();
-  updateHeader();
-  updateUsernameInputPlaceholder();
-  updateAddFriendButtonText();
-  updateFriendListHeader();
-};
-
-const updateDocumentTitle = (): void => {
-  document.title = i18next.t('myFriends');
-};
-
-const updateHeader = (): void => {
-  const header = document.querySelector('.container h1');
-  if (header) {
-    header.textContent = i18next.t('myFriends');
-  }
-};
-
-const updateUsernameInputPlaceholder = (): void => {
-  const usernameInput = document.getElementById('username-input') as HTMLInputElement | null;
-  if (usernameInput) {
-    usernameInput.placeholder = i18next.t('enterUsername');
-  }
-};
-
-const updateAddFriendButtonText = (): void => {
-  const addFriendButton = document.getElementById('add-friend-btn');
-  if (addFriendButton) {
-    addFriendButton.textContent = i18next.t('addFriend');
-  }
-};
-
-const updateFriendListHeader = (): void => {
-  const friendListHeader = document.querySelector('.friend-list h2');
-  if (friendListHeader) {
-    friendListHeader.textContent = i18next.t('friendList');
-  }
+  updateText('title', i18next.t('myFriends'));
+  updateText('.container h1', i18next.t('myFriends'));
+  updatePlaceholder('#username-input', i18next.t('enterUsername'));
+  updateText('#add-friend-btn', i18next.t('addFriend'));
+  updateText('.friend-list h2', i18next.t('friendList'));
 };
 
 async function loadFriends(): Promise<void> {

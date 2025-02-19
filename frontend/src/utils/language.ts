@@ -13,7 +13,6 @@ export const updateActiveLanguageButton = () => {
   localStorage.setItem('language', selectedLang);
 };
 
-
 export const setUserLanguage = (language: string, updatePageContent: () => void): void => {
   if (language) {
     document.documentElement.lang = language;

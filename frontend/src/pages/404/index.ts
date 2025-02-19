@@ -3,6 +3,7 @@ import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { updateLanguage } from '@/models/User/repository';
 import { initLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
+import { updateText } from '@/utils/updateElements';
 
 const registerHomeLink = (): void => {
   const homeLink = document.querySelector('a[href="/"]');
@@ -15,14 +16,9 @@ const registerHomeLink = (): void => {
 };
 
 const updatePageContent = (): void => {
-  const titleTag = document.querySelector('title');
-  if (titleTag) titleTag.textContent = i18next.t('pageNotFound');
-
-  const header = document.querySelector('h1');
-  if (header) header.textContent = i18next.t('pageNotFound');
-
-  const backHomeBtn = document.querySelector('.btn');
-  if (backHomeBtn) backHomeBtn.textContent = i18next.t('backHome');
+  updateText('title', i18next.t('pageNotFound'));
+  updateText('h1', i18next.t('pageNotFound'));
+  updateText('.btn', i18next.t('backHome'));
 };
 
 const NotFoundPage = new Page({

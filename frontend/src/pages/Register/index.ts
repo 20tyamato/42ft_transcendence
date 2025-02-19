@@ -3,27 +3,18 @@ import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { initLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
-
-const setText = (selector: string, translationKey: string, useInnerHTML = false): void => {
-  const element = document.querySelector(selector);
-  if (element) {
-    if (useInnerHTML) {
-      element.innerHTML = i18next.t(translationKey);
-    } else {
-      element.textContent = i18next.t(translationKey);
-    }
-  }
-};
+import { updateInnerHTML, updateText } from '@/utils/updateElements';
 
 const updatePageContent = (): void => {
-  setText('.register-container h2', 'register');
-  setText('label[for="username"]', 'username');
-  setText('label[for="email"]', 'emailAddress');
-  setText('label[for="displayName"]', 'displayName');
-  setText('label[for="password"]', 'password');
-  setText('label[for="password_confirm"]', 'confirmPassword');
-  setText('button.btn.btn-primary', 'register');
-  setText('.centered-text', 'loginPrompt', true);
+  updateText('title', i18next.t('register'));
+  updateText('.register-container h2', i18next.t('register'));
+  updateText('label[for="username"]', i18next.t('username'));
+  updateText('label[for="email"]', i18next.t('emailAddress'));
+  updateText('label[for="displayName"]', i18next.t('displayName'));
+  updateText('label[for="password"]', i18next.t('password'));
+  updateText('label[for="password_confirm"]', i18next.t('confirmPassword'));
+  updateText('button.btn.btn-primary', i18next.t('register'));
+  updateInnerHTML('.centered-text', i18next.t('loginPrompt'));
 };
 
 const initTogglePassword = (toggleBtnId: string, fieldId: string, iconId: string): void => {

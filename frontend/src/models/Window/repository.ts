@@ -10,7 +10,6 @@ const clearUserSession = (): void => {
 // idleTimer をモジュールスコープで保持
 let idleTimer: number | null = null;
 
-
 export const resetTimer = () => {
   const idleTimeout = 10000; // 10秒
 

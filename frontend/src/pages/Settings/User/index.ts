@@ -5,9 +5,10 @@ import {
   fetchCurrentUser,
   updateAvatar,
   updateLanguage,
-  updateUserInfo
+  updateUserInfo,
 } from '@/models/User/repository';
 import { setUserLanguage } from '@/utils/language';
+import { updateAttribute, updatePlaceholder, updateText } from '@/utils/updateElements';
 import i18next from 'i18next';
 
 const updatePageContent = (): void => {
@@ -21,25 +22,6 @@ const updatePageContent = (): void => {
   updateText('label[for="languageSelect"]', i18next.t('language'));
   updateText('button[type="submit"]', i18next.t('save'));
 };
-
-const updateText = (selector: string, text: string): void => {
-  const el = document.querySelector(selector);
-  if (el) el.textContent = text;
-};
-
-const updatePlaceholder = (selector: string, placeholder: string): void => {
-  const el = document.querySelector(selector) as HTMLInputElement | null;
-  if (el) el.placeholder = placeholder;
-};
-
-const updateAttribute = (selector: string, attribute: string, value: string): void => {
-  const el = document.querySelector(selector);
-  if (el) el.setAttribute(attribute, value);
-};
-
-/* ============================================================================
-   DOM 要素取得・ユーザーデータ反映
-   ============================================================================ */
 
 type SettingsElements = {
   avatarPreviewEl: HTMLImageElement;
@@ -58,7 +40,7 @@ const getSettingsElements = (): SettingsElements => ({
   emailInput: document.getElementById('emailInput') as HTMLInputElement,
   languageSelect: document.getElementById('languageSelect') as HTMLSelectElement,
   form: document.getElementById('userSettingsForm') as HTMLFormElement,
-  responseMessage: document.getElementById('response-message')
+  responseMessage: document.getElementById('response-message'),
 });
 
 const populateUserData = (
@@ -104,7 +86,8 @@ const initAvatarPreview = (
 const handleFormSubmit = async (event: Event, elements: SettingsElements) => {
   event.preventDefault();
 
-  const { emailInput, displayNameInput, languageSelect, avatarUploadInput, responseMessage } = elements;
+  const { emailInput, displayNameInput, languageSelect, avatarUploadInput, responseMessage } =
+    elements;
   const newEmail = emailInput.value.trim();
   const newDisplayName = displayNameInput.value.trim();
   const newLanguage = languageSelect.value;

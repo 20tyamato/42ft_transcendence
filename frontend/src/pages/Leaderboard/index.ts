@@ -3,6 +3,7 @@ import CommonLayout from '@/layouts/common/index';
 import { checkUserAccess } from '@/models/User/auth';
 import { fetchCurrentUser, fetchUsers } from '@/models/User/repository';
 import { setUserLanguage } from '@/utils/language';
+import { updateText } from '@/utils/updateElements';
 import i18next from 'i18next';
 
 interface IRankingUser {
@@ -11,28 +12,12 @@ interface IRankingUser {
 }
 
 const updatePageContent = (): void => {
-  updateTitle();
-  updateBackButtonText();
-};
-
-const updateTitle = (): void => {
-  const titleEl = document.querySelector('.ranking-container h1');
-  if (titleEl) {
-    titleEl.textContent = i18next.t('leaderboard');
-  }
-};
-
-const updateBackButtonText = (): void => {
-  const saveButton = document.querySelector('.btn');
-  if (saveButton) {
-    saveButton.textContent = i18next.t('backToHome');
-  }
+  updateText('h1', i18next.t('leaderboard'));
+  updateText('.btn', i18next.t('backToHome'));
 };
 
 const renderRankingList = (users: IRankingUser[], rankingList: HTMLElement): void => {
-  const sortedUsers = users
-    .sort((a, b) => b.level - a.level)
-    .slice(0, 10);
+  const sortedUsers = users.sort((a, b) => b.level - a.level).slice(0, 10);
 
   sortedUsers.forEach((user, index) => {
     const li = document.createElement('li');

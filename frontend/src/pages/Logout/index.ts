@@ -4,16 +4,14 @@ import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { updateOnlineStatus } from '@/models/User/repository';
 import { initLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
+import { updateInnerHTML, updateText } from '@/utils/updateElements';
 
 const updatePageContent = (): void => {
-  const logoutTitle = document.querySelector('.logout-container h1');
-  if (logoutTitle) logoutTitle.textContent = i18next.t('logout');
-
-  const logoutMessage = document.getElementById('logout-message');
-  if (logoutMessage) logoutMessage.textContent = i18next.t('logoutMessage');
-
-  const logoutBtn = document.getElementById('logout-btn');
-  if (logoutBtn) logoutBtn.textContent = i18next.t('login');
+  updateText('title', i18next.t('logout'));
+  updateText('.logout-container h1', i18next.t('logout'));
+  updateText('label[for="username"]', i18next.t('username'));
+  updateInnerHTML('#logout-message', i18next.t('logoutMessage'));
+  updateText('#logout-btn', i18next.t('login'));
 };
 
 const performLogout = async (): Promise<void> => {
@@ -57,7 +55,7 @@ const LogoutPage = new Page({
     await performLogout();
 
     clearUserSession();
-    
+
     registerLogoutButtonHandler();
 
     pg.logger.info('LogoutPage mounted!');

@@ -4,23 +4,31 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('pong', '0009_tournamentgamesession_tournamentmatch_and_more'),
+        ("pong", "0009_tournamentgamesession_tournamentmatch_and_more"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='tournamentgamesession',
-            name='max_players',
+            model_name="tournamentgamesession",
+            name="max_players",
         ),
         migrations.RemoveField(
-            model_name='tournamentgamesession',
-            name='min_players',
+            model_name="tournamentgamesession",
+            name="min_players",
         ),
         migrations.AlterField(
-            model_name='tournamentgamesession',
-            name='status',
-            field=models.CharField(choices=[('WAITING_PLAYERS', 'Waiting for Players'), ('IN_PROGRESS', 'Tournament in Progress'), ('COMPLETED', 'Tournament Completed'), ('CANCELLED', 'Tournament Cancelled')], default='WAITING_PLAYERS', max_length=20),
+            model_name="tournamentgamesession",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("WAITING_PLAYERS", "Waiting for Players"),
+                    ("IN_PROGRESS", "Tournament in Progress"),
+                    ("COMPLETED", "Tournament Completed"),
+                    ("CANCELLED", "Tournament Cancelled"),
+                ],
+                default="WAITING_PLAYERS",
+                max_length=20,
+            ),
         ),
     ]
