@@ -3,17 +3,44 @@ import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { updateActiveLanguageButton } from '@/models/Lang/repository';
 import { updateLanguage } from '@/models/User/repository';
-import createThreeScene from '@/pages/Home/scene';
 
-const updateContent = () => {
+
+const updatePageContent = (): void => {
   const titleTag = document.querySelector('title');
   if (titleTag) titleTag.textContent = i18next.t('pageNotFound');
 
-  const startBtn = document.querySelector('h1');
-  if (startBtn) startBtn.textContent = i18next.t('pageNotFound');
+  const header = document.querySelector('h1');
+  if (header) header.textContent = i18next.t('pageNotFound');
 
-  const backHomeBtn = document.querySelector('a[href="/"]');
+  const backHomeBtn = document.querySelector('.btn');
   if (backHomeBtn) backHomeBtn.textContent = i18next.t('backHome');
+};
+
+const changeLanguage = (language: string): void => {
+  i18next.changeLanguage(language, updatePageContent);
+  updateActiveLanguageButton();
+};
+
+const registerLanguageButton = (buttonId: string, language: string): void => {
+  const button = document.getElementById(buttonId);
+  if (!button) return;
+  button.addEventListener('click', () => changeLanguage(language));
+};
+
+const initLanguageSwitchers = (): void => {
+  registerLanguageButton('lang-en', 'en');
+  registerLanguageButton('lang-ja', 'ja');
+  registerLanguageButton('lang-fr', 'fr');
+};
+
+const registerHomeLink = (): void => {
+  const homeLink = document.querySelector('a[href="/"]');
+  if (!homeLink) return;
+  homeLink.addEventListener('click', (event) => {
+    event.preventDefault();
+    updateLanguage(i18next.language);
+    window.location.href = '/';
+  });
 };
 
 const NotFoundPage = new Page({
@@ -22,36 +49,13 @@ const NotFoundPage = new Page({
     layout: CommonLayout,
   },
   mounted: async ({ pg }: { pg: Page }) => {
-    updateContent();
+    updatePageContent();
     updateActiveLanguageButton();
 
-    const btnEn = document.getElementById('lang-en');
-    const btnJa = document.getElementById('lang-ja');
-    const btnFr = document.getElementById('lang-fr');
-    btnEn?.addEventListener('click', () => {
-      i18next.changeLanguage('en', updateContent);
-      updateActiveLanguageButton();
-    });
-    btnJa?.addEventListener('click', () => {
-      i18next.changeLanguage('ja', updateContent);
-      updateActiveLanguageButton();
-    });
-    btnFr?.addEventListener('click', () => {
-      i18next.changeLanguage('fr', updateContent);
-      updateActiveLanguageButton();
-    });
+    initLanguageSwitchers();
+    registerHomeLink();
 
     pg.logger.info('NotFoundPage mounted!');
-    const backHomeBtn = document.querySelector('a[href="/"]');
-    backHomeBtn?.addEventListener('click', (event) => {
-      event.preventDefault();
-      i18next.changeLanguage(i18next.language);
-      updateLanguage(i18next.language);
-      window.location.href = '/';
-    });
-
-    // Three.js 初期化
-    createThreeScene();
   },
 });
 
