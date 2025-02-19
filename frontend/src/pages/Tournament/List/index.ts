@@ -16,6 +16,31 @@ const TournamentListPage = new Page({
     layout: CommonLayout,
   },
   mounted: async ({ pg }) => {
+    // 新規トーナメント作成ボタンのイベントリスナー
+    const createButton = document.getElementById('create-tournament');
+    if (createButton instanceof HTMLElement) {
+      createButton.addEventListener('click', async () => {
+        try {
+          const response = await fetch('/api/tournaments', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              name: `Tournament ${new Date().toLocaleString()}`
+            }),
+          });
+
+          if (!response.ok) throw new Error('Failed to create tournament');
+          
+          // 作成後、一覧を再取得
+          fetchTournaments();
+        } catch (error) {
+          showError('Failed to create tournament');
+        }
+      });
+    }
+
     const refreshInterval = setInterval(fetchTournaments, 5000);
 
     // 初期表示時にトーナメント一覧を取得
@@ -130,31 +155,6 @@ const TournamentListPage = new Page({
           <div class="error-message">${message}</div>
         `;
       }
-    }
-
-    // 新規トーナメント作成ボタンのイベントリスナー
-    const createButton = document.getElementById('create-tournament');
-    if (createButton) {
-      createButton.addEventListener('click', async () => {
-        try {
-          const response = await fetch('/api/tournaments', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              name: `Tournament ${new Date().toLocaleString()}`
-            }),
-          });
-
-          if (!response.ok) throw new Error('Failed to create tournament');
-          
-          // 作成後、一覧を再取得
-          fetchTournaments();
-        } catch (error) {
-          showError('Failed to create tournament');
-        }
-      });
     }
   },
 });
