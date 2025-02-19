@@ -2,20 +2,15 @@ import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { checkUserAccess } from '@/models/User/auth';
 import { fetchCurrentUser } from '@/models/User/repository';
+import { updateText } from '@/utils/updateElements';
 import i18next from 'i18next';
 
 const updatePageContent = () => {
-  const easyLevelCard = document.querySelector('.easy-level h1');
-  if (easyLevelCard) easyLevelCard.textContent = i18next.t('easyLevel');
-
-  const mediumLevelCard = document.querySelector('.medium-level h1');
-  if (mediumLevelCard) mediumLevelCard.textContent = i18next.t('mediumLevel');
-
-  const hardLevelCard = document.querySelector('.hard-level h1');
-  if (hardLevelCard) hardLevelCard.textContent = i18next.t('hardLevel');
-
-  const secretLevelCard = document.querySelector('.secret-level h1');
-  if (secretLevelCard) secretLevelCard.textContent = i18next.t('secretLevel');
+  updateText('title', i18next.t('selectLevel'));
+  updateText('.easy-level h1', i18next.t('easyLevel'));
+  updateText('.medium-level h1', i18next.t('mediumLevel'));
+  updateText('.hard-level h1', i18next.t('hardLevel'));
+  updateText('.secret-level h1', i18next.t('secretLevel'));
 };
 
 const SinglePlaySelectPage = new Page({
