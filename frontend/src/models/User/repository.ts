@@ -1,5 +1,5 @@
 import { API_URL } from '@/config/config';
-import i18next from 'i18next';
+import i18next from '@/config/i18n';
 
 export interface IUserData {
   display_name: string;

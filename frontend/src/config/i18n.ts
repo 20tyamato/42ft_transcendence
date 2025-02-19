@@ -1,9 +1,9 @@
 import i18next from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
-import en from '../locales/en.json';
-import fr from '../locales/fr.json';
-import ja from '../locales/ja.json';
+import en from '@src/locales/en.json';
+import fr from '@src/locales/fr.json';
+import ja from '@src/locales/ja.json';
 
 i18next.use(LanguageDetector).init(
   {

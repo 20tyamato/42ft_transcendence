@@ -1,3 +1,4 @@
+import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { checkUserAccess } from '@/models/User/auth';
@@ -9,7 +10,6 @@ import {
 } from '@/models/User/repository';
 import { setUserLanguage } from '@/utils/language';
 import { updateAttribute, updatePlaceholder, updateText } from '@/utils/updateElements';
-import i18next from 'i18next';
 
 const updatePageContent = (): void => {
   updateText('.settings-title', i18next.t('userSettings'));
@@ -103,7 +103,8 @@ const handleFormSubmit = async (event: Event, elements: SettingsElements) => {
     return;
   }
 
-  if (!['en', 'ja', 'fr'].includes(newLanguage)) {
+  const validLanguages = ['en', 'ja', 'fr'];
+  if (validLanguages.indexOf(newLanguage) === -1) {
     setResponse(responseMessage, i18next.t('validLanguage'), 'red');
     return;
   }
