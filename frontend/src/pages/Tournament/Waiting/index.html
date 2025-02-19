@@ -1,0 +1,22 @@
+<!-- frontend/src/pages/Tournament/Waiting/index.html -->
+<div class="waiting-room-container">
+  <div class="waiting-room-header">
+    <h1>Tournament Waiting Room</h1>
+    <div id="error-container"></div>
+  </div>
+
+  <div class="waiting-status">
+    <div class="participant-count">
+      Waiting for players: <span id="participant-count">0</span>/4
+    </div>
+  </div>
+
+  <div class="participant-list" id="participant-list">
+    <!-- 参加者リストが動的に追加される -->
+  </div>
+
+  <div class="waiting-room-info">
+    <p>The tournament will start automatically when 4 players join.</p>
+    <button id="leave-tournament" class="btn-secondary">Leave Tournament</button>
+  </div>
+</div>

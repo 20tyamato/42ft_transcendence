@@ -15,7 +15,8 @@ import FriendsPage from './pages/Friends/index';
 import LogoutPage from './pages/Logout';
 import ResultPage from './pages/Result/index';
 import SettingsUserPage from './pages/Settings/User/index';
-import TournamentPage from '@/pages/Tournament/index';
+import TournamentListPage from '@/pages/Tournament/List/index';
+import TournamentWaitingPage from '@/pages/Tournament/Waiting/index';
 
 import { Page } from './core/Page';
 
@@ -40,7 +41,8 @@ const routes: Record<string, Page> = {
   '/multiplay/game': GamePage,
   // '/games/:id/results': GameResultsPage,
   '/result': ResultPage,
-  '/tournament': TournamentPage,
+  '/tournament': TournamentListPage,
+  '/tournament/waiting': TournamentWaitingPage,
   // '/tournament/:id': TournamentPage,
   '/leaderboard': LeaderboardPage,
   '/friends': FriendsPage,
