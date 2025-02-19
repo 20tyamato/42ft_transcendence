@@ -1,87 +1,143 @@
-body {
-  font-family: 'Arial', sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
-  color: #fff;
+/* frontend/src/pages/Tournament/style.css */
+
+.tournament-container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+.tournament-header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.tournament-header h1 {
+  color: #1f2937;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.tournament-content {
+  min-height: 400px;
+  background-color: #ffffff;
+  padding: 20px;
+}
+
+/* エラーメッセージ */
+.error-message {
+  background-color: #fee2e2;
+  border: 1px solid #ef4444;
+  color: #991b1b;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
+/* 待機室 */
+.waiting-room {
+  background-color: #f9fafb;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.waiting-room h2 {
+  color: #1f2937;
+  margin-bottom: 15px;
+}
+
+.waiting-room ul {
+  list-style: none;
+  padding: 0;
+}
+
+.waiting-room li {
+  padding: 10px;
+  margin: 5px 0;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+}
+
+/* トーナメント */
 .tournament {
+  padding: 20px;
+}
+
+.tournament h2 {
+  color: #1f2937;
+  margin-bottom: 20px;
+}
+
+.matches {
   display: flex;
   flex-direction: column;
-  align-items: center;
-}
-
-.trophy {
-  font-size: 64px;
-  color: #ffdf00;
-  margin-bottom: 20px;
-  text-shadow:
-    0 0 10px #ffdf00,
-    0 0 20px #ffaa00;
-}
-
-.round {
-  display: flex;
-  justify-content: center;
-  margin: 20px 0;
   gap: 20px;
 }
 
 .match {
-  width: 120px;
-  height: 60px;
-  border: 2px solid #00ffcc;
-  margin: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
   border-radius: 8px;
-  box-shadow:
-    0 0 10px #00ffcc,
-    0 0 20px #00ffaa;
-  font-size: 16px;
+  padding: 15px;
+  margin: 10px 0;
+}
+
+.player {
+  padding: 10px;
+  margin: 5px 0;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  color: #1f2937;
+}
+
+.vs {
+  text-align: center;
+  padding: 5px;
+  color: #6b7280;
   font-weight: bold;
-  color: #fff;
-  text-transform: uppercase;
-  transition:
-    transform 0.3s,
-    box-shadow 0.3s;
 }
 
-.match:hover {
-  transform: scale(1.1);
-  box-shadow:
-    0 0 15px #00ffaa,
-    0 0 30px #00ffcc;
-}
-
-.semi .match {
-  width: 160px;
-  margin: 0 230px;
-}
-
-.quarter .match {
-  width: 160px;
-  margin: 0 70px;
-}
-
-.btn {
-  padding: 12px 25px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: 0.3s;
-  color: #fff;
-  background-color: #007bff;
-  font-size: 1rem;
+.winner {
+  margin-top: 10px;
+  padding: 8px;
+  background-color: #ecfdf5;
+  color: #047857;
+  border-radius: 4px;
+  text-align: center;
   font-weight: bold;
-  margin-top: 20px;
 }
 
-.btn:hover {
-  background-color: #0056b3;
+/* 結果表示 */
+.results {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.winner-display {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #ecfdf5;
+  border-radius: 8px;
+  border: 1px solid #047857;
+}
+
+.winner-display h3 {
+  color: #047857;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .tournament-container {
+    margin: 10px;
+    padding: 15px;
+  }
 }
