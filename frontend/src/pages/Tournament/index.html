@@ -1,14 +1,21 @@
 <!-- frontend/src/pages/Tournament/index.html -->
 <div class="tournament-container">
   <div class="tournament-header">
-    <h1>Tournament</h1>
+    <h1>Tournaments</h1>
   </div>
   
   <!-- エラーメッセージ表示エリア -->
   <div id="error-container"></div>
+
+  <!-- トーナメント作成ボタン -->
+  <div class="tournament-actions">
+    <button id="create-tournament" class="btn-primary">Create New Tournament</button>
+  </div>
   
-  <!-- メインコンテンツエリア -->
+  <!-- トーナメント一覧 -->
   <div class="tournament-content">
-    <!-- 動的に内容が変更される -->
+    <div class="tournament-list">
+      <!-- トーナメントカードがここに動的に追加される -->
+    </div>
   </div>
 </div>

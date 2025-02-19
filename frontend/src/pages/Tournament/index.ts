@@ -1,24 +1,15 @@
 // frontend/src/pages/Tournament/index.ts
+
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { WebSocketManager, WebSocketMessage } from '@/core/WebSocketManager';
 
-interface TournamentState {
+interface Tournament {
+  id: number;
+  name: string;
   status: 'WAITING_PLAYERS' | 'IN_PROGRESS' | 'COMPLETED';
-  current_round: number;
-  participants: string[];
-  matches: {
-    id: number;
-    round: number;
-    match_number: number;
-    player1: string | null;
-    player2: string | null;
-    winner: string | null;
-    scores: {
-      player1: number;
-      player2: number;
-    };
-  }[];
+  created_at: string;
+  participants: number;
 }
 
 const TournamentPage = new Page({
@@ -27,94 +18,122 @@ const TournamentPage = new Page({
     layout: CommonLayout,
   },
   mounted: async ({ pg }) => {
-    const wsManager = new WebSocketManager();
-    let tournamentState: TournamentState | null = null;
-
-    // WebSocket接続の設定
-    wsManager.on('connected', () => {
-      wsManager.send({ type: 'join_tournament' });
-    });
-
-    wsManager.on('tournament_state', (message: WebSocketMessage) => {
-      tournamentState = message.state as TournamentState;
-      updateView();
-    });
-
-    wsManager.on('error', (message: string) => {
-      showError(message);
-    });
-
-    // WebSocket接続を開始
-    const wsUrl = `ws://${window.location.host}/ws/tournament/1/testuser/`; // TODO: IDとユーザー名を動的に
-    wsManager.connect(wsUrl);
-
-    // ビュー更新関数
-    function updateView() {
-      const mainElement = document.querySelector('main');
-      if (!mainElement || !tournamentState) return;
-
-      switch (tournamentState.status) {
-        case 'WAITING_PLAYERS':
-          mainElement.innerHTML = `
-            <div class="waiting-room">
-              <h2>Waiting Room</h2>
-              <p>Players (${tournamentState.participants.length}/4):</p>
-              <ul>
-                ${tournamentState.participants.map(player => `
-                  <li>${player}</li>
-                `).join('')}
-              </ul>
-            </div>
-          `;
-          break;
-
-        case 'IN_PROGRESS':
-          mainElement.innerHTML = `
-            <div class="tournament">
-              <h2>Tournament (Round ${tournamentState.current_round})</h2>
-              <div class="matches">
-                ${tournamentState.matches.map(match => `
-                  <div class="match">
-                    <div class="player">${match.player1 || 'TBD'}</div>
-                    <div class="vs">vs</div>
-                    <div class="player">${match.player2 || 'TBD'}</div>
-                    ${match.winner ? `<div class="winner">Winner: ${match.winner}</div>` : ''}
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-          `;
-          break;
-
-        case 'COMPLETED':
-          const finalMatch = tournamentState.matches.find(m => m.round === 2);
-          if (finalMatch) {
-            mainElement.innerHTML = `
-              <div class="results">
-                <h2>Tournament Complete</h2>
-                <div class="winner-display">
-                  <h3>Winner</h3>
-                  <p>${finalMatch.winner}</p>
-                </div>
-              </div>
-            `;
-          }
-          break;
+    // トーナメント一覧の取得と表示
+    async function fetchTournaments() {
+      try {
+        const response = await fetch('/api/tournaments');
+        if (!response.ok) throw new Error('Failed to fetch tournaments');
+        const tournaments = await response.json();
+        displayTournaments(tournaments);
+      } catch (error) {
+        showError('Failed to load tournaments');
       }
     }
 
-    // エラー表示関数
-    function showError(message: string) {
-      const mainElement = document.querySelector('main');
-      if (!mainElement) return;
+    // トーナメント一覧の表示
+    function displayTournaments(tournaments: Tournament[]) {
+      const listElement = document.querySelector('.tournament-list');
+      if (!listElement) return;
 
-      const errorElement = document.createElement('div');
-      errorElement.className = 'error-message';
-      errorElement.textContent = message;
+      listElement.innerHTML = tournaments.map(tournament => `
+        <div class="tournament-card" data-id="${tournament.id}">
+          <h3>${tournament.name}</h3>
+          <span class="tournament-card-status status-${tournament.status.toLowerCase()}">
+            ${formatStatus(tournament.status)}
+          </span>
+          <div class="tournament-card-info">
+            <div>Created: ${formatDate(tournament.created_at)}</div>
+            <div>Participants: ${tournament.participants}/4</div>
+          </div>
+          <div class="tournament-card-actions">
+            ${renderActionButton(tournament)}
+          </div>
+        </div>
+      `).join('');
 
-      mainElement.prepend(errorElement);
-      setTimeout(() => errorElement.remove(), 5000);
+      // カードのクリックイベントを設定
+      listElement.querySelectorAll('.tournament-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+          if (e.target instanceof HTMLButtonElement) return; // ボタンクリックは除外
+          const id = card.getAttribute('data-id');
+          if (id) viewTournament(id);
+        });
+      });
     }
+
+    // トーナメントの状態に応じたボタンの表示
+    function renderActionButton(tournament: Tournament) {
+      if (tournament.status === 'WAITING_PLAYERS' && tournament.participants < 4) {
+        return `<button class="btn-primary join-tournament" data-id="${tournament.id}">Join</button>`;
+      }
+      return '';
+    }
+
+    // 状態の表示形式を整形
+    function formatStatus(status: string): string {
+      switch (status) {
+        case 'WAITING_PLAYERS': return 'Waiting for Players';
+        case 'IN_PROGRESS': return 'In Progress';
+        case 'COMPLETED': return 'Completed';
+        default: return status;
+      }
+    }
+
+    // 日付の表示形式を整形
+    function formatDate(dateString: string): string {
+      return new Date(dateString).toLocaleString();
+    }
+
+    // トーナメントの詳細表示へ移動
+    function viewTournament(id: string) {
+      window.location.href = `/tournament/${id}`;
+    }
+
+    // エラーメッセージの表示
+    function showError(message: string) {
+      const errorContainer = document.getElementById('error-container');
+      if (errorContainer) {
+        errorContainer.innerHTML = `
+          <div class="error-message">${message}</div>
+        `;
+      }
+    }
+
+    // 新規トーナメント作成ボタンのイベントリスナー
+    const createButton = document.getElementById('create-tournament');
+    if (createButton) {
+      createButton.addEventListener('click', async () => {
+        try {
+          const response = await fetch('/api/tournaments', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              name: `Tournament ${new Date().toLocaleString()}`
+            }),
+          });
+
+          if (!response.ok) throw new Error('Failed to create tournament');
+          
+          // 作成後、一覧を再取得
+          fetchTournaments();
+        } catch (error) {
+          showError('Failed to create tournament');
+        }
+      });
+    }
+
+    // 初期表示時にトーナメント一覧を取得
+    fetchTournaments();
+
+    // トーナメント一覧の定期更新
+    const refreshInterval = setInterval(fetchTournaments, 5000);
+
+    // クリーンアップ
+    return () => {
+      clearInterval(refreshInterval);
+    };
   },
 });
 
