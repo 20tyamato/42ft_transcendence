@@ -18,6 +18,7 @@ import SettingsUserPage from './pages/Settings/User/index';
 import TournamentListPage from '@/pages/Tournament/List/index';
 import TournamentWaitingPage from '@/pages/Tournament/Waiting/index';
 import TournamentGamePage from '@/pages/Tournament/Game/index';
+import TournamentBracketPage from '@/pages/Tournament/Bracket/index';
 
 import { Page } from './core/Page';
 
@@ -45,6 +46,7 @@ const routes: Record<string, Page> = {
   '/tournament': TournamentListPage,
   '/tournament/waiting': TournamentWaitingPage,
   '/tournament/game': TournamentGamePage,
+  '/tournament/bracket': TournamentBracketPage,
   // '/tournament/:id': TournamentPage,
   '/leaderboard': LeaderboardPage,
   '/friends': FriendsPage,
