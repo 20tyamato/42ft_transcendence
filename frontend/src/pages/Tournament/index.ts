@@ -2,6 +2,7 @@
 
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
+import { API_URL } from '@/config/config';
 import { WebSocketManager, WebSocketMessage } from '@/core/WebSocketManager';
 
 interface Tournament {
@@ -21,7 +22,11 @@ const TournamentPage = new Page({
     // トーナメント一覧の取得と表示
     async function fetchTournaments() {
       try {
-        const response = await fetch('/api/tournaments');
+        const response = await fetch(`${API_URL}/api/tournaments`, {
+          headers: {
+            'Authorization': `Token ${localStorage.getItem('token')}`, // 認証トークンを追加
+          }
+        });
         if (!response.ok) throw new Error('Failed to fetch tournaments');
         const tournaments = await response.json();
         displayTournaments(tournaments);
@@ -104,22 +109,32 @@ const TournamentPage = new Page({
     if (createButton) {
       createButton.addEventListener('click', async () => {
         try {
-          const response = await fetch('/api/tournaments', {
+          const response = await fetch(`${API_URL}/api/tournaments`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              'Authorization': `Token ${localStorage.getItem('token')}`, // 認証トークンを追加
             },
             body: JSON.stringify({
               name: `Tournament ${new Date().toLocaleString()}`
             }),
           });
-
-          if (!response.ok) throw new Error('Failed to create tournament');
+    
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Tournament creation error:', {
+              status: response.status,
+              statusText: response.statusText,
+              errorBody: errorText
+            });
+            throw new Error(`Failed to create tournament: ${response.status} ${errorText}`);
+          }
           
           // 作成後、一覧を再取得
           fetchTournaments();
         } catch (error) {
-          showError('Failed to create tournament');
+          console.error('Tournament creation catch error:', error);
+          showError(`Failed to create tournament: ${error.message}`);
         }
       });
     }

@@ -26,6 +26,7 @@ const TournamentListPage = new Page({
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              'Authorization': `Token ${localStorage.getItem('token')}`,
             },
             body: JSON.stringify({
               name: `Tournament ${new Date().toLocaleString()}`
@@ -65,7 +66,11 @@ const TournamentListPage = new Page({
 
     async function fetchTournaments() {
       try {
-        const response = await fetch(`${API_URL}/api/tournaments/`);
+        const response = await fetch(`${API_URL}/api/tournaments/`, {
+          headers: {
+            'Authorization': `Token ${localStorage.getItem('token')}`, // 認証トークンを追加
+          }
+        });
         if (!response.ok) throw new Error('Failed to fetch tournaments');
         const tournaments = await response.json();
         displayTournaments(tournaments);
@@ -148,9 +153,10 @@ const TournamentListPage = new Page({
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Token ${localStorage.getItem('token')}`, // 認証トークンを追加
           },
         });
-
+    
         if (!response.ok) throw new Error('Failed to join tournament');
         
         // 参加成功後、待機ページへ遷移
