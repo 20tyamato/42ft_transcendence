@@ -18,7 +18,9 @@ from .serializers import (
 )
 from .tournament.repositories import TournamentRepository
 from .tournament.services import TournamentService
-from asgiref.sync import sync_to_async
+from asgiref.sync import async_to_sync
+import logging
+logger = logging.getLogger(__name__)
 
 class HealthCheckView(APIView):
     permission_classes = [AllowAny]
@@ -281,13 +283,12 @@ class TournamentListCreateView(generics.ListCreateAPIView):
 
         return queryset[:limit]
 
-    def perform_create(self, serializer):  # asyncを削除
-       """トーナメントを作成"""
-       tournament = serializer.save()  # awaitを削除
-       # 非同期処理を同期的に扱う
-       service = TournamentService()
-       sync_to_async(service.initialize_tournament)(tournament.id)
-       return tournament
+    def perform_create(self, serializer):
+        tournament = serializer.save()
+        service = TournamentService()
+        # 非同期関数を同期的に実行
+        async_to_sync(service.initialize_tournament)(tournament.id)
+        return tournament
 
 
 @api_view(["GET"])

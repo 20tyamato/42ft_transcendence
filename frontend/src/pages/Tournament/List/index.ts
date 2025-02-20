@@ -32,7 +32,6 @@ const TournamentListPage = new Page({
             }),
           });
 
-          // FIXME: トーナメントID検証用debug出力2
           console.log('Response status:', response.status);
           const tournament = await response.json();
           console.log('tournament data:', tournament);
