@@ -9,7 +9,6 @@ from ..models import (
     User,
 )
 
-
 class TournamentRepository:
     """トーナメントに関連するデータベース操作を抽象化するリポジトリクラス"""
 

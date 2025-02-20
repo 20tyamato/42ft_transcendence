@@ -1,7 +1,8 @@
 from typing import Dict
 import asyncio
 from .repositories import TournamentRepository
-
+import logging
+logger = logging.getLogger(__name__)
 
 class TournamentService:
     """トーナメントの進行を管理するサービスクラス"""
@@ -27,25 +28,48 @@ class TournamentService:
         return True
 
     async def add_participant(self, tournament_id: int, username: str) -> bool:
-        tournament_state = self.active_tournaments.get(tournament_id)
-        if not tournament_state:
-            return False
+        try:
+            logger.info(f"Service: Adding participant {username} to tournament {tournament_id}")
+            
+            tournament_state = self.active_tournaments.get(tournament_id)
+            logger.info(f"Current tournament state: {tournament_state}")
+            
+            if not tournament_state:
+                logger.error(f"Tournament {tournament_id} not found in active_tournaments")
+                # 必要に応じてトーナメントを初期化
+                logger.info("Attempting to initialize tournament")
+                init_result = await self.initialize_tournament(tournament_id)
+                logger.info(f"Tournament initialization result: {init_result}")
+                
+                tournament_state = self.active_tournaments.get(tournament_id)
+                if not tournament_state:
+                    logger.error("Failed to initialize tournament state")
+                    return False
 
-        # 参加者の追加（データベース）
-        participant = await TournamentRepository.add_participant(
-            tournament_id, username
-        )
-        if not participant:
-            return False
+            # 既存の参加者チェック
+            if username in tournament_state["participants"]:
+                logger.info(f"User {username} is already a participant")
+                return True
 
-        # メモリ上の状態更新
-        tournament_state["participants"].append(username)
+            # 参加者の追加（データベース）
+            logger.info(f"Adding participant to repository: {username}")
+            # TODO: ここasync_to_syncかも???
+            participant = await TournamentRepository.add_participant(tournament_id, username)
+            logger.info(f"Repository add_participant result: {participant}")
+            
+            if not participant:
+                logger.error("Failed to add participant to repository")
+                return False
 
-        # 4人集まったら即開始
-        if len(tournament_state["participants"]) == 4:
-            await self.start_tournament(tournament_id)
+            # メモリ上の状態更新
+            tournament_state["participants"].append(username)
+            logger.info(f"Updated tournament state: {tournament_state}")
 
-        return True
+            return True
+            
+        except Exception as e:
+            logger.error(f"Error in add_participant: {str(e)}", exc_info=True)
+            raise
 
     async def start_tournament(self, tournament_id: int) -> None:
         """トーナメントの開始"""

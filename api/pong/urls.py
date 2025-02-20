@@ -15,6 +15,7 @@ from .views import (
     TournamentListCreateView,
     tournament_status,
 )
+from . import views
 
 app_name = "pong"
 urlpatterns = [
@@ -55,5 +56,5 @@ urlpatterns = [
     # Tournament
     path("tournaments/", TournamentListCreateView.as_view(), name="tournament-list-create"),
     path("tournaments/<int:tournament_id>/status/", tournament_status, name="tournament-status"),
-
+    path('tournaments/<int:tournament_id>/join/', views.join_tournament),
 ]

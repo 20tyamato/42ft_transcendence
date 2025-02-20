@@ -320,3 +320,43 @@ async def tournament_status(request, tournament_id):
     tournament_state = await service.get_tournament_state(tournament_id)
 
     return Response(tournament_state)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+async def join_tournament(request, tournament_id):
+    logger.info(f"Join tournament request received - ID: {tournament_id}, User: {request.user.username}")
+    
+    try:
+        service = TournamentService()
+        logger.info("TournamentService initialized")
+        
+        # トーナメントの存在確認
+        tournament = await TournamentRepository.get_tournament(tournament_id)
+        logger.info(f"Tournament found: {tournament}")
+        
+        if not tournament:
+            logger.error(f"Tournament {tournament_id} not found")
+            return Response(
+                {'error': 'Tournament not found'}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        # 参加処理
+        logger.info(f"Attempting to add participant {request.user.username}")
+        result = await service.add_participant(tournament_id, request.user.username)
+        logger.info(f"Add participant result: {result}")
+        
+        if result:
+            return Response({'message': 'Successfully joined tournament'})
+        else:
+            return Response(
+                {'error': 'Failed to join tournament'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+    except Exception as e:
+        logger.error(f"Error in join_tournament: {str(e)}", exc_info=True)
+        return Response(
+            {'error': f'Internal server error: {str(e)}'}, 
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )

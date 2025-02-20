@@ -11,7 +11,7 @@ const TournamentWaitingPage = new Page({
   mounted: async ({ pg }) => {
     const tournamentId = new URLSearchParams(window.location.search).get('id');
     let socket: WebSocket | null = null;
-    
+
     if (!tournamentId) {
       showError('Tournament ID is missing');
       window.location.href = '/tournament';
@@ -23,11 +23,11 @@ const TournamentWaitingPage = new Page({
     if (joinButton instanceof HTMLElement) {
       joinButton.addEventListener('click', async () => {
         try {
-          const response = await fetch(`${API_URL}/api/tournaments/${tournamentId}/`, {
+          const response = await fetch(`${API_URL}/api/tournaments/${tournamentId}/join/`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Token ${localStorage.getItem('token')}`,
+              Authorization: `Token ${localStorage.getItem('token')}`,
             },
           });
 
@@ -42,7 +42,6 @@ const TournamentWaitingPage = new Page({
           if (socket) {
             socket.send(JSON.stringify({ type: 'join_tournament' }));
           }
-
         } catch (error) {
           showError('Failed to join tournament');
         }
@@ -135,17 +134,24 @@ const TournamentWaitingPage = new Page({
       // Update participant list
       const listElement = document.getElementById('participant-list');
       if (listElement) {
-        listElement.innerHTML = Array(4).fill(null).map((_, index) => {
-          const participant = state.participants[index];
-          return `
+        listElement.innerHTML = Array(4)
+          .fill(null)
+          .map((_, index) => {
+            const participant = state.participants[index];
+            return `
             <div class="participant-slot ${participant ? '' : 'empty'}">
-              ${participant ? `
+              ${
+                participant
+                  ? `
                 <div class="player-name">${participant}</div>
                 <div class="player-status">Ready</div>
-              ` : 'Waiting for player...'}
+              `
+                  : 'Waiting for player...'
+              }
             </div>
           `;
-        }).join('');
+          })
+          .join('');
       }
 
       // Update button visibility
@@ -153,7 +159,7 @@ const TournamentWaitingPage = new Page({
       const isParticipant = state.participants.includes(username);
       const joinButton = document.getElementById('join-tournament');
       const leaveButton = document.getElementById('leave-tournament');
-      
+
       if (joinButton && leaveButton) {
         joinButton.style.display = isParticipant ? 'none' : 'inline-block';
         leaveButton.style.display = isParticipant ? 'inline-block' : 'none';
