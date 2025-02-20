@@ -81,7 +81,7 @@ const TournamentListPage = new Page({
         const tournaments = await response.json();
         displayTournaments(tournaments);
       } catch (error) {
-        showError('Failed to load tournaments');
+        showError('Failed to load tournaments on list');
       }
     }
 
@@ -99,7 +99,7 @@ const TournamentListPage = new Page({
           </span>
           <div class="tournament-card-info">
             <div>Created: ${formatDate(tournament.created_at)}</div>
-            <div>Participants: ${tournament.participants}/4</div>
+            <div>Participants: ${tournament.participants.length}/4</div>
           </div>
           <div class="tournament-card-actions">
             ${renderActionButton(tournament)}
@@ -134,7 +134,7 @@ const TournamentListPage = new Page({
     }
 
     function renderActionButton(tournament: Tournament) {
-      if (tournament.status === 'WAITING_PLAYERS' && tournament.participants < 4) {
+      if (tournament.status === 'WAITING_PLAYERS' && tournament.participants.length < 4) {
         return `<button class="btn-primary join-tournament" data-id="${tournament.id}">Join</button>`;
       }
       return '';

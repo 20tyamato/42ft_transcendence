@@ -195,6 +195,14 @@ class TournamentGameSessionSerializer(serializers.ModelSerializer):
             "started_at",
             "completed_at",
             "current_round",
+            "participants"
+        ]
+
+    def get_participants(self, obj):
+        """参加者のユーザー名リストを取得"""
+        return [
+            participant.user.username 
+            for participant in obj.tournamentparticipant_set.all()
         ]
 
     def validate(self, data):

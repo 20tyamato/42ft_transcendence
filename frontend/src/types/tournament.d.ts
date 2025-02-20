@@ -5,7 +5,7 @@ export interface Tournament {
   name: string;
   status: 'WAITING_PLAYERS' | 'IN_PROGRESS' | 'COMPLETED';
   created_at: string;
-  participants: number;
+  participants: string[];
 }
 
 export interface TournamentMatch {

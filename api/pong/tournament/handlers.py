@@ -28,12 +28,6 @@ class TournamentWebSocketHandler(AsyncWebsocketConsumer):
         self.username = self.scope["url_route"]["kwargs"]["username"]
         self.tournament_group = f"tournament_{self.tournament_id}"
 
-        # トーナメントの初期化
-        service = self.get_service()
-        if not await service.initialize_tournament(self.tournament_id):
-            await self.close()
-            return
-
         # グループへの参加
         await self.channel_layer.group_add(self.tournament_group, self.channel_name)
         await self.accept()

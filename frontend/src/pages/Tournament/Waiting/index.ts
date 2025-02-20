@@ -124,6 +124,7 @@ const TournamentWaitingPage = new Page({
       window.removeEventListener('popstate', handleNavigation);
     };
 
+    // TODO: 参加者の取得が出来ていない???
     function updateWaitingRoom(state: TournamentState) {
       // Update participant count
       const countElement = document.getElementById('participant-count');
@@ -155,6 +156,7 @@ const TournamentWaitingPage = new Page({
       }
 
       // Update button visibility
+      // TODO: ここのisParticipantが正常に機能していない???
       const username = localStorage.getItem('username');
       const isParticipant = state.participants.includes(username);
       const joinButton = document.getElementById('join-tournament');
