@@ -48,12 +48,13 @@ const handleLoginSubmit = async (
     }
   } catch (error) {
     console.error(error);
+    // エラー文も多様化する必要あり
     responseMessage.textContent = i18next.t('unexpectedError');
     responseMessage.style.color = 'red';
   }
 };
 
-const initLoginForm = (): void => {
+const registerLoginForm = (): void => {
   const form = document.getElementById('login-form') as HTMLFormElement | null;
   const responseMessage = document.getElementById('response-message');
   if (!form || !responseMessage) return;
@@ -82,7 +83,7 @@ const LoginPage = new Page({
 
     registerLanguageSwitchers(updatePageContent);
 
-    initLoginForm();
+    registerLoginForm();
     
     registerTogglePassword('toggle-password', 'password', 'password-icon');
 

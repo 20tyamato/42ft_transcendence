@@ -1,13 +1,6 @@
 import { API_URL } from '@/config/config';
 import i18next from '@/config/i18n';
 
-export interface IUserData {
-  display_name: string;
-  email: string;
-  avatar?: string;
-  language?: string;
-}
-
 export const fetchUsers = async () => {
   const token = localStorage.getItem('token');
   if (!token) return;
