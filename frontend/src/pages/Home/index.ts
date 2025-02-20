@@ -9,17 +9,17 @@ import { updateText } from '@/utils/updateElements';
 
 const registerStartButton = (): void => {
   const startBtn = document.querySelector('a[href="/login"]');
-    startBtn?.addEventListener('click', (event) => {
-      event.preventDefault();
-      if (isLoggedIn()) {
-        i18next.changeLanguage(i18next.language);
-        updateLanguage(i18next.language);
-        window.location.href = '/modes';
-      } else {
-        window.location.href = '/login';
-      }
-    });
-}
+  startBtn?.addEventListener('click', (event) => {
+    event.preventDefault();
+    if (isLoggedIn()) {
+      i18next.changeLanguage(i18next.language);
+      updateLanguage(i18next.language);
+      window.location.href = '/modes';
+    } else {
+      window.location.href = '/login';
+    }
+  });
+};
 
 const updatePageContent = () => {
   updateText('title', i18next.t('home'));

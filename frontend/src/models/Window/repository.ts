@@ -39,7 +39,7 @@ export const resetTimer = () => {
 
 export const initResetTimerListeners = (): void => {
   const events = ['mousemove', 'keydown', 'click', 'scroll'];
-  events.forEach(event => {
+  events.forEach((event) => {
     window.addEventListener(event, resetTimer);
   });
 };

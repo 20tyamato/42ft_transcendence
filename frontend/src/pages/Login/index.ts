@@ -84,7 +84,7 @@ const LoginPage = new Page({
     registerLanguageSwitchers(updatePageContent);
 
     registerLoginForm();
-    
+
     registerTogglePassword('toggle-password', 'password', 'password-icon');
 
     pg.logger.info('LoginPage mounted!');

@@ -4,14 +4,8 @@ import CommonLayout from '@/layouts/common/index';
 import { IBlockchainScore, ITournamentHistory } from '@/models/interface';
 import { checkUserAccess } from '@/models/User/auth';
 import { fetchCurrentUser } from '@/models/User/repository';
-import { setUserLanguage } from '@/utils/language';
+import { languageNames, setUserLanguage } from '@/utils/language';
 import { updateInnerHTML, updateText } from '@/utils/updateElements';
-
-const languageNames: { [key: string]: string } = {
-  en: 'English',
-  ja: '日本語',
-  fr: 'Français',
-};
 
 const updatePageContent = (): void => {
   updateText('title', i18next.t('userProfile'));

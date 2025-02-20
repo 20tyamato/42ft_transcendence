@@ -12,7 +12,7 @@ const handleRegistrationSubmit = async (
   responseMessage: HTMLElement
 ): Promise<void> => {
   const formData = new FormData(form);
-  
+
   // バリデーションチェック
   const validationError = validateRegistrationForm(formData);
   if (validationError) {

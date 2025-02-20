@@ -1,5 +1,11 @@
 import i18next from '@/config/i18n';
 
+export const languageNames: { [key: string]: string } = {
+  en: 'English',
+  ja: '日本語',
+  fr: 'Français',
+};
+
 export const updateActiveLanguageButton = () => {
   const selectedLang = i18next.language;
   const btnEn = document.getElementById('lang-en');

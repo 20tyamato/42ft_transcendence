@@ -1,33 +1,38 @@
+import { languageNames } from '@/utils/language';
+
 export interface IFriend {
-id: number;
-username: string;
-is_online: boolean;
+  id: number;
+  username: string;
+  is_online: boolean;
 }
 
 export interface IUserData {
-display_name: string;
-email: string;
-avatar?: string;
-language?: string;
+  username: string;
+  email: string;
+  display_name: string;
+  avatar: string;
+  level: number;
+  experience: number;
+  language: keyof typeof languageNames;
+  is_online: boolean;
 }
 
 export interface IRankingUser {
-username: string;
-level: number;
+  username: string;
+  level: number;
 }
 
-
 export interface ITournamentHistory {
-    date: string;
-    result: string;
-  }
-  
-  export interface IBlockchainScore {
-    txHash: string;
-    score: number;
-  }
+  date: string;
+  result: string;
+}
 
-  export interface IGameScore {
-    player1: number;
-    player2: number;
-  }
+export interface IBlockchainScore {
+  txHash: string;
+  score: number;
+}
+
+export interface IGameScore {
+  player1: number;
+  player2: number;
+}
