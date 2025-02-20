@@ -23,13 +23,16 @@ const TournamentWaitingPage = new Page({
     if (joinButton instanceof HTMLElement) {
       joinButton.addEventListener('click', async () => {
         try {
-          const response = await fetch(`${API_URL}/api/tournaments/${tournamentId}/join/`, {
+          const response = await fetch(`${API_URL}/api/tournaments/${tournamentId}/`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               'Authorization': `Token ${localStorage.getItem('token')}`,
             },
           });
+
+          console.log('Response status:', response.status);
+          console.log('response data:', response);
 
           if (!response.ok) {
             throw new Error('Failed to join tournament');
