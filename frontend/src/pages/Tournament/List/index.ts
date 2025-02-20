@@ -34,19 +34,18 @@ const TournamentListPage = new Page({
 
           // FIXME: トーナメントID検証用debug出力2
           console.log('Response status:', response.status);
-          const responseData = await response.json();
-          console.log('Response data:', responseData);
+          const tournament = await response.json();
+          console.log('tournament data:', tournament);
 
           if (!response.ok) {
             throw new Error(`Failed to create tournament: ${response.status}`);
           }
-          if (!responseData.id) {
-            console.log('Tournament creation successful but no ID received:', responseData);
+          if (!tournament.id) {
+            console.log('Tournament creation successful but no ID received:', tournament);
             throw new Error('Tournament ID not received');
           }
 
           // レスポンスからトーナメントIDを取得
-          const tournament = await response.json();
           console.log('Created tournament:', tournament); // デバッグ用
 
           if (!tournament.id) {
