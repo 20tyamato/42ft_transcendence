@@ -1,9 +1,12 @@
 {
   "dependencies": {
-    "gsap": "^3.12.7"
+    "gsap": "^3.12.7",
+    "i18next": "^24.2.2",
+    "i18next-browser-languagedetector": "^8.0.2"
   },
   "devDependencies": {
     "@types/gsap": "^1.20.2",
+    "@types/i18next": "^12.1.0",
     "@types/three": "^0.173.0"
   }
 }

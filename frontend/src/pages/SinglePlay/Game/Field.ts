@@ -41,7 +41,7 @@ export default class Field {
       color: 0x000aff,
       wireframe: true,
       transparent: true,
-      opacity: 0.0,
+      opacity: 1.0,
     });
 
     this.field = new THREE.Mesh(this.fieldGeometry, this.fieldMaterial);
