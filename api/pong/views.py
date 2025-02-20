@@ -18,7 +18,7 @@ from .serializers import (
 )
 from .tournament.repositories import TournamentRepository
 from .tournament.services import TournamentService
-import asyncio
+from asgiref.sync import sync_to_async
 
 class HealthCheckView(APIView):
     permission_classes = [AllowAny]
@@ -286,7 +286,7 @@ class TournamentListCreateView(generics.ListCreateAPIView):
        tournament = serializer.save()  # awaitを削除
        # 非同期処理を同期的に扱う
        service = TournamentService()
-       asyncio.create_task(service.initialize_tournament(tournament.id))
+       sync_to_async(service.initialize_tournament)(tournament.id)
        return tournament
 
 
