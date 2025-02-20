@@ -1,7 +1,7 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
-import { IBlockchainScore, ITournamentHistory } from '@/models/interface';
+import { IBlockchainScore, ITournamentHistory, IUserData } from '@/models/interface';
 import { checkUserAccess } from '@/models/User/auth';
 import { fetchCurrentUser } from '@/models/User/repository';
 import { languageNames, setUserLanguage } from '@/utils/language';
@@ -51,28 +51,16 @@ const updatePageContent = (): void => {
   }
 };
 
-const updateFrontElements = (userData: {
-  avatar: string;
-  username: string;
-  email: string;
-  display_name: string;
-  experience: number;
-  level: number;
-  language: keyof typeof languageNames;
-  is_online: boolean;
-}): void => {
-  const avatarEl = document.getElementById('avatar') as HTMLImageElement | null;
+const updateFrontElements = (userData: IUserData): void => {
   const usernameEl = document.getElementById('username');
   const emailEl = document.getElementById('email');
   const displayNameEl = document.getElementById('displayName');
-  const experienceEl = document.getElementById('experience');
+  const avatarEl = document.getElementById('avatar') as HTMLImageElement | null;
   const levelEl = document.getElementById('level');
+  const experienceEl = document.getElementById('experience');
   const languageEl = document.getElementById('language');
   const onlineStatusEl = document.getElementById('onlineStatus');
 
-  if (avatarEl) {
-    avatarEl.src = userData.avatar || '/src/resources/avatar.png';
-  }
   if (usernameEl) {
     usernameEl.textContent = userData.username;
   }
@@ -82,11 +70,14 @@ const updateFrontElements = (userData: {
   if (displayNameEl) {
     displayNameEl.textContent = userData.display_name;
   }
-  if (experienceEl) {
-    experienceEl.textContent = userData.experience.toString();
+  if (avatarEl) {
+    avatarEl.src = userData.avatar || '/src/resources/avatar.png';
   }
   if (levelEl) {
     levelEl.textContent = userData.level.toString();
+  }
+  if (experienceEl) {
+    experienceEl.textContent = userData.experience.toString();
   }
   if (languageEl) {
     languageEl.textContent = languageNames[userData.language];
@@ -195,31 +186,22 @@ const ProfilePage = new Page({
   mounted: async ({ pg }: { pg: Page }) => {
     try {
       checkUserAccess();
-      const userData = await fetchCurrentUser();
+      const userData: IUserData = await fetchCurrentUser();
 
       // 言語設定とページ文言の更新
-      setUserLanguage(userData.language, updatePageContent);
+      setUserLanguage(userData.language.toString(), updatePageContent);
 
       // フロント側の更新
-      const { avatar, username, email, display_name, experience, level, language, is_online } =
-        userData as {
-          avatar: string;
-          username: string;
-          email: string;
-          display_name: string;
-          experience: number;
-          level: number;
-          language: keyof typeof languageNames;
-          is_online: boolean;
-        };
+      const { username, email, display_name, avatar, level, experience, language, is_online } =
+        userData;
 
       updateFrontElements({
-        avatar,
         username,
         email,
         display_name,
-        experience,
+        avatar,
         level,
+        experience,
         language,
         is_online,
       });
