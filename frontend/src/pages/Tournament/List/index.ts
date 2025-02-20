@@ -2,14 +2,7 @@
 import { Page } from '@/core/Page';
 import { API_URL } from '@/config/config';
 import CommonLayout from '@/layouts/common/index';
-
-interface Tournament {
-  id: number;
-  name: string;
-  status: 'WAITING_PLAYERS' | 'IN_PROGRESS' | 'COMPLETED';
-  created_at: string;
-  participants: number;
-}
+import { Tournament } from '@/types/tournament';
 
 const TournamentListPage = new Page({
   name: 'Tournament/List',
@@ -22,32 +15,44 @@ const TournamentListPage = new Page({
     if (createButton instanceof HTMLElement) {
       createButton.addEventListener('click', async () => {
         try {
+          // FIXME: トーナメントID検証用debug出力1
+          const requestData = {
+            name: `Tournament ${new Date().toLocaleString()}`,
+          };
+          console.log('Creating tournament with data:', requestData);
+
           const response = await fetch(`${API_URL}/api/tournaments/`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Token ${localStorage.getItem('token')}`,
+              Authorization: `Token ${localStorage.getItem('token')}`,
             },
             body: JSON.stringify({
-              name: `Tournament ${new Date().toLocaleString()}`
+              name: `Tournament ${new Date().toLocaleString()}`,
             }),
           });
 
+          // FIXME: トーナメントID検証用debug出力2
+          console.log('Response status:', response.status);
+          const responseData = await response.json();
+          console.log('Response data:', responseData);
+
           if (!response.ok) {
-            // エラーレスポンスの本文を取得
-            const errorText = await response.text();
-            console.error('Tournament creation error:', {
-              status: response.status,
-              statusText: response.statusText,
-              errorBody: errorText
-            });
-            
-            throw new Error(`Failed to create tournament: ${response.status} ${errorText}`);
+            throw new Error(`Failed to create tournament: ${response.status}`);
           }
-          
+          if (!responseData.id) {
+            console.log('Tournament creation successful but no ID received:', responseData);
+            throw new Error('Tournament ID not received');
+          }
+
           // レスポンスからトーナメントIDを取得
           const tournament = await response.json();
-          
+          console.log('Created tournament:', tournament); // デバッグ用
+
+          if (!tournament.id) {
+            throw new Error('Tournament ID not received');
+          }
+
           // 待機室へ遷移
           window.location.href = `/tournament/waiting?id=${tournament.id}`;
         } catch (error) {
@@ -71,8 +76,8 @@ const TournamentListPage = new Page({
       try {
         const response = await fetch(`${API_URL}/api/tournaments/`, {
           headers: {
-            'Authorization': `Token ${localStorage.getItem('token')}`, // 認証トークンを追加
-          }
+            Authorization: `Token ${localStorage.getItem('token')}`, // 認証トークンを追加
+          },
         });
         if (!response.ok) throw new Error('Failed to fetch tournaments');
         const tournaments = await response.json();
@@ -86,7 +91,9 @@ const TournamentListPage = new Page({
       const listElement = document.querySelector('.tournament-list');
       if (!listElement) return;
 
-      listElement.innerHTML = tournaments.map(tournament => `
+      listElement.innerHTML = tournaments
+        .map(
+          (tournament) => `
         <div class="tournament-card" data-id="${tournament.id}">
           <h3>${tournament.name}</h3>
           <span class="tournament-card-status status-${tournament.status.toLowerCase()}">
@@ -100,7 +107,9 @@ const TournamentListPage = new Page({
             ${renderActionButton(tournament)}
           </div>
         </div>
-      `).join('');
+      `
+        )
+        .join('');
 
       // カードのクリックイベントを設定
       setupEventListeners(listElement);
@@ -108,7 +117,7 @@ const TournamentListPage = new Page({
 
     function setupEventListeners(listElement: Element) {
       // トーナメントカードのクリックイベント
-      listElement.querySelectorAll('.tournament-card').forEach(card => {
+      listElement.querySelectorAll('.tournament-card').forEach((card) => {
         card.addEventListener('click', (e) => {
           if (e.target instanceof HTMLButtonElement) return;
           const id = card.getAttribute('data-id');
@@ -117,7 +126,7 @@ const TournamentListPage = new Page({
       });
 
       // 参加ボタンのクリックイベント
-      listElement.querySelectorAll('.join-tournament').forEach(button => {
+      listElement.querySelectorAll('.join-tournament').forEach((button) => {
         button.addEventListener('click', async (e) => {
           e.stopPropagation();
           const id = button.getAttribute('data-id');
@@ -135,10 +144,14 @@ const TournamentListPage = new Page({
 
     function formatStatus(status: string): string {
       switch (status) {
-        case 'WAITING_PLAYERS': return 'Waiting for Players';
-        case 'IN_PROGRESS': return 'In Progress';
-        case 'COMPLETED': return 'Completed';
-        default: return status;
+        case 'WAITING_PLAYERS':
+          return 'Waiting for Players';
+        case 'IN_PROGRESS':
+          return 'In Progress';
+        case 'COMPLETED':
+          return 'Completed';
+        default:
+          return status;
       }
     }
 
@@ -156,12 +169,12 @@ const TournamentListPage = new Page({
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Token ${localStorage.getItem('token')}`, // 認証トークンを追加
+            Authorization: `Token ${localStorage.getItem('token')}`, // 認証トークンを追加
           },
         });
-    
+
         if (!response.ok) throw new Error('Failed to join tournament');
-        
+
         // 参加成功後、待機ページへ遷移
         window.location.href = `/tournament/waiting?id=${id}`;
       } catch (error) {

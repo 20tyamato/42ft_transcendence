@@ -280,9 +280,12 @@ class TournamentListCreateView(generics.ListCreateAPIView):
             queryset = queryset.filter(status=status)
 
         return queryset[:limit]
+
     async def perform_create(self, serializer):
         """トーナメントを作成"""
+        # print("Received tournament creation request")
         tournament = await serializer.save()
+        # print("Created tournament object:", vars(tournament))
         # サービスの初期化
         service = TournamentService()
         await service.initialize_tournament(tournament.id)
