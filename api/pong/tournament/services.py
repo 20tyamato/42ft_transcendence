@@ -53,7 +53,8 @@ class TournamentService:
 
             # 参加者の追加（データベース）
             logger.info(f"Adding participant to repository: {username}")
-            # TODO: ここasync_to_syncかも???
+            # TODO: 以下の取得に失敗している
+            # NOTE: async_to_syncではなかった
             participant = await TournamentRepository.add_participant(tournament_id, username)
             logger.info(f"Repository add_participant result: {participant}")
             
