@@ -91,7 +91,7 @@ const TournamentPage = new Page({
 
     // トーナメントの詳細表示へ移動
     function viewTournament(id: string) {
-      window.location.href = `/tournament/${id}`;
+      window.location.href = `/tournament/waiting?id=${id}`;
     }
 
     // エラーメッセージの表示

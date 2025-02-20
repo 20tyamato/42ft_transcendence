@@ -284,10 +284,25 @@ class TournamentListCreateView(generics.ListCreateAPIView):
         return queryset[:limit]
 
     def perform_create(self, serializer):
+        logger.info(f"Creating tournament with user: {self.request.user.username}")
         tournament = serializer.save()
+        logger.info(f"Tournament created with ID: {tournament.id}")
+        
         service = TournamentService()
-        # 非同期関数を同期的に実行
+        # トーナメントの初期化
+        logger.info("Initializing tournament...")
         async_to_sync(service.initialize_tournament)(tournament.id)
+        logger.info("Tournament initialized")
+        
+        # 作成者を最初の参加者として登録
+        logger.info(f"Adding creator {self.request.user.username} as first participant")
+        result = async_to_sync(service.add_participant)(tournament.id, self.request.user.username)
+        logger.info(f"Add participant result: {result}")
+        
+        # 最終状態の確認
+        state = async_to_sync(service.get_tournament_state)(tournament.id)
+        logger.info(f"Tournament final state after creation: {state}")
+        
         return tournament
 
 

@@ -158,7 +158,7 @@ const TournamentListPage = new Page({
     }
 
     function viewTournament(id: string) {
-      window.location.href = `/tournament/${id}`;
+      window.location.href = `/tournament/waiting?id=${id}`;
     }
 
     async function joinTournament(id: string) {
