@@ -17,10 +17,10 @@ class Logger:
         return cls._instance
 
     def _initialize(self) -> None:
-        self._logstash_url = os.getenv("BACKEND_LOGSTASH_URL")
+        self._logstash_url = os.getenv("LOGSTASH_URL")
         if not self._logstash_url:
             raise ValueError(
-                "BACKEND_LOGSTASH_URL is not set. please set the environment variable."
+                "LOGSTASH_URL is not set. please set the environment variable."
             )
 
         # 標準のロガーの設定
