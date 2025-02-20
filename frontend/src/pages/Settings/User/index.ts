@@ -1,6 +1,7 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
+import { IUserData } from '@/models/interface';
 import { checkUserAccess } from '@/models/User/auth';
 import {
   fetchCurrentUser,
@@ -44,12 +45,7 @@ const getSettingsElements = (): SettingsElements => ({
 });
 
 const populateUserData = (
-  userData: {
-    avatar?: string;
-    display_name?: string;
-    email?: string;
-    language?: string;
-  },
+  userData: IUserData,
   elements: SettingsElements
 ): void => {
   if (userData.avatar) {
@@ -62,7 +58,7 @@ const populateUserData = (
     elements.emailInput.value = userData.email;
   }
   if (userData.language) {
-    elements.languageSelect.value = userData.language;
+    elements.languageSelect.value = userData.language.toString();
   }
 };
 
@@ -144,17 +140,15 @@ const SettingsUserPage = new Page({
 
     try {
       checkUserAccess();
-      const userData = await fetchCurrentUser();
-      setUserLanguage(userData.language, updatePageContent);
+      const userData: IUserData = await fetchCurrentUser();
+      setUserLanguage(userData.language.toString(), updatePageContent);
       populateUserData(userData, elements);
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
 
-    // 画像アップロード時のプレビュー表示
     registerAvatarPreview(elements.avatarUploadInput, elements.avatarPreviewEl);
 
-    // フォーム送信イベントの登録
     elements.form.addEventListener('submit', (event) => handleFormSubmit(event, elements));
     pg.logger.info('SettingsUserPage mounted!');
   },
