@@ -1,0 +1,69 @@
+/* frontend/src/pages/Tournament/Ready/style.css */
+.tournament-ready {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.status-display {
+  text-align: center;
+}
+
+.countdown {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 1rem 0;
+}
+
+.players-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.player-list {
+  background: rgba(0, 0, 0, 0.5);
+  padding: 1rem;
+  border-radius: 5px;
+  min-width: 300px;
+}
+
+.player-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.player-ready {
+  background-color: #1a472a;
+}
+
+.ready-btn {
+  padding: 0.5rem 2rem;
+  font-size: 1.2rem;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.ready-btn:hover {
+  background-color: #1a472a;
+}
+
+.ready-btn.active {
+  background-color: #1a472a;
+}
+
+.ready-btn:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+}

@@ -63,6 +63,29 @@ export class TournamentRepository {
     );
   }
 
+  // Ready状態を送信
+  sendReady(isReady: boolean): void {
+    if (!this.socket) {
+      console.error('WebSocket connection not established');
+      return;
+    }
+
+    const username = localStorage.getItem('username');
+    if (!username) {
+      console.error('Username not found');
+      return;
+    }
+
+    this.socket.send(
+      JSON.stringify({
+        type: 'player_ready',
+        username: username,
+        isReady: isReady,
+        sessionId: this.sessionId,
+      })
+    );
+  }
+
   // トーナメントから離脱
   leaveTournament(): void {
     if (!this.socket) return;
