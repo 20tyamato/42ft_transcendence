@@ -1,6 +1,5 @@
 from rest_framework import generics, status
 from rest_framework.authtoken.models import Token
-from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -12,12 +11,9 @@ from .serializers import (
     FriendSerializer,
     GameSerializer,
     LoginSerializer,
-    TournamentGameSessionSerializer,
     UserAvatarSerializer,
     UserSerializer,
 )
-from .tournament.repositories import TournamentRepository
-from .tournament.services import TournamentService
 
 
 class HealthCheckView(APIView):
@@ -265,36 +261,4 @@ class GameRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated, IsPlayerOrReadOnly]
 
 
-class TournamentListCreateView(generics.ListCreateAPIView):
-    serializer_class = TournamentGameSessionSerializer
-    permission_classes = [IsAuthenticated]
-
-    async def get_queryset(self):
-        """トーナメント一覧を取得"""
-        limit = int(self.request.query_params.get("limit", 10))
-        status = self.request.query_params.get("status")
-        return await TournamentRepository.get_tournaments(status=status, limit=limit)
-
-    async def perform_create(self, serializer):
-        """トーナメントを作成"""
-        tournament = await serializer.save()
-        # サービスの初期化
-        service = TournamentService()
-        await service.initialize_tournament(tournament.id)
-        return tournament
-
-
-@api_view(["GET"])
-@permission_classes([IsAuthenticated])
-async def tournament_status(request, tournament_id):
-    """特定のトーナメントの状態を取得"""
-    tournament = await TournamentRepository.get_tournament(tournament_id)
-    if not tournament:
-        return Response(
-            {"detail": "Tournament not found"}, status=status.HTTP_404_NOT_FOUND
-        )
-
-    service = TournamentService()
-    tournament_state = await service.get_tournament_state(tournament_id)
-
-    return Response(tournament_state)
+# TODO: class TournamentListCreateView(generics.ListCreateAPIView):

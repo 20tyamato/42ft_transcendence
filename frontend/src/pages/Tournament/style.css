@@ -1,87 +1,45 @@
-body {
-  font-family: 'Arial', sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
-  color: #fff;
-}
-
-.tournament {
+/* frontend/src/pages/Tournament/style.css */
+.tournament-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.trophy {
-  font-size: 64px;
-  color: #ffdf00;
-  margin-bottom: 20px;
-  text-shadow:
-    0 0 10px #ffdf00,
-    0 0 20px #ffaa00;
-}
-
-.round {
-  display: flex;
   justify-content: center;
-  margin: 20px 0;
-  gap: 20px;
+  min-height: 80vh;
+  padding: 2rem;
+  text-align: center;
 }
 
-.match {
-  width: 120px;
-  height: 60px;
-  border: 2px solid #00ffcc;
-  margin: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.7);
+.tournament-box {
+  background-color: rgba(255, 255, 255, 0.9);
   border-radius: 8px;
-  box-shadow:
-    0 0 10px #00ffcc,
-    0 0 20px #00ffaa;
-  font-size: 16px;
-  font-weight: bold;
-  color: #fff;
-  text-transform: uppercase;
-  transition:
-    transform 0.3s,
-    box-shadow 0.3s;
+  padding: 3rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
 }
 
-.match:hover {
-  transform: scale(1.1);
-  box-shadow:
-    0 0 15px #00ffaa,
-    0 0 30px #00ffcc;
+.tournament-title {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  color: #333;
 }
 
-.semi .match {
-  width: 160px;
-  margin: 0 230px;
+.tournament-info {
+  margin-bottom: 2rem;
+  color: #666;
 }
 
-.quarter .match {
-  width: 160px;
-  margin: 0 70px;
-}
-
-.btn {
-  padding: 12px 25px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: 0.3s;
-  color: #fff;
+.btn-primary {
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
   background-color: #007bff;
-  font-size: 1rem;
-  font-weight: bold;
-  margin-top: 20px;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-.btn:hover {
+.btn-primary:hover {
   background-color: #0056b3;
 }
