@@ -47,3 +47,18 @@ export interface ITournamentState {
   }>;
   currentRound: number;
 }
+
+export type TournamentMatchStatus = 'pending' | 'in_progress' | 'completed';
+
+export interface ITournamentMatch {
+  id: string;
+  round: number; // 0: 準決勝, 1: 決勝
+  player1: string | null;
+  player2: string | null;
+  winner: string | null;
+  status: TournamentMatchStatus;
+}
+
+export interface ITournamentBracket {
+  matches: ITournamentMatch[];
+}
