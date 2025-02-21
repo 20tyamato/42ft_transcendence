@@ -29,24 +29,18 @@ const TournamentListPage = new Page({
             },
             body: JSON.stringify({
               name: `Tournament ${new Date().toLocaleString()}`,
+              participants: [localStorage.getItem('username')],
             }),
           });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Failed to create tournament: ${JSON.stringify(errorData)}`);
+          }
 
           console.log('Response status:', response.status);
           const tournament = await response.json();
           console.log('tournament data:', tournament);
-
-          if (!response.ok) {
-            throw new Error(`Failed to create tournament: ${response.status}`);
-          }
-          if (!tournament.id) {
-            console.log('Tournament creation successful but no ID received:', tournament);
-            throw new Error('Tournament ID not received');
-          }
-
-          // レスポンスからトーナメントIDを取得
-          console.log('Created tournament:', tournament); // デバッグ用
-
           if (!tournament.id) {
             throw new Error('Tournament ID not received');
           }

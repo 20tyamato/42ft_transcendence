@@ -185,6 +185,11 @@ class GameSerializer(serializers.ModelSerializer):
 
 
 class TournamentGameSessionSerializer(serializers.ModelSerializer):
+    participants = serializers.ListField(
+        child=serializers.CharField(),
+        required=False
+    )
+
     class Meta:
         model = TournamentGameSession
         fields = [
@@ -198,21 +203,31 @@ class TournamentGameSessionSerializer(serializers.ModelSerializer):
             "participants"
         ]
 
-    def get_participants(self, obj):
-        """参加者のユーザー名リストを取得"""
-        return [
+    def to_representation(self, instance):
+        """シリアライズ時（読み取り時）の処理"""
+        data = super().to_representation(instance)
+        data['participants'] = [
             participant.user.username 
-            for participant in obj.tournamentparticipant_set.all()
+            for participant in instance.tournamentparticipant_set.all()
         ]
-
-    def validate(self, data):
-        if self.instance and self.instance.status != "WAITING_PLAYERS":
-            # 進行中・完了済みトーナメントの編集を防止
-            raise serializers.ValidationError(
-                "Cannot modify tournament after it has started"
-            )
-
         return data
+
+    def create(self, validated_data):
+        """デシリアライズ時（作成時）の処理"""
+        participants = validated_data.pop('participants', [])
+        instance = super().create(validated_data)
+        
+        for username in participants:
+            try:
+                user = User.objects.get(username=username)
+                TournamentParticipant.objects.create(
+                    tournament=instance,
+                    user=user
+                )
+            except User.DoesNotExist:
+                pass
+
+        return instance
 
 
 class TournamentMatchSerializer(serializers.ModelSerializer):
