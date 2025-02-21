@@ -4,6 +4,8 @@ from rest_framework import serializers
 from .models import (
     Game,
     User,
+    TournamentSession,
+    TournamentParticipant
 )
 
 
@@ -179,3 +181,36 @@ class GameSerializer(serializers.ModelSerializer):
             "score_player2",
             "is_ai_opponent",
         ]
+
+
+class TournamentParticipantSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
+    display_name = serializers.CharField(source='user.display_name', read_only=True)
+
+    class Meta:
+        model = TournamentParticipant
+        fields = ['id', 'username', 'display_name', 'is_ready', 'joined_at', 'bracket_position']
+
+class TournamentSessionSerializer(serializers.ModelSerializer):
+    participants = TournamentParticipantSerializer(many=True, read_only=True)
+    current_players_count = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = TournamentSession
+        fields = [
+            'id',
+            'status',
+            'created_at',
+            'started_at',
+            'completed_at',
+            'max_players',
+            'current_players_count',
+            'participants'
+        ]
+
+    def validate(self, data):
+        if self.instance and self.instance.status != 'WAITING_PLAYERS':
+            raise serializers.ValidationError(
+                "Cannot modify tournament after it has started"
+            )
+        return data
