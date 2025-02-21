@@ -94,7 +94,7 @@ class GameSession(models.Model):
     def __str__(self):
         return f"Game Session {self.id}: {self.player1.display_name} vs {self.player2.display_name if self.player2 else 'Waiting'}"
 
-
+# TODO: 参加者のリストを追加する
 class TournamentGameSession(models.Model):
     STATUS_CHOICES = [
         ("WAITING_PLAYERS", "Waiting for Players"),

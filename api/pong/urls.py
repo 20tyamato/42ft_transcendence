@@ -12,6 +12,7 @@ from .views import (
     UserAvatarUpdateView,
     UserListCreateView,
     UserRetrieveUpdateView,
+    # TournamentListCreateView
 )
 
 app_name = "pong"

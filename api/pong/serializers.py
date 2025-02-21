@@ -183,7 +183,7 @@ class GameSerializer(serializers.ModelSerializer):
             "is_ai_opponent",
         ]
 
-
+# TODO: 参加者の名前リストを追加する???
 class TournamentGameSessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = TournamentGameSession
