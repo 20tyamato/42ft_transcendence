@@ -1,5 +1,11 @@
 import i18next from '@/config/i18n';
 
+export const languageNames: { [key: string]: string } = {
+  en: 'English',
+  ja: '日本語',
+  fr: 'Français',
+};
+
 export const updateActiveLanguageButton = () => {
   const selectedLang = i18next.language;
   const btnEn = document.getElementById('lang-en');
@@ -37,7 +43,7 @@ export const registerLanguageButton = (
   button.addEventListener('click', () => changeLanguage(language, updatePageContent));
 };
 
-export const initLanguageSwitchers = (updatePageContent: () => void): void => {
+export const registerLanguageSwitchers = (updatePageContent: () => void): void => {
   registerLanguageButton('lang-en', 'en', updatePageContent);
   registerLanguageButton('lang-ja', 'ja', updatePageContent);
   registerLanguageButton('lang-fr', 'fr', updatePageContent);

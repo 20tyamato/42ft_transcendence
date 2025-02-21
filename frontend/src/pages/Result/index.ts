@@ -2,13 +2,9 @@ import { API_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { checkUserAccess } from '@/models/User/auth';
+import { IGameScore } from '@/models/interface';
 
-interface GameScore {
-  player1: number;
-  player2: number;
-}
-
-async function sendGameResult(score: GameScore) {
+async function sendGameResult(score: IGameScore) {
   try {
     const token = localStorage.getItem('token');
     const username = localStorage.getItem('username');

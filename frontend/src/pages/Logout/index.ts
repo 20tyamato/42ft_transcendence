@@ -3,18 +3,10 @@ import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { updateOnlineStatus } from '@/models/User/repository';
-import { initLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
+import { registerLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
 import { updateInnerHTML, updateText } from '@/utils/updateElements';
 
-const updatePageContent = (): void => {
-  updateText('title', i18next.t('logout'));
-  updateText('.logout-container h1', i18next.t('logout'));
-  updateText('label[for="username"]', i18next.t('username'));
-  updateInnerHTML('#logout-message', i18next.t('logoutMessage'));
-  updateText('#logout-btn', i18next.t('login'));
-};
-
-const performLogout = async (): Promise<void> => {
+const executeLogout = async (): Promise<void> => {
   try {
     await fetch(`${API_URL}/api/logout/`, {
       method: 'POST',
@@ -34,11 +26,19 @@ const clearUserSession = (): void => {
   localStorage.clear();
 };
 
-const registerLogoutButtonHandler = (): void => {
+const registerLogoutButton = (): void => {
   const logoutBtn = document.getElementById('logout-btn');
   logoutBtn?.addEventListener('click', () => {
     window.location.href = '/login';
   });
+};
+
+const updatePageContent = (): void => {
+  updateText('title', i18next.t('logout'));
+  updateText('.logout-container h1', i18next.t('logout'));
+  updateText('label[for="username"]', i18next.t('username'));
+  updateInnerHTML('#logout-message', i18next.t('logoutMessage'));
+  updateText('#logout-btn', i18next.t('login'));
 };
 
 const LogoutPage = new Page({
@@ -49,14 +49,13 @@ const LogoutPage = new Page({
   mounted: async ({ pg }: { pg: Page }) => {
     updatePageContent();
     updateActiveLanguageButton();
-    initLanguageSwitchers(updatePageContent);
+    registerLanguageSwitchers(updatePageContent);
 
     updateOnlineStatus(false);
-    await performLogout();
-
+    await executeLogout();
     clearUserSession();
 
-    registerLogoutButtonHandler();
+    registerLogoutButton();
 
     pg.logger.info('LogoutPage mounted!');
   },

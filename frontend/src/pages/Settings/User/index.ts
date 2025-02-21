@@ -1,5 +1,7 @@
+import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
+import { IUserData } from '@/models/interface';
 import { checkUserAccess } from '@/models/User/auth';
 import {
   fetchCurrentUser,
@@ -9,7 +11,6 @@ import {
 } from '@/models/User/repository';
 import { setUserLanguage } from '@/utils/language';
 import { updateAttribute, updatePlaceholder, updateText } from '@/utils/updateElements';
-import i18next from 'i18next';
 
 const updatePageContent = (): void => {
   updateText('.settings-title', i18next.t('userSettings'));
@@ -44,12 +45,7 @@ const getSettingsElements = (): SettingsElements => ({
 });
 
 const populateUserData = (
-  userData: {
-    avatar?: string;
-    display_name?: string;
-    email?: string;
-    language?: string;
-  },
+  userData: IUserData,
   elements: SettingsElements
 ): void => {
   if (userData.avatar) {
@@ -62,11 +58,11 @@ const populateUserData = (
     elements.emailInput.value = userData.email;
   }
   if (userData.language) {
-    elements.languageSelect.value = userData.language;
+    elements.languageSelect.value = userData.language.toString();
   }
 };
 
-const initAvatarPreview = (
+const registerAvatarPreview = (
   avatarUploadInput: HTMLInputElement,
   avatarPreviewEl: HTMLImageElement
 ): void => {
@@ -103,7 +99,8 @@ const handleFormSubmit = async (event: Event, elements: SettingsElements) => {
     return;
   }
 
-  if (!['en', 'ja', 'fr'].includes(newLanguage)) {
+  const validLanguages = ['en', 'ja', 'fr'];
+  if (validLanguages.indexOf(newLanguage) === -1) {
     setResponse(responseMessage, i18next.t('validLanguage'), 'red');
     return;
   }
@@ -143,17 +140,15 @@ const SettingsUserPage = new Page({
 
     try {
       checkUserAccess();
-      const userData = await fetchCurrentUser();
-      setUserLanguage(userData.language, updatePageContent);
+      const userData: IUserData = await fetchCurrentUser();
+      setUserLanguage(userData.language.toString(), updatePageContent);
       populateUserData(userData, elements);
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
 
-    // 画像アップロード時のプレビュー表示
-    initAvatarPreview(elements.avatarUploadInput, elements.avatarPreviewEl);
+    registerAvatarPreview(elements.avatarUploadInput, elements.avatarPreviewEl);
 
-    // フォーム送信イベントの登録
     elements.form.addEventListener('submit', (event) => handleFormSubmit(event, elements));
     pg.logger.info('SettingsUserPage mounted!');
   },

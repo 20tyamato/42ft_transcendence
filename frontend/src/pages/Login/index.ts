@@ -3,17 +3,9 @@ import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { updateLanguage, updateOnlineStatus } from '@/models/User/repository';
-import { initLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
+import { registerLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
+import { registerTogglePassword } from '@/utils/togglePassword';
 import { updateInnerHTML, updateText } from '@/utils/updateElements';
-
-const updatePageContent = (): void => {
-  updateText('title', i18next.t('login'));
-  updateText('.login-container h1', i18next.t('login'));
-  updateText('label[for="username"]', i18next.t('username'));
-  updateText('label[for="password"]', i18next.t('password'));
-  updateText('button.btn.btn-primary', i18next.t('login'));
-  updateInnerHTML('.centered-text', i18next.t('registerPrompt'));
-};
 
 const handleLoginSubmit = async (
   form: HTMLFormElement,
@@ -56,12 +48,13 @@ const handleLoginSubmit = async (
     }
   } catch (error) {
     console.error(error);
+    // エラー文も多様化する必要あり
     responseMessage.textContent = i18next.t('unexpectedError');
     responseMessage.style.color = 'red';
   }
 };
 
-const initLoginForm = (): void => {
+const registerLoginForm = (): void => {
   const form = document.getElementById('login-form') as HTMLFormElement | null;
   const responseMessage = document.getElementById('response-message');
   if (!form || !responseMessage) return;
@@ -72,24 +65,13 @@ const initLoginForm = (): void => {
   });
 };
 
-const initTogglePassword = (): void => {
-  const togglePasswordBtn = document.getElementById('toggle-password');
-  const passwordField = document.getElementById('password') as HTMLInputElement | null;
-  const passwordIcon = document.getElementById('password-icon');
-
-  if (togglePasswordBtn && passwordField && passwordIcon) {
-    togglePasswordBtn.addEventListener('click', () => {
-      if (passwordField.type === 'password') {
-        passwordField.type = 'text';
-        passwordIcon.classList.remove('fa-eye');
-        passwordIcon.classList.add('fa-eye-slash');
-      } else {
-        passwordField.type = 'password';
-        passwordIcon.classList.remove('fa-eye-slash');
-        passwordIcon.classList.add('fa-eye');
-      }
-    });
-  }
+const updatePageContent = (): void => {
+  updateText('title', i18next.t('login'));
+  updateText('.login-container h1', i18next.t('login'));
+  updateText('label[for="username"]', i18next.t('username'));
+  updateText('label[for="password"]', i18next.t('password'));
+  updateText('button.btn.btn-primary', i18next.t('login'));
+  updateInnerHTML('.centered-text', i18next.t('registerPrompt'));
 };
 
 const LoginPage = new Page({
@@ -98,10 +80,12 @@ const LoginPage = new Page({
   mounted: async ({ pg }: { pg: Page }) => {
     updatePageContent();
     updateActiveLanguageButton();
-    initLanguageSwitchers(updatePageContent);
 
-    initLoginForm();
-    initTogglePassword();
+    registerLanguageSwitchers(updatePageContent);
+
+    registerLoginForm();
+
+    registerTogglePassword('toggle-password', 'password', 'password-icon');
 
     pg.logger.info('LoginPage mounted!');
   },

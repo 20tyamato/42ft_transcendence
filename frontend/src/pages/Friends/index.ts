@@ -1,17 +1,12 @@
 import { API_URL } from '@/config/config';
+import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
+import { IFriend } from '@/models/interface';
 import { checkUserAccess } from '@/models/User/auth';
 import { fetchCurrentUser } from '@/models/User/repository';
 import { setUserLanguage } from '@/utils/language';
 import { updatePlaceholder, updateText } from '@/utils/updateElements';
-import i18next from 'i18next';
-
-interface Friend {
-  id: number;
-  username: string;
-  is_online: boolean;
-}
 
 const token = localStorage.getItem('token');
 
@@ -36,7 +31,7 @@ async function loadFriends(): Promise<void> {
       const errorMsg = await response.text();
       throw new Error(`Failed to load friends: ${errorMsg}`);
     }
-    const friends: Friend[] = await response.json();
+    const friends: IFriend[] = await response.json();
     renderFriends(friends);
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -94,7 +89,7 @@ async function deleteFriend(friendId: number): Promise<void> {
   }
 }
 
-function renderFriends(friends: Friend[]): void {
+function renderFriends(friends: IFriend[]): void {
   const friendsContainer = document.getElementById('friends-container') as HTMLUListElement | null;
   if (!friendsContainer) {
     console.error("Element with ID 'friends-container' not found in the DOM.");

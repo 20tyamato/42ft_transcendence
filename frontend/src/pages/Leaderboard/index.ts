@@ -1,15 +1,11 @@
+import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
+import { IRankingUser } from '@/models/interface';
 import { checkUserAccess } from '@/models/User/auth';
 import { fetchCurrentUser, fetchUsers } from '@/models/User/repository';
 import { setUserLanguage } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
-import i18next from 'i18next';
-
-interface IRankingUser {
-  username: string;
-  level: number;
-}
 
 const updatePageContent = (): void => {
   updateText('h1', i18next.t('leaderboard'));
@@ -32,7 +28,7 @@ const showRankingError = (rankingList: HTMLElement, message: string): void => {
   rankingList.appendChild(li);
 };
 
-const initBackButton = (backBtn: HTMLElement | null): void => {
+const registerBackButton = (backBtn: HTMLElement | null): void => {
   backBtn?.addEventListener('click', () => {
     window.location.href = '/modes';
   });
@@ -51,10 +47,8 @@ const LeaderboardPage = new Page({
       checkUserAccess();
       const userData = await fetchCurrentUser();
 
-      // 言語設定とページ文言の更新
       setUserLanguage(userData.language, updatePageContent);
 
-      // ランキングデータの取得とレンダリング
       const users: IRankingUser[] = await fetchUsers();
       if (rankingList) {
         renderRankingList(users, rankingList);
@@ -66,7 +60,7 @@ const LeaderboardPage = new Page({
       }
     }
 
-    initBackButton(backBtn);
+    registerBackButton(backBtn);
     pg.logger.info('LeaderboardPage mounted!');
   },
 });

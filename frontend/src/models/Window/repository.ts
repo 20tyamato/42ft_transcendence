@@ -1,6 +1,8 @@
 import { API_URL } from '@/config/config';
 import { updateOnlineStatus } from '@/models/User/repository';
 
+const IDLE_TIMEOUT = 10000; // 10秒
+
 const clearUserSession = (): void => {
   localStorage.removeItem('token');
   localStorage.removeItem('username');
@@ -11,14 +13,12 @@ const clearUserSession = (): void => {
 let idleTimer: number | null = null;
 
 export const resetTimer = () => {
-  const idleTimeout = 10000; // 10秒
+  const idleTimeout = IDLE_TIMEOUT;
 
-  // 既にタイマーが設定されている場合はクリアする
   if (idleTimer !== null) {
     clearTimeout(idleTimer);
   }
 
-  // 新たなタイマーをセットする
   idleTimer = window.setTimeout(() => {
     try {
       updateOnlineStatus(false);
@@ -35,4 +35,11 @@ export const resetTimer = () => {
       console.error('Logout API call failed:', error);
     }
   }, idleTimeout);
+};
+
+export const initResetTimerListeners = (): void => {
+  const events = ['mousemove', 'keydown', 'click', 'scroll'];
+  events.forEach((event) => {
+    window.addEventListener(event, resetTimer);
+  });
 };

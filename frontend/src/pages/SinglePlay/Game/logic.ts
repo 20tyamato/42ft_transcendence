@@ -1,3 +1,4 @@
+import { IGameScore } from '@/models/interface';
 import * as THREE from 'three';
 import Ball from './Ball';
 
@@ -13,12 +14,7 @@ const keysPressed: { ArrowLeft: boolean; ArrowRight: boolean } = {
   ArrowRight: false,
 };
 
-export interface GameScore {
-  player1: number;
-  player2: number;
-}
-
-export let score: GameScore = { player1: 0, player2: 0 };
+export let score: IGameScore = { player1: 0, player2: 0 };
 
 export function initGame() {
   const container = document.getElementById('container');
