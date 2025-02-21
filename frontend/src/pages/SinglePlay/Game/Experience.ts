@@ -112,6 +112,7 @@ export default class Experience {
       this.localGame.update();
     }
     this.cameraClass.update();
+    this.cameraClass.update();
     this.renderer.update();
   }
 
