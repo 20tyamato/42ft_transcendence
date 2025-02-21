@@ -95,7 +95,7 @@ class GameSession(models.Model):
         return f"Game Session {self.id}: {self.player1.display_name} vs {self.player2.display_name if self.player2 else 'Waiting'}"
 
 
-class TournamentGameSession(models.Model):
+class TournamentSession(models.Model):
     STATUS_CHOICES = [
         ("WAITING_PLAYERS", "Waiting for Players"),
         ("IN_PROGRESS", "Tournament in Progress"),
@@ -103,55 +103,39 @@ class TournamentGameSession(models.Model):
         ("CANCELLED", "Tournament Cancelled"),
     ]
 
-    name = models.CharField(max_length=100)
     status = models.CharField(
         max_length=20, choices=STATUS_CHOICES, default="WAITING_PLAYERS"
     )
     created_at = models.DateTimeField(auto_now_add=True)
     started_at = models.DateTimeField(null=True, blank=True)
     completed_at = models.DateTimeField(null=True, blank=True)
-    current_round = models.IntegerField(default=0)
+    max_players = models.IntegerField(default=4)
 
     def __str__(self):
-        return f"Tournament: {self.name} ({self.status})"
+        return f"Tournament {self.id} ({self.status})"
 
+    @property
+    def current_players_count(self):
+        return self.participants.count()
 
-class TournamentMatch(models.Model):
-    tournament = models.ForeignKey(
-        TournamentGameSession, related_name="matches", on_delete=models.CASCADE
-    )
-    game = models.OneToOneField(Game, null=True, blank=True, on_delete=models.SET_NULL)
-    round_number = models.IntegerField()
-    match_number = models.IntegerField()
-    player1 = models.ForeignKey(
-        User,
-        related_name="tournament_matches_as_player1",
-        null=True,
-        on_delete=models.SET_NULL,
-    )
-    player2 = models.ForeignKey(
-        User,
-        related_name="tournament_matches_as_player2",
-        null=True,
-        on_delete=models.SET_NULL,
-    )
-    next_match = models.ForeignKey(
-        "self", null=True, blank=True, on_delete=models.SET_NULL
-    )
-
-    class Meta:
-        unique_together = [("tournament", "round_number", "match_number")]
+    @property
+    def is_full(self):
+        return self.current_players_count >= self.max_players
 
 
 class TournamentParticipant(models.Model):
     tournament = models.ForeignKey(
-        TournamentGameSession, related_name="participants", on_delete=models.CASCADE
+        TournamentSession, related_name="participants", on_delete=models.CASCADE
     )
     user = models.ForeignKey(
-        User, related_name="tournament_participations", on_delete=models.CASCADE
+        "User", related_name="tournament_participations", on_delete=models.CASCADE
     )
     joined_at = models.DateTimeField(auto_now_add=True)
-    seed = models.IntegerField(null=True, blank=True)
+    is_ready = models.BooleanField(default=False)
+    bracket_position = models.IntegerField(null=True, blank=True)
 
     class Meta:
         unique_together = [("tournament", "user")]
+
+    def __str__(self):
+        return f"{self.user.display_name} in Tournament {self.tournament.id}"
