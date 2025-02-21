@@ -24,9 +24,6 @@
   "html.format.indentInnerHtml": true,
   "html.format.wrapLineLength": 120,
   "html.format.wrapAttributes": "auto",
-<<<<<<< HEAD
-  "css.format.enable": true
-=======
   "css.format.enable": true,
   "javascript.format.enable": true,
   "prettier.printWidth": 80,
@@ -36,5 +33,4 @@
   "prettier.trailingComma": "es5",
   "prettier.arrowParens": "always",
   "liveServer.settings.port": 5501
->>>>>>> 0dda73f (FIX: adjust canvas size && change ball color)
 }
