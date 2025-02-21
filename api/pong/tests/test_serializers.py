@@ -4,12 +4,11 @@ from rest_framework.exceptions import ValidationError
 
 from pong.models import Game, User, TournamentSession, TournamentParticipant
 from django.test import TestCase
-from django.contrib.auth import get_user_model
 from pong.serializers import (
     GameSerializer,
     UserSerializer,
     TournamentSessionSerializer,
-    TournamentParticipantSerializer
+    TournamentParticipantSerializer,
 )
 
 
@@ -246,19 +245,15 @@ class GameSerializerTests(APITestCase):
         self.assertFalse(serializer.is_valid())
         self.assertIn("Player2 is required for non-AI games", str(serializer.errors))
 
-User = get_user_model()
 
 class TournamentParticipantSerializerTests(TestCase):
     def setUp(self):
         self.tournament = TournamentSession.objects.create()
         self.user = User.objects.create_user(
-            username='testuser',
-            display_name='Test User',
-            password='testpass123'
+            username="testuser", display_name="Test User", password="testpass123"
         )
         self.participant = TournamentParticipant.objects.create(
-            tournament=self.tournament,
-            user=self.user
+            tournament=self.tournament, user=self.user
         )
         self.serializer = TournamentParticipantSerializer(instance=self.participant)
 
@@ -267,35 +262,38 @@ class TournamentParticipantSerializerTests(TestCase):
         data = self.serializer.data
         self.assertCountEqual(
             data.keys(),
-            ['id', 'username', 'display_name', 'is_ready', 'joined_at', 'bracket_position']
+            [
+                "id",
+                "username",
+                "display_name",
+                "is_ready",
+                "joined_at",
+                "bracket_position",
+            ],
         )
 
     def test_username_field_content(self):
         """usernameフィールドが正しく取得されることをテスト"""
         data = self.serializer.data
-        self.assertEqual(data['username'], self.user.username)
+        self.assertEqual(data["username"], self.user.username)
 
     def test_display_name_field_content(self):
         """display_nameフィールドが正しく取得されることをテスト"""
         data = self.serializer.data
-        self.assertEqual(data['display_name'], self.user.display_name)
+        self.assertEqual(data["display_name"], self.user.display_name)
+
 
 class TournamentSessionSerializerTests(TestCase):
     def setUp(self):
         self.tournament = TournamentSession.objects.create()
         self.user1 = User.objects.create_user(
-            username='testuser1',
-            display_name='Test User 1',
-            password='testpass123'
+            username="testuser1", display_name="Test User 1", password="testpass123"
         )
         self.user2 = User.objects.create_user(
-            username='testuser2',
-            display_name='Test User 2',
-            password='testpass123'
+            username="testuser2", display_name="Test User 2", password="testpass123"
         )
         self.participant1 = TournamentParticipant.objects.create(
-            tournament=self.tournament,
-            user=self.user1
+            tournament=self.tournament, user=self.user1
         )
         self.serializer = TournamentSessionSerializer(instance=self.tournament)
 
@@ -304,41 +302,49 @@ class TournamentSessionSerializerTests(TestCase):
         data = self.serializer.data
         self.assertCountEqual(
             data.keys(),
-            ['id', 'status', 'created_at', 'started_at', 'completed_at',
-             'max_players', 'current_players_count', 'participants']
+            [
+                "id",
+                "status",
+                "created_at",
+                "started_at",
+                "completed_at",
+                "max_players",
+                "current_players_count",
+                "participants",
+            ],
         )
 
     def test_participants_field_content(self):
         """参加者フィールドが正しくシリアライズされることをテスト"""
         data = self.serializer.data
-        self.assertEqual(len(data['participants']), 1)
-        self.assertEqual(data['participants'][0]['username'], self.user1.username)
-        self.assertEqual(data['participants'][0]['display_name'], self.user1.display_name)
+        self.assertEqual(len(data["participants"]), 1)
+        self.assertEqual(data["participants"][0]["username"], self.user1.username)
+        self.assertEqual(
+            data["participants"][0]["display_name"], self.user1.display_name
+        )
 
     def test_validate_tournament_modification(self):
         """進行中のトーナメントの修正が禁止されることをテスト"""
-        self.tournament.status = 'IN_PROGRESS'
+        self.tournament.status = "IN_PROGRESS"
         self.tournament.save()
-        
+
         serializer = TournamentSessionSerializer(
-            instance=self.tournament,
-            data={'status': 'WAITING_PLAYERS'}
+            instance=self.tournament, data={"status": "WAITING_PLAYERS"}
         )
-        
+
         with self.assertRaises(ValidationError):
             serializer.is_valid(raise_exception=True)
 
     def test_current_players_count(self):
         """current_players_countが正しく計算されることをテスト"""
         data = self.serializer.data
-        self.assertEqual(data['current_players_count'], 1)
-        
+        self.assertEqual(data["current_players_count"], 1)
+
         # 参加者を追加
         TournamentParticipant.objects.create(
-            tournament=self.tournament,
-            user=self.user2
+            tournament=self.tournament, user=self.user2
         )
-        
+
         serializer = TournamentSessionSerializer(instance=self.tournament)
         data = serializer.data
-        self.assertEqual(data['current_players_count'], 2)
+        self.assertEqual(data["current_players_count"], 2)

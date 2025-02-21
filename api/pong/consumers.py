@@ -221,6 +221,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         except Exception as e:
             print(f"Error in game loop: {e}")
 
+
 class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.channel_layer.group_add("tournament_group", self.channel_name)
@@ -229,7 +230,7 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         # 切断時のクリーンアップ処理
-        if hasattr(self, 'username'):
+        if hasattr(self, "username"):
             await self.handle_leave_tournament(self.username)
         await self.channel_layer.group_discard("tournament_group", self.channel_name)
         print(f"Tournament WebSocket disconnected with code: {close_code}")
@@ -237,38 +238,34 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         try:
             data = json.loads(text_data)
-            message_type = data.get('type')
-            username = data.get('username')
+            message_type = data.get("type")
+            username = data.get("username")
 
             if not username:
-                await self.send(json.dumps({
-                    'type': 'error',
-                    'message': 'Username is required'
-                }))
+                await self.send(
+                    json.dumps({"type": "error", "message": "Username is required"})
+                )
                 return
 
-            if message_type == 'join_tournament':
+            if message_type == "join_tournament":
                 self.username = username  # インスタンス変数として保存
                 await self.handle_join_tournament(username)
-            elif message_type == 'leave_tournament':
+            elif message_type == "leave_tournament":
                 await self.handle_leave_tournament(username)
 
         except json.JSONDecodeError:
-            await self.send(json.dumps({
-                'type': 'error',
-                'message': 'Invalid message format'
-            }))
+            await self.send(
+                json.dumps({"type": "error", "message": "Invalid message format"})
+            )
 
     @database_sync_to_async
     def get_or_create_active_tournament(self):
         """アクティブなトーナメントを取得または作成"""
-        tournament = TournamentSession.objects.filter(
-            status='WAITING_PLAYERS'
-        ).first()
-        
+        tournament = TournamentSession.objects.filter(status="WAITING_PLAYERS").first()
+
         if not tournament:
             tournament = TournamentSession.objects.create()
-        
+
         return tournament
 
     @database_sync_to_async
@@ -276,8 +273,7 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
         """トーナメントに参加者を追加"""
         user = User.objects.get(username=username)
         participant, created = TournamentParticipant.objects.get_or_create(
-            tournament=tournament,
-            user=user
+            tournament=tournament, user=user
         )
         return participant, created
 
@@ -285,19 +281,18 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
     def remove_participant(self, username):
         """トーナメントから参加者を削除"""
         TournamentParticipant.objects.filter(
-            user__username=username,
-            tournament__status='WAITING_PLAYERS'
+            user__username=username, tournament__status="WAITING_PLAYERS"
         ).delete()
 
     @database_sync_to_async
     def get_tournament_status(self, tournament):
         """トーナメントの現在の状態を取得"""
-        participants = tournament.participants.all().select_related('user')
+        participants = tournament.participants.all().select_related("user")
         serializer = TournamentParticipantSerializer(participants, many=True)
         return {
-            'sessionId': str(tournament.id),
-            'status': tournament.status,
-            'participants': serializer.data
+            "sessionId": str(tournament.id),
+            "status": tournament.status,
+            "participants": serializer.data,
         }
 
     async def handle_join_tournament(self, username):
@@ -305,65 +300,55 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
         try:
             tournament = await self.get_or_create_active_tournament()
             await self.add_participant(tournament, username)
-            
+
             status = await self.get_tournament_status(tournament)
-            
+
             # 全参加者に状態を通知
             await self.channel_layer.group_send(
-                "tournament_group",
-                {
-                    "type": "tournament_status",
-                    "status": status
-                }
+                "tournament_group", {"type": "tournament_status", "status": status}
             )
 
             # 4人揃ったら準備開始を通知
-            if status['participants'].__len__() >= 4:
+            if status["participants"].__len__() >= 4:
                 await self.channel_layer.group_send(
-                    "tournament_group",
-                    {
-                        "type": "tournament_ready",
-                        "status": status
-                    }
+                    "tournament_group", {"type": "tournament_ready", "status": status}
                 )
 
         except User.DoesNotExist:
-            await self.send(json.dumps({
-                'type': 'error',
-                'message': 'User not found'
-            }))
+            await self.send(json.dumps({"type": "error", "message": "User not found"}))
         except Exception as e:
-            await self.send(json.dumps({
-                'type': 'error',
-                'message': str(e)
-            }))
+            await self.send(json.dumps({"type": "error", "message": str(e)}))
 
     async def handle_leave_tournament(self, username):
         """トーナメント離脱処理"""
         await self.remove_participant(username)
         tournament = await self.get_or_create_active_tournament()
         status = await self.get_tournament_status(tournament)
-        
+
         # 全参加者に状態を通知
         await self.channel_layer.group_send(
-            "tournament_group",
-            {
-                "type": "tournament_status",
-                "status": status
-            }
+            "tournament_group", {"type": "tournament_status", "status": status}
         )
 
     async def tournament_status(self, event):
         """トーナメント状態の通知を送信"""
-        await self.send(text_data=json.dumps({
-            "type": "tournament_status",
-            "participants": event["status"]["participants"]
-        }))
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "type": "tournament_status",
+                    "participants": event["status"]["participants"],
+                }
+            )
+        )
 
     async def tournament_ready(self, event):
         """トーナメント準備開始の通知を送信"""
-        await self.send(text_data=json.dumps({
-            "type": "tournament_ready",
-            "sessionId": event["status"]["sessionId"],
-            "participants": event["status"]["participants"]
-        }))
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "type": "tournament_ready",
+                    "sessionId": event["status"]["sessionId"],
+                    "participants": event["status"]["participants"],
+                }
+            )
+        )

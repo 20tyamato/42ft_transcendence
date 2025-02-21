@@ -47,4 +47,3 @@ export interface ITournamentState {
   }>;
   currentRound: number;
 }
-

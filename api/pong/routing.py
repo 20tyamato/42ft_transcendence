@@ -10,5 +10,5 @@ websocket_urlpatterns = [
         r"ws/game/(?P<session_id>game_[^/]+)/(?P<username>[^/]+)/$",
         consumers.GameConsumer.as_asgi(),
     ),
-    re_path(r'ws/tournament/$', consumers.TournamentMatchmakingConsumer.as_asgi()),
+    re_path(r"ws/tournament/$", consumers.TournamentMatchmakingConsumer.as_asgi()),
 ]

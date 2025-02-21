@@ -5,42 +5,65 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('pong', '0010_remove_tournamentgamesession_max_players_and_more'),
+        ("pong", "0010_remove_tournamentgamesession_max_players_and_more"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='TournamentSession',
+            name="TournamentSession",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('status', models.CharField(choices=[('WAITING_PLAYERS', 'Waiting for Players'), ('IN_PROGRESS', 'Tournament in Progress'), ('COMPLETED', 'Tournament Completed'), ('CANCELLED', 'Tournament Cancelled')], default='WAITING_PLAYERS', max_length=20)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('started_at', models.DateTimeField(blank=True, null=True)),
-                ('completed_at', models.DateTimeField(blank=True, null=True)),
-                ('max_players', models.IntegerField(default=4)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("WAITING_PLAYERS", "Waiting for Players"),
+                            ("IN_PROGRESS", "Tournament in Progress"),
+                            ("COMPLETED", "Tournament Completed"),
+                            ("CANCELLED", "Tournament Cancelled"),
+                        ],
+                        default="WAITING_PLAYERS",
+                        max_length=20,
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("started_at", models.DateTimeField(blank=True, null=True)),
+                ("completed_at", models.DateTimeField(blank=True, null=True)),
+                ("max_players", models.IntegerField(default=4)),
             ],
         ),
         migrations.RenameField(
-            model_name='tournamentparticipant',
-            old_name='seed',
-            new_name='bracket_position',
+            model_name="tournamentparticipant",
+            old_name="seed",
+            new_name="bracket_position",
         ),
         migrations.AddField(
-            model_name='tournamentparticipant',
-            name='is_ready',
+            model_name="tournamentparticipant",
+            name="is_ready",
             field=models.BooleanField(default=False),
         ),
         migrations.AlterField(
-            model_name='tournamentparticipant',
-            name='tournament',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='participants', to='pong.tournamentsession'),
+            model_name="tournamentparticipant",
+            name="tournament",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="participants",
+                to="pong.tournamentsession",
+            ),
         ),
         migrations.DeleteModel(
-            name='TournamentMatch',
+            name="TournamentMatch",
         ),
         migrations.DeleteModel(
-            name='TournamentGameSession',
+            name="TournamentGameSession",
         ),
     ]

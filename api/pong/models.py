@@ -97,16 +97,14 @@ class GameSession(models.Model):
 
 class TournamentSession(models.Model):
     STATUS_CHOICES = [
-        ('WAITING_PLAYERS', 'Waiting for Players'),
-        ('IN_PROGRESS', 'Tournament in Progress'),
-        ('COMPLETED', 'Tournament Completed'),
-        ('CANCELLED', 'Tournament Cancelled'),
+        ("WAITING_PLAYERS", "Waiting for Players"),
+        ("IN_PROGRESS", "Tournament in Progress"),
+        ("COMPLETED", "Tournament Completed"),
+        ("CANCELLED", "Tournament Cancelled"),
     ]
 
     status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default='WAITING_PLAYERS'
+        max_length=20, choices=STATUS_CHOICES, default="WAITING_PLAYERS"
     )
     created_at = models.DateTimeField(auto_now_add=True)
     started_at = models.DateTimeField(null=True, blank=True)
@@ -124,23 +122,20 @@ class TournamentSession(models.Model):
     def is_full(self):
         return self.current_players_count >= self.max_players
 
+
 class TournamentParticipant(models.Model):
     tournament = models.ForeignKey(
-        TournamentSession,
-        related_name='participants',
-        on_delete=models.CASCADE
+        TournamentSession, related_name="participants", on_delete=models.CASCADE
     )
     user = models.ForeignKey(
-        'User',
-        related_name='tournament_participations',
-        on_delete=models.CASCADE
+        "User", related_name="tournament_participations", on_delete=models.CASCADE
     )
     joined_at = models.DateTimeField(auto_now_add=True)
     is_ready = models.BooleanField(default=False)
     bracket_position = models.IntegerField(null=True, blank=True)
 
     class Meta:
-        unique_together = [('tournament', 'user')]
+        unique_together = [("tournament", "user")]
 
     def __str__(self):
         return f"{self.user.display_name} in Tournament {self.tournament.id}"

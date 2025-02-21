@@ -11,7 +11,7 @@ export class TournamentRepository {
     return new Promise((resolve, reject) => {
       try {
         this.socket = new WebSocket(`${WS_URL}/ws/tournament/`);
-        
+
         this.socket.onopen = () => {
           console.log('Tournament WebSocket connected');
           resolve();
@@ -48,33 +48,37 @@ export class TournamentRepository {
   // トーナメントに参加
   joinTournament(): void {
     if (!this.socket) return;
-    
+
     const username = localStorage.getItem('username');
     if (!username) {
       console.error('Username not found');
       return;
     }
 
-    this.socket.send(JSON.stringify({
-      type: 'join_tournament',
-      username: username
-    }));
+    this.socket.send(
+      JSON.stringify({
+        type: 'join_tournament',
+        username: username,
+      })
+    );
   }
 
   // トーナメントから離脱
   leaveTournament(): void {
     if (!this.socket) return;
-    
+
     const username = localStorage.getItem('username');
     if (!username) {
       console.error('Username not found');
       return;
     }
 
-    this.socket.send(JSON.stringify({
-      type: 'leave_tournament',
-      username: username
-    }));
+    this.socket.send(
+      JSON.stringify({
+        type: 'leave_tournament',
+        username: username,
+      })
+    );
   }
 
   // セッションIDを設定

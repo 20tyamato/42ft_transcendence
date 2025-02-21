@@ -44,10 +44,7 @@ const getSettingsElements = (): SettingsElements => ({
   responseMessage: document.getElementById('response-message'),
 });
 
-const populateUserData = (
-  userData: IUserData,
-  elements: SettingsElements
-): void => {
+const populateUserData = (userData: IUserData, elements: SettingsElements): void => {
   if (userData.avatar) {
     elements.avatarPreviewEl.src = userData.avatar;
   }
