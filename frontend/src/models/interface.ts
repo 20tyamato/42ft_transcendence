@@ -36,3 +36,15 @@ export interface IGameScore {
   player1: number;
   player2: number;
 }
+
+export interface ITournamentState {
+  sessionId: string;
+  status: 'WAITING_PLAYERS' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+  participants: Array<{
+    username: string;
+    displayName: string;
+    isReady?: boolean;
+  }>;
+  currentRound: number;
+}
+

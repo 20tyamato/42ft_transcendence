@@ -16,6 +16,7 @@ import LogoutPage from './pages/Logout';
 import ResultPage from './pages/Result/index';
 import SettingsUserPage from './pages/Settings/User/index';
 import TournamentPage from './pages/Tournament';
+import TournamentWaitingPage from './pages/Tournament/Waiting';
 
 import { Page } from './core/Page';
 
@@ -38,10 +39,9 @@ const routes: Record<string, Page> = {
   '/multiplay/test': WebSocketTestPage,
   '/multiplay/waiting': WaitingPage,
   '/multiplay/game': GamePage,
-  // '/games/:id/results': GameResultsPage,
   '/result': ResultPage,
   '/tournament': TournamentPage,
-  // '/tournament/:id': TournamentPage,
+  '/tournament/waiting': TournamentWaitingPage,
   '/leaderboard': LeaderboardPage,
   '/friends': FriendsPage,
 };
