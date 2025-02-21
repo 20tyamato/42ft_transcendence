@@ -47,7 +47,7 @@ export default class Experience {
     0.1,
     1000
   );
-  public renderer!: THREE.WebGLRenderer;
+  public renderer!: Renderer;
   public world!: World;
   public cameraLerp!: CameraLerp;
 
@@ -73,6 +73,8 @@ export default class Experience {
     this.initializeRenderer(canvas);
     this.world = new World(canvas);
     this.cameraLerp = new CameraLerp(canvas);
+    this.renderer = Renderer.getInstance(canvas); // これでOK
+
 
     this.field = new Field(canvas);
     this.paddle = new Paddle(canvas);
@@ -106,6 +108,7 @@ export default class Experience {
     if (this.localGameStarted) {
       this.localGame.update();
     }
+    this.renderer.update();
   }
 
   public destroy(): void {
@@ -124,7 +127,6 @@ export default class Experience {
     });
   }
   public initializeRenderer(canvas: HTMLCanvasElement): void {
-    this.renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
-    this.renderer.setSize(this.WIDTH, this.HEIGHT);
+    this.renderer = new Renderer(canvas); // カスタムクラスをnew
   }
 }

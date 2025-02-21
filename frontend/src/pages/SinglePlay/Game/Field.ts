@@ -13,7 +13,7 @@ export default class Field {
   private fieldMaterial!: THREE.MeshBasicMaterial;
   private field!: THREE.Mesh<THREE.BoxGeometry, THREE.MeshBasicMaterial>;
 
-  constructor(private canvas: HTMLCanvasElement) {
+  constructor(canvas: HTMLCanvasElement) {
     // Experience シングルトンを取得
     this.experience = Experience.getInstance(canvas);
 
