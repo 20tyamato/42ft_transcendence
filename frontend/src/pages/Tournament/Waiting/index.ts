@@ -13,23 +13,19 @@ const WaitingPage = new Page({
   },
   mounted: async () => {
     console.log('Tournament waiting page mounting...');
-    
+
     // DOM要素の取得
     const statusElement = document.getElementById('connection-status');
-    const participantsElement = document.getElementById('participants-count');
     const cancelButton = document.getElementById('cancel-button');
 
     // WebSocketメッセージハンドラ
     const handleWebSocketMessage = (data: any) => {
       console.log('Received tournament data:', data);
-      
+
       switch (data.type) {
         case 'tournament_status':
           if (statusElement) {
             statusElement.textContent = `Waiting for players... (${data.participants.length}/4)`;
-          }
-          if (participantsElement) {
-            participantsElement.textContent = data.participants.map((p: any) => p.displayName).join(', ');
           }
           break;
 
