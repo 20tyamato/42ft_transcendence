@@ -17,6 +17,7 @@ import ResultPage from './pages/Result/index';
 import SettingsUserPage from './pages/Settings/User/index';
 import TournamentPage from './pages/Tournament';
 import TournamentWaitingPage from './pages/Tournament/Waiting';
+// FIXME: just test for bracket display
 import BracketPage from './pages/Tournament/Bracket';
 
 import { Page } from './core/Page';
