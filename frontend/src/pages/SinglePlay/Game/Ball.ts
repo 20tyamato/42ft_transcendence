@@ -9,10 +9,10 @@ export default class Ball {
   private BALL_RADIUS: number
   private FIELD_LENGTH: number
 
-  private ballGeometry!: THREE.SphereGeometry
-  private ballMaterial!: THREE.MeshBasicMaterial
-  private ball!: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>
-  private mainLight!: THREE.HemisphereLight
+  public ballGeometry!: THREE.SphereGeometry
+  public ballMaterial!: THREE.MeshBasicMaterial
+  public ball!: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>
+  public mainLight!: THREE.HemisphereLight
 
   constructor(canvas: HTMLCanvasElement) {
     // Experienceのインスタンスを取得

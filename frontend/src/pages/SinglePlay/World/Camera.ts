@@ -1,13 +1,14 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import Experience from '../Game/Experience';
+import Renderer from '../Utils/Renderer';
 
 export default class Camera {
   private experience: Experience;
-  private renderer: THREE.WebGLRenderer;
+  private renderer: Renderer;
   private scene: THREE.Scene;
   private canvas: HTMLCanvasElement;
-  private instance: THREE.PerspectiveCamera;
+  public instance: THREE.PerspectiveCamera;
   private controls: OrbitControls;
   private WIDTH: number;
   private HEIGHT: number;
@@ -19,7 +20,7 @@ export default class Camera {
 
   constructor(canvas: HTMLCanvasElement) {
     this.experience = Experience.getInstance(canvas); // 先に割り当てる
-    this.renderer = new THREE.WebGLRenderer({ canvas });
+    this.renderer = Renderer.getInstance(canvas);
     this.scene = this.experience.scene;
     this.canvas = this.experience.canvas;
 
@@ -37,7 +38,7 @@ export default class Camera {
   }
   private createCamera(): THREE.PerspectiveCamera {
     const camera = new THREE.PerspectiveCamera(this.VIEW_ANGLE, this.ASPECT, this.NEAR, this.FAR);
-    camera.position.set(0, 200, this.FIELD_LENGTH / 2 + 1000);
+    camera.position.set(0, 0, this.FIELD_LENGTH / 2);
     this.scene.add(camera);
     return camera;
   }

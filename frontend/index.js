@@ -33,44 +33,18 @@ console.clear();
     running,
     score = {
       player1: 0,
-      player2: 0,
-    };
-
-  function startBallMovement() {
-    var direction = Math.random() > 0.5 ? -1 : 1;
-    ball.$velocity = {
-      x: 0,
-      z: direction * 20,
-    };
-    ball.$stopped = false;
-  }
+      player2: 0,ball 
 
   function processCpuPaddle() {
     var ballPos = ball.position,
-      cpuPos = paddle2.position;
-
-    if (cpuPos.x - 100 > ballPos.x) {
-      cpuPos.x -= Math.min(cpuPos.x - ballPos.x, 6);
-    } else if (cpuPos.x - 100 < ballPos.x) {
-      cpuPos.x += Math.min(ballPos.x - cpuPos.x, 6);
-    }
-  }
-
-  function processBallMovement() {
+      cpuPos = paddle2.position;ball 
     if (!ball.$velocity) {
       startBallMovement();
     }
 
     if (ball.$stopped) {
       return;
-    }
-
-    updateBallPosition();
-
-    if (isSideCollision()) {
-      ball.$velocity.x *= -1;
-    }
-
+    }ball 
     if (isPaddle1Collision()) {
       hitBallBack(paddle1);
     }
@@ -78,16 +52,7 @@ console.clear();
     if (isPaddle2Collision()) {
       hitBallBack(paddle2);
     }
-
-    if (isPastPaddle1()) {
-      scoreBy('player2');
-    }
-
-    if (isPastPaddle2()) {
-      scoreBy('player1');
-    }
-  }
-
+    ball 
   function isPastPaddle1() {
     return ball.position.z > paddle1.position.z + 100;
   }
@@ -101,7 +66,7 @@ console.clear();
 
     //update the ball's position.
     ballPos.x += ball.$velocity.x;
-    ballPos.z += ball.$velocity.z;
+    ballPos.z += ball.$velocity.ball z;
 
     // add an arc to the ball's flight. Comment this out for boring, flat pong.
     ballPos.y = -(((ballPos.z - 1) * (ballPos.z - 1)) / 5000) + 435;
@@ -131,15 +96,7 @@ console.clear();
       paddleX = paddle.position.x,
       ballX = ball.position.x;
     return ballX > paddleX - halfPaddleWidth && ballX < paddleX + halfPaddleWidth;
-  }
-
-  function scoreBy(playerName) {
-    addPoint(playerName);
-    updateScoreBoard();
-    stopBall();
-    setTimeout(reset, 2000);
-  }
-
+  }ball 
   function updateScoreBoard() {
     scoreBoard.innerHTML = 'Player 1: ' + score.player1 + ' Player 2: ' + score.player2;
   }
@@ -164,14 +121,7 @@ console.clear();
 
   function render() {
     if (running) {
-      requestAnimationFrame(render);
-
-      processBallMovement();
-      processCpuPaddle();
-
-      renderer.render(scene, camera);
-    }
-  }
+      requestAnimationFrame(render);ball 
 
   function reset() {
     ball.position.set(0, 0, 0);
@@ -184,7 +134,7 @@ console.clear();
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(WIDTH, HEIGHT);
     renderer.setClearColor(0x9999bb, 1);
-    container.appendChild(renderer.domElement);
+    container.appendChild(renderer.domball Element);
 
     camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
     camera.position.set(0, 100, FIELD_LENGTH / 2 + 500);
@@ -213,7 +163,7 @@ console.clear();
     mainLight = new THREE.HemisphereLight(0xffffff, 0x003300);
     scene.add(mainLight);
 
-    camera.lookAt(ball.position);
+    camera.lookAt(ball.position);ball 
 
     updateScoreBoard();
     startRender();

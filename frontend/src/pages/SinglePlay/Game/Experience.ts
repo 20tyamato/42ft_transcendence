@@ -41,12 +41,7 @@ export default class Experience {
   public time: Time = new Time();
   public scene: THREE.Scene = new THREE.Scene();
   public resources: Loaders;
-  public camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-  );
+  public cameraClass: Camera;
   public renderer!: Renderer;
   public world!: World;
   public cameraLerp!: CameraLerp;
@@ -69,11 +64,12 @@ export default class Experience {
     this.time = new Time();
     this.scene = new THREE.Scene();
     this.resources = new Loaders(sources);
-    this.camera = new THREE.PerspectiveCamera();
+    this.cameraClass = new Camera(canvas)  // クラスインスタンスを保持
+    this.camera = this.cameraClass.instance  // ここで camera の実体を登録
     this.initializeRenderer(canvas);
     this.world = new World(canvas);
     this.cameraLerp = new CameraLerp(canvas);
-    this.renderer = Renderer.getInstance(canvas); // これでOK
+    this.renderer = Renderer.getInstance(canvas);
 
 
     this.field = new Field(canvas);
@@ -108,6 +104,7 @@ export default class Experience {
     if (this.localGameStarted) {
       this.localGame.update();
     }
+    this.cameraClass.update();
     this.renderer.update();
   }
 

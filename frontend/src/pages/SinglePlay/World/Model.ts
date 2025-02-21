@@ -17,13 +17,14 @@ export default class Model {
   }
 
   private loadModel(): void {
-    const resource = this.resources.items.model;
+    const resource = this.resources.items.scene;
     if (!resource || !resource.scene) {
       console.error('Model resource is not loaded correctly.');
       return;
     }
 
     this.model = resource.scene;
+    console.log('GLTF resource structure:', resource);
     this.model.scale.set(12, 12, 12);
     this.model.position.set(0, -350, 600);
     this.scene.add(this.model);
