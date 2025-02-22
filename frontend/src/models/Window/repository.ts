@@ -1,14 +1,6 @@
 import { executeLogout } from '@/models/User/auth';
 
 const IDLE_TIMEOUT = 10000; // 10秒
-
-const clearUserSession = (): void => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('username');
-  localStorage.clear();
-};
-
-// idleTimer をモジュールスコープで保持
 let idleTimer: number | null = null;
 
 export const resetTimer = () => {
