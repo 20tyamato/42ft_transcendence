@@ -1,4 +1,3 @@
-// frontend/src/pages/MultiPlay/Game/index.ts
 import { WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
