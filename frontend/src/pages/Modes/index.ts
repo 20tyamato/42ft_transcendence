@@ -1,3 +1,4 @@
+import { API_URL } from '@/config/config';
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import LoggedInLayout from '@/layouts/loggedin/index';
@@ -65,27 +66,28 @@ const ModesPage = new Page({
 
       initResetTimerListeners();
 
-      // window.addEventListener('beforeunload', () => {
-      //   const url = `${API_URL}/api/logout/`;
-      //   const data = JSON.stringify({}); // 必要に応じてログアウトに必要な情報を付加
+      // ウィンドウを閉じると、ログアウト処理を行う
+      window.addEventListener('beforeunload', () => {
+        const url = `${API_URL}/api/logout/`;
+        const data = JSON.stringify({}); // 必要に応じてログアウトに必要な情報を付加
       
-      //   // navigator.sendBeacon が利用可能であれば使用する
-      //   if (navigator.sendBeacon) {
-      //     navigator.sendBeacon(url, data);
-      //   } else {
-      //     // sendBeacon 非対応の場合、fetch の keepalive オプションを利用（ただし完全な信頼性は保証されません）
-      //     fetch(url, {
-      //       method: 'POST',
-      //       headers: { 'Content-Type': 'application/json' },
-      //       body: data,
-      //       credentials: 'include',
-      //       keepalive: true,
-      //     });
-      //   }
+        // navigator.sendBeacon が利用可能であれば使用する
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon(url, data);
+        } else {
+          // sendBeacon 非対応の場合、fetch の keepalive オプションを利用（ただし完全な信頼性は保証されません）
+          fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: data,
+            credentials: 'include',
+            keepalive: true,
+          });
+        }
       
-      //   // クライアント側のセッション情報をクリアする
-      //   clearUserSession();
-      // });
+        // クライアント側のセッション情報をクリアする
+        clearUserSession();
+      });
 
       pg.logger.info('ModesPage mounted!');
     } catch (error) {
