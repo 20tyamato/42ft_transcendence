@@ -55,7 +55,7 @@ const updateUserAvatar = (avatar?: string): void => {
   }
 };
 
-const logoutUser = (): void => {
+const logoutUser = async (): Promise<void> => {
   const url = `${API_URL}/api/logout/`;
   const data = JSON.stringify({});
   const token = localStorage.getItem('token');
@@ -64,24 +64,28 @@ const logoutUser = (): void => {
   if (navigator.sendBeacon) {
     navigator.sendBeacon(url, data);
   } else {
-    fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${token}`,
-      },
-      body: data,
-      credentials: 'include',
-      keepalive: true,
-    });
+    try {
+      await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Token ${token}`,
+        },
+        body: data,
+        credentials: 'include',
+        keepalive: true,
+      });
+    } catch (error) {
+      console.error('Logout request failed:', error);
+    }
   }
+  navigateTo('/login');
 };
 
 const setupBeforeUnloadLogout = (): void => {
   window.addEventListener('beforeunload', () => {
     if (isInternalNavigation) return;
     logoutUser();
-    localStorage.clear();
   });
 };
 
