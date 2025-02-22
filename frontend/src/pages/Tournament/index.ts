@@ -1,7 +1,5 @@
-// frontend/src/pages/Tournament/index.ts
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
-import './style.css';
 
 const TournamentPage = new Page({
   name: 'Tournament',

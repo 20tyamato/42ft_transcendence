@@ -1,7 +1,6 @@
+import { WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
-import './style.css';
-import { WS_URL } from '@/config/config';
 
 const WebSocketTestPage = new Page({
   name: 'MultiPlay/Test', // パスを修正
