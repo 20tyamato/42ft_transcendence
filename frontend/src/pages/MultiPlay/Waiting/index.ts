@@ -1,8 +1,6 @@
-// frontend/src/pages/MultiPlay/Waiting/index.ts
+import { WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
-import { WS_URL } from '@/config/config';
-import './style.css';
 
 const WaitingPage = new Page({
   name: 'MultiPlay/Waiting',

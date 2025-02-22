@@ -1,9 +1,6 @@
-// frontend/src/pages/Tournament/Waiting/index.ts
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { tournamentRepository } from '@/models/Tournament/repository';
-import { ITournamentState } from '@/models/interface';
-import './style.css';
 
 const WaitingPage = new Page({
   name: 'Tournament/Waiting',
