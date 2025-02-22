@@ -43,8 +43,8 @@ export class GameRenderer {
   private readonly PADDLE_WIDTH = 200;
   private readonly PADDLE_HEIGHT = 30;
   private readonly BALL_RADIUS = 30;
-  private readonly BALL_SPEED_MULTIPLIER = 15.0;
-  private readonly PADDLE_SPEED_MULTIPLIER = 10.0;
+  private readonly BALL_SPEED_MULTIPLIER = 100.0;
+  private readonly PADDLE_SPEED_MULTIPLIER = 100.0;
 
   constructor(container: HTMLElement, isPlayer1: boolean) {
     this.isPlayer1 = isPlayer1;
