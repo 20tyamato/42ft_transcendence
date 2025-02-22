@@ -59,14 +59,20 @@ class LoginView(APIView):
 
         if Token.objects.filter(user=user).exists():
             return Response(
-                {"error": "このアカウントは既にログインしています。"},
+                {"message": "このアカウントは既にログインしています。"},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
         # トークンが存在しなければ新規発行
-        token = Token.objects.create(user=user)
+        token = Token.objects.get_or_create(user=user)
+        # token, created = Token.objects.get_or_create(user=user)
         return Response(
-            {"token": token.key, "user_id": user.id, "username": user.username}
+            {
+                "message": "Login Success",
+                "token": token.key,
+                "user_id": user.id,
+                "username": user.username,
+            }
         )
 
 
@@ -74,7 +80,7 @@ class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        request.user.auth_token.delete()
+        Token.objects.filter(user=request.user).delete()
         return Response({"message": "Logout successful"})
 
 
