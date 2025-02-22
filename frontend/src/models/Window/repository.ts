@@ -1,5 +1,3 @@
-import { executeLogout } from '@/models/User/auth';
-
 const IDLE_TIMEOUT = 10000; // 10秒
 let idleTimer: number | null = null;
 
@@ -12,8 +10,7 @@ export const resetTimer = () => {
 
   idleTimer = window.setTimeout(() => {
     try {
-      executeLogout();
-      window.location.href = '/login';
+      window.location.href = '/logout';
     } catch (error) {
       console.error('Logout API call failed:', error);
     }
