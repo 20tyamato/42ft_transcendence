@@ -22,7 +22,7 @@ class HealthCheckView(APIView):
 
     def get(self, request):
         logger.info("HealthCheck endpoint accessed")
-        return Response({"status": "ok"})
+        return Response({"status": "ok"}, status=status.HTTP_200_OK)
 
 
 class UserListCreateView(generics.ListCreateAPIView):
@@ -59,20 +59,19 @@ class LoginView(APIView):
 
         if Token.objects.filter(user=user).exists():
             return Response(
-                {"message": "このアカウントは既にログインしています。"},
+                {"message": "User is already logged in"},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        # トークンが存在しなければ新規発行
-        token = Token.objects.get_or_create(user=user)
-        # token, created = Token.objects.get_or_create(user=user)
+        token = Token.objects.create(user=user)
         return Response(
             {
                 "message": "Login Success",
                 "token": token.key,
                 "user_id": user.id,
                 "username": user.username,
-            }
+            },
+            status=status.HTTP_200_OK,
         )
 
 
@@ -81,7 +80,7 @@ class LogoutView(APIView):
 
     def post(self, request):
         Token.objects.filter(user=request.user).delete()
-        return Response({"message": "Logout successful"})
+        return Response({"message": "Logout successful"}, status=status.HTTP_200_OK)
 
 
 class UserRetrieveUpdateView(generics.RetrieveUpdateAPIView):
@@ -109,7 +108,8 @@ class UpdateUserImageView(APIView):
         user.save()
 
         return Response(
-            {"message": "Avatar updated successfully", "avatar": user.avatar}
+            {"message": "Avatar updated successfully", "avatar": user.avatar},
+            status=status.HTTP_201_CREATED,
         )
 
     def delete(self, request):
@@ -118,12 +118,13 @@ class UpdateUserImageView(APIView):
         user.save()
 
         return Response(
-            {"message": "Avatar deleted successfully", "avatar": user.avatar}
+            {"message": "Avatar deleted successfully", "avatar": user.avatar},
+            status=status.HTTP_200_OK,
         )
 
     def get(self, request):
         user = request.user
-        return Response({"avatar": user.avatar})
+        return Response({"avatar": user.avatar}, status=status.HTTP_200_OK)
 
     def put(self, request):
         user = request.user
@@ -131,7 +132,8 @@ class UpdateUserImageView(APIView):
         user.save()
 
         return Response(
-            {"message": "Avatar updated successfully", "avatar": user.avatar}
+            {"message": "Avatar updated successfully", "avatar": user.avatar},
+            status=status.HTTP_201_CREATED,
         )
 
 
@@ -149,12 +151,16 @@ class UpdateUserInfoView(APIView):
                 "message": "User info updated successfully",
                 "display_name": user.display_name,
                 "email": user.email,
-            }
+            },
+            status=201,
         )
 
     def get(self, request):
         user = request.user
-        return Response({"display_name": user.display_name, "email": user.email})
+        return Response(
+            {"display_name": user.display_name, "email": user.email},
+            status=status.HTTP_200_OK,
+        )
 
 
 class FriendListView(APIView):

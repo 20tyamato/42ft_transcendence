@@ -7,22 +7,28 @@ import { registerLanguageSwitchers, updateActiveLanguageButton } from '@/utils/l
 import { updateInnerHTML, updateText } from '@/utils/updateElements';
 
 const executeLogout = async (): Promise<void> => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    console.warn('トークンが見つからないため、ログアウト API を呼び出さずに処理を続行します。');
+    return;
+  }
   try {
-    await fetch(`${API_URL}/api/logout/`, {
+    const response = await fetch(`${API_URL}/api/logout/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Token ${token}`,
       },
-      credentials: 'include',
     });
+    if (!response.ok) {
+      console.error('Logout API call failed with status:', response.status);
+    }
   } catch (error) {
     console.error('Logout API call failed:', error);
   }
 };
 
 const clearUserSession = (): void => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('username');
   localStorage.clear();
 };
 
@@ -52,10 +58,13 @@ const LogoutPage = new Page({
     registerLanguageSwitchers(updatePageContent);
 
     updateOnlineStatus(false);
-    await executeLogout();
+    executeLogout();
     clearUserSession();
 
-    registerLogoutButton();
+    const logoutBtn = document.getElementById('logout-btn');
+    logoutBtn?.addEventListener('click', () => {
+      window.location.href = '/login';
+    });
 
     pg.logger.info('LogoutPage mounted!');
   },
