@@ -55,35 +55,30 @@ const updateUserAvatar = (avatar?: string): void => {
   }
 };
 
-const logoutUser = async (): Promise<void> => {
-  const url = `${API_URL}/api/logout/`;
-  const data = JSON.stringify({});
+const logoutUser = (): void => {
   const token = localStorage.getItem('token');
   if (!token) return;
+
+  const url = `${API_URL}/api/logout/`;
+  const data = JSON.stringify({});
 
   if (navigator.sendBeacon) {
     navigator.sendBeacon(url, data);
   } else {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', url, false); // false で同期リクエスト
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.setRequestHeader('Authorization', `Token ${token}`);
     try {
-      await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Token ${token}`,
-        },
-        body: data,
-        credentials: 'include',
-        keepalive: true,
-      });
+      xhr.send(data);
     } catch (error) {
-      console.error('Logout request failed:', error);
+      console.error('Failed to send beacon:', error);
     }
   }
-  navigateTo('/login');
 };
 
-const setupBeforeUnloadLogout = (): void => {
-  window.addEventListener('beforeunload', () => {
+const setupUnloadLogout = (): void => {
+  window.addEventListener('unload', () => {
     if (isInternalNavigation) return;
     logoutUser();
   });
@@ -102,7 +97,7 @@ const mountModesPage = async (pg: Page): Promise<void> => {
     registerIconNavigation();
 
     initResetTimerListeners();
-    setupBeforeUnloadLogout();
+    setupUnloadLogout();
 
     pg.logger.info('ModesPage mounted!');
   } catch (error) {
