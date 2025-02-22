@@ -1,4 +1,3 @@
-import { API_URL } from '@/config/config';
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
@@ -55,35 +54,6 @@ const updateUserAvatar = (avatar?: string): void => {
   }
 };
 
-const logoutUser = (): void => {
-  const token = localStorage.getItem('token');
-  if (!token) return;
-
-  const url = `${API_URL}/api/logout/`;
-  const data = JSON.stringify({});
-
-  if (navigator.sendBeacon) {
-    navigator.sendBeacon(url, data);
-  } else {
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', url, false); // false で同期リクエスト
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.setRequestHeader('Authorization', `Token ${token}`);
-    try {
-      xhr.send(data);
-    } catch (error) {
-      console.error('Failed to send beacon:', error);
-    }
-  }
-};
-
-const setupUnloadLogout = (): void => {
-  window.addEventListener('unload', () => {
-    if (isInternalNavigation) return;
-    logoutUser();
-  });
-};
-
 const mountModesPage = async (pg: Page): Promise<void> => {
   try {
     resetTimer();
@@ -97,7 +67,6 @@ const mountModesPage = async (pg: Page): Promise<void> => {
     registerIconNavigation();
 
     initResetTimerListeners();
-    setupUnloadLogout();
 
     pg.logger.info('ModesPage mounted!');
   } catch (error) {
