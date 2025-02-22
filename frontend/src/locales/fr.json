@@ -60,5 +60,8 @@
   "hardLevel": "Difficile",
   "secretLevel": "Oni",
   "pageNotFound": "Page non trouvée",
-  "backHome": "Retour à l'accueil"
+  "backHome": "Retour à l'accueil",
+  "home": "Accueil",
+  "modes": "Modes",
+  "levelSelection": "Sélection du niveau"
 }

@@ -178,3 +178,5 @@ make up
 - `DELETE /games/<pk>/`
 
 ## 参考資料
+
+- [Icons](https://fontawesome.com/icons)

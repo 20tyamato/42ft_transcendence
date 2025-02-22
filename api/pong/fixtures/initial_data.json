@@ -140,6 +140,146 @@
     }
   },
   {
+    "model": "pong.user",
+    "pk": 11,
+    "fields": {
+      "username": "sample11",
+      "email": "sample11@example.com",
+      "display_name": "Sample User 11",
+      "level": 10,
+      "experience": 900,
+      "is_staff": true,
+      "is_superuser": true,
+      "password": "pbkdf2_sha256$870000$K4nvyWY5NPgr7IaFbAfGbp$cJYOU0mHWUsRVpzORLXyOcpldlctU6L4lF+7fV/aomQ="
+    }
+  },
+  {
+    "model": "pong.user",
+    "pk": 12,
+    "fields": {
+      "username": "sample12",
+      "email": "sample12@example.com",
+      "display_name": "Sample User 12",
+      "level": 10,
+      "experience": 900,
+      "is_staff": true,
+      "is_superuser": true,
+      "password": "pbkdf2_sha256$870000$K4nvyWY5NPgr7IaFbAfGbp$cJYOU0mHWUsRVpzORLXyOcpldlctU6L4lF+7fV/aomQ="
+    }
+  },
+  {
+    "model": "pong.user",
+    "pk": 13,
+    "fields": {
+      "username": "sample13",
+      "email": "sample13@example.com",
+      "display_name": "Sample User 13",
+      "level": 10,
+      "experience": 900,
+      "is_staff": true,
+      "is_superuser": true,
+      "password": "pbkdf2_sha256$870000$K4nvyWY5NPgr7IaFbAfGbp$cJYOU0mHWUsRVpzORLXyOcpldlctU6L4lF+7fV/aomQ="
+    }
+  },
+  {
+    "model": "pong.user",
+    "pk": 14,
+    "fields": {
+      "username": "sample14",
+      "email": "sample14@example.com",
+      "display_name": "Sample User 14",
+      "level": 10,
+      "experience": 900,
+      "is_staff": true,
+      "is_superuser": true,
+      "password": "pbkdf2_sha256$870000$K4nvyWY5NPgr7IaFbAfGbp$cJYOU0mHWUsRVpzORLXyOcpldlctU6L4lF+7fV/aomQ="
+    }
+  },
+  {
+    "model": "pong.user",
+    "pk": 15,
+    "fields": {
+      "username": "sample15",
+      "email": "sample15@example.com",
+      "display_name": "Sample User 15",
+      "level": 10,
+      "experience": 900,
+      "is_staff": true,
+      "is_superuser": true,
+      "password": "pbkdf2_sha256$870000$K4nvyWY5NPgr7IaFbAfGbp$cJYOU0mHWUsRVpzORLXyOcpldlctU6L4lF+7fV/aomQ="
+    }
+  },
+  {
+    "model": "pong.user",
+    "pk": 16,
+    "fields": {
+      "username": "sample16",
+      "email": "sample16@example.com",
+      "display_name": "Sample User 16",
+      "level": 10,
+      "experience": 900,
+      "is_staff": true,
+      "is_superuser": true,
+      "password": "pbkdf2_sha256$870000$K4nvyWY5NPgr7IaFbAfGbp$cJYOU0mHWUsRVpzORLXyOcpldlctU6L4lF+7fV/aomQ="
+    }
+  },
+  {
+    "model": "pong.user",
+    "pk": 17,
+    "fields": {
+      "username": "sample17",
+      "email": "sample17@example.com",
+      "display_name": "Sample User 17",
+      "level": 10,
+      "experience": 900,
+      "is_staff": true,
+      "is_superuser": true,
+      "password": "pbkdf2_sha256$870000$K4nvyWY5NPgr7IaFbAfGbp$cJYOU0mHWUsRVpzORLXyOcpldlctU6L4lF+7fV/aomQ="
+    }
+  },
+  {
+    "model": "pong.user",
+    "pk": 18,
+    "fields": {
+      "username": "sample18",
+      "email": "sample18@example.com",
+      "display_name": "Sample User 18",
+      "level": 10,
+      "experience": 900,
+      "is_staff": true,
+      "is_superuser": true,
+      "password": "pbkdf2_sha256$870000$K4nvyWY5NPgr7IaFbAfGbp$cJYOU0mHWUsRVpzORLXyOcpldlctU6L4lF+7fV/aomQ="
+    }
+  },
+  {
+    "model": "pong.user",
+    "pk": 19,
+    "fields": {
+      "username": "sample19",
+      "email": "sample19@example.com",
+      "display_name": "Sample User 19",
+      "level": 10,
+      "experience": 900,
+      "is_staff": true,
+      "is_superuser": true,
+      "password": "pbkdf2_sha256$870000$K4nvyWY5NPgr7IaFbAfGbp$cJYOU0mHWUsRVpzORLXyOcpldlctU6L4lF+7fV/aomQ="
+    }
+  },
+  {
+    "model": "pong.user",
+    "pk": 20,
+    "fields": {
+      "username": "sample20",
+      "email": "sample20@example.com",
+      "display_name": "Sample User 20",
+      "level": 10,
+      "experience": 900,
+      "is_staff": true,
+      "is_superuser": true,
+      "password": "pbkdf2_sha256$870000$K4nvyWY5NPgr7IaFbAfGbp$cJYOU0mHWUsRVpzORLXyOcpldlctU6L4lF+7fV/aomQ="
+    }
+  },
+  {
     "model": "pong.game",
     "pk": 1,
     "fields": {

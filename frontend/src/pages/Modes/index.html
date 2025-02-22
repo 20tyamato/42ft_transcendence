@@ -7,11 +7,25 @@
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <div class="game-modes-container">
-      <button class="game-mode-button single-mode">SINGLE MODE</button>
-      <button class="game-mode-button multi-mode">MULTI MODE</button>
-      <button class="game-mode-button tournament-mode">TOURNAMENT MODE</button>
+    <div class="header">
+      <div class="header__logo"></div>
+      <div class="header__profile">
+        <div class="logout-icon">
+          <img src="/src/resources/logout.png" alt="Logout" style="cursor: pointer" />
+        </div>
+        <div class="profile-icon">
+          <img id="avatar" src="/src/resources/avatar.png" alt="Avatar" style="cursor: pointer" />
+        </div>
+      </div>
     </div>
-    <script type="module" src="./index.ts"></script>
+    <div class="content">
+      <div id="background"></div>
+      <div class="game-modes-container">
+        <button class="game-mode-button single-mode">SINGLE MODE</button>
+        <button class="game-mode-button multi-mode">MULTI MODE</button>
+        <button class="game-mode-button tournament-mode">TOURNAMENT MODE</button>
+      </div>
+      <script type="module" src="./index.ts"></script>
+    </div>
   </body>
 </html>

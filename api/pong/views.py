@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from core.logger import logger
+
 from .models import Game, User
 from .permissions import IsPlayerOrReadOnly
 from .serializers import (
@@ -21,7 +22,7 @@ class HealthCheckView(APIView):
 
     def get(self, request):
         logger.info("HealthCheck endpoint accessed")
-        return Response({"status": "ok"})
+        return Response({"status": "ok"}, status=status.HTTP_200_OK)
 
 
 class UserListCreateView(generics.ListCreateAPIView):
@@ -55,10 +56,22 @@ class LoginView(APIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data["user"]
-        token, created = Token.objects.get_or_create(user=user)
 
+        if Token.objects.filter(user=user).exists():
+            return Response(
+                {"message": "User is already logged in. Logout from the other device."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        token = Token.objects.create(user=user)
         return Response(
-            {"token": token.key, "user_id": user.id, "username": user.username}
+            {
+                "message": "Login Success",
+                "token": token.key,
+                "user_id": user.id,
+                "username": user.username,
+            },
+            status=status.HTTP_200_OK,
         )
 
 
@@ -66,8 +79,8 @@ class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        request.user.auth_token.delete()
-        return Response({"message": "Logout successful"})
+        Token.objects.filter(user=request.user).delete()
+        return Response({"message": "Logout successful"}, status=status.HTTP_200_OK)
 
 
 class UserRetrieveUpdateView(generics.RetrieveUpdateAPIView):
@@ -95,7 +108,8 @@ class UpdateUserImageView(APIView):
         user.save()
 
         return Response(
-            {"message": "Avatar updated successfully", "avatar": user.avatar}
+            {"message": "Avatar updated successfully", "avatar": user.avatar},
+            status=status.HTTP_201_CREATED,
         )
 
     def delete(self, request):
@@ -104,12 +118,13 @@ class UpdateUserImageView(APIView):
         user.save()
 
         return Response(
-            {"message": "Avatar deleted successfully", "avatar": user.avatar}
+            {"message": "Avatar deleted successfully", "avatar": user.avatar},
+            status=status.HTTP_200_OK,
         )
 
     def get(self, request):
         user = request.user
-        return Response({"avatar": user.avatar})
+        return Response({"avatar": user.avatar}, status=status.HTTP_200_OK)
 
     def put(self, request):
         user = request.user
@@ -117,7 +132,8 @@ class UpdateUserImageView(APIView):
         user.save()
 
         return Response(
-            {"message": "Avatar updated successfully", "avatar": user.avatar}
+            {"message": "Avatar updated successfully", "avatar": user.avatar},
+            status=status.HTTP_201_CREATED,
         )
 
 
@@ -135,12 +151,16 @@ class UpdateUserInfoView(APIView):
                 "message": "User info updated successfully",
                 "display_name": user.display_name,
                 "email": user.email,
-            }
+            },
+            status=201,
         )
 
     def get(self, request):
         user = request.user
-        return Response({"display_name": user.display_name, "email": user.email})
+        return Response(
+            {"display_name": user.display_name, "email": user.email},
+            status=status.HTTP_200_OK,
+        )
 
 
 class FriendListView(APIView):
