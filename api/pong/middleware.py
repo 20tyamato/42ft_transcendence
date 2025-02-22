@@ -12,7 +12,7 @@ class UpdateLastActivityMiddleware:
     def __call__(self, request):
         if request.user.is_authenticated:
             now = timezone.now()
-            threshold = timedelta(minutes=10)
+            threshold = timedelta(minutes=1)
             last_activity = request.user.last_activity
 
             if last_activity and (now - last_activity > threshold):

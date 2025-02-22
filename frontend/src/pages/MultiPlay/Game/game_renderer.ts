@@ -42,6 +42,8 @@ export class GameRenderer {
   private readonly PADDLE_WIDTH = 200;
   private readonly PADDLE_HEIGHT = 30;
   private readonly BALL_RADIUS = 30;
+  private readonly BALL_SPEED_MULTIPLIER = 15.0;
+  private readonly PADDLE_SPEED_MULTIPLIER = 10.0;
 
   constructor(container: HTMLElement, isPlayer1: boolean) {
     this.isPlayer1 = isPlayer1;
@@ -114,7 +116,7 @@ export class GameRenderer {
     let paddle = this.paddles.get(username);
 
     if (!paddle) {
-      const paddleGeometry = new THREE.BoxGeometry(this.PADDLE_WIDTH, this.PADDLE_HEIGHT, 10);
+      const paddleGeometry = new THREE.BoxGeometry(this.PADDLE_WIDTH, this.PADDLE_HEIGHT, 20);
       const paddleMaterial = new THREE.MeshLambertMaterial({ color: 0xcccccc });
       paddle = new THREE.Mesh(paddleGeometry, paddleMaterial);
       this.paddles.set(username, paddle);
@@ -146,10 +148,26 @@ export class GameRenderer {
   }
 
   private interpolateState(deltaTime: number) {
-    // lint回避のためだけに定義
-    console.log(deltaTime);
-    // 必要に応じて状態の補間処理を実装
-    // 現在は単純な更新のみ
+    if (this.currentState) {
+      this.ball.position.x +=
+        this.currentState.ball.velocity.x * deltaTime * this.BALL_SPEED_MULTIPLIER;
+      this.ball.position.y +=
+        this.currentState.ball.velocity.y * deltaTime * this.BALL_SPEED_MULTIPLIER;
+      this.ball.position.z +=
+        this.currentState.ball.velocity.z * deltaTime * this.BALL_SPEED_MULTIPLIER;
+
+      // 各プレイヤーのパドルの補間処理
+      this.paddles.forEach((paddle, username) => {
+        const playerState = this.currentState!.players[username];
+        if (playerState) {
+          // 現在の位置と目標位置との差分を計算し、倍率を適用して補間
+          const diffX = playerState.x - paddle.position.x;
+          const diffZ = playerState.z - paddle.position.z;
+          paddle.position.x += diffX * deltaTime * this.PADDLE_SPEED_MULTIPLIER;
+          paddle.position.z += diffZ * deltaTime * this.PADDLE_SPEED_MULTIPLIER;
+        }
+      });
+    }
   }
 
   public updateState(newState: GameState) {
