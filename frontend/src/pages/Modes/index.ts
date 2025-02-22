@@ -1,9 +1,8 @@
-import { API_URL } from '@/config/config';
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import LoggedInLayout from '@/layouts/loggedin/index';
-import { checkUserAccess } from '@/models/User/auth';
-import { fetchCurrentUser, updateOnlineStatus } from '@/models/User/repository';
+import { checkUserAccess, executeLogout } from '@/models/User/auth';
+import { fetchCurrentUser } from '@/models/User/repository';
 import { initResetTimerListeners, resetTimer } from '@/models/Window/repository';
 import { setUserLanguage } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
@@ -44,33 +43,10 @@ const updateUserAvatar = (avatar?: string): void => {
   }
 };
 
-const clearUserSession = (): void => {
-  localStorage.clear();
-};
-
-const logoutUser = (): void => {
-  const url = `${API_URL}/api/logout/`;
-  const data = JSON.stringify({});
-
-  updateOnlineStatus(false);
-  if (navigator.sendBeacon) {
-    navigator.sendBeacon(url, data);
-  } else {
-    fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: data,
-      credentials: 'include',
-      keepalive: true,
-    });
-  }
-};
-
 const setupBeforeUnloadLogout = (): void => {
   window.addEventListener('beforeunload', () => {
     if (isInternalNavigation) return;
-    logoutUser();
-    clearUserSession();
+    executeLogout();
   });
 };
 

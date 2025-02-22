@@ -1,36 +1,9 @@
-import { API_URL } from '@/config/config';
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
-import { updateOnlineStatus } from '@/models/User/repository';
+import { executeLogout } from '@/models/User/auth';
 import { registerLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
 import { updateInnerHTML, updateText } from '@/utils/updateElements';
-
-const executeLogout = async (): Promise<void> => {
-  const token = localStorage.getItem('token');
-  if (!token) {
-    console.warn('トークンが見つからないため、ログアウト API を呼び出さずに処理を続行します。');
-    return;
-  }
-  try {
-    const response = await fetch(`${API_URL}/api/logout/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${token}`,
-      },
-    });
-    if (!response.ok) {
-      console.error('Logout API call failed with status:', response.status);
-    }
-  } catch (error) {
-    console.error('Logout API call failed:', error);
-  }
-};
-
-const clearUserSession = (): void => {
-  localStorage.clear();
-};
 
 const registerLogoutButton = (): void => {
   const logoutBtn = document.getElementById('logout-btn');
@@ -57,14 +30,9 @@ const LogoutPage = new Page({
     updateActiveLanguageButton();
     registerLanguageSwitchers(updatePageContent);
 
-    updateOnlineStatus(false);
     executeLogout();
-    clearUserSession();
 
-    const logoutBtn = document.getElementById('logout-btn');
-    logoutBtn?.addEventListener('click', () => {
-      window.location.href = '/login';
-    });
+    registerLogoutButton();
 
     pg.logger.info('LogoutPage mounted!');
   },

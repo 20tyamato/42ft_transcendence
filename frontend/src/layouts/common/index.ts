@@ -1,7 +1,6 @@
 import { Layout } from '@/core/Layout';
 import logoPic from '@/resources/42_logo.svg';
 import avatarPic from '@/resources/avatar.png';
-import logout from '@/resources/logout.png';
 
 const CommonLayout = new Layout({
   name: 'common',
@@ -44,4 +43,4 @@ function checkScreenSize() {
 // window.addEventListener('resize', checkScreenSize);
 
 export default CommonLayout;
-export { avatarPic, checkScreenSize, logoPic, logout };
+export { avatarPic, checkScreenSize, logoPic };
