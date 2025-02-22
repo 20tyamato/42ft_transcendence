@@ -45,56 +45,57 @@ const updateUserAvatar = (avatar?: string): void => {
 };
 
 const clearUserSession = (): void => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('username');
   localStorage.clear();
+};
+
+const logoutUser = (): void => {
+  const url = `${API_URL}/api/logout/`;
+  const data = JSON.stringify({});
+
+  if (navigator.sendBeacon) {
+    navigator.sendBeacon(url, data);
+  } else {
+    fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: data,
+      credentials: 'include',
+      keepalive: true,
+    });
+  }
+};
+
+const setupBeforeUnloadLogout = (): void => {
+  window.addEventListener('beforeunload', () => {
+    if (isInternalNavigation) return;
+    logoutUser();
+    clearUserSession();
+  });
+};
+
+const mountModesPage = async (pg: Page): Promise<void> => {
+  try {
+    resetTimer();
+    checkUserAccess();
+
+    const userData = await fetchCurrentUser();
+    setUserLanguage(userData.language, updatePageContent);
+    updateUserAvatar(userData.avatar);
+    registerNavigationButtons();
+
+    initResetTimerListeners();
+    setupBeforeUnloadLogout();
+
+    pg.logger.info('ModesPage mounted!');
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 const ModesPage = new Page({
   name: 'Modes',
-  config: {
-    layout: LoggedInLayout,
-  },
-  mounted: async ({ pg }: { pg: Page }) => {
-    try {
-      resetTimer();
-      checkUserAccess();
-
-      const userData = await fetchCurrentUser();
-
-      setUserLanguage(userData.language, updatePageContent);
-      updateUserAvatar(userData.avatar);
-      registerNavigationButtons();
-
-      initResetTimerListeners();
-
-      // ウィンドウを閉じる（またはリロードする）と、ログアウト処理を行う
-      window.addEventListener('beforeunload', () => {
-        if (isInternalNavigation) return;
-
-        const url = `${API_URL}/api/logout/`;
-        const data = JSON.stringify({});
-
-        if (navigator.sendBeacon) {
-          navigator.sendBeacon(url, data);
-        } else {
-          fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: data,
-            credentials: 'include',
-            keepalive: true,
-          });
-        }
-
-        clearUserSession();
-      });
-
-      pg.logger.info('ModesPage mounted!');
-    } catch (error) {
-      console.error(error);
-    }
-  },
+  config: { layout: LoggedInLayout },
+  mounted: async ({ pg }: { pg: Page }) => mountModesPage(pg),
 });
 
 export default ModesPage;
