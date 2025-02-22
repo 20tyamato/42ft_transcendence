@@ -7,6 +7,7 @@ export function checkUserAccess(): string {
     window.location.href = '/login';
     throw new Error('Token does not exist, redirected to login page.');
   }
+  updateOnlineStatus(true);
   return token;
 }
 
