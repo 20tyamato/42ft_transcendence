@@ -60,5 +60,8 @@
   "hardLevel": "上級",
   "secretLevel": "鬼",
   "pageNotFound": "ページが見つかりません",
-  "backHome": "ホームに戻る"
+  "backHome": "ホームに戻る",
+  "home": "ホーム",
+  "modes": "モード",
+  "levelSelection": "レベル選択"
 }

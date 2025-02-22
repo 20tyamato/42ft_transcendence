@@ -6,7 +6,7 @@ import { fetchCurrentUser } from '@/models/User/repository';
 import { updateText } from '@/utils/updateElements';
 
 const updatePageContent = () => {
-  updateText('title', i18next.t('selectLevel'));
+  updateText('title', i18next.t('levelSelection'));
   updateText('.easy-level h1', i18next.t('easyLevel'));
   updateText('.medium-level h1', i18next.t('mediumLevel'));
   updateText('.hard-level h1', i18next.t('hardLevel'));

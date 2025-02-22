@@ -9,6 +9,7 @@ import { setUserLanguage } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
 
 const DEFAULT_AVATAR_SRC = '/src/resources/avatar.png';
+let isInternalNavigation = false;
 
 const updatePageContent = (): void => {
   updateText('title', i18next.t('modes'));
@@ -17,11 +18,7 @@ const updatePageContent = (): void => {
   updateText('.tournament-mode', i18next.t('tournamentMode'));
 };
 
-// グローバル変数として内部遷移用のフラグを定義
-let isInternalNavigation = false;
-
 const navigateTo = (path: string): void => {
-  // 内部ナビゲーションの場合はフラグを立てる
   isInternalNavigation = true;
   console.log(`Navigating to ${path}`);
   window.location.href = path;
@@ -53,7 +50,6 @@ const clearUserSession = (): void => {
   localStorage.clear();
 };
 
-// ModesPage の mounted 内で各種処理を実施
 const ModesPage = new Page({
   name: 'Modes',
   config: {
@@ -74,11 +70,10 @@ const ModesPage = new Page({
 
       // ウィンドウを閉じる（またはリロードする）と、ログアウト処理を行う
       window.addEventListener('beforeunload', () => {
-        // 内部遷移の場合はログアウト処理をスキップ
         if (isInternalNavigation) return;
 
         const url = `${API_URL}/api/logout/`;
-        const data = JSON.stringify({}); // 必要に応じてログアウトに必要な情報を付加
+        const data = JSON.stringify({});
 
         if (navigator.sendBeacon) {
           navigator.sendBeacon(url, data);
