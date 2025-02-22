@@ -1,7 +1,7 @@
 import { API_URL } from '@/config/config';
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
-import LoggedInLayout from '@/layouts/loggedin/index';
+import CommonLayout from '@/layouts/common/index';
 import { checkUserAccess } from '@/models/User/auth';
 import { fetchCurrentUser } from '@/models/User/repository';
 import { initResetTimerListeners, resetTimer } from '@/models/Window/repository';
@@ -90,7 +90,7 @@ const mountModesPage = async (pg: Page): Promise<void> => {
 
 const ModesPage = new Page({
   name: 'Modes',
-  config: { layout: LoggedInLayout },
+  config: { layout: CommonLayout },
   mounted: async ({ pg }: { pg: Page }) => mountModesPage(pg),
 });
 
