@@ -41,6 +41,12 @@ const updateUserAvatar = (avatar?: string): void => {
   }
 };
 
+const clearUserSession = (): void => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('username');
+  localStorage.clear();
+};
+
 const ModesPage = new Page({
   name: 'Modes',
   config: {
@@ -58,6 +64,28 @@ const ModesPage = new Page({
       registerNavigationButtons();
 
       initResetTimerListeners();
+
+      // window.addEventListener('beforeunload', () => {
+      //   const url = `${API_URL}/api/logout/`;
+      //   const data = JSON.stringify({}); // 必要に応じてログアウトに必要な情報を付加
+      
+      //   // navigator.sendBeacon が利用可能であれば使用する
+      //   if (navigator.sendBeacon) {
+      //     navigator.sendBeacon(url, data);
+      //   } else {
+      //     // sendBeacon 非対応の場合、fetch の keepalive オプションを利用（ただし完全な信頼性は保証されません）
+      //     fetch(url, {
+      //       method: 'POST',
+      //       headers: { 'Content-Type': 'application/json' },
+      //       body: data,
+      //       credentials: 'include',
+      //       keepalive: true,
+      //     });
+      //   }
+      
+      //   // クライアント側のセッション情報をクリアする
+      //   clearUserSession();
+      // });
 
       pg.logger.info('ModesPage mounted!');
     } catch (error) {

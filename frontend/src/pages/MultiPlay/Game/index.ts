@@ -2,7 +2,6 @@ import { WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { GameRenderer } from './game_renderer';
-import './style.css';
 
 const GamePage = new Page({
   name: 'MultiPlay/Game',
