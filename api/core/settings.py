@@ -73,10 +73,10 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
-    # "pong.middleware.UpdateLastActivityMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "pong.middleware.UpdateLastActivityMiddleware",
 ]
 
 ROOT_URLCONF = "core.urls"

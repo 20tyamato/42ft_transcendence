@@ -35,6 +35,7 @@ export class GameRenderer {
   private currentState: GameState | null = null;
   private animationFrameId: number | null = null;
   private lastRenderTime: number = 0;
+  private targetBallPosition: THREE.Vector3 = new THREE.Vector3();
 
   // 定数
   private readonly FIELD_WIDTH = 1200;
@@ -149,18 +150,13 @@ export class GameRenderer {
 
   private interpolateState(deltaTime: number) {
     if (this.currentState) {
-      this.ball.position.x +=
-        this.currentState.ball.velocity.x * deltaTime * this.BALL_SPEED_MULTIPLIER;
-      this.ball.position.y +=
-        this.currentState.ball.velocity.y * deltaTime * this.BALL_SPEED_MULTIPLIER;
-      this.ball.position.z +=
-        this.currentState.ball.velocity.z * deltaTime * this.BALL_SPEED_MULTIPLIER;
+      // ボール位置の補間
+      this.ball.position.lerp(this.targetBallPosition, deltaTime * this.BALL_SPEED_MULTIPLIER);
 
       // 各プレイヤーのパドルの補間処理
       this.paddles.forEach((paddle, username) => {
         const playerState = this.currentState!.players[username];
         if (playerState) {
-          // 現在の位置と目標位置との差分を計算し、倍率を適用して補間
           const diffX = playerState.x - paddle.position.x;
           const diffZ = playerState.z - paddle.position.z;
           paddle.position.x += diffX * deltaTime * this.PADDLE_SPEED_MULTIPLIER;
@@ -173,20 +169,15 @@ export class GameRenderer {
   public updateState(newState: GameState) {
     this.currentState = newState;
 
-    // プレイヤー2の場合、Z座標を反転させる必要はない
-    // （カメラが既に回転しているため）
-    const ballPosition = {
-      x: newState.ball.position.x,
-      y: newState.ball.position.y,
-      z: newState.ball.position.z,
-    };
+    // ターゲット位置を更新（直接 this.ball.position.set() はしない）
+    this.targetBallPosition.set(
+      newState.ball.position.x,
+      newState.ball.position.y,
+      newState.ball.position.z
+    );
 
-    // ボールの位置更新
-    this.ball.position.set(ballPosition.x, ballPosition.y, ballPosition.z);
-
-    // パドルの位置更新
+    // パドルはそのまま更新
     Object.entries(newState.players).forEach(([username, position]) => {
-      // サーバーから送られてきた座標をそのまま使用
       this.createOrUpdatePaddle(username, position.x, position.z);
     });
   }
