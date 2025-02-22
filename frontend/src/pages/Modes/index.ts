@@ -37,6 +37,17 @@ const registerNavigationButtons = (): void => {
   bindNavigationButton('.tournament-mode', '/tournament');
 };
 
+const registerIconNavigation = (): void => {
+  const logoutIcon = document.querySelector('.logout-icon');
+  if (logoutIcon) {
+    logoutIcon.addEventListener('click', () => navigateTo('/logout'));
+  }
+  const profileIcon = document.querySelector('.profile-icon');
+  if (profileIcon) {
+    profileIcon.addEventListener('click', () => navigateTo('/profile'));
+  }
+};
+
 const updateUserAvatar = (avatar?: string): void => {
   const avatarEl = document.getElementById('avatar') as HTMLImageElement | null;
   if (avatarEl) {
@@ -47,13 +58,18 @@ const updateUserAvatar = (avatar?: string): void => {
 const logoutUser = (): void => {
   const url = `${API_URL}/api/logout/`;
   const data = JSON.stringify({});
+  const token = localStorage.getItem('token');
+  if (!token) return;
 
   if (navigator.sendBeacon) {
     navigator.sendBeacon(url, data);
   } else {
     fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${token}`,
+      },
       body: data,
       credentials: 'include',
       keepalive: true,
@@ -77,7 +93,9 @@ const mountModesPage = async (pg: Page): Promise<void> => {
     const userData = await fetchCurrentUser();
     setUserLanguage(userData.language, updatePageContent);
     updateUserAvatar(userData.avatar);
+
     registerNavigationButtons();
+    registerIconNavigation();
 
     initResetTimerListeners();
     setupBeforeUnloadLogout();
