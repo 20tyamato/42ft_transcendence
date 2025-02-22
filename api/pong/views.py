@@ -59,7 +59,7 @@ class LoginView(APIView):
 
         if Token.objects.filter(user=user).exists():
             return Response(
-                {"message": "User is already logged in"},
+                {"message": "User is already logged in. Logout from the other device."},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
