@@ -5,8 +5,8 @@ import { executeLogout } from '@/models/User/auth';
 import { registerLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
 import { updateInnerHTML, updateText } from '@/utils/updateElements';
 
-const registerLogoutButton = (): void => {
-  const logoutBtn = document.getElementById('logout-btn');
+const registerLoginButton = (): void => {
+  const logoutBtn = document.getElementById('login-btn');
   logoutBtn?.addEventListener('click', () => {
     window.location.href = '/login';
   });
@@ -17,7 +17,7 @@ const updatePageContent = (): void => {
   updateText('.logout-container h1', i18next.t('logout'));
   updateText('label[for="username"]', i18next.t('username'));
   updateInnerHTML('#logout-message', i18next.t('logoutMessage'));
-  updateText('#logout-btn', i18next.t('login'));
+  updateText('#login-btn', i18next.t('login'));
 };
 
 const LogoutPage = new Page({
@@ -30,9 +30,9 @@ const LogoutPage = new Page({
     updateActiveLanguageButton();
     registerLanguageSwitchers(updatePageContent);
 
-    executeLogout();
+    registerLoginButton();
 
-    registerLogoutButton();
+    executeLogout();
 
     pg.logger.info('LogoutPage mounted!');
   },

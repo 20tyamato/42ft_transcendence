@@ -20,14 +20,13 @@ export const executeLogout = async (): Promise<void> => {
     console.warn('No token found in local storage. Skipping logout.');
     return;
   }
+  updateOnlineStatus(false);
   console.log('token:', token);
 
   const baseUrl = `${API_URL}/api/logout/`;
   const data = JSON.stringify({});
 
   try {
-    updateOnlineStatus(false);
-
     const response = await fetch(baseUrl, {
       method: 'POST',
       headers: {
@@ -36,7 +35,6 @@ export const executeLogout = async (): Promise<void> => {
       },
       body: data,
       credentials: 'include',
-      keepalive: true,
     });
     if (response.ok) {
       localStorage.clear();

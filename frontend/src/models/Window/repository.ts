@@ -9,11 +9,7 @@ export const resetTimer = () => {
   }
 
   idleTimer = window.setTimeout(() => {
-    try {
-      window.location.href = '/logout';
-    } catch (error) {
-      console.error('Logout API call failed:', error);
-    }
+    window.location.href = '/logout';
   }, idleTimeout);
 };
 
