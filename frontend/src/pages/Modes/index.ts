@@ -3,7 +3,7 @@ import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import LoggedInLayout from '@/layouts/loggedin/index';
 import { checkUserAccess } from '@/models/User/auth';
-import { fetchCurrentUser } from '@/models/User/repository';
+import { fetchCurrentUser, updateOnlineStatus } from '@/models/User/repository';
 import { initResetTimerListeners, resetTimer } from '@/models/Window/repository';
 import { setUserLanguage } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
@@ -52,6 +52,7 @@ const logoutUser = (): void => {
   const url = `${API_URL}/api/logout/`;
   const data = JSON.stringify({});
 
+  updateOnlineStatus(false);
   if (navigator.sendBeacon) {
     navigator.sendBeacon(url, data);
   } else {

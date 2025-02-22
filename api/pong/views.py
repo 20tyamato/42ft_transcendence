@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from core.logger import logger
+
 from .models import Game, User
 from .permissions import IsPlayerOrReadOnly
 from .serializers import (
@@ -55,8 +56,15 @@ class LoginView(APIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data["user"]
-        token, created = Token.objects.get_or_create(user=user)
 
+        if Token.objects.filter(user=user).exists():
+            return Response(
+                {"error": "このアカウントは既にログインしています。"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        # トークンが存在しなければ新規発行
+        token = Token.objects.create(user=user)
         return Response(
             {"token": token.key, "user_id": user.id, "username": user.username}
         )
