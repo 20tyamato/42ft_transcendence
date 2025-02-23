@@ -1,6 +1,7 @@
 import { WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
+import { ITournamentMatch } from '@/models/interface';
 
 const WaitingPage = new Page({
   name: 'Tournament/Waiting',
@@ -60,8 +61,32 @@ const WaitingPage = new Page({
             }
           } else if (data.type === 'tournament_ready') {
             console.log('Tournament ready:', data);
-            // セッションIDを使用して準決勝のゲームページへ遷移
-            window.location.href = `/tournament/game?session=${data.sessionId}`;
+            const username = localStorage.getItem('username');
+
+            if (!username) {
+              console.error('No username found');
+              window.location.href = '/tournament';
+              return;
+            }
+
+            const matches = data.matches as ITournamentMatch[];
+            const myMatch = matches.find(
+              (match) => match.player1 === username || match.player2 === username
+            );
+
+            if (myMatch) {
+              const gameUrl = `/tournament/game?session=${data.sessionId}&isPlayer1=${username === myMatch.player1}&matchId=${myMatch.id}&round=${myMatch.round}`;
+              console.log('Navigating to tournament game:', gameUrl);
+              window.location.href = gameUrl;
+            } else {
+              console.error('Match not found for user');
+              window.location.href = '/tournament';
+            }
+          } else if (data.type === 'error') {
+            console.error('Tournament error:', data.message);
+            if (statusElement) {
+              statusElement.textContent = `Error: ${data.message}`;
+            }
           }
         } catch (e) {
           console.error('Error parsing message:', e);

@@ -62,8 +62,3 @@ export interface ITournamentMatch {
 export interface ITournamentBracket {
   matches: ITournamentMatch[];
 }
-
-export interface ITournamentReadyState extends ITournamentState {
-  countdown?: number; // カウントダウンタイマー用
-  timeoutAt?: string; // Ready待ち時間の期限
-}

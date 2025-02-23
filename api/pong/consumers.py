@@ -612,6 +612,32 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
             "participants": serializer.data,
         }
 
+    @database_sync_to_async
+    def create_tournament_matches(self, tournament, participants):
+        """準決勝の対戦カードを生成"""
+        # 参加者をシャッフルして2試合に分ける
+        player_list = list(participants)
+        random.shuffle(player_list)
+        
+        # 準決勝の2試合を作成
+        matches = [
+            {
+                "id": f"semi_1_{tournament.id}",
+                "round": 0,  # 0: 準決勝
+                "player1": player_list[0].user.username,
+                "player2": player_list[1].user.username,
+                "status": "pending"
+            },
+            {
+                "id": f"semi_2_{tournament.id}",
+                "round": 0,
+                "player1": player_list[2].user.username,
+                "player2": player_list[3].user.username,
+                "status": "pending"
+            }
+        ]
+        return matches
+
     async def handle_join_tournament(self, username):
         """トーナメント参加処理"""
         try:
@@ -622,13 +648,24 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
 
             # 全参加者に状態を通知
             await self.channel_layer.group_send(
-                "tournament_group", {"type": "tournament_status", "status": status}
+                "tournament_group", 
+                {"type": "tournament_status", "status": status}
             )
 
             # 4人揃ったら準備開始を通知
             if status["participants"].__len__() >= 4:
+                # 対戦カードを生成
+                matches = await self.create_tournament_matches(
+                    tournament, 
+                    tournament.participants.all()
+                )
+                
+                # ステータスに対戦カード情報を追加
+                status["matches"] = matches
+
                 await self.channel_layer.group_send(
-                    "tournament_group", {"type": "tournament_ready", "status": status}
+                    "tournament_group", 
+                    {"type": "tournament_ready", "status": status}
                 )
 
         except User.DoesNotExist:
