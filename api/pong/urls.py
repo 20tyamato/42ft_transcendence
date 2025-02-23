@@ -52,5 +52,4 @@ urlpatterns = [
         "games/<int:pk>/", GameRetrieveUpdateDestroyView.as_view(), name="game-detail"
     ),
     # Tournament
-    # TODO: add Tournament frontend
 ]

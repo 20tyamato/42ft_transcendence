@@ -280,5 +280,3 @@ class GameRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = GameSerializer
     permission_classes = [IsAuthenticated, IsPlayerOrReadOnly]
 
-
-# TODO: class TournamentListCreateView(generics.ListCreateAPIView):

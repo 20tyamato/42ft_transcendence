@@ -496,6 +496,48 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
         except Exception as e:
             print(f"Error handling tournament database update: {e}")
 
+    async def broadcast_game_end(self, game):
+        """ゲーム終了時のWebSocket通知送信"""
+        winner_name = game.get_winner()
+        if not winner_name:
+            return
+
+        # ゲーム終了のメッセージを構築
+        message = {
+            "type": "game_end",
+            "winner": winner_name,
+            "is_final": self.is_final,
+            "game_type": self.game_type,
+            "tournament_id": self.session_id,
+            "scores": {
+                game.player1_name: game.score[game.player1_name],
+                game.player2_name: game.score[game.player2_name]
+            }
+        }
+
+        if not self.is_final:
+            message["next_stage"] = "final_waiting"
+        else:
+            message["next_stage"] = "tournament_complete"
+
+        # 試合参加者に結果を送信
+        await self.channel_layer.group_send(
+            self.game_group_name,
+            message
+        )
+
+        # トーナメント全体のグループにも結果を通知
+        tournament_group = f"tournament_{self.session_id}"
+        await self.channel_layer.group_send(
+            tournament_group,
+            {
+                "type": "tournament_update",
+                "event": "match_complete",
+                "game_type": self.game_type,
+                "winner": winner_name,
+                "next_stage": message["next_stage"]
+            }
+        )
 
 class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
     async def connect(self):
