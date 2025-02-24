@@ -122,7 +122,6 @@ const initializeWebSocket = (
       switch (data.type) {
         case 'state_update': {
           renderer.updateState(data.state);
-          // 毎回 DOM 全体を書き換えず、スコアのみ更新
           updateScoreBoard(data.state.score, username);
           if (!data.state.is_active) {
             const opponent = getOpponentFn();
