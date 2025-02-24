@@ -1,8 +1,9 @@
 import { API_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
-import { checkUserAccess } from '@/models/User/auth';
 import { IGameScore } from '@/models/interface';
+import { checkUserAccess } from '@/models/User/auth';
+import { fetchUserAvatar } from '@/models/User/repository';
 
 async function sendGameResult(score: IGameScore) {
   try {
@@ -72,6 +73,31 @@ const ResultPage = new Page({
 
       if (opponentNameElement && score.opponent) {
         opponentNameElement.textContent = score.opponent;
+      }
+      console.log(username);
+      console.log(score.opponent);
+
+      const playerAvatarImg = document.getElementById('player-avatar') as HTMLImageElement;
+      const opponentAvatarImg = document.getElementById('opponent-avatar') as HTMLImageElement;
+      if (playerAvatarImg && opponentAvatarImg && username) {
+        fetchUserAvatar(username).then((avatar) => {
+          if (avatar && avatar.type.startsWith('image/')) {
+            const avatarUrl = URL.createObjectURL(avatar);
+            playerAvatarImg.src = avatarUrl;
+          } else {
+            playerAvatarImg.src = `${API_URL}/media/default_avatar.png`;
+          }
+        });
+        playerAvatarImg.alt = username;
+        fetchUserAvatar(score.opponent).then((avatar) => {
+          if (avatar && avatar.type.startsWith('image/')) {
+            const avatarUrl = URL.createObjectURL(avatar);
+            opponentAvatarImg.src = avatarUrl;
+          } else {
+            opponentAvatarImg.src = `${API_URL}/media/default_avatar.png`;
+          }
+        });
+        opponentAvatarImg.alt = score.opponent;
       }
 
       if (playerScoreElement) playerScoreElement.textContent = String(score.player1);

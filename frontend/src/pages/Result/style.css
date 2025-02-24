@@ -13,6 +13,23 @@ body {
   justify-content: center;
 }
 
+.avatar-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  object-fit: cover;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.player-side .avatar-icon {
+  margin-right: 0.75rem;
+}
+
+.cpu-side .avatar-icon {
+  margin-left: 0.75rem;
+}
+
 .results-container {
   text-align: center;
   color: #fff;

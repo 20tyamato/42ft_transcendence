@@ -16,13 +16,29 @@
       <div class="result-item">
         <div class="score-display">
           <div class="player-side">
-            <div id="playerName" class="player-name">Player</div>
-            <div id="playerScore" class="score">15</div>
+            <img
+              class="avatar-icon"
+              id="player-avatar"
+              src="/assets/avatars/default.png"
+              alt="Player Avatar"
+            />
+            <div class="player-info">
+              <div id="playerName" class="player-name">Player</div>
+              <div id="playerScore" class="score">15</div>
+            </div>
           </div>
           <div class="vs">VS</div>
           <div class="cpu-side">
-            <div class="player-name">CPU</div>
-            <div id="cpuScore" class="score">0</div>
+            <img
+              class="avatar-icon"
+              id="opponent-avatar"
+              src="/assets/avatars/default.png"
+              alt="Opponent Avatar"
+            />
+            <div class="player-info">
+              <div class="player-name">CPU</div>
+              <div id="cpuScore" class="score">0</div>
+            </div>
           </div>
         </div>
         <div id="result-message" class="result-message">You Win!</div>
