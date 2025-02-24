@@ -50,17 +50,35 @@ const finishGame = async (finalScore: any): Promise<void> => {
   window.location.href = '/result';
 };
 
+const getAvatarIcon = (username: string): string => {
+  // ユーザーごとに画像がある場合はそのパスを返し、なければデフォルトを返す
+  return `/assets/avatars/${username}.png`;
+};
+
+const initializeScoreBoard = (username: string, opponentName: string): void => {
+  const playerAvatarImg = document.getElementById('player-avatar') as HTMLImageElement;
+  const opponentAvatarImg = document.getElementById('opponent-avatar') as HTMLImageElement;
+  if (playerAvatarImg && opponentAvatarImg) {
+    playerAvatarImg.src = getAvatarIcon(username);
+    playerAvatarImg.alt = username;
+    opponentAvatarImg.src = getAvatarIcon(opponentName);
+    opponentAvatarImg.alt = opponentName;
+  }
+};
+
 /**
  * スコアボードの表示更新
  */
-const updateScoreBoard = (score: any, username: string, isPlayer1: boolean): void => {
-  const scoreBoard = document.getElementById('score-board');
-  if (scoreBoard) {
+const updateScoreBoard = (score: any, username: string): void => {
+  const playerScoreValue = document.getElementById('player-score-value');
+  const opponentScoreValue = document.getElementById('opponent-score-value');
+  if (playerScoreValue && opponentScoreValue) {
     const playerScore = score[username] || 0;
-    const opponentScore = Object.entries(score).find(([id]) => id !== username)?.[1] || 0;
-    scoreBoard.textContent = isPlayer1
-      ? `${playerScore} - ${opponentScore}`
-      : `${opponentScore} - ${playerScore}`;
+    const opponentEntry = Object.entries(score).find(([id]) => id !== username);
+    const opponentScore = opponentEntry ? opponentEntry[1] : 0;
+
+    playerScoreValue.textContent = String(playerScore);
+    opponentScoreValue.textContent = String(opponentScore);
   }
 };
 

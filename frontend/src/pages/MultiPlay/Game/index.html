@@ -12,7 +12,27 @@
   </head>
   <body>
     <div id="game-container">
-      <div id="score-board"></div>
+      <div id="score-board">
+        <div class="score-item" id="player-item">
+          <img
+            class="avatar-icon"
+            id="player-avatar"
+            src="/assets/avatars/default.png"
+            alt="Player Avatar"
+          />
+          <span class="score" id="player-score-value">0</span>
+        </div>
+        <div class="score-separator">-</div>
+        <div class="score-item" id="opponent-item">
+          <img
+            class="avatar-icon"
+            id="opponent-avatar"
+            src="/assets/avatars/default.png"
+            alt="Opponent Avatar"
+          />
+          <span class="score" id="opponent-score-value">0</span>
+        </div>
+      </div>
       <div id="game-canvas"></div>
     </div>
     <div id="game-over" class="hidden">

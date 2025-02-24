@@ -24,6 +24,29 @@ export const fetchUsers = async () => {
   }
 };
 
+export const fetchUser = async (username: string) => {
+  const token = localStorage.getItem('token');
+  if (!token) return;
+
+  try {
+    const response = await fetch(`${API_URL}/api/users/${username}/`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      console.error('Failed to fetch user:', await response.text());
+      return;
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching user:', error);
+  }
+};
+
 export const fetchCurrentUser = async () => {
   const token = localStorage.getItem('token');
   if (!token) return;
