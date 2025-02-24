@@ -15,12 +15,12 @@ export class GameRenderer {
 
   // 定数（各種サイズ・スピード調整）
   private readonly FIELD_WIDTH = 1200;
-  private readonly FIELD_LENGTH = 3000;
+  private readonly FIELD_LENGTH = 2400;
   private readonly PADDLE_WIDTH = 200;
-  private readonly PADDLE_HEIGHT = 30;
+  private readonly PADDLE_HEIGHT = 60;
   private readonly BALL_RADIUS = 30;
-  private readonly BALL_SPEED_MULTIPLIER = 200.0;
-  private readonly PADDLE_SPEED_MULTIPLIER = 200.0;
+  private readonly BALL_SPEED_MULTIPLIER = 1000.0;
+  private readonly PADDLE_SPEED_MULTIPLIER = 1000.0;
 
   constructor(container: HTMLElement, isPlayer1: boolean) {
     this.isPlayer1 = isPlayer1;
@@ -55,7 +55,7 @@ export class GameRenderer {
     const fieldGeometry = new THREE.BoxGeometry(this.FIELD_WIDTH, 5, this.FIELD_LENGTH);
     const fieldMaterial = new THREE.MeshLambertMaterial({ color: 0x003300 });
     const field = new THREE.Mesh(fieldGeometry, fieldMaterial);
-    field.position.y = -50;
+    // field.position.y = -50;
     this.scene.add(field);
 
     // ボールの作成
@@ -186,6 +186,9 @@ export class GameRenderer {
 
   // 初期ボール発射の設定（ランダムな方向）
   private launchInitialBall() {
+    // ボールの位置を毎回中心にリセットする
+    this.ball.position.set(0, this.ball.position.y, 0);
+
     const angle = Math.random() * 2 * Math.PI;
     const distance = 500;
     this.targetBallPosition.set(
