@@ -1,6 +1,32 @@
 <!-- frontend/src/pages/Tournament/Game/index.html -->
-<div class="container">
-  <h1>Tournament Game</h1>
-  <div id="game-canvas"></div>
-  <div id="score-board"></div>
-</div>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tournament Game</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div id="game-container">
+      <div id="tournament-info">
+        <div id="round-indicator"></div>
+        <div id="score-board"></div>
+      </div>
+      <div id="game-canvas"></div>
+    </div>
+    <div id="game-over" class="hidden">
+      <h1>Game Over</h1>
+      <p>Winner: <span id="winner-name"></span></p>
+      <div id="next-match-info" class="hidden">
+        <p>Proceeding to Finals</p>
+        <div class="loader"></div>
+      </div>
+      <button id="exit-btn">Exit Tournament</button>
+    </div>
+  </body>
+</html>

@@ -1,29 +1,6 @@
+// frontend/src/pages/MultiPlay/Game/game_renderer.ts
 import * as THREE from 'three';
-
-interface GameState {
-  ball: {
-    position: {
-      x: number;
-      y: number;
-      z: number;
-    };
-    velocity: {
-      x: number;
-      y: number;
-      z: number;
-    };
-  };
-  players: {
-    [key: string]: {
-      x: number;
-      z: number;
-    };
-  };
-  score: {
-    [key: string]: number;
-  };
-  is_active: boolean;
-}
+import { IGameState } from '@/models/interface';
 
 export class GameRenderer {
   private scene: THREE.Scene;
@@ -32,7 +9,7 @@ export class GameRenderer {
   private ball: THREE.Mesh;
   private paddles: Map<string, THREE.Mesh>;
   private isPlayer1: boolean;
-  private currentState: GameState | null = null;
+  private currentState: IGameState | null = null;
   private animationFrameId: number | null = null;
   private lastRenderTime: number = 0;
 
@@ -152,7 +129,7 @@ export class GameRenderer {
     // 現在は単純な更新のみ
   }
 
-  public updateState(newState: GameState) {
+  public updateState(newState: IGameState) {
     this.currentState = newState;
 
     // プレイヤー2の場合、Z座標を反転させる必要はない

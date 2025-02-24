@@ -1,3 +1,4 @@
+// frontend/src/models/interface.ts
 import { languageNames } from '@/utils/language';
 
 export interface IFriend {
@@ -50,4 +51,29 @@ export interface ITournamentMatch {
 
 export interface ITournamentBracket {
   matches: ITournamentMatch[];
+}
+
+export interface IGameState {
+  ball: {
+    position: {
+      x: number;
+      y: number;
+      z: number;
+    };
+    velocity: {
+      x: number;
+      y: number;
+      z: number;
+    };
+  };
+  players: {
+    [key: string]: {
+      x: number;
+      z: number;
+    };
+  };
+  score: {
+    [key: string]: number;
+  };
+  is_active: boolean;
 }

@@ -1,3 +1,4 @@
+// frontend/src/pages/Tournament/Waiting/index.ts
 import { WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
