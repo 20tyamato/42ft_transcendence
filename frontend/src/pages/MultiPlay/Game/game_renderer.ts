@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-interface GameState {
+interface IGameState {
   ball: {
     position: {
       x: number;
@@ -32,19 +32,19 @@ export class GameRenderer {
   private ball: THREE.Mesh;
   private paddles: Map<string, THREE.Mesh>;
   private isPlayer1: boolean;
-  private currentState: GameState | null = null;
+  private currentState: IGameState | null = null;
   private animationFrameId: number | null = null;
   private lastRenderTime: number = 0;
   private targetBallPosition: THREE.Vector3 = new THREE.Vector3();
 
-  // 定数
+  // 定数（ボールとパドルの動作をより速く・大きく）
   private readonly FIELD_WIDTH = 1200;
   private readonly FIELD_LENGTH = 3000;
   private readonly PADDLE_WIDTH = 200;
   private readonly PADDLE_HEIGHT = 30;
   private readonly BALL_RADIUS = 30;
-  private readonly BALL_SPEED_MULTIPLIER = 100.0;
-  private readonly PADDLE_SPEED_MULTIPLIER = 100.0;
+  private readonly BALL_SPEED_MULTIPLIER = 200.0; // ボールの速さをUP
+  private readonly PADDLE_SPEED_MULTIPLIER = 200.0; // パドルの動く幅を広く
 
   constructor(container: HTMLElement, isPlayer1: boolean) {
     this.isPlayer1 = isPlayer1;
@@ -62,7 +62,30 @@ export class GameRenderer {
     this.setupCamera();
     this.setupLighting();
 
+    // ゲーム開始前のデフォルト状態を初期化（ローカルプレイヤー用）
+    if (!this.currentState) {
+      this.currentState = {
+        ball: {
+          position: { x: 0, y: 0, z: 0 },
+          velocity: { x: 0, y: 0, z: 0 },
+        },
+        players: {},
+        score: {},
+        is_active: false,
+      };
+      const username = this.isPlayer1 ? 'player1' : 'player2';
+      // プレイヤー側に合わせた初期位置（フィールド端付近）
+      this.currentState.players[username] = {
+        x: 0,
+        z: this.isPlayer1 ? this.FIELD_LENGTH / 2 - 100 : -this.FIELD_LENGTH / 2 + 100,
+      };
+    }
+
+    // 最初のボールの方向をランダムに設定
+    this.launchInitialBall();
+
     window.addEventListener('resize', this.onWindowResize.bind(this));
+    window.addEventListener('keydown', this.onKeyDown.bind(this));
 
     // レンダリングループを開始
     this.startRenderLoop();
@@ -129,7 +152,7 @@ export class GameRenderer {
 
   private startRenderLoop() {
     const animate = (currentTime: number) => {
-      // 前回のレンダリングからの経過時間を計算（秒単位）
+      // 前回のレンダリングからの経過時間（秒単位）
       const deltaTime = this.lastRenderTime ? (currentTime - this.lastRenderTime) / 1000 : 0;
       this.lastRenderTime = currentTime;
 
@@ -150,8 +173,9 @@ export class GameRenderer {
 
   private interpolateState(deltaTime: number) {
     if (this.currentState) {
-      // ボール位置の補間
-      this.ball.position.lerp(this.targetBallPosition, deltaTime * this.BALL_SPEED_MULTIPLIER);
+      // 補間係数を1を超えないようにクランプ
+      const lerpFactor = Math.min(deltaTime * this.BALL_SPEED_MULTIPLIER, 1);
+      this.ball.position.lerp(this.targetBallPosition, lerpFactor);
 
       // 各プレイヤーのパドルの補間処理
       this.paddles.forEach((paddle, username) => {
@@ -166,7 +190,7 @@ export class GameRenderer {
     }
   }
 
-  public updateState(newState: GameState) {
+  public updateState(newState: IGameState) {
     this.currentState = newState;
 
     // ターゲット位置を更新（直接 this.ball.position.set() はしない）
@@ -176,10 +200,43 @@ export class GameRenderer {
       newState.ball.position.z
     );
 
-    // パドルはそのまま更新
+    // 各プレイヤーのパドルを更新
     Object.entries(newState.players).forEach(([username, position]) => {
       this.createOrUpdatePaddle(username, position.x, position.z);
     });
+  }
+
+  // 最初のボールの方向をランダムに決定
+  private launchInitialBall() {
+    const angle = Math.random() * 2 * Math.PI;
+    const distance = 500; // 初期の移動距離
+    this.targetBallPosition.set(
+      this.ball.position.x + Math.cos(angle) * distance,
+      this.ball.position.y,
+      this.ball.position.z + Math.sin(angle) * distance
+    );
+  }
+
+  // 矢印キーでのパドル操作（移動幅を広く）
+  private onKeyDown(event: KeyboardEvent) {
+    if (!this.currentState) return;
+    const username = this.isPlayer1 ? 'player1' : 'player2';
+    const moveAmount = 50; // 移動量（大きめに設定）
+    if (event.key === 'ArrowLeft') {
+      this.currentState.players[username].x -= moveAmount;
+    } else if (event.key === 'ArrowRight') {
+      this.currentState.players[username].x += moveAmount;
+    } else if (event.key === 'ArrowUp') {
+      this.currentState.players[username].z -= moveAmount;
+    } else if (event.key === 'ArrowDown') {
+      this.currentState.players[username].z += moveAmount;
+    }
+    // すぐにパドル位置を反映
+    const paddle = this.paddles.get(username);
+    if (paddle && this.currentState.players[username]) {
+      paddle.position.x = this.currentState.players[username].x;
+      paddle.position.z = this.currentState.players[username].z;
+    }
   }
 
   private onWindowResize() {
@@ -202,6 +259,7 @@ export class GameRenderer {
 
     // イベントリスナーの削除
     window.removeEventListener('resize', this.onWindowResize.bind(this));
+    window.removeEventListener('keydown', this.onKeyDown.bind(this));
 
     // Three.jsのリソース解放
     this.renderer.dispose();
