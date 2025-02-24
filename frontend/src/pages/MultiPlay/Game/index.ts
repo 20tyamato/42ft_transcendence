@@ -1,6 +1,7 @@
 import { WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
+import { fetchUserAvatar } from '@/models/User/repository';
 import { GameRenderer } from './game_renderer';
 
 /**
@@ -50,24 +51,32 @@ const finishGame = async (finalScore: any): Promise<void> => {
   window.location.href = '/result';
 };
 
-const getAvatarIcon = (username: string): string => {
-  // ユーザーごとに画像がある場合はそのパスを返し、なければデフォルトを返す
-  return `/assets/avatars/${username}.png`;
-};
-
+/**
+ * スコアボード初期化
+ * － ゲーム開始時に一度だけユーザーと対戦相手のアバターアイコンを設定する
+ */
 const initializeScoreBoard = (username: string, opponentName: string): void => {
   const playerAvatarImg = document.getElementById('player-avatar') as HTMLImageElement;
   const opponentAvatarImg = document.getElementById('opponent-avatar') as HTMLImageElement;
   if (playerAvatarImg && opponentAvatarImg) {
-    playerAvatarImg.src = getAvatarIcon(username);
+    fetchUserAvatar(username).then((avatar) => {
+      if (avatar) {
+        playerAvatarImg.src = URL.createObjectURL(avatar);
+      }
+    });
     playerAvatarImg.alt = username;
-    opponentAvatarImg.src = getAvatarIcon(opponentName);
+    fetchUserAvatar(opponentName).then((avatar) => {
+      if (avatar) {
+        opponentAvatarImg.src = URL.createObjectURL(avatar);
+      }
+    });
     opponentAvatarImg.alt = opponentName;
   }
 };
 
 /**
  * スコアボードの表示更新
+ * － 毎回スコア部分のみを更新し、アバターアイコンは固定のままとなる
  */
 const updateScoreBoard = (score: any, username: string): void => {
   const playerScoreValue = document.getElementById('player-score-value');
@@ -107,7 +116,8 @@ const initializeWebSocket = (
       switch (data.type) {
         case 'state_update': {
           renderer.updateState(data.state);
-          updateScoreBoard(data.state.score, username, isPlayer1);
+          // 毎回 DOM 全体を書き換えず、スコアのみ更新
+          updateScoreBoard(data.state.score, username);
           if (!data.state.is_active) {
             const opponent = getOpponentFn();
             const finalScore = {
@@ -222,6 +232,7 @@ const GamePage = new Page({
   name: 'MultiPlay/Game',
   config: { layout: CommonLayout },
   mounted: async ({ pg }: { pg: Page }): Promise<void> => {
+    console.log('Game page mounting...');
     // パラメータ取得と検証
     const params = extractGameParameters();
     if (!params) {
@@ -230,7 +241,11 @@ const GamePage = new Page({
       return;
     }
     const { sessionId, isPlayer1, username } = params;
-    const opponentFn = () => getOpponent(sessionId, username);
+    const opponentName = getOpponent(sessionId, username);
+    const opponentFn = () => opponentName;
+
+    // スコアボードの初期化（アバター設定を一度だけ実施）
+    initializeScoreBoard(username, opponentName);
 
     // ゲームコンテナの取得
     const container = document.getElementById('game-canvas');

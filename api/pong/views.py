@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -97,6 +98,15 @@ class UserAvatarUpdateView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class UserAvatarRetrieveView(generics.RetrieveAPIView):
+    serializer_class = UserAvatarSerializer
+    permission_classes = [AllowAny]
+
+    def get_object(self):
+        username = self.kwargs.get("username")
+        return get_object_or_404(User, username=username)
 
 
 class UpdateUserImageView(APIView):

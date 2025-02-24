@@ -24,6 +24,20 @@ export const fetchUsers = async () => {
   }
 };
 
+export const fetchUserAvatar = async (username: string): Promise<Blob | null> => {
+  try {
+    const response = await fetch(`${API_URL}/api/users/${username}/avatar/`);
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Failed to fetch user avatar:', errorText);
+      return null;
+    }
+    return await response.blob();
+  } catch (error) {
+    console.error('Error fetching user avatar:', error);
+    return null;
+  }
+};
 export const fetchUser = async (username: string) => {
   const token = localStorage.getItem('token');
   if (!token) return;
