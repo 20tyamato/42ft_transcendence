@@ -1,6 +1,5 @@
 // frontend/src/models/Tournament/repository.ts
 import { WS_URL } from '@/config/config';
-import { ITournamentState } from '../interface';
 
 export class TournamentRepository {
   private socket: WebSocket | null = null;
@@ -59,6 +58,29 @@ export class TournamentRepository {
       JSON.stringify({
         type: 'join_tournament',
         username: username,
+      })
+    );
+  }
+
+  // Ready状態を送信
+  sendReady(isReady: boolean): void {
+    if (!this.socket) {
+      console.error('WebSocket connection not established');
+      return;
+    }
+
+    const username = localStorage.getItem('username');
+    if (!username) {
+      console.error('Username not found');
+      return;
+    }
+
+    this.socket.send(
+      JSON.stringify({
+        type: 'player_ready',
+        username: username,
+        isReady: isReady,
+        sessionId: this.sessionId,
       })
     );
   }

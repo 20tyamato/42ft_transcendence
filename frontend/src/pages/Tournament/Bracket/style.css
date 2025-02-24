@@ -1,0 +1,78 @@
+/* frontend/src/pages/Tournament/Bracket/style.css */
+.tournament-bracket {
+  position: relative;
+  display: flex;
+  flex-direction: column-reverse;  /* 順序を逆にする */
+  align-items: center;
+  gap: 4rem;  /* カード間の距離を広げる */
+  padding: 2rem;
+  background-color: rgba(255, 255, 255, 0.85);
+  border-radius: 10px;
+  width: 80%;
+  margin: 2rem auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.tournament-title {
+  color: #000;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  order: -1;  /* タイトルを最上部に */
+}
+
+.semi-finals {
+  display: flex;
+  gap: 4rem;
+  justify-content: center;
+  width: 100%;
+  position: relative;
+}
+
+.final {
+  position: relative;
+  margin-bottom: 2rem;  /* 決勝と準決勝の間隔 */
+}
+
+.match {
+  border: 1px solid #333;
+  padding: 1rem;
+  min-width: 200px;
+  background: #222;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  position: relative;
+}
+
+
+.player {
+  padding: 0.5rem;
+  text-align: center;
+  color: #fff;
+  font-size: 1.1rem;
+}
+
+.vs {
+  text-align: center;
+  font-weight: bold;
+  padding: 0.5rem;
+  color: #fff;
+}
+
+.winner {
+  background-color: #1a472a;
+  font-weight: bold;
+}
+
+.match-in-progress {
+  border-color: #0056b3;
+}
+
+.match-completed {
+  border-color: #1a472a;
+}
+
+.match-pending {
+  border-color: #555;
+  background: #333;
+}
