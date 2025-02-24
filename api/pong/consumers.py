@@ -227,17 +227,41 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
     games = {}  # セッションIDをキーとしたゲームインスタンスの管理
 
     async def connect(self):
+        try:
         # URL routeからパラメータを取得
-        self.session_id = self.scope["url_route"]["kwargs"]["session_id"]
-        self.username = self.scope["url_route"]["kwargs"]["username"]
-        self.is_final = "final" in self.scope["url_route"]["pattern"].pattern
-        self.game_type = "final" if self.is_final else "semi-final"
-        self.game_group_name = f"tournament_{self.game_type}_{self.session_id}"
-        self.game_task = None
+            self.session_id = self.scope["url_route"]["kwargs"]["session_id"]
+            self.username = self.scope["url_route"]["kwargs"]["username"]
+            print(f"Connection parameters: session_id={self.session_id}, username={self.username}")
+            # スコープの内容をデバッグ出力
+            print(f"URL route scope: {self.scope['url_route']}")
+            try:
+                self.is_final = "final" in self.scope["url_route"]["pattern"].pattern
+                print(f"Pattern check: is_final={self.is_final}")
+            except Exception as e:
+                print(f"Error checking pattern: {e}")
+                print(f"Pattern object: {self.scope['url_route'].get('pattern')}")
+                # デフォルト値を設定
+                self.is_final = False
+            
+            self.game_type = "final" if self.is_final else "semi-final"
+            print(f"Game type set to: {self.game_type}")
+            
+            self.game_group_name = f"tournament_{self.game_type}_{self.session_id}"
+            print(f"Game group name: {self.game_group_name}")
+            
+            self.game_task = None
+        
+        except Exception as e:
+            print(f"Unexpected error in connect: {e}")
+            await self.close()
+            return
 
         # トーナメントセッションの検証
+        print(f"Before validation: session_id={self.session_id}, username={self.username}")
         is_valid = await self.validate_tournament_session()
+        print(f"After validation: result={is_valid}")
         if not is_valid:
+            print("Session validation failed, closing connection")
             await self.close()
             return
 
@@ -392,30 +416,39 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def validate_tournament_session(self):
         """トーナメントセッションとプレイヤーの参加資格を検証"""
+        print(f"Starting validation for session={self.session_id}, user={self.username}")
+        
         try:
+            print("Attempting to fetch tournament session...")
             tournament = TournamentSession.objects.get(id=self.session_id)
-            participant = TournamentParticipant.objects.get(
-                tournament=tournament, user__username=self.username
-            )
-
-            # トーナメントが進行中であることを確認
-            is_valid = tournament.status == "IN_PROGRESS"
-            # 対戦カードに含まれているかを確認
-            is_valid &= participant.bracket_position is not None
-
-            if not is_valid:
-                print(
-                    f"Invalid tournament session: status={tournament.status}, participant={participant}"
-                )
-
-            return is_valid
-
-        except (
-            TournamentSession.DoesNotExist,
-            TournamentParticipant.DoesNotExist,
-        ) as e:
-            print(f"Tournament validation error: {e}")
+            print(f"Found tournament: id={tournament.id}, status={tournament.status}")
+        except TournamentSession.DoesNotExist:
+            print(f"Tournament session not found: {self.session_id}")
             return False
+
+        try:
+            print("Attempting to fetch participant...")
+            participant = TournamentParticipant.objects.get(
+                tournament=tournament,
+                user__username=self.username
+            )
+            print(f"Found participant: user={participant.user.username}, bracket_position={participant.bracket_position}")
+        except TournamentParticipant.DoesNotExist:
+            print(f"Participant not found: {self.username}")
+            return False
+
+        # トーナメントが進行中であることを確認
+        is_valid = tournament.status == "IN_PROGRESS"
+        print(f"Tournament status check: {tournament.status} == 'IN_PROGRESS' = {is_valid}")
+
+        # 対戦カードに含まれているかを確認
+        has_position = participant.bracket_position is not None
+        print(f"Bracket position check: position={participant.bracket_position}, has_position={has_position}")
+
+        is_valid &= has_position
+
+        print(f"Final validation result: {is_valid}")
+        return is_valid
 
     @database_sync_to_async
     def get_match_players(self):
