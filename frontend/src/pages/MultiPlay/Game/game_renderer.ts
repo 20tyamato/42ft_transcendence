@@ -52,10 +52,18 @@ export class GameRenderer {
     container.appendChild(this.renderer.domElement);
 
     // フィールドの作成
-    const fieldGeometry = new THREE.BoxGeometry(this.FIELD_WIDTH, 5, this.FIELD_LENGTH);
+    const fieldGeometry = new THREE.BoxGeometry(this.FIELD_WIDTH, 10, this.FIELD_LENGTH);
     const fieldMaterial = new THREE.MeshLambertMaterial({ color: 0x003300 });
     const field = new THREE.Mesh(fieldGeometry, fieldMaterial);
-    // field.position.y = -50;
+    // 周りに壁を作成する
+    const wallGeometry = new THREE.BoxGeometry(this.FIELD_WIDTH, 10, 10);
+    const wallMaterial = new THREE.MeshLambertMaterial({ color: 0x003300 });
+    const wall1 = new THREE.Mesh(wallGeometry, wallMaterial);
+    wall1.position.set(0, 5, this.FIELD_LENGTH / 2);
+    const wall2 = new THREE.Mesh(wallGeometry, wallMaterial);
+    wall2.position.set(0, 5, -this.FIELD_LENGTH / 2);
+    field.add(wall1);
+    field.add(wall2);
     this.scene.add(field);
 
     // ボールの作成
