@@ -1,4 +1,4 @@
-import { WS_URL } from '@/config/config';
+import { API_URL, WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { fetchUserAvatar } from '@/models/User/repository';
@@ -60,14 +60,20 @@ const initializeScoreBoard = (username: string, opponentName: string): void => {
   const opponentAvatarImg = document.getElementById('opponent-avatar') as HTMLImageElement;
   if (playerAvatarImg && opponentAvatarImg) {
     fetchUserAvatar(username).then((avatar) => {
-      if (avatar) {
-        playerAvatarImg.src = URL.createObjectURL(avatar);
+      if (avatar && avatar.type.startsWith('image/')) {
+        const avatarUrl = URL.createObjectURL(avatar);
+        playerAvatarImg.src = avatarUrl;
+      } else {
+        playerAvatarImg.src = `${API_URL}/media/default_avatar.png`;
       }
     });
     playerAvatarImg.alt = username;
     fetchUserAvatar(opponentName).then((avatar) => {
-      if (avatar) {
-        opponentAvatarImg.src = URL.createObjectURL(avatar);
+      if (avatar && avatar.type.startsWith('image/')) {
+        const avatarUrl = URL.createObjectURL(avatar);
+        opponentAvatarImg.src = avatarUrl;
+      } else {
+        opponentAvatarImg.src = `${API_URL}/media/default_avatar.png`;
       }
     });
     opponentAvatarImg.alt = opponentName;

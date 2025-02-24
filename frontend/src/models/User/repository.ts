@@ -38,6 +38,7 @@ export const fetchUserAvatar = async (username: string): Promise<Blob | null> =>
     return null;
   }
 };
+
 export const fetchUser = async (username: string) => {
   const token = localStorage.getItem('token');
   if (!token) return;
