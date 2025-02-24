@@ -15,7 +15,7 @@ const GamePage = new Page({
       session: urlParams.get('session'),
       isPlayer1: urlParams.get('isPlayer1'),
       matchId: urlParams.get('matchId'),
-      round: urlParams.get('round')
+      round: urlParams.get('round'),
     });
   },
 });

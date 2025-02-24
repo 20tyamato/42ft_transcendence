@@ -245,7 +245,9 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_add(self.game_group_name, self.channel_name)
         await self.accept()
 
-        print(f"Player {self.username} connected to tournament {self.game_type} game {self.session_id}")
+        print(
+            f"Player {self.username} connected to tournament {self.game_type} game {self.session_id}"
+        )
 
         # ゲームインスタンスの初期化
         if self.session_id not in self.games:
@@ -254,7 +256,7 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
                 self.games[self.session_id] = MultiplayerPongGame(
                     session_id=self.session_id,
                     player1_name=players[0],
-                    player2_name=players[1]
+                    player2_name=players[1],
                 )
 
         # ゲーム更新ループの開始
@@ -269,7 +271,9 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
             except asyncio.CancelledError:
                 pass
 
-        print(f"Player {self.username} disconnected from tournament {self.game_type} game {self.session_id}")
+        print(
+            f"Player {self.username} disconnected from tournament {self.game_type} game {self.session_id}"
+        )
 
         # ゲームが存在する場合、切断による敗北処理を実行
         if self.session_id in self.games:
@@ -296,12 +300,11 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
 
             if game and data["type"] == "move":
                 game.move_player(username=self.username, new_x=data["position"])
-                
+
                 # ゲーム状態の即時送信
                 state = game.get_state()
                 await self.channel_layer.group_send(
-                    self.game_group_name,
-                    {"type": "game_state", "state": state}
+                    self.game_group_name, {"type": "game_state", "state": state}
                 )
 
         except json.JSONDecodeError:
@@ -323,13 +326,14 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
                     state = game.update(delta_time=0.016)
 
                     await self.channel_layer.group_send(
-                        self.game_group_name,
-                        {"type": "game_state", "state": state}
+                        self.game_group_name, {"type": "game_state", "state": state}
                     )
 
                     # スコアが変化した場合、ゲーム状態を保存
-                    if (game.score[game.player1_name] > 0 or 
-                        game.score[game.player2_name] > 0):
+                    if (
+                        game.score[game.player1_name] > 0
+                        or game.score[game.player2_name] > 0
+                    ):
                         await self.save_game_state(game)
 
                     if not game.is_active:
@@ -348,30 +352,42 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
     async def game_state(self, event):
         """ゲーム状態の更新をクライアントに送信"""
         if self.games.get(self.session_id):
-            await self.send(text_data=json.dumps({
-                "type": "state_update",
-                "state": event["state"],
-                "game_type": self.game_type  # 準決勝/決勝の情報を追加
-            }))
+            await self.send(
+                text_data=json.dumps(
+                    {
+                        "type": "state_update",
+                        "state": event["state"],
+                        "game_type": self.game_type,  # 準決勝/決勝の情報を追加
+                    }
+                )
+            )
 
     async def player_disconnected(self, event):
         """プレイヤーの切断をクライアントに通知"""
-        await self.send(text_data=json.dumps({
-            "type": "player_disconnected",
-            "disconnected_player": event["disconnected_player"],
-            "game_type": self.game_type
-        }))
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "type": "player_disconnected",
+                    "disconnected_player": event["disconnected_player"],
+                    "game_type": self.game_type,
+                }
+            )
+        )
 
     async def game_end(self, event):
         """ゲーム終了をクライアントに通知"""
-        await self.send(text_data=json.dumps({
-            "type": "game_end",
-            "winner": event["winner"],
-            "is_final": self.is_final,
-            "next_stage": "final" if not self.is_final else "complete",
-            "game_type": self.game_type,
-            "tournament_id": self.session_id
-        }))
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "type": "game_end",
+                    "winner": event["winner"],
+                    "is_final": self.is_final,
+                    "next_stage": "final" if not self.is_final else "complete",
+                    "game_type": self.game_type,
+                    "tournament_id": self.session_id,
+                }
+            )
+        )
 
     @database_sync_to_async
     def validate_tournament_session(self):
@@ -379,21 +395,25 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
         try:
             tournament = TournamentSession.objects.get(id=self.session_id)
             participant = TournamentParticipant.objects.get(
-                tournament=tournament,
-                user__username=self.username
+                tournament=tournament, user__username=self.username
             )
-            
+
             # トーナメントが進行中であることを確認
             is_valid = tournament.status == "IN_PROGRESS"
             # 対戦カードに含まれているかを確認
             is_valid &= participant.bracket_position is not None
-            
+
             if not is_valid:
-                print(f"Invalid tournament session: status={tournament.status}, participant={participant}")
-            
+                print(
+                    f"Invalid tournament session: status={tournament.status}, participant={participant}"
+                )
+
             return is_valid
 
-        except (TournamentSession.DoesNotExist, TournamentParticipant.DoesNotExist) as e:
+        except (
+            TournamentSession.DoesNotExist,
+            TournamentParticipant.DoesNotExist,
+        ) as e:
             print(f"Tournament validation error: {e}")
             return False
 
@@ -402,21 +422,20 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
         """現在の試合の対戦プレイヤーを取得"""
         try:
             tournament = TournamentSession.objects.get(id=self.session_id)
-            
+
             # 準決勝か決勝かで取得条件を変更
             if self.is_final:
                 # bracket_position=3 は決勝進出者を示す
                 participants = TournamentParticipant.objects.filter(
-                    tournament=tournament,
-                    bracket_position=3
-                ).order_by('id')[:2]
+                    tournament=tournament, bracket_position=3
+                ).order_by("id")[:2]
             else:
                 # bracket_position=1,2 は準決勝の対戦カードを示す
                 start_position = 1 if "1" in self.game_group_name else 2
                 participants = TournamentParticipant.objects.filter(
                     tournament=tournament,
-                    bracket_position__in=[start_position, start_position + 1]
-                ).order_by('bracket_position')
+                    bracket_position__in=[start_position, start_position + 1],
+                ).order_by("bracket_position")
 
             if len(participants) != 2:
                 print(f"Invalid number of participants: {len(participants)}")
@@ -459,14 +478,13 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
         try:
             tournament = TournamentSession.objects.get(id=self.session_id)
             winner_name = game.get_winner()
-            
+
             if not winner_name:
                 return
 
             winner = User.objects.get(username=winner_name)
             winner_participant = TournamentParticipant.objects.get(
-                tournament=tournament,
-                user=winner
+                tournament=tournament, user=winner
             )
 
             if self.is_final:
@@ -474,7 +492,7 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
                 tournament.status = "COMPLETED"
                 tournament.completed_at = timezone.now()
                 tournament.save()
-                
+
                 # 勝者の記録
                 winner_participant.bracket_position = 5  # 優勝者位置
                 winner_participant.save()
@@ -485,8 +503,7 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
 
                 # 全準決勝が終了したか確認
                 finalists_count = TournamentParticipant.objects.filter(
-                    tournament=tournament,
-                    bracket_position=3
+                    tournament=tournament, bracket_position=3
                 ).count()
 
                 if finalists_count == 2:
@@ -512,8 +529,8 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
             "tournament_id": self.session_id,
             "scores": {
                 game.player1_name: game.score[game.player1_name],
-                game.player2_name: game.score[game.player2_name]
-            }
+                game.player2_name: game.score[game.player2_name],
+            },
         }
 
         if not self.is_final:
@@ -522,10 +539,7 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
             message["next_stage"] = "tournament_complete"
 
         # 試合参加者に結果を送信
-        await self.channel_layer.group_send(
-            self.game_group_name,
-            message
-        )
+        await self.channel_layer.group_send(self.game_group_name, message)
 
         # トーナメント全体のグループにも結果を通知
         tournament_group = f"tournament_{self.session_id}"
@@ -536,9 +550,10 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
                 "event": "match_complete",
                 "game_type": self.game_type,
                 "winner": winner_name,
-                "next_stage": message["next_stage"]
-            }
+                "next_stage": message["next_stage"],
+            },
         )
+
 
 class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -619,7 +634,7 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
         # 参加者をシャッフルして2試合に分ける
         player_list = list(participants)
         random.shuffle(player_list)
-        
+
         # 準決勝の2試合を作成
         matches = [
             {
@@ -627,15 +642,15 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
                 "round": 0,  # 0: 準決勝
                 "player1": player_list[0].user.username,
                 "player2": player_list[1].user.username,
-                "status": "pending"
+                "status": "pending",
             },
             {
                 "id": f"semi_2_{tournament.id}",
                 "round": 0,
                 "player1": player_list[2].user.username,
                 "player2": player_list[3].user.username,
-                "status": "pending"
-            }
+                "status": "pending",
+            },
         ]
         return matches
 
@@ -649,24 +664,21 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
 
             # 全参加者に状態を通知
             await self.channel_layer.group_send(
-                "tournament_group", 
-                {"type": "tournament_status", "status": status}
+                "tournament_group", {"type": "tournament_status", "status": status}
             )
 
             # 4人揃ったら準備開始を通知
             if status["participants"].__len__() >= 4:
                 # 対戦カードを生成
                 matches = await self.create_tournament_matches(
-                    tournament, 
-                    tournament.participants.all()
+                    tournament, tournament.participants.all()
                 )
-                
+
                 # ステータスに対戦カード情報を追加
                 status["matches"] = matches
 
                 await self.channel_layer.group_send(
-                    "tournament_group", 
-                    {"type": "tournament_ready", "status": status}
+                    "tournament_group", {"type": "tournament_ready", "status": status}
                 )
 
         except User.DoesNotExist:
@@ -704,8 +716,7 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
                     "type": "tournament_ready",
                     "sessionId": event["status"]["sessionId"],
                     "participants": event["status"]["participants"],
-                    "matches": event["status"]["matches"]
+                    "matches": event["status"]["matches"],
                 }
             )
         )
-
