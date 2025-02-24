@@ -1,29 +1,5 @@
+import { IGameState } from '@/models/interface';
 import * as THREE from 'three';
-
-interface IGameState {
-  ball: {
-    position: {
-      x: number;
-      y: number;
-      z: number;
-    };
-    velocity: {
-      x: number;
-      y: number;
-      z: number;
-    };
-  };
-  players: {
-    [key: string]: {
-      x: number;
-      z: number;
-    };
-  };
-  score: {
-    [key: string]: number;
-  };
-  is_active: boolean;
-}
 
 export class GameRenderer {
   private scene: THREE.Scene;
@@ -206,14 +182,14 @@ export class GameRenderer {
     });
   }
 
-  // 最初のボールの方向をランダムに決定
+  // FIX: 最初のボールの方向をランダムに決定
   private launchInitialBall() {
     const angle = Math.random() * 2 * Math.PI;
     const distance = 500; // 初期の移動距離
     this.targetBallPosition.set(
       this.ball.position.x + Math.cos(angle) * distance,
-      this.ball.position.y,
-      this.ball.position.z + Math.sin(angle) * distance
+      this.ball.position.y + Math.sin(angle) * distance,
+      this.ball.position.z
     );
   }
 
@@ -221,7 +197,7 @@ export class GameRenderer {
   private onKeyDown(event: KeyboardEvent) {
     if (!this.currentState) return;
     const username = this.isPlayer1 ? 'player1' : 'player2';
-    const moveAmount = 50; // 移動量（大きめに設定）
+    const moveAmount = 300; // 移動量（大きめに設定）
     if (event.key === 'ArrowLeft') {
       this.currentState.players[username].x -= moveAmount;
     } else if (event.key === 'ArrowRight') {
