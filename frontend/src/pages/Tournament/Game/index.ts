@@ -57,27 +57,56 @@ const TournamentGamePage = new Page({
     socket.onmessage = async (event) => {
       try {
         const data = JSON.parse(event.data);
+        console.log('WebSocket message received:', {
+          type: data.type,
+          timestamp: new Date().toISOString(),
+          data: data
+        });
         
         switch (data.type) {
           case 'state_update':
+            console.log('State update received:', {
+              is_active: data.state.is_active,
+              score: data.state.score,
+              ball: data.state.ball,
+              players: data.state.players,
+              timestamp: new Date().toISOString()
+            });
+    
             renderer.updateState(data.state);
             updateScoreBoard(data.state.score);
-
+    
             if (!data.state.is_active) {
+              console.log('Game state became inactive:', {
+                state: data.state,
+                timestamp: new Date().toISOString()
+              });
               await handleGameEnd(data);
             }
             break;
-
+    
           case 'player_disconnected':
+            console.log('Player disconnected:', {
+              data: data,
+              timestamp: new Date().toISOString()
+            });
             await handleDisconnection(data);
             break;
-
+    
           case 'game_end':
+            console.log('Game end received:', {
+              data: data,
+              timestamp: new Date().toISOString()
+            });
             await handleGameEnd(data);
             break;
         }
       } catch (e) {
-        console.error('Error in WebSocket message handler:', e);
+        console.error('Error in WebSocket message handler:', {
+          error: e,
+          rawData: event.data,
+          timestamp: new Date().toISOString()
+        });
       }
     };
 
@@ -94,6 +123,12 @@ const TournamentGamePage = new Page({
 
     // ゲーム終了時の処理
     const handleGameEnd = async (data: any) => {
+      console.log('Handling game end:', {
+        data: data,
+        state: data.state,
+        timestamp: new Date().toISOString()
+      });
+    
       const finalScore = {
         player1: data.state?.score?.[username] || 0,
         player2: data.state?.score?.[Object.keys(data.state.score).find(key => key !== username) || ''] || 0,
@@ -101,20 +136,25 @@ const TournamentGamePage = new Page({
         tournamentId: sessionId,
         matchId: matchId,
       };
-
+    
+      console.log('Final score calculated:', {
+        finalScore,
+        timestamp: new Date().toISOString()
+      });
+    
       localStorage.setItem('finalScore', JSON.stringify(finalScore));
       localStorage.setItem('gameMode', 'tournament');
 
       // ゲーム終了後の遷移処理
-      setTimeout(() => {
-        if (data.next_stage === 'final_waiting') {
-          window.location.href = `/tournament/waiting_final?session=${sessionId}`;
-        } else if (data.next_stage === 'tournament_complete') {
-          window.location.href = `/tournament/result?session=${sessionId}`;
-        } else {
-          window.location.href = '/tournament';
-        }
-      }, 1000);
+      // setTimeout(() => {
+      //   if (data.next_stage === 'final_waiting') {
+      //     window.location.href = `/tournament/waiting_final?session=${sessionId}`;
+      //   } else if (data.next_stage === 'tournament_complete') {
+      //     window.location.href = `/tournament/result?session=${sessionId}`;
+      //   } else {
+      //     window.location.href = '/tournament';
+      //   }
+      // }, 1000);
     };
 
     // 切断時の処理
@@ -132,9 +172,9 @@ const TournamentGamePage = new Page({
       localStorage.setItem('finalScore', JSON.stringify(finalScore));
       localStorage.setItem('gameMode', 'tournament');
 
-      setTimeout(() => {
-        window.location.href = `/tournament/result?session=${sessionId}`;
-      }, 1000);
+      // setTimeout(() => {
+      //   window.location.href = `/tournament/result?session=${sessionId}`;
+      // }, 1000);
     };
 
     // 自分の接続が切れた場合の処理
@@ -152,7 +192,7 @@ const TournamentGamePage = new Page({
       localStorage.setItem('finalScore', JSON.stringify(finalScore));
       localStorage.setItem('gameMode', 'tournament');
 
-      window.location.href = `/tournament/result?session=${sessionId}`;
+      // window.location.href = `/tournament/result?session=${sessionId}`;
     };
 
     // キー入力の状態管理
