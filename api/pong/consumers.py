@@ -668,6 +668,11 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
         player_list = list(participants)
         random.shuffle(player_list)
 
+        # ブラケットポジションを更新
+        for i, participant in enumerate(player_list):
+            participant.bracket_position = i + 1  # 1-4の位置を割り当て
+            participant.save()
+
         # 準決勝の2試合を作成
         matches = [
             {
@@ -687,6 +692,13 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
         ]
         return matches
 
+    @database_sync_to_async
+    def update_tournament_status(self, tournament, new_status):
+        """トーナメントのステータスを更新"""
+        tournament.status = new_status
+        tournament.save()
+        return tournament
+
     async def handle_join_tournament(self, username):
         """トーナメント参加処理"""
         try:
@@ -700,16 +712,24 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
                 "tournament_group", {"type": "tournament_status", "status": status}
             )
 
+            print(f"Current participants count: {len(status['participants'])}")
+
             # 4人揃ったら準備開始を通知
-            if status["participants"].__len__() >= 4:
+            if len(status["participants"]) >= 4:
+                print("Tournament ready! Updating status and creating matches...")
+                # トーナメントステータスを更新
+                tournament = await self.update_tournament_status(tournament, "IN_PROGRESS")
+                
                 # 対戦カードを生成
                 matches = await self.create_tournament_matches(
                     tournament, tournament.participants.all()
                 )
 
-                # ステータスに対戦カード情報を追加
+                # ステータスを再取得（更新後）
+                status = await self.get_tournament_status(tournament)
                 status["matches"] = matches
 
+                print(f"Sending tournament ready notification with matches: {matches}")
                 await self.channel_layer.group_send(
                     "tournament_group", {"type": "tournament_ready", "status": status}
                 )
@@ -717,6 +737,7 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
         except User.DoesNotExist:
             await self.send(json.dumps({"type": "error", "message": "User not found"}))
         except Exception as e:
+            print(f"Error in handle_join_tournament: {e}")
             await self.send(json.dumps({"type": "error", "message": str(e)}))
 
     async def handle_leave_tournament(self, username):
