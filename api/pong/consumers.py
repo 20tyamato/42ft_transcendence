@@ -704,6 +704,7 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
                     "type": "tournament_ready",
                     "sessionId": event["status"]["sessionId"],
                     "participants": event["status"]["participants"],
+                    "matches": event["status"]["matches"]
                 }
             )
         )

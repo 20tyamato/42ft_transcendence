@@ -37,17 +37,6 @@ export interface IGameScore {
   player2: number;
 }
 
-export interface ITournamentState {
-  sessionId: string;
-  status: 'WAITING_PLAYERS' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
-  participants: Array<{
-    username: string;
-    displayName: string;
-    isReady?: boolean;
-  }>;
-  currentRound: number;
-}
-
 export type TournamentMatchStatus = 'pending' | 'in_progress' | 'completed';
 
 export interface ITournamentMatch {

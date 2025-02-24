@@ -20,6 +20,7 @@ import TournamentWaitingPage from './pages/Tournament/Waiting';
 // FIXME: just test for bracket display
 import BracketPage from './pages/Tournament/Bracket';
 import ReadyPage from './pages/Tournament/Ready';
+import TournamentGamePage from './pages/Tournament/Game/index';
 
 import { Page } from './core/Page';
 
@@ -47,6 +48,7 @@ const routes: Record<string, Page> = {
   '/tournament/waiting': TournamentWaitingPage,
   '/tournament/bracket': BracketPage,
   '/tournament/ready': ReadyPage,
+  '/tournament/game': TournamentGamePage,
   '/leaderboard': LeaderboardPage,
   '/friends': FriendsPage,
 };

@@ -1,6 +1,5 @@
 // frontend/src/models/Tournament/repository.ts
 import { WS_URL } from '@/config/config';
-import { ITournamentState } from '../interface';
 
 export class TournamentRepository {
   private socket: WebSocket | null = null;

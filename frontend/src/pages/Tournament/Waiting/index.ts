@@ -69,6 +69,11 @@ const WaitingPage = new Page({
               return;
             }
 
+            if (!data.matches) {
+              console.error('No matches data received:', data);
+              return;
+            }
+
             const matches = data.matches as ITournamentMatch[];
             const myMatch = matches.find(
               (match) => match.player1 === username || match.player2 === username
