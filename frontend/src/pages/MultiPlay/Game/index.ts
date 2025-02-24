@@ -38,13 +38,34 @@ const GamePage = new Page({
       ArrowLeft: false,
       ArrowRight: false,
     };
+    const logWebSocketState = (ws: WebSocket, event: string) => {
+      console.log('WebSocket state:', {
+        event,
+        readyState: ws.readyState,
+        readyStateText: ['CONNECTING', 'OPEN', 'CLOSING', 'CLOSED'][ws.readyState],
+        url: ws.url,
+        timestamp: new Date().toISOString()
+      });
+    };
+
+    console.log('Attempting WebSocket connection:', {
+      endpoint: `${WS_URL}/ws/game/${sessionId}/${username}/`,
+      sessionId,
+      username,
+      isPlayer1,
+      timestamp: new Date().toISOString()
+    });
 
     // WebSocket接続
     const socket = new WebSocket(`${WS_URL}/ws/game/${sessionId}/${username}/`);
     let wsConnected = false;
 
     socket.onopen = () => {
-      console.log('Game WebSocket connected');
+      console.log('Game WebSocket connected:', {
+        endpoint: socket.url,
+        timestamp: new Date().toISOString()
+      });
+      logWebSocketState(socket, 'onopen');
       wsConnected = true;
     };
 
@@ -52,6 +73,14 @@ const GamePage = new Page({
       // async を追加
       try {
         const data = JSON.parse(event.data);
+        console.log('Received WebSocket message:', {
+          type: data.type,
+          timestamp: new Date().toISOString(),
+          state: data.type === 'state_update' ? {
+            is_active: data.state.is_active,
+            score: data.state.score
+          } : null
+        });
         if (data.type === 'state_update') {
           renderer.updateState(data.state);
           updateScoreBoard(data.state.score);
@@ -108,11 +137,26 @@ const GamePage = new Page({
     };
 
     socket.onerror = (error) => {
-      console.error('Game WebSocket error:', error);
+      console.error('Game WebSocket error:', {
+        error,
+        timestamp: new Date().toISOString(),
+        socketState: {
+          readyState: socket.readyState,
+          readyStateText: ['CONNECTING', 'OPEN', 'CLOSING', 'CLOSED'][socket.readyState]
+        }
+      });
+      logWebSocketState(socket, 'onerror');
       wsConnected = false;
     };
 
     socket.onclose = () => {
+      console.log('Game WebSocket closed:', {
+        timestamp: new Date().toISOString(),
+        socketState: {
+          readyState: socket.readyState,
+          readyStateText: ['CONNECTING', 'OPEN', 'CLOSING', 'CLOSED'][socket.readyState]
+        }
+      });
       console.log('Game WebSocket closed');
       wsConnected = false;
 

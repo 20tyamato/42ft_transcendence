@@ -40,17 +40,44 @@ const TournamentGamePage = new Page({
       ArrowLeft: false,
       ArrowRight: false,
     };
+    
 
     // WebSocket接続
     const wsEndpoint = round === 1 
       ? `${WS_URL}/ws/tournament/final/${sessionId}/${username}/`
       : `${WS_URL}/ws/tournament/semi-final/${sessionId}/${username}/`;
+
+    console.log('Attempting WebSocket connection:', {
+        wsEndpoint,
+        sessionId,
+        matchId,
+        round,
+        username,
+        timestamp: new Date().toISOString()
+      });
+  
+      // WebSocket作成前にreadyStateの確認用関数
+    const logWebSocketState = (ws: WebSocket, event: string) => {
+        console.log('WebSocket state:', {
+          event,
+          readyState: ws.readyState,
+          // readyStateの意味を文字列で出力
+          readyStateText: ['CONNECTING', 'OPEN', 'CLOSING', 'CLOSED'][ws.readyState],
+          url: ws.url,
+          timestamp: new Date().toISOString()
+        });
+      };
     
     const socket = new WebSocket(wsEndpoint);
     let wsConnected = false;
 
+    // 接続試行の詳細なログ
     socket.onopen = () => {
-      console.log('Tournament game WebSocket connected');
+      console.log('WebSocket connection successful:', {
+        endpoint: socket.url,
+        timestamp: new Date().toISOString()
+      });
+      logWebSocketState(socket, 'onopen');
       wsConnected = true;
     };
 
@@ -111,12 +138,37 @@ const TournamentGamePage = new Page({
     };
 
     socket.onerror = (error) => {
-      console.error('Tournament game WebSocket error:', error);
+      console.error('WebSocket connection error:', {
+        error,
+        endpoint: wsEndpoint,
+        socketState: {
+          readyState: socket.readyState,
+          readyStateText: ['CONNECTING', 'OPEN', 'CLOSING', 'CLOSED'][socket.readyState]
+        },
+        connectionParams: {
+          sessionId,
+          matchId,
+          round,
+          username
+        },
+        timestamp: new Date().toISOString()
+      });
+      logWebSocketState(socket, 'onerror');
       wsConnected = false;
     };
 
-    socket.onclose = () => {
-      console.log('Tournament game WebSocket closed');
+    socket.onclose = (event) => {
+      console.log('WebSocket connection closed:', {
+        code: event.code,
+        reason: event.reason,
+        wasClean: event.wasClean,
+        socketState: {
+          readyState: socket.readyState,
+          readyStateText: ['CONNECTING', 'OPEN', 'CLOSING', 'CLOSED'][socket.readyState]
+        },
+        timestamp: new Date().toISOString()
+      });
+      logWebSocketState(socket, 'onclose');
       wsConnected = false;
       handleConnectionLost();
     };
