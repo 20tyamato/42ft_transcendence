@@ -74,8 +74,6 @@ const ResultPage = new Page({
       if (opponentNameElement && score.opponent) {
         opponentNameElement.textContent = score.opponent;
       }
-      console.log(username);
-      console.log(score.opponent);
 
       const playerAvatarImg = document.getElementById('player-avatar') as HTMLImageElement;
       const opponentAvatarImg = document.getElementById('opponent-avatar') as HTMLImageElement;
