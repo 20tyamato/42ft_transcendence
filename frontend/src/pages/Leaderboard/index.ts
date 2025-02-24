@@ -39,7 +39,7 @@ const LeaderboardPage = new Page({
   config: {
     layout: CommonLayout,
   },
-  mounted: async ({ pg }: { pg: Page }) => {
+  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
     const rankingList = document.getElementById('rankingList');
     const backBtn = document.getElementById('backBtn');
 

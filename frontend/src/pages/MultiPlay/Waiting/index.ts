@@ -8,7 +8,7 @@ const WaitingPage = new Page({
     layout: CommonLayout,
     html: '/src/pages/MultiPlay/Waiting/index.html',
   },
-  mounted: async () => {
+  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
     console.log('Waiting page mounting...');
     let socket: WebSocket | null = null;
 

@@ -143,7 +143,7 @@ const FriendsPage = new Page({
   config: {
     layout: CommonLayout,
   },
-  mounted: async ({ pg }: { pg: Page }) => {
+  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
     // ユーザー認証チェックとユーザーデータの取得
     checkUserAccess();
     const userData = await fetchCurrentUser();

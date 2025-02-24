@@ -50,7 +50,7 @@ const ResultPage = new Page({
   config: {
     layout: CommonLayout,
   },
-  mounted: async () => {
+  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
     checkUserAccess();
     const storedScore = localStorage.getItem('finalScore');
     const gameMode = localStorage.getItem('gameMode');

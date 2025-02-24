@@ -8,7 +8,7 @@ const WaitingPage = new Page({
     layout: CommonLayout,
     html: '/src/pages/Tournament/Waiting/index.html',
   },
-  mounted: async () => {
+  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
     console.log('Tournament waiting page mounting...');
 
     // DOM要素の取得

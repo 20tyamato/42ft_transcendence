@@ -6,7 +6,7 @@ import { GameRenderer } from './game_renderer';
 const GamePage = new Page({
   name: 'MultiPlay/Game',
   config: { layout: CommonLayout },
-  mounted: async () => {
+  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
     // パラメータの取得と検証
     const urlParams = new URLSearchParams(window.location.search);
     const sessionId = urlParams.get('session');
