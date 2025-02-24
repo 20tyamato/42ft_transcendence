@@ -42,6 +42,7 @@ export default class Experience {
   public scene: THREE.Scene = new THREE.Scene();
   public resources: Loaders;
   public cameraClass: Camera;
+  public camera!: THREE.PerspectiveCamera; // ここで camera プロパティを追加
   public renderer!: Renderer;
   public world!: World;
   public cameraLerp!: CameraLerp;
@@ -64,13 +65,12 @@ export default class Experience {
     this.time = new Time();
     this.scene = new THREE.Scene();
     this.resources = new Loaders(sources);
-    this.cameraClass = new Camera(canvas)  // クラスインスタンスを保持
-    this.camera = this.cameraClass.instance  // ここで camera の実体を登録
+    this.cameraClass = new Camera(canvas); // クラスインスタンスを保持
+    this.camera = this.cameraClass.instance; // ここで camera の実体を登録
     this.initializeRenderer(canvas);
     this.world = new World(canvas);
     this.cameraLerp = new CameraLerp(canvas);
     this.renderer = Renderer.getInstance(canvas);
-
 
     this.field = new Field(canvas);
     this.paddle = new Paddle(canvas);
