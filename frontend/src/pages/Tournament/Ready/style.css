@@ -1,0 +1,59 @@
+/* frontend/src/pages/Tournament/Ready/style.css */
+.tournament-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    transform: translateY(-10%);
+  }
+  
+  .tournament-box {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+  }
+  
+  .tournament-title {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 2rem;
+  }
+  
+  .status-container {
+    margin: 2rem 0;
+    padding: 1rem;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+  }
+  
+  .status-text {
+    font-size: 1.2rem;
+    color: #666;
+  }
+  
+  .btn-primary {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .btn-primary:hover {
+    background-color: #45a049;
+  }
+  
+  .btn-primary.ready {
+    background-color: #f44336;
+  }
+  
+  .btn-primary.ready:hover {
+    background-color: #da190b;
+  }
