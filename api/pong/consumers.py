@@ -406,7 +406,7 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
                     "type": "game_end",
                     "winner": event["winner"],
                     "is_final": self.is_final,
-                    "next_stage": "final" if not self.is_final else "complete",
+                    "next_stage": "final_waiting" if not self.is_final else "complete",
                     "game_type": self.game_type,
                     "tournament_id": self.session_id,
                 }

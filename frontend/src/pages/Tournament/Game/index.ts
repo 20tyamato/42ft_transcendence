@@ -231,9 +231,9 @@ const TournamentGamePage = new Page({
       localStorage.setItem('finalScore', JSON.stringify(finalScore));
       localStorage.setItem('gameMode', 'tournament');
 
-      setTimeout(() => {
-        window.location.href = `/tournament/result?session=${sessionId}`;
-      }, 1000);
+      // setTimeout(() => {
+      //   window.location.href = `/tournament/result?session=${sessionId}`;
+      // }, 1000);
     };
 
     // 自分の接続が切れた場合の処理
@@ -251,7 +251,7 @@ const TournamentGamePage = new Page({
       localStorage.setItem('finalScore', JSON.stringify(finalScore));
       localStorage.setItem('gameMode', 'tournament');
 
-      window.location.href = `/tournament/result?session=${sessionId}`;
+      // window.location.href = `/tournament/result?session=${sessionId}`;
     };
 
     // キー入力の状態管理
