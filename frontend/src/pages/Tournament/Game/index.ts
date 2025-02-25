@@ -1,3 +1,4 @@
+// frontend/src/pages/Tournament/Game/index.ts
 import { WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
@@ -198,15 +199,15 @@ const TournamentGamePage = new Page({
       localStorage.setItem('gameMode', 'tournament');
 
       // ゲーム終了後の遷移処理
-      // setTimeout(() => {
-      //   if (data.next_stage === 'final_waiting') {
-      //     window.location.href = `/tournament/waiting_final?session=${sessionId}`;
-      //   } else if (data.next_stage === 'tournament_complete') {
-      //     window.location.href = `/tournament/result?session=${sessionId}`;
-      //   } else {
-      //     window.location.href = '/tournament';
-      //   }
-      // }, 1000);
+      setTimeout(() => {
+        if (data.next_stage === 'final_waiting') {
+          window.location.href = `/tournament/waiting_final?session=${sessionId}`;
+        } else if (data.next_stage === 'tournament_complete') {
+          window.location.href = `/tournament/result?session=${sessionId}`;
+        } else {
+          window.location.href = '/tournament';
+        }
+      }, 1000);
     };
 
     // 切断時の処理
