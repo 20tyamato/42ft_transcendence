@@ -18,7 +18,7 @@ const createThreeScene = () => {
 
   // ■ テクスチャを生成するヘルパー関数
   //   大きめのキャンバス + はっきりした色 + 文字サイズはやや小さめ
-  function createBallTexture(number, backgroundColor, textColor) {
+  function createBallTexture(number: string, backgroundColor: string, textColor: string) {
     const size = 512; // 大きめに確保
     const canvas = document.createElement('canvas');
     canvas.width = size;
