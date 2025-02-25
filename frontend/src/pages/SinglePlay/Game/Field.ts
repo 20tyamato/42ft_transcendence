@@ -31,12 +31,12 @@ export default class Field {
       this.FIELD_WIDTH,
       1500,
       this.FIELD_LENGTH,
-      50,
-      50,
-      50
+      20,
+      20,
+      20
     );
 
-    // wireframe オプションで枠線表示のみなど
+    // this.fieldGeometry = new THREE.BoxGeometry(900, 10, 3000)
     this.fieldMaterial = new THREE.MeshNormalMaterial({
       // color: 0x000aff,
       wireframe: true,
@@ -44,8 +44,9 @@ export default class Field {
       opacity: 1.0,
     });
 
+
     this.field = new THREE.Mesh(this.fieldGeometry, this.fieldMaterial);
-    this.field.position.set(0, -50, 0);
+    this.field.position.set(0, -5, 0);
     console.log('Field created:', this.field.uuid);
     console.log('Field position:', this.field.position);
 

@@ -29,7 +29,7 @@ export default class Camera {
     this.VIEW_ANGLE = 75;
     this.ASPECT = this.WIDTH / this.HEIGHT;
     this.NEAR = 0.1;
-    this.FAR = 1000;
+    this.FAR = 5000;
     this.FIELD_LENGTH = 3000;
 
     this.instance = this.createCamera();
@@ -39,9 +39,11 @@ export default class Camera {
     console.log('Camera lookAt target:', this.controls.target); // OrbitControlsを使っているなら
 
   }
+
   private createCamera(): THREE.PerspectiveCamera {
     const camera = new THREE.PerspectiveCamera(this.VIEW_ANGLE, this.ASPECT, this.NEAR, this.FAR);
-    camera.position.set(0, -500, this.FIELD_LENGTH-100);
+    camera.position.set(0, 500, 1000);
+    camera.lookAt(0, 10, 0);  
     this.scene.add(camera);
     return camera;
   }

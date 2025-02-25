@@ -26,12 +26,12 @@ export default class Experience {
 
   public WIDTH: number = window.innerWidth;
   public HEIGHT: number = window.innerHeight;
-  public VIEW_ANGLE: number = 45;
-  public ASPECT: number = this.WIDTH / this.HEIGHT;
+  public VIEW_ANGLE: number = 75;
+  public ASPECT: number = window.innerWidth / window.innerHeight;
   public NEAR: number = 0.1;
-  public FAR: number = 10000;
-  public FIELD_WIDTH: number = 900;
-  public FIELD_LENGTH: number = 3000;
+  public FAR: number = 5000;
+  public FIELD_WIDTH: number = 800;
+  public FIELD_LENGTH: number = 2400;
   public BALL_RADIUS: number = 20;
   public PADDLE_WIDTH: number = 200;
   public PADDLE_HEIGHT: number = 30;
@@ -41,12 +41,7 @@ export default class Experience {
   public time: Time = new Time();
   public scene: THREE.Scene = new THREE.Scene();
   public resources: Loaders;
-  public camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    3000
-  );
+  public camera = new THREE.PerspectiveCamera();
   public cameraClass: Camera;
   public renderer!: Renderer;
   public world!: World;
@@ -85,6 +80,8 @@ export default class Experience {
 
     this.sizes.on('resize', () => this.resize());
     this.time.on('tick', () => this.update());
+
+    this.resize();
   }
 
   static getInstance(canvas: HTMLCanvasElement): Experience {

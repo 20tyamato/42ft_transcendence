@@ -15,7 +15,7 @@ console.clear();
     FAR = 10000,
     FIELD_WIDTH = 1200,
     FIELD_LENGTH = 3000,
-    BALL_RADIUS = 20,
+    BALL_RADIUS = 15,
     PADDLE_WIDTH = 200,
     PADDLE_HEIGHT = 30,
     //get the scoreboard element.

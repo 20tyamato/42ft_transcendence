@@ -43,7 +43,7 @@ export default class Ball {
     this.camera.lookAt(this.ball.position)
 
     // ボールの初期座標をセット
-    this.ball.position.set(0, 0, -1500)
+    this.ball.position.set(0, 0, this.FIELD_LENGTH / 2)
     console.log('Ball position after set:', this.ball.position);
   }
 
