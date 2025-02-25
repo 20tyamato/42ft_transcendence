@@ -14,7 +14,10 @@ websocket_urlpatterns = [
         r"ws/tournament/semi-final/(?P<session_id>[^/]+)/(?P<username>[^/]+)/$",
         consumers.TournamentGameConsumer.as_asgi(),
     ),
-    # TODO: add ws/tournament/waitin_final/
+    re_path(
+        r"ws/tournament/waiting-final/(?P<session_id>[^/]+)/$",
+        consumers.TournamentWaitingFinalConsumer.as_asgi(),
+    ),
     re_path(
         r"ws/tournament/final/(?P<session_id>[^/]+)/(?P<username>[^/]+)/$",
         consumers.TournamentGameConsumer.as_asgi(),

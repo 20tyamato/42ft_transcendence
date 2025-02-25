@@ -1,0 +1,26 @@
+.tournament-waiting-final {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.finalist-list {
+  margin: 20px 0;
+}
+
+.finalist {
+  padding: 10px;
+  margin: 5px 0;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+
+.error {
+  color: #e74c3c;
+}
+
+.ready {
+  color: #2ecc71;
+  font-weight: bold;
+}

@@ -17,10 +17,12 @@ import ResultPage from './pages/Result/index';
 import SettingsUserPage from './pages/Settings/User/index';
 import TournamentPage from './pages/Tournament';
 import TournamentWaitingPage from './pages/Tournament/Waiting';
+import TournamentGamePage from './pages/Tournament/Game/index';
+import TournamentWaitingFinalPage from './pages/Tournament/WaitingFinal/index';
+// import TournamentResultPage from './pages/Tournament/Result/index';
 // FIXME: just test for bracket display
 import BracketPage from './pages/Tournament/Bracket';
 import ReadyPage from './pages/Tournament/Ready';
-import TournamentGamePage from './pages/Tournament/Game/index';
 
 import { Page } from './core/Page';
 
@@ -49,6 +51,8 @@ const routes: Record<string, Page> = {
   '/tournament/bracket': BracketPage,
   '/tournament/ready': ReadyPage,
   '/tournament/game': TournamentGamePage,
+  '/tournament/waiting_final': TournamentWaitingFinalPage,
+  // '/tournament/result': TournamentResultPage,
   '/leaderboard': LeaderboardPage,
   '/friends': FriendsPage,
 };

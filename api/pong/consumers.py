@@ -774,3 +774,64 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
                 }
             )
         )
+
+class TournamentWaitingFinalConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        self.session_id = self.scope["url_route"]["kwargs"]["session_id"]
+        self.final_waiting_group = f"tournament_final_waiting_{self.session_id}"
+        
+        # グループに参加
+        await self.channel_layer.group_add(self.final_waiting_group, self.channel_name)
+        await self.accept()
+        
+        # 現在の決勝進出者状況を取得して送信
+        status = await self.get_finalist_status()
+        await self.send(json.dumps({
+            "type": "finalists_status",
+            "finalists": status["finalists"],
+            "ready": status["ready"]
+        }))
+        
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(self.final_waiting_group, self.channel_name)
+    
+    async def receive(self, text_data):
+        # クライアントからのメッセージ処理
+        data = json.loads(text_data)
+        
+        if data.get("type") == "check_status":
+            status = await self.get_finalist_status()
+            await self.send(json.dumps({
+                "type": "finalists_status",
+                "finalists": status["finalists"],
+                "ready": status["ready"]
+            }))
+    
+    async def final_ready(self, event):
+        # 決勝戦開始通知
+        await self.send(json.dumps({
+            "type": "final_ready",
+            "finalists": event["finalists"],
+            "match_id": event["match_id"]
+        }))
+    
+    @database_sync_to_async
+    def get_finalist_status(self):
+        # 決勝進出者情報の取得
+        try:
+            tournament = TournamentSession.objects.get(id=self.session_id)
+            finalists = list(TournamentParticipant.objects.filter(
+                tournament=tournament,
+                bracket_position=3  # 決勝進出者位置
+            ).select_related('user').values('user__username', 'user__display_name'))
+            
+            # 両方の準決勝が終了したかチェック
+            ready = len(finalists) >= 2
+            
+            return {
+                "finalists": finalists,
+                "ready": ready
+            }
+        except Exception as e:
+            print(f"Error getting finalist status: {e}")
+            return {"finalists": [], "ready": False}

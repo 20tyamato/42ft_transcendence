@@ -117,6 +117,48 @@ export class TournamentRepository {
   isConnected(): boolean {
     return this.socket !== null && this.socket.readyState === WebSocket.OPEN;
   }
+
+  // 決勝待機画面用の接続メソッド
+  connectToFinalWaiting(sessionId: string, onMessage: (data: any) => void): Promise<void> {
+    return new Promise((resolve, reject) => {
+      try {
+        this.socket = new WebSocket(`${WS_URL}/ws/tournament/waiting-final/${sessionId}/`);
+
+        this.socket.onopen = () => {
+          console.log('Tournament Final Waiting WebSocket connected');
+          resolve();
+        };
+
+        this.socket.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          onMessage(data);
+        };
+
+        this.socket.onerror = (error) => {
+          console.error('Tournament Final Waiting WebSocket error:', error);
+          reject(error);
+        };
+
+        this.socket.onclose = () => {
+          console.log('Tournament Final Waiting WebSocket closed');
+          this.socket = null;
+        };
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  // ステータスチェックメソッド
+  checkFinalStatus(): void {
+    if (!this.socket) return;
+
+    this.socket.send(
+      JSON.stringify({
+        type: 'check_status'
+      })
+    );
+  }
 }
 
 // シングルトンインスタンスをエクスポート
