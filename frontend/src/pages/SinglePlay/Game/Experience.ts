@@ -1,12 +1,12 @@
 import * as THREE from 'three';
-import Sizes from '../Utils/Sizez';
-import Time from '../Utils/Time';
-import Camera from '../World/Camera';
-import Renderer from '../Utils/Renderer';
-import World from '../World/World';
-import Loaders from '../Utils/Loaders';
-import CameraLerp from '../World/CameraLerp';
-import sources from '../Utils/sources';
+import Sizes from './Utils/Sizez';
+import Time from './Utils/Time';
+import Camera from './World/Camera';
+import Renderer from './Utils/Renderer';
+import World from './World/World';
+import Loaders from './Utils/Loaders';
+import CameraLerp from './World/CameraLerp';
+import sources from './Utils/sources';
 import Field from '../Game/Field';
 import Paddle from '../Game/Paddle';
 import Ball from '../Game/Ball';
@@ -106,7 +106,6 @@ export default class Experience {
     if (this.localGameStarted) {
       this.localGame.update();
     }
-    this.cameraClass.update();
     this.cameraClass.update();
     this.renderer.update();
   }
