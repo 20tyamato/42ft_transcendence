@@ -37,8 +37,8 @@ export default class Paddle {
   }
 
   private setPaddlePositions(): void {
-    this.paddleOne.position.set(0, 15, 1300);
-    this.paddleTwo.position.set(0, 15, -1300);
+    this.paddleOne.position.set(0, 15, 1000);
+    this.paddleTwo.position.set(0, 15, -1000);
   }
 
   public update(): void {}

@@ -5,7 +5,6 @@ import Camera from './World/Camera';
 import Renderer from './Utils/Renderer';
 import World from './World/World';
 import Loaders from './Utils/Loaders';
-import CameraLerp from './World/CameraLerp';
 import sources from './Utils/sources';
 import Field from '../Game/Field';
 import Paddle from '../Game/Paddle';
@@ -30,7 +29,7 @@ export default class Experience {
   public ASPECT: number = window.innerWidth / window.innerHeight;
   public NEAR: number = 0.1;
   public FAR: number = 5000;
-  public FIELD_WIDTH: number = 800;
+  public FIELD_WIDTH: number = 1000;
   public FIELD_LENGTH: number = 2400;
   public BALL_RADIUS: number = 20;
   public PADDLE_WIDTH: number = 200;
@@ -45,7 +44,6 @@ export default class Experience {
   public cameraClass: Camera;
   public renderer!: Renderer;
   public world!: World;
-  public cameraLerp!: CameraLerp;
 
   public field!: Field;
   public paddle!: Paddle;
@@ -69,7 +67,6 @@ export default class Experience {
     this.camera = this.cameraClass.instance; // ここで camera の実体を登録
     this.initializeRenderer(canvas);
     this.world = new World(canvas);
-    this.cameraLerp = new CameraLerp(canvas);
     this.renderer = Renderer.getInstance(canvas);
 
     this.field = new Field(canvas);
@@ -99,7 +96,7 @@ export default class Experience {
 
   public update(): void {
     this.world.update();
-    this.cameraLerp.update();
+    // this.cameraLerp.update();
     this.ball.update();
     this.field.update();
     this.paddle.update();

@@ -4,6 +4,7 @@ import Experience from '../Experience';
 import Renderer from '../Utils/Renderer';
 
 export default class Camera {
+
   private experience: Experience;
   private renderer: Renderer;
   private scene: THREE.Scene;
@@ -29,7 +30,7 @@ export default class Camera {
     this.VIEW_ANGLE = 75;
     this.ASPECT = this.WIDTH / this.HEIGHT;
     this.NEAR = 0.1;
-    this.FAR = 5000;
+    this.FAR = 6000;
     this.FIELD_LENGTH = 3000;
 
     this.instance = this.createCamera();
@@ -41,8 +42,8 @@ export default class Camera {
   }
 
   private createCamera(): THREE.PerspectiveCamera {
-    const camera = new THREE.PerspectiveCamera(this.VIEW_ANGLE, this.ASPECT, this.NEAR, this.FAR);
-    camera.position.set(0, 500, 1000);
+    const camera = this.experience.camera;
+    camera.position.set(0, 500, 2000);
     camera.lookAt(0, 10, 0);  
     this.scene.add(camera);
     return camera;

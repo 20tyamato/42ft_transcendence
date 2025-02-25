@@ -5,7 +5,7 @@ import Experience from './Experience'  // 実際のパスに合わせて修正�
 export default class Ball {
   private experience: Experience
   private scene: THREE.Scene
-  private camera: THREE.Camera
+  private camera: THREE.PerspectiveCamera
   private BALL_RADIUS: number
   private FIELD_LENGTH: number
 
@@ -43,7 +43,7 @@ export default class Ball {
     this.camera.lookAt(this.ball.position)
 
     // ボールの初期座標をセット
-    this.ball.position.set(0, 0, this.FIELD_LENGTH / 2)
+    this.ball.position.set(0, 0, 0)
     console.log('Ball position after set:', this.ball.position);
   }
 
