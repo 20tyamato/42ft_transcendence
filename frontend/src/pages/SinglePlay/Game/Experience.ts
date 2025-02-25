@@ -56,6 +56,10 @@ export default class Experience {
   private localGameStarted: boolean = false;
 
   private constructor(canvas: HTMLCanvasElement) {
+    if (Experience.instance) {
+      return Experience.instance;
+    }
+
     Experience.instance = this;
     window.experience = this;
     window.incorrectDevice = false;
