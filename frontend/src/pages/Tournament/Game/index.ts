@@ -176,10 +176,11 @@ const TournamentGamePage = new Page({
 
     // ゲーム終了時の処理
     const handleGameEnd = async (data: any) => {
-      console.log('Handling game end:', {
-        data: data,
-        state: data.state,
-        timestamp: new Date().toISOString()
+      console.log('Handling game end - Full data:', data);
+      console.log('next_stage value:', data.next_stage);
+      console.log('Condition check:', {
+        'final_waiting': data.next_stage === 'final_waiting',
+        'tournament_complete': data.next_stage === 'tournament_complete'
       });
     
       const finalScore = {
@@ -198,16 +199,21 @@ const TournamentGamePage = new Page({
       localStorage.setItem('finalScore', JSON.stringify(finalScore));
       localStorage.setItem('gameMode', 'tournament');
 
+      console.log('Navigating to:', data.next_stage === 'final_waiting' 
+        ? `/tournament/waiting_final?session=${sessionId}`
+        : data.next_stage === 'tournament_complete' 
+          ? `/tournament/result?session=${sessionId}`
+          : '/tournament');
       // ゲーム終了後の遷移処理
-      setTimeout(() => {
-        if (data.next_stage === 'final_waiting') {
-          window.location.href = `/tournament/waiting_final?session=${sessionId}`;
-        } else if (data.next_stage === 'tournament_complete') {
-          window.location.href = `/tournament/result?session=${sessionId}`;
-        } else {
-          window.location.href = '/tournament';
-        }
-      }, 1000);
+      // setTimeout(() => {
+      //   if (data.next_stage === 'final_waiting') {
+      //     window.location.href = `/tournament/waiting_final?session=${sessionId}`;
+      //   } else if (data.next_stage === 'tournament_complete') {
+      //     window.location.href = `/tournament/result?session=${sessionId}`;
+      //   } else {
+      //     window.location.href = '/tournament';
+      //   }
+      // }, 1000);
     };
 
     // 切断時の処理
