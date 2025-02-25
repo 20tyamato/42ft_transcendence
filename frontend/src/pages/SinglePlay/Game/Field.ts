@@ -1,6 +1,6 @@
 // Field.ts
 import * as THREE from 'three';
-import Experience from './Experience'; // 実際のパスに合わせてください
+import Experience from './Experience'; 
 
 export default class Field {
   // --- クラスプロパティの型定義 ---
@@ -10,8 +10,8 @@ export default class Field {
   private FIELD_LENGTH: number;
 
   private fieldGeometry!: THREE.BoxGeometry;
-  private fieldMaterial!: THREE.MeshBasicMaterial;
-  private field!: THREE.Mesh<THREE.BoxGeometry, THREE.MeshBasicMaterial>;
+  private fieldMaterial!: THREE.MeshNormalMaterial;
+  private field!: THREE.Mesh<THREE.BoxGeometry, THREE.MeshNormalMaterial>;
 
   constructor(canvas: HTMLCanvasElement) {
     // Experience シングルトンを取得
@@ -37,8 +37,8 @@ export default class Field {
     );
 
     // wireframe オプションで枠線表示のみなど
-    this.fieldMaterial = new THREE.MeshBasicMaterial({
-      color: 0x000aff,
+    this.fieldMaterial = new THREE.MeshNormalMaterial({
+      // color: 0x000aff,
       wireframe: true,
       transparent: true,
       opacity: 1.0,
@@ -46,9 +46,11 @@ export default class Field {
 
     this.field = new THREE.Mesh(this.fieldGeometry, this.fieldMaterial);
     this.field.position.set(0, -50, 0);
+    console.log('Field created:', this.field.uuid);
+    console.log('Field position:', this.field.position);
 
-    // シーンに追加
     this.scene.add(this.field);
+    console.log('Field added to scene:', this.field);
   }
 
   // 毎フレーム呼び出される更新メソッドが必要なら

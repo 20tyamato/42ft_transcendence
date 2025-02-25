@@ -9,7 +9,7 @@ const createThreeScene = () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.getElementById('background')?.appendChild(renderer.domElement);
 
-  // ライト設定 (MeshBasicMaterial の場合はライティング影響なし。後で Standard 等に戻すとき用)
+  // ライト設定 (MeshNormalMaterial の場合はライティング影響なし。後で Standard 等に戻すとき用)
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
   scene.add(ambientLight);
   const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
@@ -49,12 +49,12 @@ const createThreeScene = () => {
   const ballRadius = 1;
   const ballGeometry = new THREE.SphereGeometry(ballRadius, 32, 32);
 
-  // 数字「4」用のマテリアル（デバッグ用に MeshBasicMaterial）
-  const ball4Material = new THREE.MeshBasicMaterial({
+  // 数字「4」用のマテリアル（デバッグ用に MeshNormalMaterial）
+  const ball4Material = new THREE.MeshNormalMaterial({
     map: createBallTexture('4', '#ff0000', '#ffffff'),
   });
-  // 数字「2」用のマテリアル（デバッグ用に MeshBasicMaterial）
-  const ball2Material = new THREE.MeshBasicMaterial({
+  // 数字「2」用のマテリアル（デバッグ用に MeshNormalMaterial）
+  const ball2Material = new THREE.MeshNormalMaterial({
     map: createBallTexture('2', '#0000ff', '#ffffff'),
   });
 

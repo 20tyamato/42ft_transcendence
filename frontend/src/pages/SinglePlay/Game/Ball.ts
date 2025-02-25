@@ -10,52 +10,46 @@ export default class Ball {
   private FIELD_LENGTH: number
 
   public ballGeometry!: THREE.SphereGeometry
-  public ballMaterial!: THREE.MeshBasicMaterial
-  public ball!: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>
+  public ballMaterial!: THREE.MeshNormalMaterial
+  public ball!: THREE.Mesh<THREE.SphereGeometry, THREE.MeshNormalMaterial>
   public mainLight!: THREE.HemisphereLight
 
   constructor(canvas: HTMLCanvasElement) {
-    // Experienceのインスタンスを取得
     this.experience = Experience.getInstance(canvas)
 
-    // Experience内のscene, camera, BALL_RADIUS, FIELD_LENGTHを参照
     this.scene = this.experience.scene
-    this.camera = this.experience.camera // camera.instance など設計に合わせて
+    this.camera = this.experience.camera
     this.BALL_RADIUS = this.experience.BALL_RADIUS
     this.FIELD_LENGTH = this.experience.FIELD_LENGTH
 
-    // ボール生成
     this.setBall()
   }
 
   private setBall(): void {
     this.ballGeometry = new THREE.SphereGeometry(this.BALL_RADIUS, 12, 12)
-    this.ballMaterial = new THREE.MeshBasicMaterial({
-      color: 0xffffff,
+    this.ballMaterial = new THREE.MeshNormalMaterial({
       wireframe: true,
-      transparent: true,
-      opacity: 0.1,
+      opacity: 1,
     })
 
     this.ball = new THREE.Mesh(this.ballGeometry, this.ballMaterial)
+    
+    console.log('Ball created:', this.ball.uuid);
+    console.log('Ball initial position:', this.ball.position);
 
-    // 簡易ライトを追加 (HemisphereLight)
-    this.mainLight = new THREE.HemisphereLight(0xffffff, 0x003300)
-    this.scene.add(this.mainLight)
-
-    // シーンにボールを追加
     this.scene.add(this.ball)
 
     // カメラがボールを向く
     this.camera.lookAt(this.ball.position)
 
     // ボールの初期座標をセット
-    this.ball.position.set(0, 290, this.FIELD_LENGTH / 2 - 80)
+    this.ball.position.set(0, 0, -1500)
+    console.log('Ball position after set:', this.ball.position);
   }
 
   public update(): void {
-    // 回転させるなどのアニメーション
-    this.ball.rotation.y += 0.007
-    this.ball.rotation.x += 0.004
+    // // 回転させるなどのアニメーション
+    this.ball.rotation.y += 0.001
+    this.ball.rotation.x += 0.001
   }
 }

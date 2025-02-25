@@ -45,11 +45,9 @@ export default class Experience {
     75,
     window.innerWidth / window.innerHeight,
     0.1,
-    1000
+    3000
   );
-  public renderer!: Renderer;
   public cameraClass: Camera;
-  public camera!: THREE.PerspectiveCamera; // ここで camera プロパティを追加
   public renderer!: Renderer;
   public world!: World;
   public cameraLerp!: CameraLerp;

@@ -8,7 +8,7 @@ export default class Paddle {
   private PADDLE_HEIGHT: number;
   private FIELD_LENGTH: number;
   private paddleGeometry: THREE.BoxGeometry;
-  private paddleMaterial: THREE.MeshBasicMaterial;
+  private paddleMaterial: THREE.MeshNormalMaterial;
   public paddleOne: THREE.Mesh;
   public paddleTwo: THREE.Mesh;
 
@@ -20,8 +20,7 @@ export default class Paddle {
     this.FIELD_LENGTH = this.experience.FIELD_LENGTH;
 
     this.paddleGeometry = new THREE.BoxGeometry(this.PADDLE_WIDTH, this.PADDLE_HEIGHT, 10);
-    this.paddleMaterial = new THREE.MeshBasicMaterial({
-      color: 0x00ff00,
+    this.paddleMaterial = new THREE.MeshNormalMaterial({
       wireframe: true,
     });
 

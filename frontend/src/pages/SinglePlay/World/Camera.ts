@@ -35,10 +35,13 @@ export default class Camera {
     this.instance = this.createCamera();
     this.controls = this.createControls();
     this.addResizeListener();
+    console.log('Camera position:', this.instance.position);
+    console.log('Camera lookAt target:', this.controls.target); // OrbitControlsを使っているなら
+
   }
   private createCamera(): THREE.PerspectiveCamera {
     const camera = new THREE.PerspectiveCamera(this.VIEW_ANGLE, this.ASPECT, this.NEAR, this.FAR);
-    camera.position.set(0, 0, this.FIELD_LENGTH / 2);
+    camera.position.set(0, -500, this.FIELD_LENGTH-100);
     this.scene.add(camera);
     return camera;
   }
