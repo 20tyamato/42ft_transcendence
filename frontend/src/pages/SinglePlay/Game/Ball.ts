@@ -1,118 +1,55 @@
-import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+// Ball.ts
+import * as THREE from 'three'
+import Experience from './Experience'  // 実際のパスに合わせて修正してください
 
-export default class Experience {
-  public canvas: HTMLCanvasElement;
-  public scene: THREE.Scene;
-  public camera: THREE.PerspectiveCamera;
-  public renderer: THREE.WebGLRenderer;
-  public controls: OrbitControls;
-  public sizes: { width: number; height: number };
-  public time: THREE.Clock;
-  public field: THREE.Mesh = new THREE.Mesh();
-  public ball: THREE.Mesh = new THREE.Mesh();
-  public ballMaterial: THREE.Material = new THREE.Material();
-  public paddleTwo: THREE.Mesh = new THREE.Mesh();
-  public paddleOne: THREE.Mesh = new THREE.Mesh();
-  public WIDTH: number;
-  public HEIGHT: number;
-  public VIEW_ANGLE: number;
-  private animationFrameId: number | null = null;
+export default class Ball {
+  private experience: Experience
+  private scene: THREE.Scene
+  private camera: THREE.Camera
+  private BALL_RADIUS: number
+  private FIELD_LENGTH: number
 
-  public FIELD_WIDTH: number = 1200;
-  public FIELD_LENGTH: number = 3000;
-  public PADDLE_WIDTH: number = 200;
-  public PADDLE_HEIGHT: number = 30;
-  public BALL_RADIUS: number = 20;
+  public ballGeometry!: THREE.SphereGeometry
+  public ballMaterial!: THREE.MeshNormalMaterial
+  public ball!: THREE.Mesh<THREE.SphereGeometry, THREE.MeshNormalMaterial>
+  public mainLight!: THREE.HemisphereLight
 
   constructor(canvas: HTMLCanvasElement) {
-    this.canvas = canvas;
-    this.scene = new THREE.Scene();
-    this.time = new THREE.Clock();
-    this.sizes = { width: window.innerWidth, height: window.innerHeight };
-    this.WIDTH = window.innerWidth;
-    this.HEIGHT = window.innerHeight;
-    this.VIEW_ANGLE = 75;
+    this.experience = Experience.getInstance(canvas)
 
-    this.camera = this.createCamera();
-    this.renderer = this.createRenderer();
-    this.controls = this.createControls();
-    this.createLighting();
+    this.scene = this.experience.scene
+    this.camera = this.experience.camera
+    this.BALL_RADIUS = this.experience.BALL_RADIUS
+    this.FIELD_LENGTH = this.experience.FIELD_LENGTH
 
-    this.startRenderingLoop();
+    this.setBall()
   }
 
-  private createCamera(): THREE.PerspectiveCamera {
-    const camera = new THREE.PerspectiveCamera(
-      this.VIEW_ANGLE,
-      this.WIDTH / this.HEIGHT,
-      0.1,
-      10000
-    );
-    camera.position.set(0, 200, this.FIELD_LENGTH / 2 + 1000);
-    this.scene.add(camera);
-    return camera;
-  }
+  private setBall(): void {
+    this.ballGeometry = new THREE.SphereGeometry(this.BALL_RADIUS, 12, 12)
+    this.ballMaterial = new THREE.MeshNormalMaterial({
+      wireframe: true,
+      opacity: 1,
+    })
 
-  private createRenderer(): THREE.WebGLRenderer {
-    const renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true });
-    renderer.setSize(this.WIDTH, this.HEIGHT);
-    return renderer;
-  }
+    this.ball = new THREE.Mesh(this.ballGeometry, this.ballMaterial)
+    
+    console.log('Ball created:', this.ball.uuid);
+    console.log('Ball initial position:', this.ball.position);
 
-  private createControls(): OrbitControls {
-    const controls = new OrbitControls(this.camera, this.canvas);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.25;
-    controls.enableZoom = true;
-    return controls;
-  }
+    this.scene.add(this.ball)
 
-  private createLighting(): void {
-    const ambientLight = new THREE.AmbientLight(0xffffff, 2);
-    this.scene.add(ambientLight);
+    // カメラがボールを向く
+    this.camera.lookAt(this.ball.position)
 
-    const pointLight = new THREE.PointLight(0xffffff, 1.5);
-    pointLight.position.set(0, 500, 0);
-    this.scene.add(pointLight);
-
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
-    directionalLight.position.set(0, 1, 1).normalize();
-    this.scene.add(directionalLight);
-
-    const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.5);
-    hemisphereLight.position.set(0, 200, 0);
-    this.scene.add(hemisphereLight);
-  }
-
-  private startRenderingLoop(): void {
-    const animate = () => {
-      this.animationFrameId = requestAnimationFrame(animate);
-      this.update();
-      this.render();
-    };
-    animate();
+    // ボールの初期座標をセット
+    this.ball.position.set(0, 0, this.FIELD_LENGTH / 2)
+    console.log('Ball position after set:', this.ball.position);
   }
 
   public update(): void {
-    this.controls.update();
-  }
-
-  public render(): void {
-    this.renderer.render(this.scene, this.camera);
-  }
-
-  public stop(): void {
-    if (this.animationFrameId !== null) {
-      cancelAnimationFrame(this.animationFrameId);
-      this.animationFrameId = null;
-    }
-  }
-
-  public destroy(): void {
-    this.stop();
-    this.controls.dispose();
-    this.renderer.dispose();
-    this.scene.clear();
+    // // 回転させるなどのアニメーション
+    this.ball.rotation.y += 0.001
+    this.ball.rotation.x += 0.001
   }
 }

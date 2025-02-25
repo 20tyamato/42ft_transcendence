@@ -1,4 +1,4 @@
-import Experience from '../Game/Experience';
+import Experience from '../Experience';
 import Model from './Model';
 import * as THREE from 'three';
 

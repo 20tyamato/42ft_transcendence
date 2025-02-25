@@ -8,7 +8,7 @@ export default class Walls {
   private FIELD_WIDTH: number;
   private FIELD_LENGTH: number;
   private wallGeometry: THREE.BoxGeometry;
-  private wallMaterial: THREE.MeshBasicMaterial;
+  private wallMaterial: THREE.MeshNormalMaterial;
   private wallRight: THREE.Mesh;
   private wallLeft: THREE.Mesh;
 
@@ -26,8 +26,7 @@ export default class Walls {
     this.FIELD_LENGTH = this.experience.FIELD_LENGTH;
 
     this.wallGeometry = new THREE.BoxGeometry(10, 10, 3800, 5, 5, 500);
-    this.wallMaterial = new THREE.MeshBasicMaterial({
-      color: 0x1f44ff,
+    this.wallMaterial = new THREE.MeshNormalMaterial({
       wireframe: true,
       transparent: true,
       opacity: 0.0,
@@ -57,3 +56,5 @@ export default class Walls {
 
   public update(): void {}
 }
+
+
