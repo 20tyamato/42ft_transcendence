@@ -1,13 +1,14 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import Experience from '../Game/Experience';
+import Renderer from '../Utils/Renderer';
 
 export default class Camera {
   private experience: Experience;
-  private renderer: THREE.WebGLRenderer;
+  private renderer: Renderer;
   private scene: THREE.Scene;
   private canvas: HTMLCanvasElement;
-  private instance: THREE.PerspectiveCamera;
+  public instance: THREE.PerspectiveCamera;
   private controls: OrbitControls;
   private WIDTH: number;
   private HEIGHT: number;
@@ -19,7 +20,7 @@ export default class Camera {
 
   constructor(canvas: HTMLCanvasElement) {
     this.experience = Experience.getInstance(canvas); // 先に割り当てる
-    this.renderer = new THREE.WebGLRenderer({ canvas });
+    this.renderer = Renderer.getInstance(canvas);
     this.scene = this.experience.scene;
     this.canvas = this.experience.canvas;
 
@@ -28,16 +29,21 @@ export default class Camera {
     this.VIEW_ANGLE = 75;
     this.ASPECT = this.WIDTH / this.HEIGHT;
     this.NEAR = 0.1;
-    this.FAR = 1000;
+    this.FAR = 5000;
     this.FIELD_LENGTH = 3000;
 
     this.instance = this.createCamera();
     this.controls = this.createControls();
     this.addResizeListener();
+    console.log('Camera position:', this.instance.position);
+    console.log('Camera lookAt target:', this.controls.target); // OrbitControlsを使っているなら
+
   }
+
   private createCamera(): THREE.PerspectiveCamera {
     const camera = new THREE.PerspectiveCamera(this.VIEW_ANGLE, this.ASPECT, this.NEAR, this.FAR);
-    camera.position.set(0, 200, this.FIELD_LENGTH / 2 + 1000);
+    camera.position.set(0, 500, 1000);
+    camera.lookAt(0, 10, 0);  
     this.scene.add(camera);
     return camera;
   }

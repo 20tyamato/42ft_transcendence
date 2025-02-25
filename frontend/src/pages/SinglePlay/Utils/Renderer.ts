@@ -1,3 +1,4 @@
+// Renderer.ts
 import * as THREE from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
@@ -6,16 +7,16 @@ import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass.js';
 import Experience from '../Game/Experience';
 
 export default class Renderer {
-  private static instance: THREE.WebGLRenderer | null = null;
-
-  static getInstance(canvas: HTMLCanvasElement): THREE.WebGLRenderer {
+  static instance: Renderer | null = null;
+  //  シングルトンインスタンスを取得
+  static getInstance(canvas: HTMLCanvasElement): Renderer {
     if (!Renderer.instance) {
-      Renderer.instance = new THREE.WebGLRenderer({ canvas, antialias: true });
-      Renderer.instance.setSize(window.innerWidth, window.innerHeight);
+      Renderer.instance = new Renderer(canvas);
     }
     return Renderer.instance;
   }
 
+  // インスタンスの破棄
   static dispose(): void {
     if (Renderer.instance) {
       Renderer.instance.dispose();
@@ -28,6 +29,7 @@ export default class Renderer {
   private sizes: { width: number; height: number };
   private scene: THREE.Scene;
   private camera: THREE.PerspectiveCamera;
+
   public instance: THREE.WebGLRenderer;
   private composer: EffectComposer;
   private bloomPass: UnrealBloomPass;
@@ -38,16 +40,19 @@ export default class Renderer {
     this.canvas = this.experience.canvas;
     this.sizes = { width: window.innerWidth, height: window.innerHeight };
     this.scene = this.experience.scene;
-    this.camera = this.experience.camera as unknown as THREE.PerspectiveCamera;
+    this.camera = this.experience.camera;
 
+    // WebGLRenderer の初期化
     this.instance = new THREE.WebGLRenderer({
       canvas: this.canvas,
       antialias: true,
       alpha: false,
     });
-    this.instance.setSize(window.innerWidth, window.innerHeight);
-
     this.instance.setSize(this.sizes.width, this.sizes.height);
+    // 例: 背景色を設定したい場合
+    // this.instance.setClearColor(0x000000, 1.0)
+
+    // EffectComposer のセットアップ
     this.composer = new EffectComposer(this.instance);
     this.composer.addPass(new RenderPass(this.scene, this.camera));
 
@@ -63,12 +68,25 @@ export default class Renderer {
     this.instance.setSize(window.innerWidth, window.innerHeight);
   }
 
-  public setSize(width: number, height: number) {
+  public setSize(width: number, height: number): void {
     this.instance.setSize(width, height);
     this.instance.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   }
 
-  update(): void {
+  /**
+   * 毎フレーム呼び出されるメソッド
+   */
+  public update(): void {
+    // ポストプロセスを含む描画処理
     this.composer.render();
+  }
+
+  /**
+   * WebGLRenderer等のリソース破棄
+   */
+  public dispose(): void {
+    this.instance.dispose();
+    // composerやPassの破棄が必要なら追加処理を行う
+    // e.g.) this.composer.dispose()
   }
 }

@@ -49,6 +49,17 @@ export default class Loaders extends EventEmitter {
           }
         );
       }
+      this.loaders.gltfLoader.load(
+        '/models/scene.glb',
+        (gltf) => {
+          console.log('GLTFモデルがロードされました:', gltf);
+          this.sourceLoaded(source, gltf);
+        },
+        undefined,
+        (error) => {
+          console.error('GLTFモデルのロードエラー:', error);
+        }
+      );
     }
   }
 
