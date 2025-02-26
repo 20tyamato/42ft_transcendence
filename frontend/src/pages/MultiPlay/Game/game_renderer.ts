@@ -107,10 +107,10 @@ export class GameRenderer {
       const deltaTime = this.lastRenderTime ? (currentTime - this.lastRenderTime) / 1000 : 0;
       this.lastRenderTime = currentTime;
 
-      // 状態の補間処理
-      if (this.currentState) {
-        this.interpolateState(deltaTime);
-      }
+      // // 状態の補間処理
+      // if (this.currentState) {
+      //   this.interpolateState(deltaTime);
+      // }
 
       // シーンのレンダリング
       this.renderer.render(this.scene, this.camera);
@@ -122,12 +122,12 @@ export class GameRenderer {
     this.animationFrameId = requestAnimationFrame(animate);
   }
 
-  private interpolateState(deltaTime: number) {
-    // lint回避のためだけに定義
-    console.log(deltaTime);
-    // 必要に応じて状態の補間処理を実装
-    // 現在は単純な更新のみ
-  }
+  // private interpolateState(deltaTime: number) {
+  //   // lint回避のためだけに定義
+  //   console.log(deltaTime);
+  //   // 必要に応じて状態の補間処理を実装
+  //   // 現在は単純な更新のみ
+  // }
 
   public updateState(newState: IGameState) {
     const now = performance.now();

@@ -344,31 +344,44 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
     async def game_loop(self):
         """ゲーム状態の定期更新ループ"""
         try:
+            last_update_time = timezone.now()
+            last_save_time = timezone.now()
+            
             while True:
                 if self.session_id in self.games:
                     game = self.games[self.session_id]
-                    state = game.update(delta_time=0.016)
+                    
+                    # 適切なdelta_timeを計算（フレームレートを安定させる）
+                    current_time = timezone.now()
+                    delta_seconds = (current_time - last_update_time).total_seconds()
+                    delta_time = min(0.033, delta_seconds)  # 最大33ms（約30FPS）に制限
+                    last_update_time = current_time
+                    
+                    # ゲーム状態を更新
+                    state = game.update(delta_time=delta_time)
 
+                    # 状態をクライアントに送信
                     await self.channel_layer.group_send(
                         self.game_group_name, {"type": "game_state", "state": state}
                     )
 
-                    # スコアが変化した場合、ゲーム状態を保存
-                    if (
-                        game.score[game.player1_name] > 0
-                        or game.score[game.player2_name] > 0
-                    ):
+                    # スコアが変化した場合、かつ最後の保存から1秒以上経過した場合のみDBに保存
+                    save_interval = (current_time - last_save_time).total_seconds()
+                    if ((game.score[game.player1_name] > 0 or game.score[game.player2_name] > 0) 
+                        and save_interval > 1.0):
                         await self.save_game_state(game)
+                        last_save_time = current_time
 
+                    # ゲーム終了処理
                     if not game.is_active:
-                        # データベース操作とWebSocket通信を分離
                         await self.handle_tournament_db_update(game)
                         await self.broadcast_game_end(game)
                         break
 
-                await asyncio.sleep(0.016)  # 約60FPS
+                # 一定間隔でループ（約30FPS）
+                await asyncio.sleep(0.033)
         except asyncio.CancelledError:
-            # ゲームループのキャンセル時は正常終了
+            # 正常なキャンセル
             pass
         except Exception as e:
             print(f"Error in game loop: {e}")
@@ -400,18 +413,8 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
 
     async def game_end(self, event):
         """ゲーム終了をクライアントに通知"""
-        await self.send(
-            text_data=json.dumps(
-                {
-                    "type": "game_end",
-                    "winner": event["winner"],
-                    "is_final": self.is_final,
-                    "next_stage": "final_waiting" if not self.is_final else "complete",
-                    "game_type": self.game_type,
-                    "tournament_id": self.session_id,
-                }
-            )
-        )
+        await self.send(text_data=json.dumps(event))
+
 
     @database_sync_to_async
     def validate_tournament_session(self):
@@ -482,9 +485,26 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def save_game_state(self, game):
-        """ゲーム状態をデータベースに保存"""
-        if not hasattr(game, "db_game_id"):
-            return
+        """ゲーム状態をDBに保存"""
+        # db_game_idがNoneの場合は先にゲームを作成/取得
+        if not hasattr(game, "db_game_id") or game.db_game_id is None:
+            try:
+                # 既存メソッドを使ってゲームオブジェクトを取得または作成
+                game_obj = Game.objects.get_or_create(
+                    player1=User.objects.get(username=game.player1_name),
+                    player2=User.objects.get(username=game.player2_name),
+                    defaults={
+                        'score_player1': game.score[game.player1_name],
+                        'score_player2': game.score[game.player2_name],
+                        'is_ai_opponent': False,
+                    }
+                )[0]
+                game.db_game_id = game_obj.id
+                print(f"Created new game with id {game.db_game_id}")
+                return  # 初回作成時は更新せずにリターン
+            except Exception as e:
+                print(f"Failed to create game: {e}")
+                return
 
         try:
             game_instance = Game.objects.get(id=game.db_game_id)
@@ -499,7 +519,6 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
                     game_instance.winner = winner
 
             game_instance.save()
-
         except Game.DoesNotExist:
             print(f"Game with id {game.db_game_id} not found")
         except Exception as e:
@@ -553,23 +572,20 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
         if not winner_name:
             return
 
-        # ゲーム終了のメッセージを構築
+        # 重要: フロントエンドの期待するフォーマットに合わせる
         message = {
             "type": "game_end",
             "winner": winner_name,
             "is_final": self.is_final,
             "game_type": self.game_type,
             "tournament_id": self.session_id,
-            "scores": {
+            "state": game.get_state(),  # フロントエンドが期待するゲーム状態を含める
+            "next_stage": "final_waiting" if not self.is_final else "tournament_complete",
+            "scores": {  # バックアップとしてscoresも含める
                 game.player1_name: game.score[game.player1_name],
                 game.player2_name: game.score[game.player2_name],
             },
         }
-
-        if not self.is_final:
-            message["next_stage"] = "final_waiting"
-        else:
-            message["next_stage"] = "tournament_complete"
 
         # 試合参加者に結果を送信
         await self.channel_layer.group_send(self.game_group_name, message)
