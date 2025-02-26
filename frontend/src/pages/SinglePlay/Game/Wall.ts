@@ -24,7 +24,7 @@ export default class Walls {
     this.wallMaterial = new THREE.MeshNormalMaterial({
       wireframe: true,
       transparent: true,
-      opacity: 0.0,
+      opacity: 0.5,
     });
 
     this.wallRight = this.createWall(450, 0, -550); // wallRight プロパティを初期化
