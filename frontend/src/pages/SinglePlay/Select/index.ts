@@ -18,7 +18,7 @@ const SinglePlaySelectPage = new Page({
   config: {
     layout: CommonLayout,
   },
-  mounted: async () => {
+  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
     checkUserAccess();
 
     const userData = await fetchCurrentUser();

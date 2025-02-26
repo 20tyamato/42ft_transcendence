@@ -183,7 +183,7 @@ const ProfilePage = new Page({
   config: {
     layout: CommonLayout,
   },
-  mounted: async ({ pg }: { pg: Page }) => {
+  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
     try {
       checkUserAccess();
       const userData: IUserData = await fetchCurrentUser();

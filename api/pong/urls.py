@@ -9,10 +9,11 @@ from .views import (
     LoginView,
     LogoutView,
     RemoveFriendView,
+    UserAvatarRetrieveView,
+    # TournamentListCreateView
     UserAvatarUpdateView,
     UserListCreateView,
     UserRetrieveUpdateView,
-    # TournamentListCreateView
 )
 
 app_name = "pong"
@@ -41,6 +42,12 @@ urlpatterns = [
         "users/me/friends/<int:friend_id>/",
         RemoveFriendView.as_view(),
         name="friend-remove",
+    ),
+    # usernameを利用してアバター画像を取得するパターン
+    path(
+        "users/<str:username>/avatar/",
+        UserAvatarRetrieveView.as_view(),
+        name="user-avatar-username",
     ),
     # Login
     path("login/", LoginView.as_view(), name="login"),

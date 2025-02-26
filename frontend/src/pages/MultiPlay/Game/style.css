@@ -2,17 +2,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  margin: 0;
   background-color: #000;
 }
 
 #game-container {
-  display: flex;
-  flex-direction: column;
   position: relative;
-  width: 60vw;
-  height: 60vh;
+  width: 80vw;
+  height: 80vh;
   background-color: #1a1a1a;
 }
 
@@ -22,6 +18,10 @@ body {
 }
 
 #score-board {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
   position: absolute;
   top: 20px;
   left: 50%;
@@ -31,6 +31,20 @@ body {
   font-weight: bold;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   z-index: 10;
+}
+
+.avatar-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  object-fit: cover;
+  margin-right: 0.5rem;
+}
+
+.score-item {
+  display: flex;
+  align-items: center;
 }
 
 #game-over {

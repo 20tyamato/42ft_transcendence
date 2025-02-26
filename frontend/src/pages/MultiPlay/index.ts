@@ -1,19 +1,14 @@
-// frontend/src/pages/MultiPlay/index.ts
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 
 const MultiPlayPage = new Page({
   name: 'MultiPlay',
-  config: {
-    layout: CommonLayout,
-  },
-  mounted: () => {
-    const startMatchmaking = document.getElementById('start-matchmaking');
-    if (startMatchmaking) {
-      startMatchmaking.addEventListener('click', () => {
-        window.location.href = '/multiplay/waiting';
-      });
-    }
+  config: { layout: CommonLayout },
+  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
+    document.getElementById('start-matchmaking')?.addEventListener('click', () => {
+      window.location.href = '/multiplay/waiting';
+    });
+    pg.logger.info('MultiPlay page mounted');
   },
 });
 

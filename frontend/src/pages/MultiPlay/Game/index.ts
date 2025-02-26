@@ -1,28 +1,256 @@
-import { WS_URL } from '@/config/config';
+import { API_URL, WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
+import { fetchUserAvatar } from '@/models/User/repository';
 import { GameRenderer } from './game_renderer';
+
+/**
+ * URLやlocalStorageから必要なパラメータを取得する
+ */
+const extractGameParameters = (): {
+  sessionId: string;
+  isPlayer1: boolean;
+  username: string;
+} | null => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const sessionId = urlParams.get('session');
+  const isPlayer1 = urlParams.get('isPlayer1') === 'true';
+  const username = localStorage.getItem('username');
+
+  console.log('Game parameters:', { sessionId, isPlayer1, username });
+
+  if (!sessionId || !username) {
+    console.log('Missing required params:', { sessionId, username });
+    return null;
+  }
+  return { sessionId, isPlayer1, username };
+};
+
+/**
+ * セッションIDからプレイヤー名を取得する
+ */
+const getPlayerNames = (sessionId: string): [string, string] => {
+  return sessionId.replace('game_', '').split('_') as [string, string];
+};
+
+/**
+ * 自分と相手の名前から相手の名前を返す
+ */
+const getOpponent = (sessionId: string, username: string): string => {
+  const [player1Name, player2Name] = getPlayerNames(sessionId);
+  return username === player1Name ? player2Name : player1Name;
+};
+
+/**
+ * ゲーム終了時の処理（スコア保存、リダイレクト）
+ */
+const finishGame = async (finalScore: any): Promise<void> => {
+  localStorage.setItem('finalScore', JSON.stringify(finalScore));
+  localStorage.setItem('gameMode', 'multiplayer');
+  await new Promise<void>((resolve) => setTimeout(resolve, 1000));
+  window.location.href = '/result';
+};
+
+/**
+ * スコアボード初期化
+ * － ゲーム開始時に一度だけユーザーと対戦相手のアバターアイコンを設定する
+ */
+const initializeScoreBoard = (username: string, opponentName: string): void => {
+  const playerAvatarImg = document.getElementById('player-avatar') as HTMLImageElement;
+  const opponentAvatarImg = document.getElementById('opponent-avatar') as HTMLImageElement;
+  if (playerAvatarImg && opponentAvatarImg) {
+    fetchUserAvatar(username).then((avatar) => {
+      if (avatar && avatar.type.startsWith('image/')) {
+        const avatarUrl = URL.createObjectURL(avatar);
+        playerAvatarImg.src = avatarUrl;
+      } else {
+        playerAvatarImg.src = `${API_URL}/media/default_avatar.png`;
+      }
+    });
+    playerAvatarImg.alt = username;
+    fetchUserAvatar(opponentName).then((avatar) => {
+      if (avatar && avatar.type.startsWith('image/')) {
+        const avatarUrl = URL.createObjectURL(avatar);
+        opponentAvatarImg.src = avatarUrl;
+      } else {
+        opponentAvatarImg.src = `${API_URL}/media/default_avatar.png`;
+      }
+    });
+    opponentAvatarImg.alt = opponentName;
+  }
+};
+
+/**
+ * スコアボードの表示更新
+ * － 毎回スコア部分のみを更新し、アバターアイコンは固定のままとなる
+ */
+const updateScoreBoard = (score: any, username: string): void => {
+  const playerScoreValue = document.getElementById('player-score-value');
+  const opponentScoreValue = document.getElementById('opponent-score-value');
+  if (playerScoreValue && opponentScoreValue) {
+    const playerScore = score[username] || 0;
+    const opponentEntry = Object.entries(score).find(([id]) => id !== username);
+    const opponentScore = opponentEntry ? opponentEntry[1] : 0;
+
+    playerScoreValue.textContent = String(playerScore);
+    opponentScoreValue.textContent = String(opponentScore);
+  }
+};
+
+/**
+ * WebSocketの初期化とイベントハンドラの設定
+ */
+const initializeWebSocket = (
+  sessionId: string,
+  username: string,
+  isPlayer1: boolean,
+  renderer: GameRenderer,
+  getOpponentFn: () => string,
+  cleanupOnDisconnect: (finalScore: any) => void
+): WebSocket => {
+  const socket = new WebSocket(`${WS_URL}/ws/game/${sessionId}/${username}/`);
+  let wsConnected = false;
+
+  socket.onopen = () => {
+    console.log('Game WebSocket connected');
+    wsConnected = true;
+  };
+
+  socket.onmessage = async (event) => {
+    try {
+      const data = JSON.parse(event.data);
+      switch (data.type) {
+        case 'state_update': {
+          renderer.updateState(data.state);
+          updateScoreBoard(data.state.score, username);
+          if (!data.state.is_active) {
+            const opponent = getOpponentFn();
+            const finalScore = {
+              player1: data.state.score[username],
+              player2: data.state.score[opponent],
+              opponent,
+            };
+            await finishGame(finalScore);
+          }
+          break;
+        }
+        case 'player_disconnected': {
+          const opponent = getOpponentFn();
+          const finalScore = {
+            player1: data.state?.score?.[username] ?? 15,
+            player2: data.state?.score?.[opponent] ?? 0,
+            opponent,
+            disconnected: true,
+            disconnectedPlayer: data.disconnected_player,
+          };
+          await finishGame(finalScore);
+          break;
+        }
+        default:
+          break;
+      }
+    } catch (e) {
+      console.error('Error in WebSocket message handler:', e);
+    }
+  };
+
+  socket.onerror = (error) => {
+    console.error('Game WebSocket error:', error);
+    wsConnected = false;
+  };
+
+  socket.onclose = () => {
+    console.log('Game WebSocket closed');
+    wsConnected = false;
+    const opponent = getOpponentFn();
+    const finalScore = {
+      player1: 0,
+      player2: 15,
+      opponent,
+      disconnected: true,
+      disconnectedPlayer: username,
+    };
+    cleanupOnDisconnect(finalScore);
+  };
+
+  return socket;
+};
+
+/**
+ * キー入力の状態管理とハンドラ設定
+ */
+const setupKeyHandlers = (
+  socket: WebSocket,
+  renderer: GameRenderer,
+  username: string,
+  isPlayer1: boolean
+): { removeHandlers: () => void } => {
+  let wsConnected = true;
+  const keyState: { [key: string]: boolean } = {
+    ArrowLeft: false,
+    ArrowRight: false,
+  };
+
+  const handleKeyChange = (e: KeyboardEvent, isPressed: boolean) => {
+    if (!wsConnected) return;
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      keyState[e.key] = isPressed;
+      e.preventDefault();
+
+      const currentX = renderer.getPaddlePosition(username) ?? 0;
+      const moveAmount = 10;
+      let movement = (keyState.ArrowRight ? moveAmount : 0) - (keyState.ArrowLeft ? moveAmount : 0);
+
+      if (!isPlayer1) {
+        movement *= -1;
+      }
+
+      const newPosition = currentX + movement;
+      if (movement !== 0) {
+        const moveMessage = {
+          type: 'move',
+          username,
+          position: newPosition,
+        };
+        socket.send(JSON.stringify(moveMessage));
+        console.log('Sending move:', moveMessage);
+      }
+    }
+  };
+
+  const keydown = (e: KeyboardEvent) => handleKeyChange(e, true);
+  const keyup = (e: KeyboardEvent) => handleKeyChange(e, false);
+
+  document.addEventListener('keydown', keydown);
+  document.addEventListener('keyup', keyup);
+
+  return {
+    removeHandlers: () => {
+      wsConnected = false;
+      document.removeEventListener('keydown', keydown);
+      document.removeEventListener('keyup', keyup);
+    },
+  };
+};
 
 const GamePage = new Page({
   name: 'MultiPlay/Game',
-  config: {
-    layout: CommonLayout,
-  },
-  mounted: async () => {
-    // パラメータの取得と検証
-    const urlParams = new URLSearchParams(window.location.search);
-    const sessionId = urlParams.get('session');
-    const isPlayer1 = urlParams.get('isPlayer1') === 'true';
-    const username = localStorage.getItem('username');
-
-    console.log('Game parameters:', { sessionId, isPlayer1, username });
-
-    if (!sessionId || !username) {
-      console.log('Missing required params:', { sessionId, username });
+  config: { layout: CommonLayout },
+  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
+    console.log('Game page mounting...');
+    // パラメータ取得と検証
+    const params = extractGameParameters();
+    if (!params) {
       await new Promise((resolve) => setTimeout(resolve, 2000));
       window.location.href = '/multiplay';
       return;
     }
+    const { sessionId, isPlayer1, username } = params;
+    const opponentName = getOpponent(sessionId, username);
+    const opponentFn = () => opponentName;
+
+    // スコアボードの初期化（アバター設定を一度だけ実施）
+    initializeScoreBoard(username, opponentName);
 
     // ゲームコンテナの取得
     const container = document.getElementById('game-canvas');
@@ -33,166 +261,31 @@ const GamePage = new Page({
 
     // レンダラーの初期化
     const renderer = new GameRenderer(container, isPlayer1);
-    const keyState = {
-      ArrowLeft: false,
-      ArrowRight: false,
-    };
 
-    // WebSocket接続
-    const socket = new WebSocket(`${WS_URL}/ws/game/${sessionId}/${username}/`);
-    let wsConnected = false;
-
-    socket.onopen = () => {
-      console.log('Game WebSocket connected');
-      wsConnected = true;
-    };
-
-    socket.onmessage = async (event) => {
-      // async を追加
-      try {
-        const data = JSON.parse(event.data);
-        if (data.type === 'state_update') {
-          renderer.updateState(data.state);
-          updateScoreBoard(data.state.score);
-
-          if (!data.state.is_active) {
-            // 確実にデータを処理するため、Promise を使用
-            await new Promise<void>((resolve) => {
-              const [player1Name, player2Name] = sessionId?.replace('game_', '').split('_') || [];
-              const opponent = username === player1Name ? player2Name : player1Name;
-
-              const finalScore = {
-                player1: data.state.score[username],
-                player2: data.state.score[opponent],
-                opponent: opponent,
-              };
-
-              localStorage.setItem('finalScore', JSON.stringify(finalScore));
-              localStorage.setItem('gameMode', 'multiplayer');
-
-              setTimeout(() => {
-                resolve();
-                window.location.href = '/result';
-              }, 1000);
-            });
-          }
-        } else if (data.type === 'player_disconnected') {
-          // 相手の切断を検知したら少し待ってからリザルト画面に遷移
-          await new Promise<void>((resolve) => {
-            const [player1Name, player2Name] = sessionId?.replace('game_', '').split('_') || [];
-            const opponent = username === player1Name ? player2Name : player1Name;
-
-            // 切断情報を含めた最終スコアを保存
-            const finalScore = {
-              player1: data.state?.score?.[username] ?? 15, // 切断時は残ったプレイヤーが15点
-              player2: data.state?.score?.[opponent] ?? 0,
-              opponent: opponent,
-              disconnected: true, // 切断による終了を示すフラグ
-              disconnectedPlayer: data.disconnected_player,
-            };
-
-            localStorage.setItem('finalScore', JSON.stringify(finalScore));
-            localStorage.setItem('gameMode', 'multiplayer');
-
-            // 少し待ってからリザルト画面に遷移
-            setTimeout(() => {
-              resolve();
-              window.location.href = '/result';
-            }, 1000);
-          });
-        }
-      } catch (e) {
-        console.error('Error in WebSocket message handler:', e);
-      }
-    };
-
-    socket.onerror = (error) => {
-      console.error('Game WebSocket error:', error);
-      wsConnected = false;
-    };
-
-    socket.onclose = () => {
-      console.log('Game WebSocket closed');
-      wsConnected = false;
-
-      // 自分が切断された場合（ネットワークエラーなど）の処理
-      const [player1Name, player2Name] = sessionId?.replace('game_', '').split('_') || [];
-      const opponent = username === player1Name ? player2Name : player1Name;
-
-      const finalScore = {
-        player1: 0, // 切断したプレイヤーは敗北
-        player2: 15, // 相手が勝利
-        opponent: opponent,
-        disconnected: true,
-        disconnectedPlayer: username, // 自分が切断したプレイヤー
-      };
-
+    // 切断時のクリーンアップ処理
+    const cleanupOnDisconnect = (finalScore: any) => {
       localStorage.setItem('finalScore', JSON.stringify(finalScore));
       localStorage.setItem('gameMode', 'multiplayer');
-
-      // リザルト画面に遷移
       window.location.href = '/result';
     };
 
-    // キー入力の状態管理
-    const handleKeyChange = (e: KeyboardEvent, isPressed: boolean) => {
-      if (!wsConnected) return;
+    // WebSocket接続の初期化
+    const socket = initializeWebSocket(
+      sessionId,
+      username,
+      isPlayer1,
+      renderer,
+      opponentFn,
+      cleanupOnDisconnect
+    );
 
-      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-        keyState[e.key] = isPressed;
-        e.preventDefault(); // ページのスクロールを防止
+    // キー入力ハンドラの設定
+    const keyHandlers = setupKeyHandlers(socket, renderer, username, isPlayer1);
 
-        // 現在のパドル位置を取得
-        const currentX = renderer.getPaddlePosition(username) ?? 0;
-
-        // 移動量の計算（プレイヤー2の場合は反転）
-        const moveAmount = 10; // PADDLE_SPEEDと同じ値
-        let movement = 0;
-
-        if (keyState.ArrowLeft) movement -= moveAmount;
-        if (keyState.ArrowRight) movement += moveAmount;
-
-        // プレイヤー2の場合は移動方向を反転
-        if (!isPlayer1) movement *= -1;
-
-        const newPosition = currentX + movement;
-
-        // 移動メッセージの送信
-        if (movement !== 0) {
-          const moveMessage = {
-            type: 'move',
-            username: username,
-            position: newPosition,
-          };
-          socket.send(JSON.stringify(moveMessage));
-          console.log('Sending move:', moveMessage);
-        }
-      }
-    };
-
-    // キーイベントリスナーの設定
-    const keydown = (e: KeyboardEvent) => handleKeyChange(e, true);
-    const keyup = (e: KeyboardEvent) => handleKeyChange(e, false);
-
-    document.addEventListener('keydown', keydown);
-    document.addEventListener('keyup', keyup);
-
-    function updateScoreBoard(score: any) {
-      const scoreBoard = document.getElementById('score-board');
-      if (scoreBoard) {
-        const playerScore = score[username] || 0;
-        const opponentScore = Object.entries(score).find(([id]) => id !== username)?.[1] || 0;
-        scoreBoard.textContent = isPlayer1
-          ? `${playerScore} - ${opponentScore}`
-          : `${opponentScore} - ${playerScore}`;
-      }
-    }
-
-    // クリーンアップ関数を返す
+    // クリーンアップ処理の返却
     return () => {
-      document.removeEventListener('keydown', keydown);
-      document.removeEventListener('keyup', keyup);
-      socket?.close();
+      keyHandlers.removeHandlers();
+      socket.close();
       renderer.dispose();
     };
   },

@@ -131,7 +131,7 @@ const SettingsUserPage = new Page({
   config: {
     layout: CommonLayout,
   },
-  mounted: async ({ pg }: { pg: Page }) => {
+  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
     // DOM 要素の取得
     const elements = getSettingsElements();
 

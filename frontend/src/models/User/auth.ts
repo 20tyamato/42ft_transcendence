@@ -1,11 +1,17 @@
 import { API_URL } from '@/config/config';
-import { updateOnlineStatus } from '@/models/User/repository';
+import { fetchCurrentUser, updateOnlineStatus } from '@/models/User/repository';
 
 export function checkUserAccess(): string {
   const token = localStorage.getItem('token');
   if (!token) {
     window.location.href = '/login';
     throw new Error('Token does not exist, redirected to login page.');
+  }
+  try {
+    fetchCurrentUser();
+  } catch (error) {
+    console.error('Failed to fetch current user:', error);
+    window.location.href = '/login';
   }
   updateOnlineStatus(true);
   return token;

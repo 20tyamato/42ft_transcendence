@@ -1,41 +1,79 @@
-/* frontend/src/pages/MultiPlay/Waiting/style.css */
-.waiting-container {
+/* 全体背景とフォント */
+body {
+  margin: 0;
+  font-family: 'Orbitron', sans-serif;
+  background: linear-gradient(135deg, #1c1c1c, #333333);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 60vh;
-  text-align: center;
-  background-color: #1a1a1a;
-  color: #ffffff;
+  min-height: 100vh;
+  overflow: hidden;
 }
 
+/* コンテナ（ガラスモーフィズム効果） */
+.waiting-container {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  padding: 50px;
+  text-align: center;
+  width: 90%;
+  max-width: 500px;
+  animation: fadeIn 0.7s ease-out;
+}
+
+/* ローディングスピナー */
 .loading-spinner {
-  width: 50px;
-  height: 50px;
-  border: 5px solid #f3f3f3;
-  border-top: 5px solid #3498db;
+  width: 60px;
+  height: 60px;
+  border: 6px solid rgba(255, 255, 255, 0.3);
+  border-top: 6px solid #00d4ff;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin-bottom: 20px;
+  margin: 0 auto 30px;
 }
 
+/* キーフレームアニメーション */
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 見出し */
+.waiting-container h1 {
+  font-size: 2.2rem;
+  color: #00d4ff;
+  margin-bottom: 20px;
+  text-shadow: 0 4px 6px rgba(0,0,0,0.5);
+}
+
+/* 接続状態のメッセージ */
+.waiting-container p {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  color: #e0e0e0;
+}
+
+/* キャンセルボタン */
 .cancel-button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background-color: #e74c3c;
+  padding: 12px 25px;
+  background: linear-gradient(45deg, #ff416c, #ff4b2b);
   color: white;
+  font-size: 1rem;
   border: none;
-  border-radius: 5px;
+  border-radius: 25px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .cancel-button:hover {
-  background-color: #c0392b;
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
 }

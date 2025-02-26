@@ -11,6 +11,7 @@ class User(AbstractUser):
     experience = models.IntegerField(default=0)
     language = models.CharField(max_length=10, default="en")
     is_online = models.BooleanField(default=False)
+    last_activity = models.DateTimeField(null=True, blank=True)
     friends = models.ManyToManyField(
         "self",
         symmetrical=True,

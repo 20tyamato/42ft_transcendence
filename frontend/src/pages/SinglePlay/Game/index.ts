@@ -1,11 +1,8 @@
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
-import Experience from './Experience';
 import Ball from './Ball';
+import Experience from './Experience';
 import Field from './Field';
-import Paddle from './Paddle';
-import Wall from './Wall';
-import LocalGame from './LocalGame';
 
 let running = true; // ゲームの状態管理
 
@@ -45,7 +42,7 @@ const SinglePlayPage = new Page({
   config: {
     layout: CommonLayout,
   },
-  mounted: async () => {
+  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
     // ヘッダーと背景を非表示にする
     const header = document.querySelector('.header');
     const background = document.getElementById('background');
