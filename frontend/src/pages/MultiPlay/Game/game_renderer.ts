@@ -130,22 +130,49 @@ export class GameRenderer {
   }
 
   public updateState(newState: IGameState) {
+    const now = performance.now();
+    
+    if (this.currentState && this.lastRenderTime) {
+      const deltaTime = (now - this.lastRenderTime) / 1000; // 秒単位
+      
+      // ボールの位置変化から速度を計算
+      const oldPos = this.currentState.ball.position;
+      const newPos = newState.ball.position;
+      
+      const distanceX = Math.abs(newPos.x - oldPos.x);
+      const distanceZ = Math.abs(newPos.z - oldPos.z);
+      const totalDistance = Math.sqrt(distanceX * distanceX + distanceZ * distanceZ);
+      
+      // 実際の速度を計算（距離/時間）
+      const actualSpeed = totalDistance / deltaTime;
+      
+      // 理論上の速度（サーバーから送られてきた速度ベクトルの大きさ）
+      const theoreticalSpeed = Math.sqrt(
+        newState.ball.velocity.x * newState.ball.velocity.x + 
+        newState.ball.velocity.z * newState.ball.velocity.z
+      );
+      
+      console.log('ボール速度分析:', {
+        deltaTime: deltaTime.toFixed(6) + '秒',
+        distanceX: distanceX.toFixed(2),
+        distanceZ: distanceZ.toFixed(2),
+        actualSpeed: actualSpeed.toFixed(2),
+        theoreticalSpeed: theoreticalSpeed.toFixed(2),
+        velocityX: newState.ball.velocity.x,
+        velocityZ: newState.ball.velocity.z,
+        frameRate: (1 / deltaTime).toFixed(2) + 'FPS',
+        timestamp: new Date().toISOString()
+      });
+    }
+    
     this.currentState = newState;
-
-    // プレイヤー2の場合、Z座標を反転させる必要はない
-    // （カメラが既に回転しているため）
-    const ballPosition = {
-      x: newState.ball.position.x,
-      y: newState.ball.position.y,
-      z: newState.ball.position.z,
-    };
-
-    // ボールの位置更新
-    this.ball.position.set(ballPosition.x, ballPosition.y, ballPosition.z);
-
-    // パドルの位置更新
+    this.lastRenderTime = now;
+    
+    // 既存のコード
+    this.ball.position.set(newState.ball.position.x, newState.ball.position.y, newState.ball.position.z);
+    
+    // パドルの更新
     Object.entries(newState.players).forEach(([username, position]) => {
-      // サーバーから送られてきた座標をそのまま使用
       this.createOrUpdatePaddle(username, position.x, position.z);
     });
   }

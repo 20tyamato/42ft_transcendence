@@ -176,45 +176,79 @@ const TournamentGamePage = new Page({
 
     // ゲーム終了時の処理
     const handleGameEnd = async (data: any) => {
-      console.log('Handling game end - Full data:', data);
-      console.log('next_stage value:', data.next_stage);
-      console.log('Condition check:', {
-        'final_waiting': data.next_stage === 'final_waiting',
-        'tournament_complete': data.next_stage === 'tournament_complete'
+      console.log('ゲーム終了ハンドラー呼び出し:', {
+        dataType: data.type,
+        nextStage: data.next_stage,
+        timestamp: new Date().toISOString()
       });
-    
+      
+      // データ構造の詳細検証
+      console.log('データ構造検証:', {
+        'data.state存在': !!data.state,
+        'data.state.score存在': !!data.state?.score,
+        'data.scores存在': !!data.scores,
+        'scoreのキー': data.state?.score ? Object.keys(data.state.score) : [],
+        'usernameの存在': data.state?.score ? username in data.state.score : false,
+        timestamp: new Date().toISOString()
+      });
+      
+      // マルチプレイとの比較のためのスコア取得ロジック
+      let playerScore = 0;
+      let opponentScore = 0;
+      let opponentName = '';
+      
+      if (data.state && data.state.score) {
+        playerScore = data.state.score[username] || 0;
+        // 相手プレイヤーの特定
+        const scoreEntries = Object.entries(data.state.score);
+        const opponentEntry = scoreEntries.find(([name]) => name !== username);
+        if (opponentEntry) {
+          [opponentName, opponentScore] = opponentEntry;
+        }
+      } else if (data.scores) {
+        // もしdata.scoresがある場合（フォーマットが異なる可能性）
+        playerScore = data.scores[username] || 0;
+        const opponentEntry = Object.entries(data.scores).find(([name]) => name !== username);
+        if (opponentEntry) {
+          [opponentName, opponentScore] = opponentEntry;
+        }
+      }
+      
+      console.log('スコア取得結果:', {
+        playerScore,
+        opponentScore,
+        opponentName,
+        timestamp: new Date().toISOString()
+      });
+      
+      // 問題の修正を試みる
       const finalScore = {
-        player1: data.state?.score?.[username] || 0,
-        player2: data.state?.score?.[Object.keys(data.state.score).find(key => key !== username) || ''] || 0,
+        player1: playerScore,
+        player2: opponentScore,
         gameType: round === 1 ? 'tournament_final' : 'tournament_semi',
         tournamentId: sessionId,
         matchId: matchId,
+        opponent: opponentName
       };
-    
-      console.log('Final score calculated:', {
-        finalScore,
-        timestamp: new Date().toISOString()
-      });
-    
+      
+      console.log('保存するスコアデータ:', finalScore);
+      
       localStorage.setItem('finalScore', JSON.stringify(finalScore));
       localStorage.setItem('gameMode', 'tournament');
-
-      console.log('Navigating to:', data.next_stage === 'final_waiting' 
-        ? `/tournament/waiting_final?session=${sessionId}`
-        : data.next_stage === 'tournament_complete' 
-          ? `/tournament/result?session=${sessionId}`
-          : '/tournament');
-      // ゲーム終了後の遷移処理
-      // setTimeout(() => {
-      //   if (data.next_stage === 'final_waiting') {
-      //     window.location.href = `/tournament/waiting_final?session=${sessionId}`;
-      //   } else if (data.next_stage === 'tournament_complete') {
-      //     window.location.href = `/tournament/result?session=${sessionId}`;
-      //   } else {
-      //     window.location.href = '/tournament';
-      //   }
-      // }, 1000);
-    };
+      
+      // 保存されたデータを検証
+      console.log('localStorage保存確認:', {
+        finalScore: JSON.parse(localStorage.getItem('finalScore') || '{}'),
+        gameMode: localStorage.getItem('gameMode'),
+        timestamp: new Date().toISOString()
+      });
+      
+      // console.log('画面遷移先:', data.next_stage === 'final_waiting' 
+      //   ? `/tournament/waiting_final?session=${sessionId}` 
+      //   : data.next_stage === 'tournament_complete' 
+      //     ? `/tournament/result?session=${sessionId}` 
+      //     : '/tournament');
+    }
 
     // 切断時の処理
     const handleDisconnection = async (data: any) => {
@@ -256,7 +290,17 @@ const TournamentGamePage = new Page({
 
     // キー入力の状態管理
     const handleKeyChange = (e: KeyboardEvent, isPressed: boolean) => {
-      if (!wsConnected) return;
+      console.log('キー操作:', {
+        key: e.key,
+        isPressed,
+        wsConnected,
+        timestamp: new Date().toISOString()
+      });
+      
+      if (!wsConnected) {
+        console.log('WebSocket未接続のため移動メッセージを送信できません');  
+        return;
+      }
 
       if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
         keyState[e.key] = isPressed;
@@ -273,12 +317,22 @@ const TournamentGamePage = new Page({
 
         const newPosition = currentX + movement;
 
+        console.log('移動計算:', {
+          keyState,
+          currentX,
+          movement,
+          newPosition,
+          isPlayer1,
+          timestamp: new Date().toISOString()
+        });
+
         if (movement !== 0) {
           const moveMessage = {
             type: 'move',
             username: username,
             position: newPosition,
           };
+          console.log('移動メッセージ送信:', moveMessage);
           socket.send(JSON.stringify(moveMessage));
         }
       }
