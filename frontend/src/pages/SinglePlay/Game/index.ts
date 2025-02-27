@@ -55,7 +55,6 @@ const SinglePlayPage = new Page({
     // Three.js の Experience を初期化
     const canvas = document.getElementById('gl') as HTMLCanvasElement;
     const experience = Experience.getInstance(canvas);
-    // experience.initializeRenderer(document.querySelector('canvas')!); //`canvas` を渡して Renderer を遅延初期化
     // ゲームループを開始
     function animate() {
       if (running) {

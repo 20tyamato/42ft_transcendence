@@ -11,13 +11,13 @@ export default class Field {
 
   private fieldGeometry!: THREE.BoxGeometry;
   private fieldMaterial!: THREE.MeshNormalMaterial;
+  private fieldGeometry2!: THREE.BoxGeometry;
+  private fieldMaterial2!: THREE.MeshNormalMaterial;
   private field!: THREE.Mesh<THREE.BoxGeometry, THREE.MeshNormalMaterial>;
 
   constructor(canvas: HTMLCanvasElement) {
     // Experience シングルトンを取得
     this.experience = Experience.getInstance(canvas);
-
-    // Experience 内の scene, FIELD_WIDTH, FIELD_LENGTH などを利用
     this.scene = this.experience.scene;
     this.FIELD_WIDTH = this.experience.FIELD_WIDTH;
     this.FIELD_LENGTH = this.experience.FIELD_LENGTH;
@@ -36,12 +36,23 @@ export default class Field {
       20
     );
 
+
+    // // 卓球の平台のジオメトリを作成
+    // this.fieldGeometry2 = new THREE.BoxGeometry(1500, 10, this.FIELD_LENGTH);
+
+    // // ワイヤーフレームのマテリアルを作成
+    // this.fieldMaterial2 = new THREE.MeshNormalMaterial({
+    //   wireframe: true,
+    //   transparent: true,
+    //   opacity: 0.5,
+    // });
+
     // this.fieldGeometry = new THREE.BoxGeometry(900, 10, 3000)
     this.fieldMaterial = new THREE.MeshNormalMaterial({
       // color: 0x000aff,
       wireframe: true,
       transparent: true,
-      opacity: 1.0,
+      opacity: 0.5,
     });
 
 

@@ -15,12 +15,7 @@ export default class Walls {
   constructor(canvas: HTMLCanvasElement) {
     this.experience = Experience.getInstance(canvas);
     this.scene = this.experience.scene;
-    this.camera = new THREE.PerspectiveCamera(
-      75,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      1000
-    );
+    this.camera = this.experience.camera;
 
     this.FIELD_WIDTH = this.experience.FIELD_WIDTH;
     this.FIELD_LENGTH = this.experience.FIELD_LENGTH;
@@ -29,7 +24,7 @@ export default class Walls {
     this.wallMaterial = new THREE.MeshNormalMaterial({
       wireframe: true,
       transparent: true,
-      opacity: 0.0,
+      opacity: 0.5,
     });
 
     this.wallRight = this.createWall(450, 0, -550); // wallRight プロパティを初期化

@@ -4,18 +4,18 @@ import * as THREE from 'three';
 
 export default class LocalGame {
   private experience: Experience;
-  private canvas: HTMLCanvasElement;
-  private time: THREE.Clock;
-  private scene: THREE.Scene;
-  private camera: THREE.PerspectiveCamera;
-  private field: THREE.Mesh;
-  private ball: THREE.Mesh;
-  private ballMaterial: THREE.Material;
-  private paddleTwo: THREE.Mesh;
-  private paddleOne: THREE.Mesh;
+  public canvas: HTMLCanvasElement;
+  public time: THREE.Clock;
+  public scene: THREE.Scene;
+  public camera: THREE.PerspectiveCamera;
+  public field: THREE.Mesh;
+  public ball: THREE.Mesh;
+  public ballMaterial: THREE.Material;
+  public paddleTwo: THREE.Mesh;
+  public paddleOne: THREE.Mesh;
 
-  private leftKeyPressed: boolean = false;
-  private rightKeyPressed: boolean = false;
+  public leftKeyPressed: boolean = false;
+  public rightKeyPressed: boolean = false;
   private scorePaddleOne: number = 0;
   private scorePaddleTwo: number = 0;
   private ballVelocity: { x: number; z: number } | null = null;
@@ -114,8 +114,18 @@ export default class LocalGame {
     });
   }
 
+  private processPlayerPaddle() {
+    if (this.leftKeyPressed && this.paddleOne.position.x > -450) {
+        this.paddleOne.position.x -= 10;  
+    }
+    if (this.rightKeyPressed && this.paddleOne.position.x < 450) {
+        this.paddleOne.position.x += 10; 
+    }
+  }
+
   update() {
     this.processBallMovement();
     this.processCpuPaddle();
+    this.processPlayerPaddle(); 
   }
 }
