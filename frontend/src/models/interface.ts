@@ -37,7 +37,7 @@ export interface IGameScore {
   player2: number;
 }
 
-export type TournamentMatchStatus = 'pending' | 'in_progress' | 'completed';
+export type ITournamentMatchStatus = 'pending' | 'in_progress' | 'completed';
 
 export interface ITournamentMatch {
   id: string;
@@ -45,7 +45,7 @@ export interface ITournamentMatch {
   player1: string | null;
   player2: string | null;
   winner: string | null;
-  status: TournamentMatchStatus;
+  status: ITournamentMatchStatus;
 }
 
 export interface ITournamentBracket {
@@ -75,4 +75,22 @@ export interface IGameState {
     [key: string]: number;
   };
   is_active: boolean;
+}
+
+export interface IWSMessageHandler {
+  (data: any): void;
+}
+
+export interface IMoveConfig {
+  currentPosition: number;
+  moveAmount: number;
+  isPlayer1: boolean;
+}
+
+export interface IGameConfig {
+  sessionId: string;
+  username: string;
+  isPlayer1: boolean;
+  wsEndpoint: string;
+  moveAmount?: number;
 }

@@ -1,5 +1,5 @@
 // frontend/src/pages/Tournament/Bracket/BracketDisplay.ts
-import { ITournamentBracket, ITournamentMatch, TournamentMatchStatus } from '@/models/interface';
+import { ITournamentBracket, ITournamentMatch, ITournamentMatchStatus } from '@/models/interface';
 
 export class BracketDisplay {
   private container: HTMLElement;
@@ -58,7 +58,7 @@ export class BracketDisplay {
     `;
   }
 
-  private getStatusClass(status: TournamentMatchStatus): string {
+  private getStatusClass(status: ITournamentMatchStatus): string {
     switch (status) {
       case 'in_progress':
         return 'match-in-progress';
