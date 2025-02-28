@@ -1,12 +1,8 @@
+# game_logic.py
 from dataclasses import dataclass
+import random
 from typing import Dict, Optional
-
-from channels.db import database_sync_to_async
-from django.contrib.auth import get_user_model
 from django.utils import timezone
-
-from .models import Game
-
 
 @dataclass
 class Vector3D:
@@ -15,27 +11,65 @@ class Vector3D:
     z: float
 
 
-class MultiplayerPongGame:
+class BaseGameLogic:
+    """全ゲームタイプの基底となるゲームロジック"""
+    
+    # 共通定数
     FIELD_WIDTH = 1200
     FIELD_LENGTH = 3000
     PADDLE_WIDTH = 200
     BALL_RADIUS = 30
     INITIAL_BALL_SPEED = 300
-    PADDLE_SPEED = 30
-    WINNING_SCORE = 15
+    # FIXME: need to adjust
+    PADDLE_SPEED = 50
+    # FIXME: for develop. it must be 15
+    WINNING_SCORE = 3
+    
+    def __init__(self, session_id: str):
+        """基本初期化処理"""
+        self.session_id = session_id
+        self.is_active = True
+        self.db_game_id = None
+        self.last_update = timezone.now()
+    
+    def update(self, delta_time: float) -> Dict:
+        """ゲーム状態更新の基本実装"""
+        if not self.is_active:
+            return self.get_state()
+        
+        # サブクラスで具体的な更新処理を実装
+        return self.get_state()
+    
+    def move_player(self, username: str, new_x: float) -> None:
+        """プレイヤー移動の基本実装"""
+        # サブクラスで実装
+        pass
+    
+    def handle_disconnection(self, disconnected_player: str) -> None:
+        """プレイヤー切断の基本処理"""
+        # サブクラスで実装
+        pass
+    
+    def get_state(self) -> dict:
+        """現在のゲーム状態を取得"""
+        # サブクラスで実装
+        return {}
+    
+    def get_winner(self) -> Optional[str]:
+        """勝者の取得"""
+        # サブクラスで実装
+        return None
 
+
+class MultiplayerPongGame(BaseGameLogic):
+    """2プレイヤー向けゲームロジック"""
+    
     def __init__(self, session_id: str, player1_name: str, player2_name: str):
-        """
-        Args:
-            session_id (str): WebSocketセッションの識別子
-            player1_name (str): プレイヤー1のユーザー名
-            player2_name (str): プレイヤー2のユーザー名
-        """
-        self.session_id = session_id  # game_idをsession_idに名称変更
+        """マルチプレイヤー固有の初期化"""
+        super().__init__(session_id)
         self.player1_name = player1_name
         self.player2_name = player2_name
-        self.db_game_id = None  # データベースのGame.idを保持するための変数
-
+        
         # ゲーム状態の初期化
         self.ball = Vector3D(0, 30, 0)
         self.ball_velocity = Vector3D(
@@ -46,38 +80,9 @@ class MultiplayerPongGame:
             player2_name: 0,
         }
         self.score = {player1_name: 0, player2_name: 0}
-        self.is_active = True
-        self.last_update = timezone.now()
-
-    async def _get_or_create_game(self) -> Game:
-        """ゲームインスタンスを取得または作成する"""
-        if self.db_game_id is not None:
-            try:
-                return await database_sync_to_async(Game.objects.get)(
-                    id=self.db_game_id
-                )
-            except Game.DoesNotExist:
-                pass
-
-        User = get_user_model()
-        player1 = await database_sync_to_async(User.objects.get)(
-            username=self.player1_name
-        )
-        player2 = await database_sync_to_async(User.objects.get)(
-            username=self.player2_name
-        )
-
-        game = await database_sync_to_async(Game.objects.create)(
-            player1=player1,
-            player2=player2,
-            score_player1=self.score[self.player1_name],
-            score_player2=self.score[self.player2_name],
-            is_ai_opponent=False,
-        )
-        self.db_game_id = game.id
-        return game
-
+    
     def update(self, delta_time: float) -> Dict:
+        """ゲーム状態の更新処理"""
         if not self.is_active:
             return self.get_state()
 
@@ -91,7 +96,7 @@ class MultiplayerPongGame:
         self._check_scoring()
 
         return self.get_state()
-
+    
     def move_player(self, username: str, new_x: float) -> None:
         """プレイヤーの移動を処理"""
         if username not in self.paddles:
@@ -100,29 +105,7 @@ class MultiplayerPongGame:
         # 移動制限
         max_x = (self.FIELD_WIDTH - self.PADDLE_WIDTH) / 2
         self.paddles[username] = max(min(new_x, max_x), -max_x)
-
-    async def save_game_state(self) -> None:
-        """ゲーム状態をDBに保存"""
-        # Gameモデルのインスタンスを取得または作成
-        game = await self._get_or_create_game()
-
-        # スコアを更新
-        game.score_player1 = self.score[self.player1_name]
-        game.score_player2 = self.score[self.player2_name]
-
-        if not self.is_active:
-            game.end_time = timezone.now()
-            winner_name = self.get_winner()
-            if winner_name:
-                # winner_nameからUserモデルのインスタンスを取得
-                from django.contrib.auth import get_user_model
-
-                User = get_user_model()
-                winner = await User.objects.get(username=winner_name)
-                game.winner = winner
-
-        await game.save()
-
+    
     def get_state(self) -> dict:
         """現在のゲーム状態を辞書形式で返す"""
         return {
@@ -147,7 +130,7 @@ class MultiplayerPongGame:
             "score": self.score,
             "is_active": self.is_active,
         }
-
+    
     def get_winner(self) -> Optional[str]:
         """勝者のusernameを返す"""
         if self.score[self.player1_name] >= self.WINNING_SCORE:
@@ -155,13 +138,9 @@ class MultiplayerPongGame:
         if self.score[self.player2_name] >= self.WINNING_SCORE:
             return self.player2_name
         return None
-
+    
     def handle_disconnection(self, disconnected_player: str) -> None:
-        """
-        プレイヤーの切断時の処理
-        Args:
-            disconnected_player (str): 切断したプレイヤーのユーザー名
-        """
+        """プレイヤーの切断時の処理"""
         # 残ったプレイヤーの勝利が確定するようにスコアを設定
         winning_player = (
             self.player2_name
@@ -169,13 +148,11 @@ class MultiplayerPongGame:
             else self.player1_name
         )
         self.score[winning_player] = self.WINNING_SCORE
-        self.score[disconnected_player] = min(
-            self.score[disconnected_player], self.WINNING_SCORE - 1
-        )
+        self.score[disconnected_player] = 0
 
         # ゲームを終了状態に
         self.is_active = False
-
+    
     # 以下、プライベートメソッド
     def _handle_wall_collision(self) -> None:
         if abs(self.ball.x) > self.FIELD_WIDTH / 2:
@@ -228,5 +205,7 @@ class MultiplayerPongGame:
     def _reset_ball(self) -> None:
         self.ball = Vector3D(0, 30, 0)
         self.ball_velocity = Vector3D(
-            self.INITIAL_BALL_SPEED, 0, -self.INITIAL_BALL_SPEED
+            self.INITIAL_BALL_SPEED * random.choice([-1, 1]), 
+            0, 
+            -self.INITIAL_BALL_SPEED * random.choice([-1, 1])
         )

@@ -283,6 +283,9 @@
     "model": "pong.game",
     "pk": 1,
     "fields": {
+      "game_type": "MULTI",
+      "status": "COMPLETED",
+      "session_id": "multi_player1_player2_abc123_1609459200",
       "player1": 1,
       "player2": 2,
       "score_player1": 15,
@@ -290,13 +293,18 @@
       "winner": 1,
       "start_time": "2021-01-01T00:00:00Z",
       "end_time": "2021-01-01T00:10:00Z",
-      "is_ai_opponent": false
+      "is_ai_opponent": false,
+      "tournament_id": null,
+      "tournament_round": null
     }
   },
   {
     "model": "pong.game",
     "pk": 2,
     "fields": {
+      "game_type": "MULTI",
+      "status": "COMPLETED",
+      "session_id": "multi_player3_player4_def456_1609459300",
       "player1": 3,
       "player2": 4,
       "score_player1": 15,
@@ -304,13 +312,18 @@
       "winner": 3,
       "start_time": "2021-01-01T00:00:00Z",
       "end_time": "2021-01-01T00:10:00Z",
-      "is_ai_opponent": false
+      "is_ai_opponent": false,
+      "tournament_id": null,
+      "tournament_round": null
     }
   },
   {
     "model": "pong.game",
     "pk": 3,
     "fields": {
+      "game_type": "MULTI",
+      "status": "COMPLETED",
+      "session_id": "multi_player5_player6_ghi789_1609459400",
       "player1": 5,
       "player2": 6,
       "score_player1": 15,
@@ -318,13 +331,18 @@
       "winner": 5,
       "start_time": "2021-01-01T00:00:00Z",
       "end_time": "2021-01-01T00:10:00Z",
-      "is_ai_opponent": false
+      "is_ai_opponent": false,
+      "tournament_id": null,
+      "tournament_round": null
     }
   },
   {
     "model": "pong.game",
     "pk": 4,
     "fields": {
+      "game_type": "MULTI",
+      "status": "COMPLETED",
+      "session_id": "multi_player7_player8_jkl012_1609459500",
       "player1": 7,
       "player2": 8,
       "score_player1": 15,
@@ -332,13 +350,18 @@
       "winner": 7,
       "start_time": "2021-01-01T00:00:00Z",
       "end_time": "2021-01-01T00:10:00Z",
-      "is_ai_opponent": false
+      "is_ai_opponent": false,
+      "tournament_id": null,
+      "tournament_round": null
     }
   },
   {
     "model": "pong.game",
     "pk": 5,
     "fields": {
+      "game_type": "MULTI",
+      "status": "COMPLETED",
+      "session_id": "multi_player9_player10_mno345_1609459600",
       "player1": 9,
       "player2": 10,
       "score_player1": 15,
@@ -346,7 +369,9 @@
       "winner": 9,
       "start_time": "2021-01-01T00:00:00Z",
       "end_time": "2021-01-01T00:10:00Z",
-      "is_ai_opponent": false
+      "is_ai_opponent": false,
+      "tournament_id": null,
+      "tournament_round": null
     }
   }
 ]
