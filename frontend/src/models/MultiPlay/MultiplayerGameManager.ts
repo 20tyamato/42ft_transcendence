@@ -1,7 +1,7 @@
 // frontend/src/models/MultiPlay/MultiplayerGameManager.ts
 import { IGameConfig, IGameState } from '@/models/interface';
 import { BaseGameManager } from '../Services/BaseGameManager';
-import { GameRenderer } from '../../pages/MultiPlay/Game/game_renderer';
+import { GameRenderer } from '../Services/game_renderer';
 
 export class MultiplayerGameManager extends BaseGameManager {
   private renderer: GameRenderer;

@@ -2,7 +2,7 @@ import { API_URL, WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { fetchUserAvatar } from '@/models/User/repository';
-import { GameRenderer } from './game_renderer';
+import { GameRenderer } from '@/models/Services/game_renderer';
 
 /**
  * URLやlocalStorageから必要なパラメータを取得する
