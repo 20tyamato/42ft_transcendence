@@ -38,7 +38,6 @@ export default class Camera {
     this.addResizeListener();
     console.log('Camera position:', this.instance.position);
     console.log('Camera lookAt target:', this.controls.target); // OrbitControlsを使っているなら
-
   }
 
   private createCamera(): THREE.PerspectiveCamera {

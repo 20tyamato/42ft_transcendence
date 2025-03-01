@@ -13,7 +13,7 @@ export class GameRenderer {
   private readonly WALL_COLOR = 0x003300;
 
   private readonly PADDLE_WIDTH = 200;
-  private readonly PADDLE_HEIGHT = 60;
+  private readonly PADDLE_HEIGHT = 30;
   private readonly PADDLE_DEPTH = 20;
   private readonly PADDLE_COLOR = 0xcccccc;
   private readonly PLAYER_OFFSET = 100;

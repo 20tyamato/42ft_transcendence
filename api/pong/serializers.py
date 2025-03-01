@@ -1,7 +1,20 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 
+import time
+import secrets
 from .models import Game, User, TournamentSession, TournamentParticipant
+
+
+def generate_session_id(game_type, player1_username, player2_username=None):
+    """構造化されたセッションIDを生成"""
+    unique_part = secrets.token_hex(6)  # 12文字のランダム文字列
+    timestamp = int(time.time())
+
+    # player2がNoneまたは空の場合は'solo'を使用
+    p2 = player2_username if player2_username else "solo"
+
+    return f"{game_type.lower()}_{player1_username}_{p2}_{unique_part}_{timestamp}"
 
 
 class FriendSerializer(serializers.ModelSerializer):
@@ -106,6 +119,14 @@ class GameSerializer(serializers.ModelSerializer):
     winner = serializers.CharField(
         source="winner.username", allow_null=True, required=False, allow_blank=True
     )
+    tournament_id = serializers.PrimaryKeyRelatedField(
+        source="tournament",
+        queryset=TournamentSession.objects.all(),
+        required=False,
+        allow_null=True,
+    )
+    # セッションIDは読み取り専用として設定（自動生成するため）
+    session_id = serializers.CharField(read_only=True)
 
     def validate_player1(self, value):
         """Validate that player1 exists"""
@@ -130,35 +151,53 @@ class GameSerializer(serializers.ModelSerializer):
         if not data.get("player1"):
             raise serializers.ValidationError("Player1 is required")
 
-        if data.get("is_ai_opponent") is False:
+        # ゲームタイプに基づくバリデーション
+        game_type = data.get("game_type", "MULTI")  # デフォルトはマルチプレイヤー
+
+        # マルチプレイまたはトーナメントの場合、AIでない限りplayer2が必要
+        if game_type in ["MULTI", "TOURNAMENT"] and data.get("is_ai_opponent") is False:
             if data.get("player2", {}).get("username") is None:
                 raise serializers.ValidationError(
-                    "Player2 is required for non-AI games"
+                    "Player2 is required for non-AI multiplayer games"
                 )
+
+        # トーナメントの場合、tournament_idが必要
+        if game_type == "TOURNAMENT" and not data.get("tournament"):
+            raise serializers.ValidationError(
+                "Tournament reference is required for tournament games"
+            )
+
         return data
 
     def create(self, validated_data):
         player1_data = validated_data.pop("player1")
-        player2_data = validated_data.pop("player2")
-        # NOTE: Noneはデフォルト値.試合が中断されたときやAI対戦のときを想定
+        player2_data = validated_data.pop("player2", {"username": None})
         winner_data = validated_data.pop("winner", None)
 
+        # ユーザーオブジェクトの取得
         player1 = User.objects.get(username=player1_data["username"])
+        player2_username = None
 
-        if player2_data["username"] is None:
+        if not player2_data or player2_data.get("username") is None:
             validated_data["player2"] = None
         else:
-            validated_data["player2"] = User.objects.get(
-                username=player2_data["username"]
-            )
+            player2_username = player2_data["username"]
+            validated_data["player2"] = User.objects.get(username=player2_username)
 
-        # NOTE: 空欄もありえるので.今後の要件で変更あるかも.
-        if winner_data and winner_data["username"]:
+        if winner_data and winner_data.get("username"):
             validated_data["winner"] = User.objects.get(
                 username=winner_data["username"]
             )
         else:
             validated_data["winner"] = None
+
+        # ゲームタイプの取得（デフォルトはMULTI）
+        game_type = validated_data.get("game_type", "MULTI")
+
+        # セッションIDの生成
+        validated_data["session_id"] = generate_session_id(
+            game_type, player1.username, player2_username
+        )
 
         game = Game.objects.create(player1=player1, **validated_data)
         return game
@@ -167,6 +206,9 @@ class GameSerializer(serializers.ModelSerializer):
         model = Game
         fields = [
             "id",
+            "game_type",
+            "status",
+            "session_id",
             "player1",
             "player2",
             "start_time",
@@ -175,7 +217,10 @@ class GameSerializer(serializers.ModelSerializer):
             "score_player1",
             "score_player2",
             "is_ai_opponent",
+            "tournament_id",
+            "tournament_round",
         ]
+        read_only_fields = ["id", "start_time", "session_id"]
 
 
 class TournamentParticipantSerializer(serializers.ModelSerializer):
@@ -196,7 +241,8 @@ class TournamentParticipantSerializer(serializers.ModelSerializer):
 
 class TournamentSessionSerializer(serializers.ModelSerializer):
     participants = TournamentParticipantSerializer(many=True, read_only=True)
-    current_players_count = serializers.IntegerField(read_only=True)
+    current_players_count = serializers.SerializerMethodField()
+    games = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = TournamentSession
@@ -209,7 +255,11 @@ class TournamentSessionSerializer(serializers.ModelSerializer):
             "max_players",
             "current_players_count",
             "participants",
+            "games",
         ]
+
+    def get_current_players_count(self, obj):
+        return obj.participants.count()
 
     def validate(self, data):
         if self.instance and self.instance.status != "WAITING_PLAYERS":
