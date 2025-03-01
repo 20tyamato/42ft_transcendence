@@ -51,5 +51,3 @@ export default class Walls {
 
   public update(): void {}
 }
-
-

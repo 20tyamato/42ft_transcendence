@@ -93,11 +93,11 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
 
 class GameConsumer(BaseGameConsumer):
     """マルチプレイヤー向けゲームコンシューマ"""
-    
+
     async def connect(self):
         """マルチプレイヤー固有の接続処理"""
         await super().connect()
-        
+
         # セッションIDからゲームインスタンス作成
         if self.session_id not in self.games:
             # プレイヤー名の取得
@@ -106,35 +106,35 @@ class GameConsumer(BaseGameConsumer):
                 self.games[self.session_id] = MultiplayerPongGame(
                     session_id=self.session_id,
                     player1_name=player_names[0],
-                    player2_name=player_names[1]
+                    player2_name=player_names[1],
                 )
-        
+
         # ゲーム更新ループの開始
         self.game_task = asyncio.create_task(self.game_loop())
-    
+
     async def disconnect(self, close_code):
         """マルチプレイヤー固有の切断処理"""
         # ゲームが存在する場合、切断処理を実行
         if self.session_id in self.games:
             game = self.games[self.session_id]
             game.handle_disconnection(self.username)
-            
+
             # 残ったプレイヤーに切断を通知
             await self.channel_layer.group_send(
                 self.game_group_name,
                 {
-                    "type": "player_disconnected", 
+                    "type": "player_disconnected",
                     "disconnected_player": self.username,
-                    "state": game.get_state()
-                }
+                    "state": game.get_state(),
+                },
             )
-            
+
             # ゲーム状態を保存
             await self.save_game_state(game)
             del self.games[self.session_id]
-        
+
         await super().disconnect(close_code)
-    
+
     async def game_loop(self):
         """マルチプレイヤー固有のゲームループ処理"""
         try:
@@ -146,6 +146,7 @@ class GameConsumer(BaseGameConsumer):
                 del self.games[self.session_id]
         except Exception as e:
             print(f"Error in multiplayer game loop: {e}")
+
 
 class TournamentGameConsumer(AsyncWebsocketConsumer):
     games = {}  # セッションIDをキーとしたゲームインスタンスの管理

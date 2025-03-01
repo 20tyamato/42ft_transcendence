@@ -5,14 +5,15 @@ import time
 import secrets
 from .models import Game, User, TournamentSession, TournamentParticipant
 
+
 def generate_session_id(game_type, player1_username, player2_username=None):
     """構造化されたセッションIDを生成"""
     unique_part = secrets.token_hex(6)  # 12文字のランダム文字列
     timestamp = int(time.time())
-    
+
     # player2がNoneまたは空の場合は'solo'を使用
-    p2 = player2_username if player2_username else 'solo'
-    
+    p2 = player2_username if player2_username else "solo"
+
     return f"{game_type.lower()}_{player1_username}_{p2}_{unique_part}_{timestamp}"
 
 
@@ -119,8 +120,10 @@ class GameSerializer(serializers.ModelSerializer):
         source="winner.username", allow_null=True, required=False, allow_blank=True
     )
     tournament_id = serializers.PrimaryKeyRelatedField(
-        source='tournament', queryset=TournamentSession.objects.all(), 
-        required=False, allow_null=True
+        source="tournament",
+        queryset=TournamentSession.objects.all(),
+        required=False,
+        allow_null=True,
     )
     # セッションIDは読み取り専用として設定（自動生成するため）
     session_id = serializers.CharField(read_only=True)
@@ -150,27 +153,27 @@ class GameSerializer(serializers.ModelSerializer):
 
         # ゲームタイプに基づくバリデーション
         game_type = data.get("game_type", "MULTI")  # デフォルトはマルチプレイヤー
-        
+
         # マルチプレイまたはトーナメントの場合、AIでない限りplayer2が必要
-        if game_type in ['MULTI', 'TOURNAMENT'] and data.get("is_ai_opponent") is False:
+        if game_type in ["MULTI", "TOURNAMENT"] and data.get("is_ai_opponent") is False:
             if data.get("player2", {}).get("username") is None:
                 raise serializers.ValidationError(
                     "Player2 is required for non-AI multiplayer games"
                 )
-                
+
         # トーナメントの場合、tournament_idが必要
-        if game_type == 'TOURNAMENT' and not data.get("tournament"):
+        if game_type == "TOURNAMENT" and not data.get("tournament"):
             raise serializers.ValidationError(
                 "Tournament reference is required for tournament games"
             )
-            
+
         return data
 
     def create(self, validated_data):
         player1_data = validated_data.pop("player1")
         player2_data = validated_data.pop("player2", {"username": None})
         winner_data = validated_data.pop("winner", None)
-        
+
         # ユーザーオブジェクトの取得
         player1 = User.objects.get(username=player1_data["username"])
         player2_username = None
@@ -190,12 +193,10 @@ class GameSerializer(serializers.ModelSerializer):
 
         # ゲームタイプの取得（デフォルトはMULTI）
         game_type = validated_data.get("game_type", "MULTI")
-        
+
         # セッションIDの生成
         validated_data["session_id"] = generate_session_id(
-            game_type, 
-            player1.username, 
-            player2_username
+            game_type, player1.username, player2_username
         )
 
         game = Game.objects.create(player1=player1, **validated_data)

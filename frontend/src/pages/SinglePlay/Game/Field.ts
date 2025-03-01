@@ -1,6 +1,6 @@
 // Field.ts
 import * as THREE from 'three';
-import Experience from './Experience'; 
+import Experience from './Experience';
 
 export default class Field {
   // --- クラスプロパティの型定義 ---
@@ -54,7 +54,6 @@ export default class Field {
       transparent: true,
       opacity: 0.5,
     });
-
 
     this.field = new THREE.Mesh(this.fieldGeometry, this.fieldMaterial);
     this.field.position.set(0, -5, 0);
