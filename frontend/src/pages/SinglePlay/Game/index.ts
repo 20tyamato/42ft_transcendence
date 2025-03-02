@@ -1,3 +1,4 @@
+import gsap from 'gsap';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import Ball from './Ball';
@@ -37,11 +38,27 @@ export function setupPauseMenu() {
   });
 }
 
+export function hideGameStartOverlay() {
+  const overlay = document.getElementById('gameStartOverlay');
+  if (!overlay) return;
+  console.log('Starting fade-out animation for GAME START overlay');
+  gsap.to(overlay, {
+    duration: 2, // 2秒かけてフェードアウト
+    opacity: 0.5,
+    delay: 2, // 2秒後に開始
+    onComplete: () => {
+      console.log('Fade-out complete. Hiding overlay.');
+      overlay.classList.add('hidden'); // CSSで非表示にする
+    },
+  });
+}
+
 const SinglePlayPage = new Page({
   name: 'SinglePlay/Game',
   config: {
     layout: CommonLayout,
   },
+
   mounted: async ({ pg }: { pg: Page }): Promise<void> => {
     // ヘッダーと背景を非表示にする
     const header = document.querySelector('.header');
@@ -74,6 +91,7 @@ const SinglePlayPage = new Page({
     }
     animate();
     setupPauseMenu();
+    hideGameStartOverlay();
 
     // Before unload event
     window.addEventListener('beforeunload', () => experience.destroy());

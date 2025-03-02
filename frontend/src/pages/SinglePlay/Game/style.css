@@ -206,3 +206,49 @@ canvas {
   padding: 20px;
   border-radius: 10px;
 }
+
+/* overlay の基本スタイル */
+#gameStartOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* 深い黒の半透明背景 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1100;
+  opacity: 0.7; /* 初期は不透明 */
+  transition: opacity 0.5s ease;
+}
+
+#gameStartOverlay.hidden {
+  display: none;
+}
+
+.overlay.hidden {
+  display: none;
+}
+
+.overlay h1 {
+  font-size: 64px;
+  margin: 0 0 20px;
+  color: #00fffc;
+  text-shadow: 0 0 20px rgba(0, 255, 252, 0.7);
+}
+
+.overlay p {
+  font-size: 32px;
+  margin: 0 0 30px;
+}
+
+.btn {
+  padding: 10px 20px;
+  font-size: 24px;
+  background-color: #fff;
+  color: #000;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}

@@ -17,6 +17,16 @@
       </div>
     </div>
     <div id="container">
+      <div id="gameStartOverlay" class="overlay">
+        <h1>GAME START</h1>
+      </div>
+      
+      <div id="gameOverOverlay" class="overlay hidden ">
+        <h1 id="endMessage">GAME OVER</h1>
+        <p id="finalScore">Score: 0 - 0</p>
+        <!-- 必要なら再挑戦ボタンなど -->
+        <button id="restartBtn" class="btn">Restart</button>
+      </div>      
       <canvas id="gl"></canvas>
       <div id="scoreDisplay">
         <div class="score-container">

@@ -91,6 +91,18 @@ export default class LocalGame {
       this.ballVelocity.z *= -1;
     }
   }
+  public showGameOverOverlay(message: string, finalScore: string) {
+    const overlay = document.getElementById('gameOverOverlay');
+    const endMessage = document.getElementById('endMessage');
+    const finalScoreElem = document.getElementById('finalScore');
+    if (overlay && endMessage && finalScoreElem) {
+      endMessage.textContent = message; // "GAME OVER" または "YOU WIN!"
+      finalScoreElem.textContent = `Score: ${finalScore}`;
+      overlay.classList.remove('hidden');
+      gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 1 });
+    }
+  }
+  
 
   private scored(player: string) {
     this.stopBall();
@@ -103,14 +115,16 @@ export default class LocalGame {
 
     if (player === 'paddleOne') {
       this.scorePaddleOne++;
-      if (this.scorePaddleOne >= 5) {
-        alert('You Win!');
+      if (this.scorePaddleOne >= 15) {
+        // プレイヤーが勝利
+        this.showGameOverOverlay("YOU WIN!", `${this.scorePaddleOne} - ${this.scorePaddleTwo}`);
         this.restartGame();
       }
     } else {
       this.scorePaddleTwo++;
-      if (this.scorePaddleTwo >= 5) {
-        alert('CPU Wins!');
+      if (this.scorePaddleTwo >= 15) {
+        // CPUが勝利
+        this.showGameOverOverlay("GAME OVER", `${this.scorePaddleOne} - ${this.scorePaddleTwo}`);
         this.restartGame();
       }
     }
