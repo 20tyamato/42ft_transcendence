@@ -75,8 +75,9 @@ export default class LocalGame {
   }
 
   private isSideCollision(): boolean {
-    return Math.abs(this.ball.position.x) > 450;
+    return Math.abs(this.ball.position.x) > this.experience.FIELD_WIDTH / 2;
   }
+
 
   private isPaddleCollision(paddle: THREE.Mesh): boolean {
     const hitX = Math.abs(this.ball.position.x - paddle.position.x) < 75; // パドル幅考慮
@@ -95,28 +96,33 @@ export default class LocalGame {
     this.stopBall();
     gsap.to(this.ballMaterial, { opacity: 0, duration: 0.5 });
 
-    setTimeout(() => this.reset(), 600);
+    setTimeout(() => {
+      this.reset();
+      this.updateScoreDisplay();
+    }, 600);
 
     if (player === 'paddleOne') {
         this.scorePaddleOne++;
-        if (this.scorePaddleOne >= 15) {
+        if (this.scorePaddleOne >= 5) {
             alert("You Win!");
             this.restartGame();
         }
     } else {
         this.scorePaddleTwo++;
-        if (this.scorePaddleTwo >= 15) {
+        if (this.scorePaddleTwo >= 5) {
             alert("CPU Wins!");
             this.restartGame();
         }
     }
-}
+    this.updateScoreDisplay();
+  }
 
-private restartGame() {
-    this.scorePaddleOne = 0;
-    this.scorePaddleTwo = 0;
-    this.reset();
-}
+  private restartGame() {
+      this.scorePaddleOne = 0;
+      this.scorePaddleTwo = 0;
+      this.reset();
+      this.updateScoreDisplay();
+  }
 
 
   private stopBall() {
@@ -128,6 +134,7 @@ private restartGame() {
     gsap.to(this.ballMaterial, { opacity: 1, duration: 0.5 });
     this.ballVelocity = null;
     this.ballStopped = false;
+    this.updateScoreDisplay();
   }
 
   private handleKeyboard() {
@@ -150,7 +157,24 @@ private restartGame() {
         this.paddleOne.position.x += paddleSpeed * deltaTime;
     }
     
-}
+  }
+
+  private updateScoreDisplay() {
+    const playerNameElem = document.getElementById('playerName');
+    const scoreElem = document.getElementById('score');
+    const username = localStorage.getItem('username') || 'Player';
+  
+    if (playerNameElem) {
+      const leftNameSpan = playerNameElem.querySelector('.leftName');
+      if (leftNameSpan) {
+        leftNameSpan.textContent = username;
+      }
+    }
+    if (scoreElem) {
+      scoreElem.textContent = `${this.scorePaddleOne} - ${this.scorePaddleTwo}`;
+    }
+  }
+  
 
   update() {
     if (!running) return; 

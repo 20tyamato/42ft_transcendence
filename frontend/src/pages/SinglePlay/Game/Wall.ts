@@ -27,8 +27,8 @@ export default class Walls {
       opacity: 0.5,
     });
 
-    this.wallRight = this.createWall(this.experience.FIELD_WIDTH / 2 + 5, 100, 0); // wallRight プロパティを初期化
-    this.wallLeft = this.createWall(-this.experience.FIELD_WIDTH / 2 - 5, 100, 0); // wallLeft プロパティを初期化
+    this.wallRight = this.createWall(this.experience.FIELD_WIDTH / 2 + 5, 0, 0); // wallRight プロパティを初期化
+    this.wallLeft = this.createWall(-this.experience.FIELD_WIDTH / 2 - 5, 0, 0); // wallLeft プロパティを初期化
 
     this.setWallsRight();
     this.setWallsLeft();

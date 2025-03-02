@@ -18,12 +18,25 @@
     </div>
     <div id="container">
       <canvas id="gl"></canvas>
-      <div id="scoreBoard"></div>
+      <div id="scoreDisplay">
+        <div class="score-container">
+          <div id="playerName">
+              <span class="leftName">Player</span>
+              <span class="vs">VS</span>
+              <span class="rightName">CPU</span>
+            </div>
+            <div id="score">
+              <span class="playerScore">0</span>
+              <span class="dash">-</span>
+              <span class="cpuScore">0</span>
+            </div>
+          </div>
+      </div>      
     </div>
     <div id="gameOver" class="hidden">
       <h1>Game Over</h1>
       <p>Your score: <span id="finalScore"></span></p>
     </div>
-    <!-- <script type="module" src="./index.ts"></script> -->
   </body>
 </html>
+
