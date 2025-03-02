@@ -3,11 +3,11 @@ import * as THREE from 'three';
 import Experience from './Experience'; // 実際のパスに合わせて修正してください
 
 export default class Ball {
-  private experience: Experience
-  private scene: THREE.Scene
-  private camera: THREE.PerspectiveCamera
-  private BALL_RADIUS: number
-  private FIELD_LENGTH: number
+  private experience: Experience;
+  private scene: THREE.Scene;
+  private camera: THREE.PerspectiveCamera;
+  private BALL_RADIUS: number;
+  private FIELD_LENGTH: number;
 
   public ballGeometry!: THREE.SphereGeometry;
   public ballMaterial!: THREE.MeshNormalMaterial;
@@ -43,7 +43,7 @@ export default class Ball {
     this.camera.lookAt(this.ball.position);
 
     // ボールの初期座標をセット
-    this.ball.position.set(0, 0, 0)
+    this.ball.position.set(0, 0, 0);
     console.log('Ball position after set:', this.ball.position);
   }
 

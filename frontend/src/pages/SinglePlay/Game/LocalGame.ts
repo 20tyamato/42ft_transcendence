@@ -1,7 +1,7 @@
 import gsap from 'gsap';
 import Experience from './Experience';
 import * as THREE from 'three';
-let running = true;
+const running = true;
 
 export default class LocalGame {
   private experience: Experience;
@@ -29,19 +29,20 @@ export default class LocalGame {
     this.time = new THREE.Clock();
     this.scene = this.experience.scene;
     this.camera = this.experience.camera as unknown as THREE.PerspectiveCamera;
-    this.field = this.experience.field as unknown as THREE.Mesh; 
+    this.field = this.experience.field as unknown as THREE.Mesh;
     this.ball = this.experience.ball.ball;
     this.ballMaterial = this.experience.ball.ballMaterial;
     this.paddleTwo = this.experience.paddle.paddleTwo;
     this.paddleOne = this.experience.paddle.paddleOne;
 
     this.startBallMovement();
-    this.handleKeyboard();5
+    this.handleKeyboard();
+    5;
   }
 
   private startBallMovement() {
     const direction = Math.random() > 0.5 ? -1 : 1;
-    this.ballVelocity = { x: 0, z: direction * 10.0 };//ボールの速度調整
+    this.ballVelocity = { x: 0, z: direction * 10.0 }; //ボールの速度調整
     this.ballStopped = false;
   }
 
@@ -61,7 +62,7 @@ export default class LocalGame {
 
     if (this.isSideCollision()) {
       this.ballVelocity!.x *= -1; // 壁に当たったらボールのX方向を反転
-    }    
+    }
     if (this.isPaddleCollision(this.paddleOne)) this.hitBallBack(this.paddleOne);
     if (this.isPaddleCollision(this.paddleTwo)) this.hitBallBack(this.paddleTwo);
     if (this.isPastPaddle(this.paddleOne)) this.scored('paddleTwo');
@@ -78,12 +79,11 @@ export default class LocalGame {
     return Math.abs(this.ball.position.x) > this.experience.FIELD_WIDTH / 2;
   }
 
-
   private isPaddleCollision(paddle: THREE.Mesh): boolean {
     const hitX = Math.abs(this.ball.position.x - paddle.position.x) < 75; // パドル幅考慮
     const hitZ = Math.abs(this.ball.position.z - paddle.position.z) < 10;
     return hitX && hitZ;
-  }  
+  }
 
   private hitBallBack(paddle: THREE.Mesh) {
     if (this.ballVelocity) {
@@ -102,28 +102,27 @@ export default class LocalGame {
     }, 600);
 
     if (player === 'paddleOne') {
-        this.scorePaddleOne++;
-        if (this.scorePaddleOne >= 5) {
-            alert("You Win!");
-            this.restartGame();
-        }
+      this.scorePaddleOne++;
+      if (this.scorePaddleOne >= 5) {
+        alert('You Win!');
+        this.restartGame();
+      }
     } else {
-        this.scorePaddleTwo++;
-        if (this.scorePaddleTwo >= 5) {
-            alert("CPU Wins!");
-            this.restartGame();
-        }
+      this.scorePaddleTwo++;
+      if (this.scorePaddleTwo >= 5) {
+        alert('CPU Wins!');
+        this.restartGame();
+      }
     }
     this.updateScoreDisplay();
   }
 
   private restartGame() {
-      this.scorePaddleOne = 0;
-      this.scorePaddleTwo = 0;
-      this.reset();
-      this.updateScoreDisplay();
+    this.scorePaddleOne = 0;
+    this.scorePaddleTwo = 0;
+    this.reset();
+    this.updateScoreDisplay();
   }
-
 
   private stopBall() {
     this.ballStopped = true;
@@ -151,19 +150,18 @@ export default class LocalGame {
     const paddleSpeed = 500; // 1秒間に動くピクセル量
 
     if (this.leftKeyPressed && this.paddleOne.position.x > -450) {
-        this.paddleOne.position.x -= paddleSpeed * deltaTime;
+      this.paddleOne.position.x -= paddleSpeed * deltaTime;
     }
     if (this.rightKeyPressed && this.paddleOne.position.x < 450) {
-        this.paddleOne.position.x += paddleSpeed * deltaTime;
+      this.paddleOne.position.x += paddleSpeed * deltaTime;
     }
-    
   }
 
   private updateScoreDisplay() {
     const playerNameElem = document.getElementById('playerName');
     const scoreElem = document.getElementById('score');
     const username = localStorage.getItem('username') || 'Player';
-  
+
     if (playerNameElem) {
       const leftNameSpan = playerNameElem.querySelector('.leftName');
       if (leftNameSpan) {
@@ -174,13 +172,12 @@ export default class LocalGame {
       scoreElem.textContent = `${this.scorePaddleOne} - ${this.scorePaddleTwo}`;
     }
   }
-  
 
   update() {
-    if (!running) return; 
-    const deltaTime = this.time.getDelta(); 
+    if (!running) return;
+    const deltaTime = this.time.getDelta();
     this.processBallMovement();
     this.processCpuPaddle();
-    this.processPlayerPaddle(deltaTime); 
+    this.processPlayerPaddle(deltaTime);
   }
 }

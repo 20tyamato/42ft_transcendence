@@ -59,7 +59,6 @@ const SinglePlayPage = new Page({
       }
     }
 
-
     const selectedLevel = localStorage.getItem('selectedLevel');
     console.log(`Retrieved selected level: ${selectedLevel}`);
 

@@ -4,7 +4,6 @@ import Experience from '../Experience';
 import Renderer from '../Utils/Renderer';
 
 export default class Camera {
-
   private experience: Experience;
   private renderer: Renderer;
   private scene: THREE.Scene;

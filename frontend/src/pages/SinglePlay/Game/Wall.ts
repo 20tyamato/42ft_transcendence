@@ -20,7 +20,7 @@ export default class Walls {
     this.FIELD_WIDTH = this.experience.FIELD_WIDTH;
     this.FIELD_LENGTH = this.experience.FIELD_LENGTH;
 
-    this.wallGeometry = new THREE.BoxGeometry(10, 20,this.experience.FIELD_LENGTH);
+    this.wallGeometry = new THREE.BoxGeometry(10, 20, this.experience.FIELD_LENGTH);
     this.wallMaterial = new THREE.MeshNormalMaterial({
       wireframe: true,
       transparent: true,

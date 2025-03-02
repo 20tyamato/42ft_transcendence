@@ -104,7 +104,7 @@ export default class Experience {
     this.renderer.update();
     this.field.updateParticles();
     // requestAnimationFrame(() => this.update());
-    console.log("Experience update running");
+    console.log('Experience update running');
   }
 
   public destroy(): void {

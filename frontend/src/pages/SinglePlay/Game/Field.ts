@@ -38,7 +38,7 @@ export default class Field {
       20,
       20
     );
-      this.fieldMaterial = new THREE.MeshNormalMaterial({
+    this.fieldMaterial = new THREE.MeshNormalMaterial({
       wireframe: true,
       transparent: true,
       opacity: 0.5,
@@ -53,7 +53,7 @@ export default class Field {
     console.log('Field added to scene:', this.field);
     this.setBackgroundParticles();
   }
-  
+
   private setBackgroundParticles(): void {
     const particleCount = 7000;
     const particlesGeometry = new THREE.BufferGeometry();
@@ -65,7 +65,10 @@ export default class Field {
       this.particlePositions[i] = (Math.random() - 0.5) * 10000;
       this.particleSpeeds[i] = (Math.random() - 0.5) * 0.1; // パーティクルの速度を設定
     }
-    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(this.particlePositions, 3));
+    particlesGeometry.setAttribute(
+      'position',
+      new THREE.BufferAttribute(this.particlePositions, 3)
+    );
 
     // PointsMaterial で星のようなパーティクルを作成
     const particlesMaterial = new THREE.PointsMaterial({
