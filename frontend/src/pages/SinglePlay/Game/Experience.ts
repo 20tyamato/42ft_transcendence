@@ -96,7 +96,6 @@ export default class Experience {
 
   public update(): void {
     this.world.update();
-    // this.cameraLerp.update();
     this.ball.update();
     this.field.update();
     this.paddle.update();
@@ -105,6 +104,8 @@ export default class Experience {
     }
     this.cameraClass.update();
     this.renderer.update();
+    requestAnimationFrame(() => this.update());
+    console.log("Experience update running");
   }
 
   public destroy(): void {
@@ -123,6 +124,6 @@ export default class Experience {
     });
   }
   public initializeRenderer(canvas: HTMLCanvasElement): void {
-    this.renderer = new Renderer(canvas); // カスタムクラスをnew
+    this.renderer = new Renderer(canvas);
   }
 }

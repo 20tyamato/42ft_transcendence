@@ -28,18 +28,19 @@ export default class LocalGame {
     this.time = new THREE.Clock();
     this.scene = this.experience.scene;
     this.camera = this.experience.camera as unknown as THREE.PerspectiveCamera;
-    this.field = this.experience.field as unknown as THREE.Mesh; // Assuming 'field' is of type THREE.Mesh
+    this.field = this.experience.field as unknown as THREE.Mesh; 
     this.ball = this.experience.ball.ball;
     this.ballMaterial = this.experience.ball.ballMaterial;
     this.paddleTwo = this.experience.paddle.paddleTwo;
     this.paddleOne = this.experience.paddle.paddleOne;
 
+    this.startBallMovement();
     this.handleKeyboard();
   }
 
   private startBallMovement() {
     const direction = Math.random() > 0.5 ? -1 : 1;
-    this.ballVelocity = { x: 0, z: direction * 0.2 };
+    this.ballVelocity = { x: 0, z: direction * 0.4 };//ボールの速度調整
     this.ballStopped = false;
   }
 
@@ -57,7 +58,9 @@ export default class LocalGame {
     this.ball.position.x += this.ballVelocity?.x ?? 0;
     this.ball.position.z += this.ballVelocity?.z ?? 0;
 
-    if (this.isSideCollision()) this.ballVelocity?.x ?? 0;
+    if (this.isSideCollision()) {
+      this.ballVelocity!.x *= -1; // 壁に当たったらボールのX方向を反転
+    }    
     if (this.isPaddleCollision(this.paddleOne)) this.hitBallBack(this.paddleOne);
     if (this.isPaddleCollision(this.paddleTwo)) this.hitBallBack(this.paddleTwo);
     if (this.isPastPaddle(this.paddleOne)) this.scored('paddleTwo');
@@ -75,8 +78,10 @@ export default class LocalGame {
   }
 
   private isPaddleCollision(paddle: THREE.Mesh): boolean {
-    return Math.abs(this.ball.position.z - paddle.position.z) < 10;
-  }
+    const hitX = Math.abs(this.ball.position.x - paddle.position.x) < 75; // パドル幅考慮
+    const hitZ = Math.abs(this.ball.position.z - paddle.position.z) < 10;
+    return hitX && hitZ;
+  }  
 
   private hitBallBack(paddle: THREE.Mesh) {
     if (this.ballVelocity) {
@@ -88,10 +93,30 @@ export default class LocalGame {
   private scored(player: string) {
     this.stopBall();
     gsap.to(this.ballMaterial, { opacity: 0, duration: 0.5 });
+
     setTimeout(() => this.reset(), 600);
-    if (player === 'paddleOne') this.scorePaddleOne++;
-    else this.scorePaddleTwo++;
-  }
+
+    if (player === 'paddleOne') {
+        this.scorePaddleOne++;
+        if (this.scorePaddleOne >= 15) {
+            alert("You Win!");
+            this.restartGame();
+        }
+    } else {
+        this.scorePaddleTwo++;
+        if (this.scorePaddleTwo >= 15) {
+            alert("CPU Wins!");
+            this.restartGame();
+        }
+    }
+}
+
+private restartGame() {
+    this.scorePaddleOne = 0;
+    this.scorePaddleTwo = 0;
+    this.reset();
+}
+
 
   private stopBall() {
     this.ballStopped = true;
@@ -101,6 +126,7 @@ export default class LocalGame {
     this.ball.position.set(0, 0, 0);
     gsap.to(this.ballMaterial, { opacity: 1, duration: 0.5 });
     this.ballVelocity = null;
+    this.ballStopped = false;
   }
 
   private handleKeyboard() {
@@ -114,18 +140,31 @@ export default class LocalGame {
     });
   }
 
-  private processPlayerPaddle() {
+  // private processPlayerPaddle() {
+  //   if (this.leftKeyPressed && this.paddleOne.position.x > -450) {
+  //       this.paddleOne.position.x -= 10;  
+  //   }
+  //   if (this.rightKeyPressed && this.paddleOne.position.x < 450) {
+  //       this.paddleOne.position.x += 10; 
+  //   }
+  // }
+  private processPlayerPaddle(deltaTime: number) {
+    const paddleSpeed = 500; // 1秒間に動くピクセル量
+
     if (this.leftKeyPressed && this.paddleOne.position.x > -450) {
-        this.paddleOne.position.x -= 10;  
+        this.paddleOne.position.x -= paddleSpeed * deltaTime;
     }
     if (this.rightKeyPressed && this.paddleOne.position.x < 450) {
-        this.paddleOne.position.x += 10; 
+        this.paddleOne.position.x += paddleSpeed * deltaTime;
     }
-  }
+    
+}
+
 
   update() {
+    const deltaTime = this.time.getDelta(); 
     this.processBallMovement();
     this.processCpuPaddle();
-    this.processPlayerPaddle(); 
+    this.processPlayerPaddle(deltaTime); 
   }
 }
