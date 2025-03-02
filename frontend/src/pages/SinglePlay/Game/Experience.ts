@@ -30,7 +30,7 @@ export default class Experience {
   public NEAR: number = 0.1;
   public FAR: number = 5000;
   public FIELD_WIDTH: number = 1500;
-  public FIELD_LENGTH: number = 2400;
+  public FIELD_LENGTH: number = 2600;
   public BALL_RADIUS: number = 20;
   public PADDLE_WIDTH: number = 150;
   public PADDLE_HEIGHT: number = 30;
