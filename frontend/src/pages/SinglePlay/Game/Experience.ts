@@ -102,6 +102,7 @@ export default class Experience {
     }
     this.cameraClass.update();
     this.renderer.update();
+    this.field.updateParticles();
     // requestAnimationFrame(() => this.update());
     console.log("Experience update running");
   }
