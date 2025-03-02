@@ -136,6 +136,13 @@ class TournamentSession(models.Model):
     started_at = models.DateTimeField(null=True, blank=True)
     completed_at = models.DateTimeField(null=True, blank=True)
     max_players = models.IntegerField(default=4)
+    winner = models.ForeignKey(
+        User,
+        related_name="tournaments_won",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
 
     def __str__(self):
         return f"Tournament {self.id} ({self.status})"
