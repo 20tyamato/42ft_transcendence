@@ -4,7 +4,6 @@ import Experience from '../Experience';
 import Renderer from '../Utils/Renderer';
 
 export default class Camera {
-
   private experience: Experience;
   private renderer: Renderer;
   private scene: THREE.Scene;
@@ -42,8 +41,9 @@ export default class Camera {
 
   private createCamera(): THREE.PerspectiveCamera {
     const camera = this.experience.camera;
-    camera.position.set(0, 500, 2000);
-    camera.lookAt(0, 10, 0);  
+    camera.far = 5000;
+    camera.position.set(0, 600, 2200);
+    camera.lookAt(0, 0, 800);
     this.scene.add(camera);
     return camera;
   }
@@ -53,6 +53,10 @@ export default class Camera {
     controls.enableDamping = true;
     controls.dampingFactor = 0.25;
     controls.enableZoom = true;
+    controls.minDistance = 1000;
+    controls.maxDistance = 3000;
+    controls.minPolarAngle = Math.PI / 4;
+    controls.maxPolarAngle = Math.PI / 2;
     return controls;
   }
 

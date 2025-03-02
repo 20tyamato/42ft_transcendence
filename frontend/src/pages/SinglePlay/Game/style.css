@@ -160,3 +160,49 @@ canvas {
   opacity: 1; /* 表示状態 */
   visibility: visible; /* 表示状態 */
 }
+
+/* scoreDisplay全体を画面上部中央に配置 */
+#scoreDisplay {
+  position: fixed;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  pointer-events: none;
+  visibility: visible;
+}
+
+.score-container {
+  background-color: rgba(0, 0, 0, 0.6); /* 半透明の黒 */
+  padding: 10px 20px;
+  border-radius: 10px;
+  text-align: center;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* 各行を横並びにして中央揃え */
+#playerName, #score {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 左右の余白を調整して、VS と - が中央に来るように */
+#playerName .vs, #score .dash {
+  margin: 0 10px;
+}
+
+/* ゲームオーバー表示（例） */
+#gameOver {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  text-align: center;
+  z-index: 1100;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 20px;
+  border-radius: 10px;
+}

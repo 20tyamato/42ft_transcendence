@@ -30,7 +30,7 @@ export default class Experience {
   public NEAR: number = 0.1;
   public FAR: number = 5000;
   public FIELD_WIDTH: number = 1500;
-  public FIELD_LENGTH: number = 2400;
+  public FIELD_LENGTH: number = 2600;
   public BALL_RADIUS: number = 20;
   public PADDLE_WIDTH: number = 150;
   public PADDLE_HEIGHT: number = 30;
@@ -76,8 +76,6 @@ export default class Experience {
     this.localGame = new LocalGame(canvas);
     this.localGameStarted = true;
     this.sizes.on('resize', () => this.resize());
-    this.time.on('tick', () => this.update());
-
     this.resize();
   }
 
@@ -96,7 +94,6 @@ export default class Experience {
 
   public update(): void {
     this.world.update();
-    // this.cameraLerp.update();
     this.ball.update();
     this.field.update();
     this.paddle.update();
@@ -105,6 +102,9 @@ export default class Experience {
     }
     this.cameraClass.update();
     this.renderer.update();
+    this.field.updateParticles();
+    // requestAnimationFrame(() => this.update());
+    console.log('Experience update running');
   }
 
   public destroy(): void {
@@ -123,6 +123,6 @@ export default class Experience {
     });
   }
   public initializeRenderer(canvas: HTMLCanvasElement): void {
-    this.renderer = new Renderer(canvas); // カスタムクラスをnew
+    this.renderer = new Renderer(canvas);
   }
 }

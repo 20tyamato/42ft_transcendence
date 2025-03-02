@@ -49,6 +49,16 @@ const SinglePlayPage = new Page({
     if (header) header.classList.add('none');
     if (background) background.classList.add('none');
 
+    const username = localStorage.getItem('username') || 'Player';
+    const playerNameDiv = document.getElementById('playerName');
+    if (playerNameDiv) {
+      // すでに HTML 内に「<span class="leftName">Player</span><span class="vs">VS</span><span class="rightName">CPU</span>」があると仮定
+      const leftNameSpan = playerNameDiv.querySelector('.leftName');
+      if (leftNameSpan) {
+        leftNameSpan.textContent = username;
+      }
+    }
+
     const selectedLevel = localStorage.getItem('selectedLevel');
     console.log(`Retrieved selected level: ${selectedLevel}`);
 

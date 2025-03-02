@@ -20,15 +20,15 @@ export default class Walls {
     this.FIELD_WIDTH = this.experience.FIELD_WIDTH;
     this.FIELD_LENGTH = this.experience.FIELD_LENGTH;
 
-    this.wallGeometry = new THREE.BoxGeometry(10, 10, 3800, 5, 5, 500);
+    this.wallGeometry = new THREE.BoxGeometry(10, 20, this.experience.FIELD_LENGTH);
     this.wallMaterial = new THREE.MeshNormalMaterial({
       wireframe: true,
       transparent: true,
       opacity: 0.5,
     });
 
-    this.wallRight = this.createWall(450, 0, -550); // wallRight プロパティを初期化
-    this.wallLeft = this.createWall(-450, 0, -550); // wallLeft プロパティを初期化
+    this.wallRight = this.createWall(this.experience.FIELD_WIDTH / 2 + 5, 0, 0); // wallRight プロパティを初期化
+    this.wallLeft = this.createWall(-this.experience.FIELD_WIDTH / 2 - 5, 0, 0); // wallLeft プロパティを初期化
 
     this.setWallsRight();
     this.setWallsLeft();
@@ -42,11 +42,11 @@ export default class Walls {
   }
 
   private setWallsRight(): void {
-    this.wallRight.position.set(450, 0, -550);
+    this.wallRight.position.set(750, 0, 0);
   }
 
   private setWallsLeft(): void {
-    this.wallLeft.position.set(-450, 0, -550);
+    this.wallLeft.position.set(-750, 0, 0);
   }
 
   public update(): void {}
