@@ -60,7 +60,7 @@ const SinglePlayPage = new Page({
       if (running) {
         experience.update();
       }
-      // requestAnimationFrame(animate);
+      requestAnimationFrame(animate);
     }
     animate();
     setupPauseMenu();

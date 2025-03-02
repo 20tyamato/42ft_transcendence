@@ -1,6 +1,7 @@
 import gsap from 'gsap';
 import Experience from './Experience';
 import * as THREE from 'three';
+let running = true;
 
 export default class LocalGame {
   private experience: Experience;
@@ -35,12 +36,12 @@ export default class LocalGame {
     this.paddleOne = this.experience.paddle.paddleOne;
 
     this.startBallMovement();
-    this.handleKeyboard();
+    this.handleKeyboard();5
   }
 
   private startBallMovement() {
     const direction = Math.random() > 0.5 ? -1 : 1;
-    this.ballVelocity = { x: 0, z: direction * 0.4 };//ボールの速度調整
+    this.ballVelocity = { x: 0, z: direction * 10.0 };//ボールの速度調整
     this.ballStopped = false;
   }
 
@@ -139,15 +140,6 @@ private restartGame() {
       if (e.key === 'ArrowLeft') this.leftKeyPressed = false;
     });
   }
-
-  // private processPlayerPaddle() {
-  //   if (this.leftKeyPressed && this.paddleOne.position.x > -450) {
-  //       this.paddleOne.position.x -= 10;  
-  //   }
-  //   if (this.rightKeyPressed && this.paddleOne.position.x < 450) {
-  //       this.paddleOne.position.x += 10; 
-  //   }
-  // }
   private processPlayerPaddle(deltaTime: number) {
     const paddleSpeed = 500; // 1秒間に動くピクセル量
 
@@ -160,8 +152,8 @@ private restartGame() {
     
 }
 
-
   update() {
+    if (!running) return; 
     const deltaTime = this.time.getDelta(); 
     this.processBallMovement();
     this.processCpuPaddle();

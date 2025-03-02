@@ -76,8 +76,6 @@ export default class Experience {
     this.localGame = new LocalGame(canvas);
     this.localGameStarted = true;
     this.sizes.on('resize', () => this.resize());
-    this.time.on('tick', () => this.update());
-
     this.resize();
   }
 
@@ -104,7 +102,7 @@ export default class Experience {
     }
     this.cameraClass.update();
     this.renderer.update();
-    requestAnimationFrame(() => this.update());
+    // requestAnimationFrame(() => this.update());
     console.log("Experience update running");
   }
 
