@@ -21,11 +21,14 @@
         <h1>GAME START</h1>
       </div>
       
-      <div id="gameOverOverlay" class="overlay hidden ">
-        <h1 id="endMessage">GAME OVER</h1>
-        <p id="finalScore">Score: 0 - 0</p>
-        <!-- 必要なら再挑戦ボタンなど -->
-        <button id="restartBtn" class="btn">Restart</button>
+      <div id="gameOverOverlay" class="hidden">
+        <div class="gameover-container">
+          <h1 id="endMessage">GAME OVER</h1>
+          <p id="finalScore">Score: 0 - 0</p>
+          <!-- 必要なら再挑戦ボタンなど -->
+          <button id="retryBtn" class="btn">Retry</button>
+          <button id="exitBtn" class="btn">Exit</button>
+        </div>
       </div>      
       <canvas id="gl"></canvas>
       <div id="scoreDisplay">
@@ -42,10 +45,6 @@
             </div>
           </div>
       </div>      
-    </div>
-    <div id="gameOver" class="hidden">
-      <h1>Game Over</h1>
-      <p>Your score: <span id="finalScore"></span></p>
     </div>
   </body>
 </html>

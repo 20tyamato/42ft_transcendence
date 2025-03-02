@@ -111,13 +111,15 @@ export default class Experience {
     this.sizes.off('resize');
     this.time.off('tick');
 
-    this.scene.traverse((child) => {
+    this.scene.traverse((child: THREE.Object3D) => {
       if (child instanceof THREE.Mesh) {
         child.geometry.dispose();
         if (Array.isArray(child.material)) {
-          child.material.forEach((material) => material.dispose());
+          (child.material as THREE.Material[]).forEach((material: THREE.Material) =>
+            material.dispose()
+          );
         } else {
-          child.material.dispose();
+          (child.material as THREE.Material).dispose();
         }
       }
     });

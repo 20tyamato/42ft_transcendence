@@ -1,7 +1,7 @@
 import gsap from 'gsap';
 import Experience from './Experience';
 import * as THREE from 'three';
-const running = true;
+let running = true;
 
 export default class LocalGame {
   private experience: Experience;
@@ -101,8 +101,20 @@ export default class LocalGame {
       overlay.classList.remove('hidden');
       gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 1 });
     }
+    const restartBtn = document.getElementById('restartBtn');
+    if (restartBtn) {
+      restartBtn.addEventListener('click', () => {
+        window.location.reload(); // ゲームを再初期化する例
+      });
+    }
+    // Exit ボタンは、例えば /singleplay/select に遷移
+    const exitBtn = document.getElementById('exitBtn');
+    if (exitBtn) {
+      exitBtn.addEventListener('click', () => {
+        window.location.href = '/singleplay/select';
+      });
+    }
   }
-  
 
   private scored(player: string) {
     this.stopBall();
@@ -115,17 +127,19 @@ export default class LocalGame {
 
     if (player === 'paddleOne') {
       this.scorePaddleOne++;
-      if (this.scorePaddleOne >= 15) {
+      if (this.scorePaddleOne >= 3) {
         // プレイヤーが勝利
-        this.showGameOverOverlay("YOU WIN!", `${this.scorePaddleOne} - ${this.scorePaddleTwo}`);
-        this.restartGame();
+        running = false;
+        this.showGameOverOverlay('YOU WIN!', `${this.scorePaddleOne} - ${this.scorePaddleTwo}`);
+        return;
       }
     } else {
       this.scorePaddleTwo++;
-      if (this.scorePaddleTwo >= 15) {
+      if (this.scorePaddleTwo >= 3) {
+        running = false;
         // CPUが勝利
-        this.showGameOverOverlay("GAME OVER", `${this.scorePaddleOne} - ${this.scorePaddleTwo}`);
-        this.restartGame();
+        this.showGameOverOverlay('GAME OVER', `${this.scorePaddleOne} - ${this.scorePaddleTwo}`);
+        return;
       }
     }
     this.updateScoreDisplay();

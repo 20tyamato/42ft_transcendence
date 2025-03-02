@@ -43,7 +43,7 @@ export function hideGameStartOverlay() {
   if (!overlay) return;
   console.log('Starting fade-out animation for GAME START overlay');
   gsap.to(overlay, {
-    duration: 2, // 2秒かけてフェードアウト
+    duration: 1.5, // 2秒かけてフェードアウト
     opacity: 0.5,
     delay: 2, // 2秒後に開始
     onComplete: () => {
@@ -51,6 +51,34 @@ export function hideGameStartOverlay() {
       overlay.classList.add('hidden'); // CSSで非表示にする
     },
   });
+}
+
+export function showGameOverOverlay(message: string, finalScore: string) {
+  const overlay = document.getElementById('gameOverOverlay');
+  const endMessage = document.getElementById('endMessage');
+  const finalScoreElem = document.getElementById('finalScore');
+  const retryBtn = document.getElementById('retryBtn');
+  const exitBtn = document.getElementById('exitBtn');
+  const scoreDisplay = document.getElementById('scoreDisplay');
+
+  if (overlay && endMessage && finalScoreElem && retryBtn && exitBtn && scoreDisplay) {
+    endMessage.textContent = message; // "GAME OVER" または "YOU WIN!"
+    finalScoreElem.textContent = `Score: ${finalScore}`;
+
+    scoreDisplay.classList.add('hidden');
+    // 非表示クラスを削除し、opacity 0 から1にフェードイン
+    overlay.classList.remove('hidden');
+    gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 1 });
+    retryBtn.addEventListener('click', () => {
+      window.location.reload();
+    });
+
+    exitBtn.addEventListener('click', () => {
+      window.location.href = '/singleplay/select';
+    });
+  } else {
+    console.warn('Game over elements are missing.');
+  }
 }
 
 const SinglePlayPage = new Page({
@@ -69,7 +97,6 @@ const SinglePlayPage = new Page({
     const username = localStorage.getItem('username') || 'Player';
     const playerNameDiv = document.getElementById('playerName');
     if (playerNameDiv) {
-      // すでに HTML 内に「<span class="leftName">Player</span><span class="vs">VS</span><span class="rightName">CPU</span>」があると仮定
       const leftNameSpan = playerNameDiv.querySelector('.leftName');
       if (leftNameSpan) {
         leftNameSpan.textContent = username;
@@ -82,7 +109,6 @@ const SinglePlayPage = new Page({
     // Three.js の Experience を初期化
     const canvas = document.getElementById('gl') as HTMLCanvasElement;
     const experience = Experience.getInstance(canvas);
-    // ゲームループを開始
     function animate() {
       if (running) {
         experience.update();
@@ -93,7 +119,6 @@ const SinglePlayPage = new Page({
     setupPauseMenu();
     hideGameStartOverlay();
 
-    // Before unload event
     window.addEventListener('beforeunload', () => experience.destroy());
   },
 });

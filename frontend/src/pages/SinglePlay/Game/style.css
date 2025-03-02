@@ -193,20 +193,6 @@ canvas {
   margin: 0 10px;
 }
 
-/* ゲームオーバー表示（例） */
-#gameOver {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: #fff;
-  text-align: center;
-  z-index: 1100;
-  background-color: rgba(0, 0, 0, 0.7);
-  padding: 20px;
-  border-radius: 10px;
-}
-
 /* overlay の基本スタイル */
 #gameStartOverlay {
   position: fixed;
@@ -219,7 +205,7 @@ canvas {
   justify-content: center;
   align-items: center;
   z-index: 1100;
-  opacity: 0.7; /* 初期は不透明 */
+  opacity: 1; /* 初期は不透明 */
   transition: opacity 0.5s ease;
 }
 
@@ -244,11 +230,60 @@ canvas {
 }
 
 .btn {
-  padding: 10px 20px;
+  padding: 12px 30px;
   font-size: 24px;
-  background-color: #fff;
+  background-color: #ffffff;
   color: #000;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.btn:hover {
+  transform: scale(1.1);
+}
+
+/* オーバーレイの共通スタイル */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9); /* 深い黒の半透明背景 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1100;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+/* hidden クラスで非表示 */
+.overlay.hidden {
+  display: none;
+}
+
+/* ゲームオーバー用コンテナ */
+.gameover-container {
+  background: rgba(0, 0, 0, 0.7);
+  padding: 30px 50px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(0, 255, 252, 0.5);
+}
+
+/* SF風フォントを使用（Orbitronを読み込んでいる前提） */
+.gameover-container h1 {
+  font-size: 72px;
+  color: #00fffc;
+  margin-bottom: 20px;
+  text-shadow: 0 0 20px rgba(0, 255, 252, 0.8);
+}
+
+.gameover-container p {
+  font-size: 36px;
+  color: #ffffff;
+  margin-bottom: 30px;
 }
