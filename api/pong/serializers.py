@@ -243,6 +243,7 @@ class TournamentSessionSerializer(serializers.ModelSerializer):
     participants = TournamentParticipantSerializer(many=True, read_only=True)
     current_players_count = serializers.SerializerMethodField()
     games = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    winner_name = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = TournamentSession
@@ -256,10 +257,18 @@ class TournamentSessionSerializer(serializers.ModelSerializer):
             "current_players_count",
             "participants",
             "games",
+            "winner", # ID
+            "winner_name", # name
         ]
 
     def get_current_players_count(self, obj):
         return obj.participants.count()
+
+    def get_winner_name(self, obj):
+        """優勝者の表示名を返す"""
+        if obj.winner:
+            return obj.winner.display_name
+        return None
 
     def validate(self, data):
         if self.instance and self.instance.status != "WAITING_PLAYERS":
