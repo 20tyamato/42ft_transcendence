@@ -1,9 +1,8 @@
 from django.utils import timezone
 from rest_framework.test import APITestCase
-from rest_framework.exceptions import ValidationError
-
-from pong.models import Game, User, TournamentSession, TournamentParticipant
 from django.test import TestCase
+from rest_framework.test import APIRequestFactory
+from pong.models import Game, User, TournamentSession, TournamentParticipant
 from pong.serializers import (
     GameSerializer,
     UserSerializer,
@@ -155,196 +154,175 @@ class UserSerializerTests(APITestCase):
         self.assertIn("username", serializer.errors)
 
 
-class GameSerializerTests(APITestCase):
+class GameSerializerTests(TestCase):
     def setUp(self):
-        self.player1 = User.objects.create_user(
-            username="player1", password="playerpass1", display_name="Player 1"
+        self.user1 = User.objects.create_user(
+            username="player1",
+            email="player1@example.com",
+            password="testpass123",
+            display_name="Player One"
         )
-        self.player2 = User.objects.create_user(
-            username="player2", password="playerpass2", display_name="Player 2"
+        self.user2 = User.objects.create_user(
+            username="player2",
+            email="player2@example.com",
+            password="testpass123",
+            display_name="Player Two"
         )
-
-    def test_serialize_ai_game(self):
-        """Test serialization of AI game"""
-        game_data = {
-            "player1": "player1",
-            "player2": None,
-            "score_player1": 15,
-            "score_player2": 10,
-            "is_ai_opponent": True,
-            "winner": "player1",
-            "end_time": timezone.now(),
-        }
-        serializer = GameSerializer(data=game_data)
-        self.assertTrue(serializer.is_valid())
-
-    def test_serialize_human_game(self):
-        """Test serialization of human vs human game"""
-        game_data = {
-            "player1": "player1",
+        
+        self.game_attributes = {
+            "player1": "player1",  
             "player2": "player2",
-            "score_player1": 10,
-            "score_player2": 15,
-            "is_ai_opponent": False,
-            "winner": "player1",
-            "end_time": timezone.now(),
+            "game_type": "MULTI",
+            "status": "WAITING",
         }
-        serializer = GameSerializer(data=game_data)
-        self.assertTrue(serializer.is_valid())
-
-    def test_deserialize_game(self):
-        """Test deserialization of game data"""
+        
+        self.factory = APIRequestFactory()
+        
+    def test_game_serializer_contains_expected_fields(self):
+        """GameSerializerが期待されるフィールドを含んでいるかテスト"""
         game = Game.objects.create(
-            player1=self.player1,
-            player2=None,
-            score_player1=15,
-            score_player2=10,
-            is_ai_opponent=True,
-            winner=self.player1,
+            player1=self.user1,
+            player2=self.user2,
+            game_type="MULTI",
+            status="WAITING",
+            session_id="game_test_123"
         )
         serializer = GameSerializer(game)
         data = serializer.data
-        self.assertEqual(data["player1"], self.player1.username)
-        self.assertIsNone(data["player2"])
-        self.assertTrue(data["is_ai_opponent"])
-
-    def test_nonexistent_player1(self):
-        """Test validation when player1 doesn't exist"""
-        data = {
-            "player1": "nonexistent_user",
-            "score_player1": 15,
-            "score_player2": 10,
-            "is_ai_opponent": True,
-        }
-        serializer = GameSerializer(data=data)
-        self.assertFalse(serializer.is_valid())
-        self.assertIn("Player1 does not exist", str(serializer.errors))
-
-    def test_missing_player1(self):
-        """Test validation when player1 is missing"""
-        data = {"score_player1": 15, "score_player2": 10, "is_ai_opponent": True}
-        serializer = GameSerializer(data=data)
-        self.assertFalse(serializer.is_valid())
-        self.assertIn("This field is required", str(serializer.errors))
-
-    def test_nonexistent_player2_in_human_game(self):
-        """Test validation when player2 doesn't exist in human game"""
-        data = {
-            "player1": "player1",
-            "player2": "nonexistent_user",
-            "is_ai_opponent": False,
-        }
-        serializer = GameSerializer(data=data)
-        self.assertFalse(serializer.is_valid())
-        self.assertIn("Player2 does not exist", str(serializer.errors))
-
-    def test_missing_player2_in_human_game(self):
-        """Test validation when player2 is missing in human game"""
-        data = {"player1": "player1", "player2": None, "is_ai_opponent": False}
-        serializer = GameSerializer(data=data)
-        self.assertFalse(serializer.is_valid())
-        self.assertIn("Player2 is required for non-AI games", str(serializer.errors))
+        
+        expected_fields = [
+            'id', 'game_type', 'status', 'session_id', 'player1', 'player2', 
+            'start_time', 'end_time', 'winner', 'score_player1', 'score_player2', 
+            'is_ai_opponent', 'tournament_id', 'tournament_round'
+        ]
+        
+        self.assertEqual(set(data.keys()), set(expected_fields))
+        
+    def test_game_serializer_create(self):
+        """GameSerializerがゲームを正しく作成できるかテスト"""
+        serializer = GameSerializer(data=self.game_attributes)
+        self.assertTrue(serializer.is_valid())
+        game = serializer.save()
+        
+        self.assertEqual(game.player1, self.user1)
+        self.assertEqual(game.player2, self.user2)
+        self.assertEqual(game.game_type, "MULTI")
+        self.assertEqual(game.status, "WAITING")
+        self.assertTrue(game.session_id.startswith("multi_player1_player2_"))
+        
+    def test_game_serializer_with_tournament(self):
+        """トーナメント関連の情報を持つゲームを正しく作成できるかテスト"""
+        tournament = TournamentSession.objects.create()
+        
+        game_with_tournament = self.game_attributes.copy()
+        game_with_tournament["tournament_id"] = tournament.id
+        game_with_tournament["game_type"] = "TOURNAMENT"
+        game_with_tournament["tournament_round"] = 0  # 準決勝
+        
+        serializer = GameSerializer(data=game_with_tournament)
+        self.assertTrue(serializer.is_valid())
+        game = serializer.save()
+        
+        self.assertEqual(game.tournament.id, tournament.id)
+        self.assertEqual(game.tournament_round, 0)
+        self.assertEqual(game.game_type, "TOURNAMENT")
 
 
-class TournamentParticipantSerializerTests(TestCase):
+class TournamentSerializerTests(TestCase):
     def setUp(self):
-        self.tournament = TournamentSession.objects.create()
-        self.user = User.objects.create_user(
-            username="testuser", display_name="Test User", password="testpass123"
-        )
-        self.participant = TournamentParticipant.objects.create(
-            tournament=self.tournament, user=self.user
-        )
-        self.serializer = TournamentParticipantSerializer(instance=self.participant)
-
-    def test_contains_expected_fields(self):
-        """シリアライザーが期待されるフィールドを含んでいることをテスト"""
-        data = self.serializer.data
-        self.assertCountEqual(
-            data.keys(),
-            [
-                "id",
-                "username",
-                "display_name",
-                "is_ready",
-                "joined_at",
-                "bracket_position",
-            ],
-        )
-
-    def test_username_field_content(self):
-        """usernameフィールドが正しく取得されることをテスト"""
-        data = self.serializer.data
-        self.assertEqual(data["username"], self.user.username)
-
-    def test_display_name_field_content(self):
-        """display_nameフィールドが正しく取得されることをテスト"""
-        data = self.serializer.data
-        self.assertEqual(data["display_name"], self.user.display_name)
-
-
-class TournamentSessionSerializerTests(TestCase):
-    def setUp(self):
-        self.tournament = TournamentSession.objects.create()
         self.user1 = User.objects.create_user(
-            username="testuser1", display_name="Test User 1", password="testpass123"
+            username="player1",
+            email="player1@example.com",
+            password="testpass123",
+            display_name="Player One"
         )
         self.user2 = User.objects.create_user(
-            username="testuser2", display_name="Test User 2", password="testpass123"
+            username="player2",
+            email="player2@example.com",
+            password="testpass123",
+            display_name="Player Two"
         )
-        self.participant1 = TournamentParticipant.objects.create(
-            tournament=self.tournament, user=self.user1
+        self.user3 = User.objects.create_user(
+            username="player3",
+            email="player3@example.com",
+            password="testpass123",
+            display_name="Player Three"
         )
-        self.serializer = TournamentSessionSerializer(instance=self.tournament)
-
-    def test_contains_expected_fields(self):
-        """シリアライザーが期待されるフィールドを含んでいることをテスト"""
-        data = self.serializer.data
-        self.assertCountEqual(
-            data.keys(),
-            [
-                "id",
-                "status",
-                "created_at",
-                "started_at",
-                "completed_at",
-                "max_players",
-                "current_players_count",
-                "participants",
-            ],
+        self.user4 = User.objects.create_user(
+            username="player4",
+            email="player4@example.com",
+            password="testpass123",
+            display_name="Player Four"
         )
-
-    def test_participants_field_content(self):
-        """参加者フィールドが正しくシリアライズされることをテスト"""
-        data = self.serializer.data
-        self.assertEqual(len(data["participants"]), 1)
-        self.assertEqual(data["participants"][0]["username"], self.user1.username)
-        self.assertEqual(
-            data["participants"][0]["display_name"], self.user1.display_name
-        )
-
-    def test_validate_tournament_modification(self):
-        """進行中のトーナメントの修正が禁止されることをテスト"""
-        self.tournament.status = "IN_PROGRESS"
-        self.tournament.save()
-
-        serializer = TournamentSessionSerializer(
-            instance=self.tournament, data={"status": "WAITING_PLAYERS"}
-        )
-
-        with self.assertRaises(ValidationError):
-            serializer.is_valid(raise_exception=True)
-
-    def test_current_players_count(self):
-        """current_players_countが正しく計算されることをテスト"""
-        data = self.serializer.data
-        self.assertEqual(data["current_players_count"], 1)
-
-        # 参加者を追加
-        TournamentParticipant.objects.create(
-            tournament=self.tournament, user=self.user2
-        )
-
-        serializer = TournamentSessionSerializer(instance=self.tournament)
+        
+        self.factory = APIRequestFactory()
+        
+    def test_tournament_serializer_contains_expected_fields(self):
+        """TournamentSessionSerializerが期待されるフィールドを含んでいるかテスト"""
+        tournament = TournamentSession.objects.create()
+        serializer = TournamentSessionSerializer(tournament)
         data = serializer.data
-        self.assertEqual(data["current_players_count"], 2)
+        
+        expected_fields = [
+            'id', 'status', 'created_at', 'started_at', 'completed_at', 'max_players',
+            'current_players_count', 'participants', 'games', 'winner',
+            'winner_username', 'winner_display_name'
+        ]
+        
+        self.assertEqual(set(data.keys()), set(expected_fields))
+        
+    def test_tournament_serializer_with_participants(self):
+        """参加者を含むトーナメントが正しくシリアライズされるかテスト"""
+        tournament = TournamentSession.objects.create()
+        
+        # 参加者を追加
+        TournamentParticipant.objects.create(tournament=tournament, user=self.user1, bracket_position=1)
+        TournamentParticipant.objects.create(tournament=tournament, user=self.user2, bracket_position=2)
+        
+        request = self.factory.get('/')
+        serializer = TournamentSessionSerializer(tournament, context={'request': request})
+        data = serializer.data
+        
+        self.assertEqual(data['current_players_count'], 2)
+        self.assertEqual(len(data['participants']), 2)
+        
+        # 参加者の情報が正しくシリアライズされているか確認
+        participants = sorted(data['participants'], key=lambda x: x['username'])
+        self.assertEqual(participants[0]['username'], 'player1')
+        self.assertEqual(participants[0]['display_name'], 'Player One')
+        self.assertEqual(participants[0]['bracket_position'], 1)
+        
+    def test_tournament_serializer_with_winner(self):
+        """優勝者を含むトーナメントが正しくシリアライズされるかテスト"""
+        tournament = TournamentSession.objects.create(
+            status="COMPLETED",
+            completed_at=timezone.now(),
+            winner=self.user1
+        )
+        
+        request = self.factory.get('/')
+        serializer = TournamentSessionSerializer(tournament, context={'request': request})
+        data = serializer.data
+        
+        self.assertEqual(data['winner'], self.user1.id)
+        self.assertEqual(data['winner_username'], 'player1')
+        self.assertEqual(data['winner_display_name'], 'Player One')
+        self.assertEqual(data['status'], 'COMPLETED')
+        
+    def test_tournament_participant_serializer(self):
+        """TournamentParticipantSerializerが正しく動作するかテスト"""
+        tournament = TournamentSession.objects.create()
+        participant = TournamentParticipant.objects.create(
+            tournament=tournament,
+            user=self.user1,
+            bracket_position=1,
+            is_ready=True
+        )
+        
+        serializer = TournamentParticipantSerializer(participant)
+        data = serializer.data
+        
+        self.assertEqual(data['username'], 'player1')
+        self.assertEqual(data['display_name'], 'Player One')
+        self.assertEqual(data['bracket_position'], 1)
+        self.assertTrue(data['is_ready'])

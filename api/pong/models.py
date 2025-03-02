@@ -157,7 +157,17 @@ class TournamentParticipant(models.Model):
     )
     joined_at = models.DateTimeField(auto_now_add=True)
     is_ready = models.BooleanField(default=False)
-    bracket_position = models.IntegerField(null=True, blank=True)
+    bracket_position = models.IntegerField(
+        null=True,
+        blank=True,
+        help_text="""
+        トーナメントブラケット内の位置を示す値。
+        1, 2: 第1準決勝の対戦者
+        3, 4: 第2準決勝の対戦者
+        5: 決勝進出者
+        6: 優勝者
+        """
+    )
 
     class Meta:
         unique_together = [("tournament", "user")]

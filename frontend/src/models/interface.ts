@@ -110,7 +110,7 @@ export interface ITournamentSession {
   participants: ITournamentParticipant[];
   // このトーナメントに関連するすべての試合（準決勝・決勝）のIDリスト
   games: number[];
-  winner?: string;        // 優勝者のユーザー名
+  winner?: string; // 優勝者のユーザー名
   winner_display_name?: string; // 優勝者の表示名
 }
 
