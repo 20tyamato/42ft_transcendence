@@ -1,3 +1,4 @@
+// frontend/src/pages/MultiPlay/index.ts
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 
