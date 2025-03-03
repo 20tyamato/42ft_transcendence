@@ -100,14 +100,23 @@ class GameConsumer(BaseGameConsumer):
 
         # セッションIDからゲームインスタンス作成
         if self.session_id not in self.games:
-            # プレイヤー名の取得
-            player_names = self.session_id.replace("game_", "").split("_")
-            if len(player_names) >= 2:  # セッションID形式の変更に対応
+            # セッションIDからプレイヤー名を抽出
+            # 想定形式: game_player1_player2_timestamp
+            parts = self.session_id.split("_")
+            if len(parts) >= 3:  # game_type + player1 + player2 + timestamp
+                player1_name = parts[1]
+                player2_name = parts[2]
+                
                 self.games[self.session_id] = MultiplayerPongGame(
                     session_id=self.session_id,
-                    player1_name=player_names[0],
-                    player2_name=player_names[1],
+                    player1_name=player1_name,
+                    player2_name=player2_name,
                 )
+                
+                # DBゲーム情報を設定
+                game_instance = await self.get_or_create_game()
+                if game_instance:
+                    self.games[self.session_id].db_game_id = game_instance.id
 
         # ゲーム更新ループの開始
         self.game_task = asyncio.create_task(self.game_loop())
@@ -146,8 +155,48 @@ class GameConsumer(BaseGameConsumer):
                 del self.games[self.session_id]
         except Exception as e:
             print(f"Error in multiplayer game loop: {e}")
+            
+    @database_sync_to_async
+    def get_or_create_game(self):
+        """ゲーム情報をDBから取得または作成"""
+        parts = self.session_id.split("_")
+        if len(parts) < 3:
+            print(f"Invalid session ID format: {self.session_id}")
+            return None
+            
+        player1_name = parts[1]
+        player2_name = parts[2]
+        
+        try:
+            # プレイヤー情報の取得
+            player1 = User.objects.get(username=player1_name)
+            player2 = User.objects.get(username=player2_name)
+            
+            # ゲーム取得または作成
+            game, created = Game.objects.get_or_create(
+                session_id=self.session_id,
+                defaults={
+                    "game_type": "MULTI",
+                    "status": "IN_PROGRESS",
+                    "player1": player1,
+                    "player2": player2
+                }
+            )
+            
+            if created:
+                print(f"Created new multiplayer game: {game.id}")
+            else:
+                print(f"Found existing multiplayer game: {game.id}")
+                
+            return game
+        except User.DoesNotExist as e:
+            print(f"User not found: {e}")
+            return None
+        except Exception as e:
+            print(f"Error creating multiplayer game: {e}")
+            return None
 
-
+# TODO: BaseGameConsumerを継承してシンプルに
 class TournamentGameConsumer(AsyncWebsocketConsumer):
     games = {}  # セッションIDをキーとしたゲームインスタンスの管理
 
