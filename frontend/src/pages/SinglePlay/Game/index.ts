@@ -1,3 +1,4 @@
+import gsap from 'gsap';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import Ball from './Ball';
@@ -11,10 +12,10 @@ export function setupPauseMenu() {
   const pauseBtn = document.getElementById('pauseBtn');
   const pauseOverlay = document.getElementById('pauseOverlay');
   const resumeBtn = document.getElementById('resumeBtn');
-  const retryBtn = document.getElementById('retryBtn');
-  const exitBtn = document.getElementById('exitBtn');
+  const pauseRetryBtn = document.getElementById('pauseRetryBtn');
+  const pauseExitBtn = document.getElementById('pauseExitBtn');
 
-  if (!pauseBtn || !pauseOverlay || !resumeBtn || !retryBtn || !exitBtn) {
+  if (!pauseBtn || !pauseOverlay || !resumeBtn || !pauseRetryBtn || !pauseExitBtn) {
     console.warn('Pause menu elements are missing.');
     return;
   }
@@ -28,13 +29,56 @@ export function setupPauseMenu() {
     pauseOverlay.style.display = 'none';
   });
 
-  retryBtn.addEventListener('click', () => {
+  pauseRetryBtn.addEventListener('click', () => {
     window.location.reload();
   });
 
-  exitBtn.addEventListener('click', () => {
+  pauseExitBtn.addEventListener('click', () => {
     window.location.href = '/singleplay/select';
   });
+}
+
+export function hideGameStartOverlay() {
+  const overlay = document.getElementById('gameStartOverlay');
+  if (!overlay) return;
+  console.log('Starting fade-out animation for GAME START overlay');
+  gsap.to(overlay, {
+    duration: 1.5, // 2秒かけてフェードアウト
+    opacity: 0.5,
+    delay: 2, // 2秒後に開始
+    onComplete: () => {
+      console.log('Fade-out complete. Hiding overlay.');
+      overlay.classList.add('hidden'); // CSSで非表示にする
+    },
+  });
+}
+
+export function showGameOverOverlay(message: string, finalScore: string) {
+  const overlay = document.getElementById('gameOverOverlay');
+  const endMessage = document.getElementById('endMessage');
+  const finalScoreElem = document.getElementById('finalScore');
+  const retryBtn = document.getElementById('retryBtn');
+  const exitBtn = document.getElementById('exitBtn');
+  const scoreDisplay = document.getElementById('scoreDisplay');
+
+  if (overlay && endMessage && finalScoreElem && retryBtn && exitBtn && scoreDisplay) {
+    endMessage.textContent = message; // "GAME OVER" または "YOU WIN!"
+    finalScoreElem.textContent = `Score: ${finalScore}`;
+
+    scoreDisplay.classList.add('hidden');
+    // 非表示クラスを削除し、opacity 0 から1にフェードイン
+    overlay.classList.remove('hidden');
+    gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 1 });
+    retryBtn.addEventListener('click', () => {
+      window.location.reload();
+    });
+
+    exitBtn.addEventListener('click', () => {
+      window.location.href = '/singleplay/select';
+    });
+  } else {
+    console.warn('Game over elements are missing.');
+  }
 }
 
 const SinglePlayPage = new Page({
@@ -42,6 +86,7 @@ const SinglePlayPage = new Page({
   config: {
     layout: CommonLayout,
   },
+
   mounted: async ({ pg }: { pg: Page }): Promise<void> => {
     // ヘッダーと背景を非表示にする
     const header = document.querySelector('.header');
@@ -52,7 +97,6 @@ const SinglePlayPage = new Page({
     const username = localStorage.getItem('username') || 'Player';
     const playerNameDiv = document.getElementById('playerName');
     if (playerNameDiv) {
-      // すでに HTML 内に「<span class="leftName">Player</span><span class="vs">VS</span><span class="rightName">CPU</span>」があると仮定
       const leftNameSpan = playerNameDiv.querySelector('.leftName');
       if (leftNameSpan) {
         leftNameSpan.textContent = username;
@@ -65,7 +109,6 @@ const SinglePlayPage = new Page({
     // Three.js の Experience を初期化
     const canvas = document.getElementById('gl') as HTMLCanvasElement;
     const experience = Experience.getInstance(canvas);
-    // ゲームループを開始
     function animate() {
       if (running) {
         experience.update();
@@ -74,8 +117,8 @@ const SinglePlayPage = new Page({
     }
     animate();
     setupPauseMenu();
+    hideGameStartOverlay();
 
-    // Before unload event
     window.addEventListener('beforeunload', () => experience.destroy());
   },
 });

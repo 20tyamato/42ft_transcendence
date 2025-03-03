@@ -1,6 +1,5 @@
-// Ball.ts
 import * as THREE from 'three';
-import Experience from './Experience'; // 実際のパスに合わせて修正してください
+import Experience from './Experience';
 
 export default class Ball {
   private experience: Experience;
@@ -39,16 +38,12 @@ export default class Ball {
 
     this.scene.add(this.ball);
 
-    // カメラがボールを向く
     this.camera.lookAt(this.ball.position);
-
-    // ボールの初期座標をセット
     this.ball.position.set(0, 0, 0);
     console.log('Ball position after set:', this.ball.position);
   }
 
   public update(): void {
-    // // 回転させるなどのアニメーション
     this.ball.rotation.y += 0.001;
     this.ball.rotation.x += 0.001;
   }

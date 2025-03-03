@@ -1,7 +1,7 @@
 import gsap from 'gsap';
 import Experience from './Experience';
 import * as THREE from 'three';
-const running = true;
+let running = true;
 
 export default class LocalGame {
   private experience: Experience;
@@ -37,20 +37,19 @@ export default class LocalGame {
 
     this.startBallMovement();
     this.handleKeyboard();
-    5;
   }
 
   private startBallMovement() {
     const direction = Math.random() > 0.5 ? -1 : 1;
-    this.ballVelocity = { x: 0, z: direction * 10.0 }; //ボールの速度調整
+    this.ballVelocity = { x: 0, z: direction * 10.0 * difficultyFactor }; //ボールの速度調整
     this.ballStopped = false;
   }
 
   private processCpuPaddle() {
     const ballPos = this.ball.position;
     const cpuPos = this.paddleTwo.position;
-    if (cpuPos.x > ballPos.x && cpuPos.x > -450) cpuPos.x -= 5;
-    if (cpuPos.x < ballPos.x && cpuPos.x < 450) cpuPos.x += 5;
+    if (cpuPos.x > ballPos.x && cpuPos.x > -450) cpuPos.x -= 5 * difficultyFactor;
+    if (cpuPos.x < ballPos.x && cpuPos.x < 450) cpuPos.x += 5 * difficultyFactor;
   }
 
   private processBallMovement() {
@@ -91,6 +90,36 @@ export default class LocalGame {
       this.ballVelocity.z *= -1;
     }
   }
+  public showGameOverOverlay(message: string, finalScore: string) {
+    // 非表示にする既存のUIを隠す
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    if (scoreDisplay) scoreDisplay.style.display = 'none';
+    const pauseOverlay = document.getElementById('pauseOverlay');
+    if (pauseOverlay) pauseOverlay.style.display = 'none';
+    const gameStartOverlay = document.getElementById('gameStartOverlay');
+    if (gameStartOverlay) gameStartOverlay.style.display = 'none';
+
+    // ゲームオーバーオーバーレイの表示
+    const overlay = document.getElementById('gameOverOverlay');
+    const endMessage = document.getElementById('endMessage');
+    const finalScoreElem = document.getElementById('finalScore');
+    if (overlay && endMessage && finalScoreElem) {
+      endMessage.textContent = message;
+      finalScoreElem.textContent = `Score: ${finalScore}`;
+      overlay.classList.remove('hidden');
+      gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 1 });
+    }
+
+    // Retry/Exit ボタンのイベントを登録（重複登録に注意）
+    const retryBtn = document.getElementById('gameOverRetryBtn');
+    if (retryBtn) {
+      retryBtn.onclick = () => window.location.reload();
+    }
+    const exitBtn = document.getElementById('gameOverExitBtn');
+    if (exitBtn) {
+      exitBtn.onclick = () => (window.location.href = '/singleplay/select');
+    }
+  }
 
   private scored(player: string) {
     this.stopBall();
@@ -103,24 +132,20 @@ export default class LocalGame {
 
     if (player === 'paddleOne') {
       this.scorePaddleOne++;
-      if (this.scorePaddleOne >= 5) {
-        alert('You Win!');
-        this.restartGame();
+      if (this.scorePaddleOne >= 3) {
+        running = false;
+        this.showGameOverOverlay('YOU WIN!', `${this.scorePaddleOne} - ${this.scorePaddleTwo}`);
+        return;
       }
     } else {
       this.scorePaddleTwo++;
-      if (this.scorePaddleTwo >= 5) {
-        alert('CPU Wins!');
-        this.restartGame();
+      if (this.scorePaddleTwo >= 3) {
+        running = false;
+        // CPUが勝利
+        this.showGameOverOverlay('GAME OVER', `${this.scorePaddleOne} - ${this.scorePaddleTwo}`);
+        return;
       }
     }
-    this.updateScoreDisplay();
-  }
-
-  private restartGame() {
-    this.scorePaddleOne = 0;
-    this.scorePaddleTwo = 0;
-    this.reset();
     this.updateScoreDisplay();
   }
 
@@ -147,7 +172,7 @@ export default class LocalGame {
     });
   }
   private processPlayerPaddle(deltaTime: number) {
-    const paddleSpeed = 500; // 1秒間に動くピクセル量
+    const paddleSpeed = 1000; // 1秒間に動くピクセル量
 
     if (this.leftKeyPressed && this.paddleOne.position.x > -450) {
       this.paddleOne.position.x -= paddleSpeed * deltaTime;
@@ -169,7 +194,14 @@ export default class LocalGame {
       }
     }
     if (scoreElem) {
-      scoreElem.textContent = `${this.scorePaddleOne} - ${this.scorePaddleTwo}`;
+      const playerScoreSpan = scoreElem.querySelector('.playerScore');
+      const dashSpan = scoreElem.querySelector('.dash');
+      const cpuScoreSpan = scoreElem.querySelector('.cpuScore');
+      if (playerScoreSpan && dashSpan && cpuScoreSpan) {
+        playerScoreSpan.textContent = this.scorePaddleOne.toString();
+        dashSpan.textContent = '-';
+        cpuScoreSpan.textContent = this.scorePaddleTwo.toString();
+      }
     }
   }
 
@@ -180,4 +212,34 @@ export default class LocalGame {
     this.processCpuPaddle();
     this.processPlayerPaddle(deltaTime);
   }
+}
+
+// Difficulty.ts
+export enum Difficulty {
+  EASY = 1,
+  MEDIUM = 3,
+  HARD = 5,
+  ONI = 10, // ユーザーレベルが5以上の場合のみ選択可能
+}
+
+const selectedLevel = localStorage.getItem('selectedLevel') || 'EASY';
+console.log(`Selected Level: ${selectedLevel}`);
+
+let difficultyFactor: number;
+switch (selectedLevel.toUpperCase()) {
+  case 'EASY':
+    difficultyFactor = Difficulty.EASY;
+    break;
+  case 'MEDIUM':
+    difficultyFactor = Difficulty.MEDIUM;
+    break;
+  case 'HARD':
+    difficultyFactor = Difficulty.HARD;
+    break;
+  case 'ONI':
+    // ユーザーレベルのチェックは別途行い、条件を満たす場合のみ SECRET を適用
+    difficultyFactor = Difficulty.ONI;
+    break;
+  default:
+    difficultyFactor = Difficulty.EASY;
 }
