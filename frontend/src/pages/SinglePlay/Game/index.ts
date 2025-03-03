@@ -12,10 +12,10 @@ export function setupPauseMenu() {
   const pauseBtn = document.getElementById('pauseBtn');
   const pauseOverlay = document.getElementById('pauseOverlay');
   const resumeBtn = document.getElementById('resumeBtn');
-  const retryBtn = document.getElementById('retryBtn');
-  const exitBtn = document.getElementById('exitBtn');
+  const pauseRetryBtn = document.getElementById('pauseRetryBtn');
+  const pauseExitBtn = document.getElementById('pauseExitBtn');
 
-  if (!pauseBtn || !pauseOverlay || !resumeBtn || !retryBtn || !exitBtn) {
+  if (!pauseBtn || !pauseOverlay || !resumeBtn || !pauseRetryBtn || !pauseExitBtn) {
     console.warn('Pause menu elements are missing.');
     return;
   }
@@ -29,11 +29,11 @@ export function setupPauseMenu() {
     pauseOverlay.style.display = 'none';
   });
 
-  retryBtn.addEventListener('click', () => {
+  pauseRetryBtn.addEventListener('click', () => {
     window.location.reload();
   });
 
-  exitBtn.addEventListener('click', () => {
+  pauseExitBtn.addEventListener('click', () => {
     window.location.href = '/singleplay/select';
   });
 }

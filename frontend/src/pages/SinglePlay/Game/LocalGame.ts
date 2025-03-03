@@ -41,15 +41,15 @@ export default class LocalGame {
 
   private startBallMovement() {
     const direction = Math.random() > 0.5 ? -1 : 1;
-    this.ballVelocity = { x: 0, z: direction * 10.0 }; //ボールの速度調整
+    this.ballVelocity = { x: 0, z: direction * 10.0 * difficultyFactor }; //ボールの速度調整
     this.ballStopped = false;
   }
 
   private processCpuPaddle() {
     const ballPos = this.ball.position;
     const cpuPos = this.paddleTwo.position;
-    if (cpuPos.x > ballPos.x && cpuPos.x > -450) cpuPos.x -= 5;
-    if (cpuPos.x < ballPos.x && cpuPos.x < 450) cpuPos.x += 5;
+    if (cpuPos.x > ballPos.x && cpuPos.x > -450) cpuPos.x -= 5 * difficultyFactor;
+    if (cpuPos.x < ballPos.x && cpuPos.x < 450) cpuPos.x += 5 * difficultyFactor;
   }
 
   private processBallMovement() {
@@ -172,7 +172,7 @@ export default class LocalGame {
     });
   }
   private processPlayerPaddle(deltaTime: number) {
-    const paddleSpeed = 500; // 1秒間に動くピクセル量
+    const paddleSpeed = 1000; // 1秒間に動くピクセル量
 
     if (this.leftKeyPressed && this.paddleOne.position.x > -450) {
       this.paddleOne.position.x -= paddleSpeed * deltaTime;
@@ -212,4 +212,34 @@ export default class LocalGame {
     this.processCpuPaddle();
     this.processPlayerPaddle(deltaTime);
   }
+}
+
+// Difficulty.ts
+export enum Difficulty {
+  EASY = 1,
+  MEDIUM = 3,
+  HARD = 5,
+  ONI = 10, // ユーザーレベルが5以上の場合のみ選択可能
+}
+
+const selectedLevel = localStorage.getItem('selectedLevel') || 'EASY';
+console.log(`Selected Level: ${selectedLevel}`);
+
+let difficultyFactor: number;
+switch (selectedLevel.toUpperCase()) {
+  case 'EASY':
+    difficultyFactor = Difficulty.EASY;
+    break;
+  case 'MEDIUM':
+    difficultyFactor = Difficulty.MEDIUM;
+    break;
+  case 'HARD':
+    difficultyFactor = Difficulty.HARD;
+    break;
+  case 'ONI':
+    // ユーザーレベルのチェックは別途行い、条件を満たす場合のみ SECRET を適用
+    difficultyFactor = Difficulty.ONI;
+    break;
+  default:
+    difficultyFactor = Difficulty.EASY;
 }

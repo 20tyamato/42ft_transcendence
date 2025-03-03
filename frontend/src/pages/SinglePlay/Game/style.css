@@ -167,7 +167,7 @@ canvas {
   top: 50px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 1000;
+  z-index: 800;
   pointer-events: none;
   visibility: visible;
 }
