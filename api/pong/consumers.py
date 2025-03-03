@@ -148,6 +148,7 @@ class GameConsumer(BaseGameConsumer):
             print(f"Error in multiplayer game loop: {e}")
 
 
+# TODO: BaseGameConsumerを継承してシンプルに
 class TournamentGameConsumer(AsyncWebsocketConsumer):
     games = {}  # セッションIDをキーとしたゲームインスタンスの管理
 
