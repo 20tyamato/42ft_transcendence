@@ -10,6 +10,7 @@ async function sendGameResult(score: IGameScore) {
     const token = localStorage.getItem('token');
     const username = localStorage.getItem('username');
 
+    // TODO: すべてのゲームモードで対応できるようにリファクタリングする
     const gameData = {
       player1: username,
       player2: null,
