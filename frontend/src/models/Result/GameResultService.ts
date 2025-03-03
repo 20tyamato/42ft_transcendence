@@ -132,6 +132,7 @@ export class GameResultService {
       console.log('Response status:', response.status);
 
       const responseData = await response.json();
+      // NOTE: PUTが許可されていないと表示される
       console.log('Response data:', responseData);
 
       if (!response.ok) {
