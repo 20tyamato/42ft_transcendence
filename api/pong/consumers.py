@@ -100,14 +100,23 @@ class GameConsumer(BaseGameConsumer):
 
         # セッションIDからゲームインスタンス作成
         if self.session_id not in self.games:
-            # プレイヤー名の取得
-            player_names = self.session_id.replace("game_", "").split("_")
-            if len(player_names) >= 2:  # セッションID形式の変更に対応
+            # セッションIDからプレイヤー名を抽出
+            # 想定形式: game_player1_player2_timestamp
+            parts = self.session_id.split("_")
+            if len(parts) >= 3:  # game_type + player1 + player2 + timestamp
+                player1_name = parts[1]
+                player2_name = parts[2]
+                
                 self.games[self.session_id] = MultiplayerPongGame(
                     session_id=self.session_id,
-                    player1_name=player_names[0],
-                    player2_name=player_names[1],
+                    player1_name=player1_name,
+                    player2_name=player2_name,
                 )
+                
+                # DBゲーム情報を設定
+                game_instance = await self.get_or_create_game()
+                if game_instance:
+                    self.games[self.session_id].db_game_id = game_instance.id
 
         # ゲーム更新ループの開始
         self.game_task = asyncio.create_task(self.game_loop())
@@ -146,10 +155,395 @@ class GameConsumer(BaseGameConsumer):
                 del self.games[self.session_id]
         except Exception as e:
             print(f"Error in multiplayer game loop: {e}")
-
+            
+    @database_sync_to_async
+    def get_or_create_game(self):
+        """ゲーム情報をDBから取得または作成"""
+        parts = self.session_id.split("_")
+        if len(parts) < 3:
+            print(f"Invalid session ID format: {self.session_id}")
+            return None
+            
+        player1_name = parts[1]
+        player2_name = parts[2]
+        
+        try:
+            # プレイヤー情報の取得
+            player1 = User.objects.get(username=player1_name)
+            player2 = User.objects.get(username=player2_name)
+            
+            # ゲーム取得または作成
+            game, created = Game.objects.get_or_create(
+                session_id=self.session_id,
+                defaults={
+                    "game_type": "MULTI",
+                    "status": "IN_PROGRESS",
+                    "player1": player1,
+                    "player2": player2
+                }
+            )
+            
+            if created:
+                print(f"Created new multiplayer game: {game.id}")
+            else:
+                print(f"Found existing multiplayer game: {game.id}")
+                
+            return game
+        except User.DoesNotExist as e:
+            print(f"User not found: {e}")
+            return None
+        except Exception as e:
+            print(f"Error creating multiplayer game: {e}")
+            return None
 
 # TODO: BaseGameConsumerを継承してシンプルに
-# class TournamentGameConsumer(BaseGameConsumer):
+class TournamentGameConsumer(AsyncWebsocketConsumer):
+    games = {}  # セッションIDをキーとしたゲームインスタンスの管理
+
+    async def connect(self):
+        # URL routeからパラメータを取得
+        self.session_id = self.scope["url_route"]["kwargs"]["session_id"]
+        self.username = self.scope["url_route"]["kwargs"]["username"]
+        self.is_final = "final" in self.scope["url_route"]["pattern"].pattern
+        self.game_type = "final" if self.is_final else "semi-final"
+        self.game_group_name = f"tournament_{self.game_type}_{self.session_id}"
+        self.game_task = None
+
+        # トーナメントセッションの検証
+        is_valid = await self.validate_tournament_session()
+        if not is_valid:
+            await self.close()
+            return
+
+        # チャンネルグループに参加
+        await self.channel_layer.group_add(self.game_group_name, self.channel_name)
+        await self.accept()
+
+        print(
+            f"Player {self.username} connected to tournament {self.game_type} game {self.session_id}"
+        )
+
+        # ゲームインスタンスの初期化
+        if self.session_id not in self.games:
+            players = await self.get_match_players()
+            if players and len(players) == 2:
+                self.games[self.session_id] = MultiplayerPongGame(
+                    session_id=self.session_id,
+                    player1_name=players[0],
+                    player2_name=players[1],
+                )
+
+        # ゲーム更新ループの開始
+        self.game_task = asyncio.create_task(self.game_loop())
+
+    async def disconnect(self, close_code):
+        # ゲームループのキャンセル
+        if self.game_task:
+            self.game_task.cancel()
+            try:
+                await self.game_task
+            except asyncio.CancelledError:
+                pass
+
+        print(
+            f"Player {self.username} disconnected from tournament {self.game_type} game {self.session_id}"
+        )
+
+        # ゲームが存在する場合、切断による敗北処理を実行
+        if self.session_id in self.games:
+            game = self.games[self.session_id]
+            game.handle_disconnection(self.username)
+
+            # 残ったプレイヤーに切断を通知
+            await self.channel_layer.group_send(
+                self.game_group_name,
+                {"type": "player_disconnected", "disconnected_player": self.username},
+            )
+
+            # ゲーム状態を保存して終了
+            await self.save_game_state(game)
+            await self.handle_tournament_db_update(game)
+            del self.games[self.session_id]
+
+        await self.channel_layer.group_discard(self.game_group_name, self.channel_name)
+
+    async def receive(self, text_data):
+        try:
+            data = json.loads(text_data)
+            game = self.games.get(self.session_id)
+
+            if game and data["type"] == "move":
+                game.move_player(username=self.username, new_x=data["position"])
+
+                # ゲーム状態の即時送信
+                state = game.get_state()
+                await self.channel_layer.group_send(
+                    self.game_group_name, {"type": "game_state", "state": state}
+                )
+
+        except json.JSONDecodeError:
+            print("Received invalid JSON")
+            return
+        except KeyError as e:
+            print(f"Missing required field: {e}")
+            return
+        except Exception as e:
+            print(f"Error processing message: {e}")
+            return
+
+    async def game_loop(self):
+        """ゲーム状態の定期更新ループ"""
+        try:
+            while True:
+                if self.session_id in self.games:
+                    game = self.games[self.session_id]
+                    state = game.update(delta_time=0.016)
+
+                    await self.channel_layer.group_send(
+                        self.game_group_name, {"type": "game_state", "state": state}
+                    )
+
+                    # スコアが変化した場合、ゲーム状態を保存
+                    if (
+                        game.score[game.player1_name] > 0
+                        or game.score[game.player2_name] > 0
+                    ):
+                        await self.save_game_state(game)
+
+                    if not game.is_active:
+                        # データベース操作とWebSocket通信を分離
+                        await self.handle_tournament_db_update(game)
+                        await self.broadcast_game_end(game)
+                        break
+
+                await asyncio.sleep(0.016)  # 約60FPS
+        except asyncio.CancelledError:
+            # ゲームループのキャンセル時は正常終了
+            pass
+        except Exception as e:
+            print(f"Error in game loop: {e}")
+
+    async def game_state(self, event):
+        """ゲーム状態の更新をクライアントに送信"""
+        if self.games.get(self.session_id):
+            await self.send(
+                text_data=json.dumps(
+                    {
+                        "type": "state_update",
+                        "state": event["state"],
+                        "game_type": self.game_type,  # 準決勝/決勝の情報を追加
+                    }
+                )
+            )
+
+    async def player_disconnected(self, event):
+        """プレイヤーの切断をクライアントに通知"""
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "type": "player_disconnected",
+                    "disconnected_player": event["disconnected_player"],
+                    "game_type": self.game_type,
+                }
+            )
+        )
+
+    async def game_end(self, event):
+        """ゲーム終了をクライアントに通知"""
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "type": "game_end",
+                    "winner": event["winner"],
+                    "is_final": self.is_final,
+                    "next_stage": "final" if not self.is_final else "complete",
+                    "game_type": self.game_type,
+                    "tournament_id": self.session_id,
+                }
+            )
+        )
+
+    @database_sync_to_async
+    def validate_tournament_session(self):
+        """トーナメントセッションとプレイヤーの参加資格を検証"""
+        try:
+            tournament = TournamentSession.objects.get(id=self.session_id)
+            participant = TournamentParticipant.objects.get(
+                tournament=tournament, user__username=self.username
+            )
+
+            # トーナメントが進行中であることを確認
+            is_valid = tournament.status == "IN_PROGRESS"
+            # 対戦カードに含まれているかを確認
+            is_valid &= participant.bracket_position is not None
+
+            if not is_valid:
+                print(
+                    f"Invalid tournament session: status={tournament.status}, participant={participant}"
+                )
+
+            return is_valid
+
+        except (
+            TournamentSession.DoesNotExist,
+            TournamentParticipant.DoesNotExist,
+        ) as e:
+            print(f"Tournament validation error: {e}")
+            return False
+
+    @database_sync_to_async
+    def get_match_players(self):
+        """現在の試合の対戦プレイヤーを取得"""
+        try:
+            tournament = TournamentSession.objects.get(id=self.session_id)
+
+            # 準決勝か決勝かで取得条件を変更
+            if self.is_final:
+                # bracket_position=3 は決勝進出者を示す
+                participants = TournamentParticipant.objects.filter(
+                    tournament=tournament, bracket_position=3
+                ).order_by("id")[:2]
+            else:
+                # bracket_position=1,2 は準決勝の対戦カードを示す
+                start_position = 1 if "1" in self.game_group_name else 2
+                participants = TournamentParticipant.objects.filter(
+                    tournament=tournament,
+                    bracket_position__in=[start_position, start_position + 1],
+                ).order_by("bracket_position")
+
+            if len(participants) != 2:
+                print(f"Invalid number of participants: {len(participants)}")
+                return None
+
+            return [p.user.username for p in participants]
+
+        except Exception as e:
+            print(f"Error getting match players: {e}")
+            return None
+
+    @database_sync_to_async
+    def save_game_state(self, game):
+        """ゲーム状態をデータベースに保存"""
+        if not hasattr(game, "db_game_id"):
+            return
+
+        try:
+            game_instance = Game.objects.get(id=game.db_game_id)
+            game_instance.score_player1 = game.score[game.player1_name]
+            game_instance.score_player2 = game.score[game.player2_name]
+
+            if not game.is_active:
+                game_instance.end_time = timezone.now()
+                winner_name = game.get_winner()
+                if winner_name:
+                    winner = User.objects.get(username=winner_name)
+                    game_instance.winner = winner
+
+            game_instance.save()
+
+        except Game.DoesNotExist:
+            print(f"Game with id {game.db_game_id} not found")
+        except Exception as e:
+            print(f"Error saving game state: {e}")
+
+    @database_sync_to_async
+    def handle_tournament_db_update(self, game):
+        """トーナメントゲーム終了時のデータベース更新"""
+        try:
+            tournament = TournamentSession.objects.get(id=self.session_id)
+            winner_name = game.get_winner()
+
+            if not winner_name:
+                return
+
+            winner = User.objects.get(username=winner_name)
+            winner_participant = TournamentParticipant.objects.get(
+                tournament=tournament, user=winner
+            )
+
+            if self.is_final:
+                # 決勝戦終了時の処理
+                tournament.status = "COMPLETED"
+                tournament.completed_at = timezone.now()
+                tournament.winner = winner
+                tournament.save()
+
+                # 勝者の記録
+                winner_participant.bracket_position = 5  # 優勝者位置
+                winner_participant.save()
+            else:
+                # 準決勝終了時の処理
+                winner_participant.bracket_position = 3  # 決勝進出者位置
+                winner_participant.save()
+
+                # 全準決勝が終了したか確認
+                finalists_count = TournamentParticipant.objects.filter(
+                    tournament=tournament, bracket_position=3
+                ).count()
+
+                if finalists_count == 2:
+                    # 決勝戦の準備
+                    tournament.status = "FINAL_READY"
+                    tournament.save()
+
+        except Exception as e:
+            print(f"Error handling tournament database update: {e}")
+
+    async def broadcast_game_end(self, game):
+        """ゲーム終了時のWebSocket通知送信"""
+        winner_name = game.get_winner()
+        if not winner_name:
+            return
+
+        # ゲーム終了のメッセージを構築
+        message = {
+            "type": "game_end",
+            "winner": winner_name,
+            "is_final": self.is_final,
+            "game_type": self.game_type,
+            "tournament_id": self.session_id,
+            "scores": {
+                game.player1_name: game.score[game.player1_name],
+                game.player2_name: game.score[game.player2_name],
+            },
+        }
+
+        if not self.is_final:
+            message["next_stage"] = "final_waiting"
+        else:
+            message["next_stage"] = "tournament_complete"
+            # 決勝の場合、トーナメント優勝者の情報も追加
+            winner = await self.get_user_by_username(winner_name)
+            if winner:
+                message["tournament_winner"] = {
+                    "id": winner.id,
+                    "username": winner.username,
+                    "display_name": winner.display_name,
+                }
+
+        # 試合参加者に結果を送信
+        await self.channel_layer.group_send(self.game_group_name, message)
+
+        # トーナメント全体のグループにも結果を通知
+        tournament_group = f"tournament_{self.session_id}"
+        await self.channel_layer.group_send(
+            tournament_group,
+            {
+                "type": "tournament_update",
+                "event": "match_complete",
+                "game_type": self.game_type,
+                "winner": winner_name,
+                "next_stage": message["next_stage"],
+                "tournament_winner": message.get("tournament_winner"),
+            },
+        )
+
+    @database_sync_to_async
+    def get_user_by_username(self, username):
+        try:
+            return User.objects.get(username=username)
+        except User.DoesNotExist:
+            return None
 
 
 class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
