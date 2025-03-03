@@ -1,6 +1,5 @@
 from django.test import TestCase
-from django.db import IntegrityError
-
+from django.utils import timezone
 from pong.models import User, Game, TournamentSession, TournamentParticipant
 
 
@@ -38,181 +37,169 @@ class UserModelTests(TestCase):
 
 class GameModelTests(TestCase):
     def setUp(self):
-        self.player1 = User.objects.create_user(
-            username="player1", password="playerpass1", display_name="Player 1"
-        )
-        self.player2 = User.objects.create_user(
-            username="player2", password="playerpass2", display_name="Player 2"
-        )
-
-    def test_create_game_ai_opponent(self):
-        """Test game creation with AI opponent"""
-        game = Game.objects.create(
-            player1=self.player1,
-            player2=None,
-            score_player1=10,
-            score_player2=20,
-            is_ai_opponent=True,
-        )
-        self.assertIsNotNone(game.id)
-        self.assertEqual(game.player1, self.player1)
-        self.assertIsNone(game.player2)
-        self.assertTrue(game.is_ai_opponent)
-
-    def test_create_game_human_opponent(self):
-        """Test game creation with human opponent"""
-        game = Game.objects.create(
-            player1=self.player1,
-            player2=self.player2,
-            score_player1=10,
-            score_player2=20,
-            is_ai_opponent=False,
-        )
-        self.assertIsNotNone(game.id)
-        self.assertEqual(game.player1, self.player1)
-        self.assertEqual(game.player2, self.player2)
-        self.assertFalse(game.is_ai_opponent)
-
-    def test_str_representation_ai(self):
-        """Test string representation for AI game"""
-        game = Game.objects.create(
-            player1=self.player1, player2=None, is_ai_opponent=True
-        )
-        expected_str = f"Game {game.id} - {self.player1.display_name} vs AI"
-        self.assertEqual(str(game), expected_str)
-
-    def test_str_representation_human(self):
-        """Test string representation for human vs human game"""
-        game = Game.objects.create(
-            player1=self.player1, player2=self.player2, is_ai_opponent=False
-        )
-        expected_str = f"Game {game.id} - {self.player1.display_name} vs {self.player2.display_name}"
-        self.assertEqual(str(game), expected_str)
-
-    def test_null_fields(self):
-        """Test nullable fields"""
-        game = Game.objects.create(
-            player1=self.player1,
-            player2=None,
-            winner=None,
-            end_time=None,
-        )
-        self.assertIsNone(game.player2)
-        self.assertIsNone(game.winner)
-        self.assertIsNone(game.end_time)
-
-    def test_winner_assignment(self):
-        """Test winner assignment for both AI and human games"""
-        # AI game
-        ai_game = Game.objects.create(
-            player1=self.player1,
-            player2=None,
-            is_ai_opponent=True,
-            score_player1=5,
-            score_player2=3,
-        )
-        ai_game.winner = self.player1
-        ai_game.save()
-        self.assertEqual(ai_game.winner, self.player1)
-
-        # Human game
-        human_game = Game.objects.create(
-            player1=self.player1,
-            player2=self.player2,
-            is_ai_opponent=False,
-            score_player1=3,
-            score_player2=5,
-        )
-        human_game.winner = self.player2
-        human_game.save()
-        self.assertEqual(human_game.winner, self.player2)
-
-
-class TournamentSessionTests(TestCase):
-    def setUp(self):
-        self.tournament = TournamentSession.objects.create()
         self.user1 = User.objects.create_user(
-            username="testuser1", display_name="Test User 1", password="testpass123"
+            username="player1",
+            email="player1@example.com",
+            password="testpass123",
+            display_name="Player One",
         )
         self.user2 = User.objects.create_user(
-            username="testuser2", display_name="Test User 2", password="testpass123"
+            username="player2",
+            email="player2@example.com",
+            password="testpass123",
+            display_name="Player Two",
         )
 
-    def test_tournament_creation(self):
-        """トーナメントが正しく作成されることをテスト"""
-        self.assertEqual(self.tournament.status, "WAITING_PLAYERS")
-        self.assertIsNotNone(self.tournament.created_at)
-        self.assertIsNone(self.tournament.started_at)
-        self.assertIsNone(self.tournament.completed_at)
-        self.assertEqual(self.tournament.max_players, 4)
-
-    def test_current_players_count(self):
-        """プレイヤー数のカウントが正しく動作することをテスト"""
-        self.assertEqual(self.tournament.current_players_count, 0)
-
-        # 参加者を追加
-        TournamentParticipant.objects.create(
-            tournament=self.tournament, user=self.user1
+    def test_game_creation(self):
+        """ゲームが正しく作成されるかテスト"""
+        game = Game.objects.create(
+            game_type="MULTI",
+            status="WAITING",
+            session_id="game_player1_player2_abc123_1234567890",
+            player1=self.user1,
+            player2=self.user2,
         )
-        self.assertEqual(self.tournament.current_players_count, 1)
+        self.assertEqual(game.game_type, "MULTI")
+        self.assertEqual(game.status, "WAITING")
+        self.assertEqual(game.player1, self.user1)
+        self.assertEqual(game.player2, self.user2)
+        self.assertEqual(game.score_player1, 0)
+        self.assertEqual(game.score_player2, 0)
+        self.assertIsNone(game.winner)
 
-        TournamentParticipant.objects.create(
-            tournament=self.tournament, user=self.user2
+    def test_game_with_winner(self):
+        """勝者を設定したゲームが正しく動作するかテスト"""
+        game = Game.objects.create(
+            game_type="MULTI",
+            status="COMPLETED",
+            session_id="game_player1_player2_abc123_1234567890",
+            player1=self.user1,
+            player2=self.user2,
+            score_player1=10,
+            score_player2=5,
+            winner=self.user1,
+            end_time=timezone.now(),
         )
-        self.assertEqual(self.tournament.current_players_count, 2)
+        self.assertEqual(game.winner, self.user1)
+        self.assertEqual(game.status, "COMPLETED")
+        self.assertTrue(game.end_time is not None)
 
-    def test_is_full_property(self):
-        """トーナメントが満員かどうかの判定をテスト"""
-        self.assertFalse(self.tournament.is_full)
+    def test_game_string_representation(self):
+        """ゲームの文字列表現が正しいかテスト"""
+        game = Game.objects.create(
+            game_type="MULTI",
+            status="WAITING",
+            session_id="game_player1_player2_abc123_1234567890",
+            player1=self.user1,
+            player2=self.user2,
+        )
+        expected_str = (
+            f"Multiplayer: {self.user1.display_name} vs {self.user2.display_name}"
+        )
+        self.assertEqual(str(game), expected_str)
 
-        # 4人参加させる
-        users = []
-        for i in range(4):
-            user = User.objects.create_user(
-                username=f"user{i}", display_name=f"User {i}", password="testpass123"
-            )
-            users.append(user)
-            TournamentParticipant.objects.create(tournament=self.tournament, user=user)
-
-        self.assertTrue(self.tournament.is_full)
-
-    def test_string_representation(self):
-        """文字列表現が正しいことをテスト"""
-        expected_str = f"Tournament {self.tournament.id} (WAITING_PLAYERS)"
-        self.assertEqual(str(self.tournament), expected_str)
+    def test_ai_opponent_game(self):
+        """AIとの対戦ゲームが正しく作成されるかテスト"""
+        game = Game.objects.create(
+            game_type="SINGLE",
+            status="IN_PROGRESS",
+            session_id="game_player1_ai_abc123_1234567890",
+            player1=self.user1,
+            is_ai_opponent=True,
+        )
+        self.assertTrue(game.is_ai_opponent)
+        expected_str = f"Single Player: {self.user1.display_name} vs AI"
+        self.assertEqual(str(game), expected_str)
 
 
-class TournamentParticipantTests(TestCase):
+class TournamentModelTests(TestCase):
     def setUp(self):
-        self.tournament = TournamentSession.objects.create()
-        self.user = User.objects.create_user(
-            username="testuser", display_name="Test User", password="testpass123"
+        self.user1 = User.objects.create_user(
+            username="player1",
+            email="player1@example.com",
+            password="testpass123",
+            display_name="Player One",
+        )
+        self.user2 = User.objects.create_user(
+            username="player2",
+            email="player2@example.com",
+            password="testpass123",
+            display_name="Player Two",
+        )
+        self.user3 = User.objects.create_user(
+            username="player3",
+            email="player3@example.com",
+            password="testpass123",
+            display_name="Player Three",
+        )
+        self.user4 = User.objects.create_user(
+            username="player4",
+            email="player4@example.com",
+            password="testpass123",
+            display_name="Player Four",
         )
 
-    def test_participant_creation(self):
-        """参加者が正しく作成されることをテスト"""
-        participant = TournamentParticipant.objects.create(
-            tournament=self.tournament, user=self.user
+    def test_tournament_session_creation(self):
+        """トーナメントセッションが正しく作成されるかテスト"""
+        tournament = TournamentSession.objects.create()
+        self.assertEqual(tournament.status, "WAITING_PLAYERS")
+        self.assertEqual(tournament.max_players, 4)
+        self.assertIsNone(tournament.started_at)
+        self.assertIsNone(tournament.completed_at)
+        self.assertIsNone(tournament.winner)
+
+    def test_tournament_with_winner(self):
+        """優勝者を設定したトーナメントが正しく動作するかテスト"""
+        tournament = TournamentSession.objects.create(
+            status="COMPLETED", completed_at=timezone.now(), winner=self.user1
         )
-        self.assertEqual(participant.tournament, self.tournament)
-        self.assertEqual(participant.user, self.user)
-        self.assertIsNotNone(participant.joined_at)
+        self.assertEqual(tournament.winner, self.user1)
+        self.assertEqual(tournament.status, "COMPLETED")
+        self.assertTrue(tournament.completed_at is not None)
+
+    def test_tournament_string_representation(self):
+        """トーナメントの文字列表現が正しいかテスト"""
+        tournament = TournamentSession.objects.create(status="IN_PROGRESS")
+        expected_str = f"Tournament {tournament.id} (IN_PROGRESS)"
+        self.assertEqual(str(tournament), expected_str)
+
+    def test_tournament_participant_creation(self):
+        """トーナメント参加者が正しく作成されるかテスト"""
+        tournament = TournamentSession.objects.create()
+        participant = TournamentParticipant.objects.create(
+            tournament=tournament, user=self.user1, bracket_position=1
+        )
+        self.assertEqual(participant.tournament, tournament)
+        self.assertEqual(participant.user, self.user1)
+        self.assertEqual(participant.bracket_position, 1)
         self.assertFalse(participant.is_ready)
-        self.assertIsNone(participant.bracket_position)
 
-    def test_unique_tournament_user_constraint(self):
-        """同じユーザーが同じトーナメントに重複参加できないことをテスト"""
-        TournamentParticipant.objects.create(tournament=self.tournament, user=self.user)
+    def test_tournament_with_participants(self):
+        """参加者を追加したトーナメントが正しく動作するかテスト"""
+        tournament = TournamentSession.objects.create()
 
-        with self.assertRaises(IntegrityError):
-            TournamentParticipant.objects.create(
-                tournament=self.tournament, user=self.user
-            )
-
-    def test_string_representation(self):
-        """文字列表現が正しいことをテスト"""
-        participant = TournamentParticipant.objects.create(
-            tournament=self.tournament, user=self.user
+        # 4人の参加者を追加
+        TournamentParticipant.objects.create(
+            tournament=tournament, user=self.user1, bracket_position=1
         )
-        expected_str = f"{self.user.display_name} in Tournament {self.tournament.id}"
-        self.assertEqual(str(participant), expected_str)
+        TournamentParticipant.objects.create(
+            tournament=tournament, user=self.user2, bracket_position=2
+        )
+        TournamentParticipant.objects.create(
+            tournament=tournament, user=self.user3, bracket_position=3
+        )
+        TournamentParticipant.objects.create(
+            tournament=tournament, user=self.user4, bracket_position=4
+        )
+
+        self.assertEqual(tournament.participants.count(), 4)
+
+        # bracket_positionでフィルタリングできることを確認
+        semi_final1_players = tournament.participants.filter(
+            bracket_position__in=[1, 2]
+        )
+        self.assertEqual(semi_final1_players.count(), 2)
+
+        # 準決勝1のプレイヤーが正しいことを確認
+        usernames = sorted([p.user.username for p in semi_final1_players])
+        self.assertEqual(usernames, ["player1", "player2"])

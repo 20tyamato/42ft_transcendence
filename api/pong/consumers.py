@@ -416,6 +416,7 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
                 # 決勝戦終了時の処理
                 tournament.status = "COMPLETED"
                 tournament.completed_at = timezone.now()
+                tournament.winner = winner
                 tournament.save()
 
                 # 勝者の記録
@@ -462,6 +463,14 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
             message["next_stage"] = "final_waiting"
         else:
             message["next_stage"] = "tournament_complete"
+            # 決勝の場合、トーナメント優勝者の情報も追加
+            winner = await self.get_user_by_username(winner_name)
+            if winner:
+                message["tournament_winner"] = {
+                    "id": winner.id,
+                    "username": winner.username,
+                    "display_name": winner.display_name,
+                }
 
         # 試合参加者に結果を送信
         await self.channel_layer.group_send(self.game_group_name, message)
@@ -476,8 +485,16 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
                 "game_type": self.game_type,
                 "winner": winner_name,
                 "next_stage": message["next_stage"],
+                "tournament_winner": message.get("tournament_winner"),
             },
         )
+
+    @database_sync_to_async
+    def get_user_by_username(self, username):
+        try:
+            return User.objects.get(username=username)
+        except User.DoesNotExist:
+            return None
 
 
 class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
