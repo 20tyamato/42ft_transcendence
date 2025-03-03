@@ -1,3 +1,4 @@
+// frontend/src/pages/Result/index.ts
 import { API_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
