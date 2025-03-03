@@ -229,22 +229,7 @@ canvas {
   margin: 0 0 30px;
 }
 
-.btn {
-  padding: 12px 30px;
-  font-size: 24px;
-  background-color: #ffffff;
-  color: #000;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.btn:hover {
-  transform: scale(1.1);
-}
-
-/* オーバーレイの共通スタイル */
+/* 共通オーバーレイのスタイル */
 .overlay {
   position: fixed;
   top: 0;
@@ -256,11 +241,11 @@ canvas {
   justify-content: center;
   align-items: center;
   z-index: 1100;
-  opacity: 0;
+  opacity: 1;
+  font-family: 'Orbitron', sans-serif;
   transition: opacity 0.5s ease;
 }
 
-/* hidden クラスで非表示 */
 .overlay.hidden {
   display: none;
 }
@@ -274,7 +259,6 @@ canvas {
   box-shadow: 0 0 30px rgba(0, 255, 252, 0.5);
 }
 
-/* SF風フォントを使用（Orbitronを読み込んでいる前提） */
 .gameover-container h1 {
   font-size: 72px;
   color: #00fffc;
@@ -286,4 +270,19 @@ canvas {
   font-size: 36px;
   color: #ffffff;
   margin-bottom: 30px;
+}
+
+.btn {
+  padding: 12px 30px;
+  font-size: 24px;
+  background-color: #fff;
+  color: #000;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.btn:hover {
+  transform: scale(1.1);
 }

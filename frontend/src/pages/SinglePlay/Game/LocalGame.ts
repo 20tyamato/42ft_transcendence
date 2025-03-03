@@ -37,7 +37,6 @@ export default class LocalGame {
 
     this.startBallMovement();
     this.handleKeyboard();
-    5;
   }
 
   private startBallMovement() {
@@ -92,27 +91,33 @@ export default class LocalGame {
     }
   }
   public showGameOverOverlay(message: string, finalScore: string) {
+    // 非表示にする既存のUIを隠す
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    if (scoreDisplay) scoreDisplay.style.display = 'none';
+    const pauseOverlay = document.getElementById('pauseOverlay');
+    if (pauseOverlay) pauseOverlay.style.display = 'none';
+    const gameStartOverlay = document.getElementById('gameStartOverlay');
+    if (gameStartOverlay) gameStartOverlay.style.display = 'none';
+
+    // ゲームオーバーオーバーレイの表示
     const overlay = document.getElementById('gameOverOverlay');
     const endMessage = document.getElementById('endMessage');
     const finalScoreElem = document.getElementById('finalScore');
     if (overlay && endMessage && finalScoreElem) {
-      endMessage.textContent = message; // "GAME OVER" または "YOU WIN!"
+      endMessage.textContent = message;
       finalScoreElem.textContent = `Score: ${finalScore}`;
       overlay.classList.remove('hidden');
       gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 1 });
     }
-    const restartBtn = document.getElementById('restartBtn');
-    if (restartBtn) {
-      restartBtn.addEventListener('click', () => {
-        window.location.reload(); // ゲームを再初期化する例
-      });
+
+    // Retry/Exit ボタンのイベントを登録（重複登録に注意）
+    const retryBtn = document.getElementById('gameOverRetryBtn');
+    if (retryBtn) {
+      retryBtn.onclick = () => window.location.reload();
     }
-    // Exit ボタンは、例えば /singleplay/select に遷移
-    const exitBtn = document.getElementById('exitBtn');
+    const exitBtn = document.getElementById('gameOverExitBtn');
     if (exitBtn) {
-      exitBtn.addEventListener('click', () => {
-        window.location.href = '/singleplay/select';
-      });
+      exitBtn.onclick = () => (window.location.href = '/singleplay/select');
     }
   }
 
@@ -128,7 +133,6 @@ export default class LocalGame {
     if (player === 'paddleOne') {
       this.scorePaddleOne++;
       if (this.scorePaddleOne >= 3) {
-        // プレイヤーが勝利
         running = false;
         this.showGameOverOverlay('YOU WIN!', `${this.scorePaddleOne} - ${this.scorePaddleTwo}`);
         return;
@@ -142,13 +146,6 @@ export default class LocalGame {
         return;
       }
     }
-    this.updateScoreDisplay();
-  }
-
-  private restartGame() {
-    this.scorePaddleOne = 0;
-    this.scorePaddleTwo = 0;
-    this.reset();
     this.updateScoreDisplay();
   }
 
@@ -197,7 +194,14 @@ export default class LocalGame {
       }
     }
     if (scoreElem) {
-      scoreElem.textContent = `${this.scorePaddleOne} - ${this.scorePaddleTwo}`;
+      const playerScoreSpan = scoreElem.querySelector('.playerScore');
+      const dashSpan = scoreElem.querySelector('.dash');
+      const cpuScoreSpan = scoreElem.querySelector('.cpuScore');
+      if (playerScoreSpan && dashSpan && cpuScoreSpan) {
+        playerScoreSpan.textContent = this.scorePaddleOne.toString();
+        dashSpan.textContent = '-';
+        cpuScoreSpan.textContent = this.scorePaddleTwo.toString();
+      }
     }
   }
 
