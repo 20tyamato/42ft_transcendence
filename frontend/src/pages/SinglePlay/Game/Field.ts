@@ -51,7 +51,7 @@ export default class Field {
 
     this.scene.add(this.field);
     console.log('Field added to scene:', this.field);
-    
+
     this.setBackgroundParticles();
   }
 
