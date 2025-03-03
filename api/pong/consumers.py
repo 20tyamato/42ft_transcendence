@@ -78,9 +78,11 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         if len(self.waiting_players) >= 2:
             player1 = self.waiting_players.pop(0)
             player2 = self.waiting_players.pop(0)
-            
+
             # データベースにゲームレコードを作成
-            session_id = await self.create_game_record(player1.username, player2.username)
+            session_id = await self.create_game_record(
+                player1.username, player2.username
+            )
 
             match_data = {
                 "type": "match_found",
@@ -97,14 +99,16 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
     def create_game_record(self, player1_username, player2_username):
         """データベースにゲームレコードを事前作成"""
         from .serializers import generate_session_id
-        
+
         try:
             player1 = User.objects.get(username=player1_username)
             player2 = User.objects.get(username=player2_username)
-            
+
             # セッションID生成 - シリアライザーと同じ関数を使用
-            session_id = generate_session_id("MULTI", player1_username, player2_username)
-            
+            session_id = generate_session_id(
+                "MULTI", player1_username, player2_username
+            )
+
             # ゲームレコード作成
             Game.objects.create(
                 game_type="MULTI",
@@ -112,11 +116,11 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                 session_id=session_id,
                 player1=player1,
                 player2=player2,
-                is_ai_opponent=False
+                is_ai_opponent=False,
             )
-            
+
             return session_id
-        
+
         except Exception as e:
             print(f"Error creating game record: {e}")
             # フォールバック

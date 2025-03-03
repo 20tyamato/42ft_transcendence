@@ -31,6 +31,7 @@ export interface IGameResult {
   opponent?: string;
   disconnected?: boolean;
   disconnectedPlayer?: string;
+  sessionId?: string;
 }
 
 export type IGameMode = 'singleplayer' | 'multiplayer' | 'tournament';

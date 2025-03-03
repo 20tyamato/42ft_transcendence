@@ -10,18 +10,21 @@ from .models import Game, User, TournamentSession, TournamentParticipant
 def generate_session_id(game_type, player1_username, player2_username=None):
     """一貫性のあるセッションIDを生成"""
     # マルチプレイヤーの場合はプレイヤー名をソート
-    if player2_username and game_type.lower() == 'multi':
+    if player2_username and game_type.lower() == "multi":
         players = sorted([player1_username, player2_username])
         player_part = f"{players[0]}_{players[1]}"
     else:
         # シングルプレイヤー/AI対戦の場合
-        player_part = f"{player1_username}_{'solo' if not player2_username else player2_username}"
-    
+        player_part = (
+            f"{player1_username}_{'solo' if not player2_username else player2_username}"
+        )
+
     # UUIDとタイムスタンプで一意性確保
     unique_id = str(uuid.uuid4())[:8]  # UUIDの一部を使用
     timestamp = int(time.time())
-    
+
     return f"{game_type.lower()}_{player_part}_{unique_id}_{timestamp}"
+
 
 class FriendSerializer(serializers.ModelSerializer):
     class Meta:
@@ -158,57 +161,65 @@ class GameSerializer(serializers.ModelSerializer):
         player1_data = validated_data.pop("player1")
         player2_data = validated_data.pop("player2", {"username": None})
         winner_data = validated_data.pop("winner", None)
-        
+
         # ユーザーオブジェクトの取得
         player1 = User.objects.get(username=player1_data["username"])
         player2_username = None
-        
+
         if not player2_data or player2_data.get("username") is None:
             validated_data["player2"] = None
         else:
             player2_username = player2_data["username"]
             validated_data["player2"] = User.objects.get(username=player2_username)
-        
+
         if winner_data and winner_data.get("username"):
-            validated_data["winner"] = User.objects.get(username=winner_data["username"])
+            validated_data["winner"] = User.objects.get(
+                username=winner_data["username"]
+            )
         else:
             validated_data["winner"] = None
-        
+
         # ゲームタイプの取得
         game_type = validated_data.get("game_type", "MULTI")
-        
+
         # クライアントから提供されたセッションIDがあるか確認
         client_session_id = self.initial_data.get("session_id")
-        
+
         # トランザクションで一貫性を確保
         with transaction.atomic():
             # 既存ゲームの検索とアップデート
             if client_session_id:
                 try:
-                    existing_game = Game.objects.select_for_update().get(session_id=client_session_id)
-                    
+                    existing_game = Game.objects.select_for_update().get(
+                        session_id=client_session_id
+                    )
+
                     # 既存ゲームのアップデート - 変更可能なフィールドのみ
                     updateable_fields = [
-                        "status", "score_player1", "score_player2", "end_time", "winner"
+                        "status",
+                        "score_player1",
+                        "score_player2",
+                        "end_time",
+                        "winner",
                     ]
-                    
+
                     for field in updateable_fields:
                         if field in validated_data:
                             setattr(existing_game, field, validated_data[field])
-                    
+
                     existing_game.save()
                     return existing_game
-                
+
                 except Game.DoesNotExist:
                     # セッションIDが提供されたがゲームが見つからない場合
                     pass
-            
+
             # 新規ゲームの作成
             if "session_id" not in validated_data:
                 validated_data["session_id"] = generate_session_id(
                     game_type, player1.username, player2_username
                 )
-            
+
             game = Game.objects.create(player1=player1, **validated_data)
             return game
 
@@ -216,9 +227,13 @@ class GameSerializer(serializers.ModelSerializer):
         """既存ゲームインスタンスの更新"""
         # 更新可能なフィールド
         updatable_fields = [
-            "score_player1", "score_player2", "status", "end_time", "is_ai_opponent"
+            "score_player1",
+            "score_player2",
+            "status",
+            "end_time",
+            "is_ai_opponent",
         ]
-        
+
         # winner特別処理
         if "winner" in validated_data:
             winner_data = validated_data.pop("winner")
@@ -226,12 +241,12 @@ class GameSerializer(serializers.ModelSerializer):
                 instance.winner = User.objects.get(username=winner_data["username"])
             else:
                 instance.winner = None
-        
+
         # その他のフィールド更新
         for field in updatable_fields:
             if field in validated_data:
                 setattr(instance, field, validated_data[field])
-        
+
         instance.save()
         return instance
 
