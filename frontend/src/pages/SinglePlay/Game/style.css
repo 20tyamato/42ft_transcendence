@@ -302,7 +302,7 @@ canvas {
 
 /* ゲームオーバー用コンテナ */
 .gameover-container {
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.1);
   padding: 40px 60px;
   border-radius: 15px;
   text-align: center;
