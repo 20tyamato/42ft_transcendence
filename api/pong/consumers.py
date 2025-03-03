@@ -469,7 +469,7 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
                 message["tournament_winner"] = {
                     "id": winner.id,
                     "username": winner.username,
-                    "display_name": winner.display_name
+                    "display_name": winner.display_name,
                 }
 
         # 試合参加者に結果を送信
@@ -485,7 +485,7 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
                 "game_type": self.game_type,
                 "winner": winner_name,
                 "next_stage": message["next_stage"],
-                "tournament_winner": message.get("tournament_winner")
+                "tournament_winner": message.get("tournament_winner"),
             },
         )
 

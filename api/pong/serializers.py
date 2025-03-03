@@ -265,13 +265,13 @@ class TournamentSessionSerializer(serializers.ModelSerializer):
 
     def get_current_players_count(self, obj):
         return obj.participants.count()
-    
+
     def get_winner_username(self, obj):
         """優勝者のユーザー名を返す"""
         if obj.winner:
             return obj.winner.username
         return None
-    
+
     def get_winner_display_name(self, obj):
         """優勝者の表示名を返す"""
         if obj.winner:

@@ -166,7 +166,7 @@ class TournamentParticipant(models.Model):
         3, 4: 第2準決勝の対戦者
         5: 決勝進出者
         6: 優勝者
-        """
+        """,
     )
 
     class Meta:
