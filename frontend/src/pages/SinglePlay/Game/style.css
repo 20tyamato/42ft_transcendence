@@ -332,3 +332,66 @@ canvas {
 .btn:hover {
   transform: scale(1.1);
 }
+
+.customization-panel {
+  position: fixed;
+  top: 10%;
+  right: 5%;
+  width: 300px;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 10px;
+  padding: 20px;
+  color: #fff;
+  font-family: 'Orbitron', sans-serif;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  z-index: 1200;
+}
+
+.customization-panel.hidden {
+  display: none;
+}
+
+.customization-panel h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+  color: #00ffc6;
+}
+
+.customization-option {
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.customization-option label {
+  font-size: 1rem;
+  flex-basis: 40%;
+}
+
+.customization-option input[type="color"],
+.customization-option input[type="range"] {
+  flex-basis: 55%;
+}
+
+.customization-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.btn {
+  padding: 8px 16px;
+  font-size: 1rem;
+  background-color: #3b82f6;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #ff7878;
+}

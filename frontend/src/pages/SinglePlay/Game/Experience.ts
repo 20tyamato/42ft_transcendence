@@ -52,6 +52,10 @@ export default class Experience {
   public localGame!: LocalGame;
 
   private localGameStarted: boolean = false;
+  // Experience.ts（抜粋）
+  public particleSystem: THREE.Points | null = null;
+  public particleSettings: { color: string; size: string; speed: string; density: string } | null =
+    null;
 
   private constructor(canvas: HTMLCanvasElement) {
     Experience.instance = this;
