@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import generics, status
+from rest_framework import generics, status, viewsets
+from rest_framework.decorators import action
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -284,8 +285,66 @@ class GameListCreateView(generics.ListCreateAPIView):
             status=status.HTTP_201_CREATED,
         )
 
-
-class GameRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+# TODO: これ要らないかも???
+class GameViewSet(viewsets.ModelViewSet):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
-    permission_classes = [IsAuthenticated, IsPlayerOrReadOnly]
+    permission_classes = [IsAuthenticated]
+    
+    def create(self, request, *args, **kwargs):
+        """ゲーム作成またはセッションIDがある場合は更新"""
+        session_id = request.data.get('session_id')
+        
+        # セッションIDが提供された場合は既存ゲームを更新
+        if session_id:
+            try:
+                game = Game.objects.get(session_id=session_id)
+                serializer = self.get_serializer(game, data=request.data, partial=True)
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+                return Response(serializer.data)
+            except Game.DoesNotExist:
+                pass  # セッションIDが見つからない場合は新規作成
+        
+        # 通常の作成処理
+        return super().create(request, *args, **kwargs)
+    
+    @action(detail=False, methods=['put'], url_path='update-result')
+    def update_result(self, request):
+        """ゲーム結果の更新専用エンドポイント"""
+        session_id = request.data.get('session_id')
+        if not session_id:
+            return Response(
+                {'error': 'Session ID is required'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            game = Game.objects.get(session_id=session_id)
+            
+            # オプション: player1のみが更新できるようにする場合
+            # if request.user.username != game.player1.username:
+            #     return Response(
+            #         {'error': 'Only player1 can update game results'}, 
+            #         status=status.HTTP_403_FORBIDDEN
+            #     )
+            
+            # 既に完了している場合は重複更新防止
+            if game.status == 'COMPLETED' and game.end_time is not None:
+                return Response(
+                    {'message': 'Game is already completed', 'data': GameSerializer(game).data},
+                    status=status.HTTP_200_OK  # エラーではなく情報提供
+                )
+            
+            # 結果を更新
+            serializer = GameSerializer(game, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            
+            return Response(serializer.data)
+        
+        except Game.DoesNotExist:
+            return Response(
+                {'error': 'Game not found with this session ID'}, 
+                status=status.HTTP_404_NOT_FOUND
+            )

@@ -3,8 +3,6 @@ from django.urls import path
 from .views import (
     AddFriendView,
     FriendListView,
-    GameListCreateView,
-    GameRetrieveUpdateDestroyView,
     HealthCheckView,
     LoginView,
     LogoutView,
@@ -54,9 +52,5 @@ urlpatterns = [
     # Logout
     path("logout/", LogoutView.as_view(), name="logout"),
     # Game
-    path("games/", GameListCreateView.as_view(), name="game-list-create"),
-    path(
-        "games/<int:pk>/", GameRetrieveUpdateDestroyView.as_view(), name="game-detail"
-    ),
     # Tournament
 ]

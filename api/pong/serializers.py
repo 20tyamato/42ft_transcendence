@@ -1,21 +1,27 @@
 from django.contrib.auth import authenticate
+from django.db import transaction
 from rest_framework import serializers
 
 import time
-import secrets
+import uuid
 from .models import Game, User, TournamentSession, TournamentParticipant
 
 
 def generate_session_id(game_type, player1_username, player2_username=None):
-    """構造化されたセッションIDを生成"""
-    unique_part = secrets.token_hex(6)  # 12文字のランダム文字列
+    """一貫性のあるセッションIDを生成"""
+    # マルチプレイヤーの場合はプレイヤー名をソート
+    if player2_username and game_type.lower() == 'multi':
+        players = sorted([player1_username, player2_username])
+        player_part = f"{players[0]}_{players[1]}"
+    else:
+        # シングルプレイヤー/AI対戦の場合
+        player_part = f"{player1_username}_{'solo' if not player2_username else player2_username}"
+    
+    # UUIDとタイムスタンプで一意性確保
+    unique_id = str(uuid.uuid4())[:8]  # UUIDの一部を使用
     timestamp = int(time.time())
-
-    # player2がNoneまたは空の場合は'solo'を使用
-    p2 = player2_username if player2_username else "solo"
-
-    return f"{game_type.lower()}_{player1_username}_{p2}_{unique_part}_{timestamp}"
-
+    
+    return f"{game_type.lower()}_{player_part}_{unique_id}_{timestamp}"
 
 class FriendSerializer(serializers.ModelSerializer):
     class Meta:
@@ -110,7 +116,7 @@ class LoginSerializer(serializers.Serializer):
             )
         raise serializers.ValidationError('Must include "username" and "password".')
 
-# TODO: add validate dup sessionID
+
 class GameSerializer(serializers.ModelSerializer):
     player1 = serializers.CharField(source="player1.username")
     player2 = serializers.CharField(
@@ -125,82 +131,8 @@ class GameSerializer(serializers.ModelSerializer):
         required=False,
         allow_null=True,
     )
-    # セッションIDは読み取り専用として設定（自動生成するため）
-    session_id = serializers.CharField(read_only=True)
-
-    def validate_player1(self, value):
-        """Validate that player1 exists"""
-        try:
-            User.objects.get(username=value)
-            return value
-        except User.DoesNotExist:
-            raise serializers.ValidationError("Player1 does not exist")
-
-    def validate_player2(self, value):
-        """Validate player2 if present"""
-        if value:
-            try:
-                User.objects.get(username=value)
-                return value
-            except User.DoesNotExist:
-                raise serializers.ValidationError("Player2 does not exist")
-        return value
-
-    def validate(self, data):
-        """Validate complete set of data"""
-        if not data.get("player1"):
-            raise serializers.ValidationError("Player1 is required")
-
-        # ゲームタイプに基づくバリデーション
-        game_type = data.get("game_type", "MULTI")  # デフォルトはマルチプレイヤー
-
-        # マルチプレイまたはトーナメントの場合、AIでない限りplayer2が必要
-        if game_type in ["MULTI", "TOURNAMENT"] and data.get("is_ai_opponent") is False:
-            if data.get("player2", {}).get("username") is None:
-                raise serializers.ValidationError(
-                    "Player2 is required for non-AI multiplayer games"
-                )
-
-        # トーナメントの場合、tournament_idが必要
-        if game_type == "TOURNAMENT" and not data.get("tournament"):
-            raise serializers.ValidationError(
-                "Tournament reference is required for tournament games"
-            )
-
-        return data
-
-    def create(self, validated_data):
-        player1_data = validated_data.pop("player1")
-        player2_data = validated_data.pop("player2", {"username": None})
-        winner_data = validated_data.pop("winner", None)
-
-        # ユーザーオブジェクトの取得
-        player1 = User.objects.get(username=player1_data["username"])
-        player2_username = None
-
-        if not player2_data or player2_data.get("username") is None:
-            validated_data["player2"] = None
-        else:
-            player2_username = player2_data["username"]
-            validated_data["player2"] = User.objects.get(username=player2_username)
-
-        if winner_data and winner_data.get("username"):
-            validated_data["winner"] = User.objects.get(
-                username=winner_data["username"]
-            )
-        else:
-            validated_data["winner"] = None
-
-        # ゲームタイプの取得（デフォルトはMULTI）
-        game_type = validated_data.get("game_type", "MULTI")
-
-        # セッションIDの生成
-        validated_data["session_id"] = generate_session_id(
-            game_type, player1.username, player2_username
-        )
-
-        game = Game.objects.create(player1=player1, **validated_data)
-        return game
+    # クライアントからセッションIDを受け取れるように変更
+    session_id = serializers.CharField(required=False)
 
     class Meta:
         model = Game
@@ -220,7 +152,88 @@ class GameSerializer(serializers.ModelSerializer):
             "tournament_id",
             "tournament_round",
         ]
-        read_only_fields = ["id", "start_time", "session_id"]
+        read_only_fields = ["id", "start_time"]
+
+    def create(self, validated_data):
+        player1_data = validated_data.pop("player1")
+        player2_data = validated_data.pop("player2", {"username": None})
+        winner_data = validated_data.pop("winner", None)
+        
+        # ユーザーオブジェクトの取得
+        player1 = User.objects.get(username=player1_data["username"])
+        player2_username = None
+        
+        if not player2_data or player2_data.get("username") is None:
+            validated_data["player2"] = None
+        else:
+            player2_username = player2_data["username"]
+            validated_data["player2"] = User.objects.get(username=player2_username)
+        
+        if winner_data and winner_data.get("username"):
+            validated_data["winner"] = User.objects.get(username=winner_data["username"])
+        else:
+            validated_data["winner"] = None
+        
+        # ゲームタイプの取得
+        game_type = validated_data.get("game_type", "MULTI")
+        
+        # クライアントから提供されたセッションIDがあるか確認
+        client_session_id = self.initial_data.get("session_id")
+        
+        # トランザクションで一貫性を確保
+        with transaction.atomic():
+            # 既存ゲームの検索とアップデート
+            if client_session_id:
+                try:
+                    existing_game = Game.objects.select_for_update().get(session_id=client_session_id)
+                    
+                    # 既存ゲームのアップデート - 変更可能なフィールドのみ
+                    updateable_fields = [
+                        "status", "score_player1", "score_player2", "end_time", "winner"
+                    ]
+                    
+                    for field in updateable_fields:
+                        if field in validated_data:
+                            setattr(existing_game, field, validated_data[field])
+                    
+                    existing_game.save()
+                    return existing_game
+                
+                except Game.DoesNotExist:
+                    # セッションIDが提供されたがゲームが見つからない場合
+                    pass
+            
+            # 新規ゲームの作成
+            if "session_id" not in validated_data:
+                validated_data["session_id"] = generate_session_id(
+                    game_type, player1.username, player2_username
+                )
+            
+            game = Game.objects.create(player1=player1, **validated_data)
+            return game
+
+    def update(self, instance, validated_data):
+        """既存ゲームインスタンスの更新"""
+        # 更新可能なフィールド
+        updatable_fields = [
+            "score_player1", "score_player2", "status", "end_time", "is_ai_opponent"
+        ]
+        
+        # winner特別処理
+        if "winner" in validated_data:
+            winner_data = validated_data.pop("winner")
+            if winner_data and winner_data.get("username"):
+                instance.winner = User.objects.get(username=winner_data["username"])
+            else:
+                instance.winner = None
+        
+        # その他のフィールド更新
+        for field in updatable_fields:
+            if field in validated_data:
+                setattr(instance, field, validated_data[field])
+        
+        instance.save()
+        return instance
 
 
 class TournamentParticipantSerializer(serializers.ModelSerializer):
