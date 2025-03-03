@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import generics, status
+from rest_framework import generics, status, viewsets
+from rest_framework.decorators import action
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -284,8 +285,8 @@ class GameListCreateView(generics.ListCreateAPIView):
             status=status.HTTP_201_CREATED,
         )
 
-
 class GameRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
     permission_classes = [IsAuthenticated, IsPlayerOrReadOnly]
+    lookup_field = 'session_id'

@@ -98,6 +98,7 @@ export class MultiplayerGameManager extends BaseGameManager {
       player1: data.state.score[this.config.username] || 0,
       player2: data.state.score[opponent] || 0,
       opponent: opponent,
+      sessionId: this.config.sessionId,
     };
 
     localStorage.setItem('finalScore', JSON.stringify(finalScore));
