@@ -24,6 +24,17 @@ export interface IRankingUser {
   level: number;
 }
 
+// ==== result =====
+export interface IGameResult {
+  player1: number;
+  player2: number;
+  opponent?: string;
+  disconnected?: boolean;
+  disconnectedPlayer?: string;
+}
+
+export type IGameMode = 'singleplayer' | 'multiplayer' | 'tournament';
+
 // ===== Game =====
 export interface IGameScore {
   player1: number;
