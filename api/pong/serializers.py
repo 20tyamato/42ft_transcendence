@@ -110,7 +110,7 @@ class LoginSerializer(serializers.Serializer):
             )
         raise serializers.ValidationError('Must include "username" and "password".')
 
-
+# TODO: add validate dup sessionID
 class GameSerializer(serializers.ModelSerializer):
     player1 = serializers.CharField(source="player1.username")
     player2 = serializers.CharField(

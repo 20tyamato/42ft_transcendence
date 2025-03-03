@@ -6,21 +6,51 @@ import { IGameScore } from '@/models/interface';
 import { checkUserAccess } from '@/models/User/auth';
 import { fetchUserAvatar } from '@/models/User/repository';
 
-async function sendGameResult(score: IGameScore) {
+async function sendGameResult(score: any, gameMode: string) {
   try {
     const token = localStorage.getItem('token');
     const username = localStorage.getItem('username');
-
-    // TODO: すべてのゲームモードで対応できるようにリファクタリングする
-    const gameData = {
-      player1: username,
-      player2: null,
-      score_player1: score.player1,
-      score_player2: score.player2,
-      is_ai_opponent: true,
-      winner: score.player1 > score.player2 ? username : null,
+    
+    let gameData: any = {
+      status: 'COMPLETED',
       end_time: new Date().toISOString(),
     };
+    
+    // ゲームモードに応じたデータ構造を構築
+    if (gameMode === 'singleplayer') {
+      // シングルプレイヤー (CPU対戦) モード
+      gameData = {
+        ...gameData,
+        game_type: 'SINGLE',
+        player1: username,
+        player2: null,
+        score_player1: score.player1,
+        score_player2: score.player2,
+        is_ai_opponent: true,
+        winner: score.player1 > score.player2 ? username : null,
+      };
+    } else if (gameMode === 'multiplayer') {
+      // マルチプレイヤーモード
+      const isWinner = score.player1 > score.player2;
+      
+      gameData = {
+        ...gameData,
+        game_type: 'MULTI',
+        player1: username,
+        player2: score.opponent,
+        score_player1: score.player1,
+        score_player2: score.player2,
+        is_ai_opponent: false,
+        winner: isWinner ? username : score.opponent,
+      };
+      
+      // 切断情報があれば処理
+      if (score.disconnected) {
+        gameData.winner = score.disconnectedPlayer === username ? score.opponent : username;
+      }
+    } 
+    // TODO: トーナメントモードは将来的に追加予定
+    // else if (gameMode === 'tournament') { ... }
 
     const response = await fetch(`${API_URL}/api/games/`, {
       method: 'POST',
@@ -56,10 +86,10 @@ const ResultPage = new Page({
   mounted: async ({ pg }: { pg: Page }): Promise<void> => {
     checkUserAccess();
     const storedScore = localStorage.getItem('finalScore');
-    const gameMode = localStorage.getItem('gameMode');
+    const gameMode = localStorage.getItem('gameMode') || 'singleplayer';
     const username = localStorage.getItem('username');
 
-    if (storedScore && gameMode === 'multiplayer') {
+    if (storedScore) {
       const score = JSON.parse(storedScore);
 
       // スコアの表示を更新
@@ -89,32 +119,51 @@ const ResultPage = new Page({
           }
         });
         playerAvatarImg.alt = username;
-        fetchUserAvatar(score.opponent).then((avatar) => {
-          if (avatar && avatar.type.startsWith('image/')) {
-            const avatarUrl = URL.createObjectURL(avatar);
-            opponentAvatarImg.src = avatarUrl;
-          } else {
-            opponentAvatarImg.src = `${API_URL}/media/default_avatar.png`;
-          }
-        });
-        opponentAvatarImg.alt = score.opponent;
+        
+        if (score.opponent) {
+          fetchUserAvatar(score.opponent).then((avatar) => {
+            if (avatar && avatar.type.startsWith('image/')) {
+              const avatarUrl = URL.createObjectURL(avatar);
+              opponentAvatarImg.src = avatarUrl;
+            } else {
+              opponentAvatarImg.src = `${API_URL}/media/default_avatar.png`;
+            }
+          });
+          opponentAvatarImg.alt = score.opponent;
+        }
       }
 
       if (playerScoreElement) playerScoreElement.textContent = String(score.player1);
       if (opponentScoreElement) opponentScoreElement.textContent = String(score.player2);
 
       if (resultMessage) {
-        if (score.player1 > score.player2) {
-          resultMessage.textContent = 'You Win!';
-          resultMessage.className = 'result-message win';
+        if (score.disconnected) {
+          // 切断による勝敗表示
+          const wasDisconnected = score.disconnectedPlayer === username;
+          if (wasDisconnected) {
+            resultMessage.textContent = 'You Disconnected - Opponent Wins';
+            resultMessage.className = 'result-message lose';
+          } else {
+            resultMessage.textContent = 'Opponent Disconnected - You Win!';
+            resultMessage.className = 'result-message win';
+          }
         } else {
-          resultMessage.textContent = 'Opponent Wins!';
-          resultMessage.className = 'result-message lose';
+          // 通常のスコアによる勝敗表示
+          if (score.player1 > score.player2) {
+            resultMessage.textContent = 'You Win!';
+            resultMessage.className = 'result-message win';
+          } else if (score.player1 < score.player2) {
+            resultMessage.textContent = 'Opponent Wins!';
+            resultMessage.className = 'result-message lose';
+          } else {
+            resultMessage.textContent = 'Draw!';
+            resultMessage.className = 'result-message draw';
+          }
         }
       }
 
       // 結果をバックエンドに送信
-      await sendGameResult(score);
+      await sendGameResult(score, gameMode);
 
       // スコアをクリア
       localStorage.removeItem('finalScore');
