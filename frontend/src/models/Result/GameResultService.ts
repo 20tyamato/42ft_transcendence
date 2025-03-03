@@ -106,12 +106,18 @@ export class GameResultService {
       const gameData = this.buildGameData(score, gameMode, username);
 
       // HTTPメソッドとエンドポイントの設定
-      let method = 'PUT';
+      // FIXME: これ全部PUTでいいのでは
+      let method = 'PUT'; // デフォルトは PUT
+      let endpoint = `${API_URL}/api/games/`;
+
       if (gameMode === 'singleplayer') {
-        method = 'POST';
+        method = 'POST'; // シングルプレイヤーは POST
+      } else if (gameMode === 'multiplayer' && score.sessionId) {
+        // マルチプレイヤーでセッションIDがある場合、エンドポイントを変更
+        endpoint = `${API_URL}/api/games/session/${score.sessionId}/`;
       }
 
-      const response = await fetch(`${API_URL}/api/games/`, {
+      const response = await fetch(endpoint, {
         method: method,
         headers: {
           'Content-Type': 'application/json',
