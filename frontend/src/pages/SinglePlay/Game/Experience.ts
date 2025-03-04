@@ -11,6 +11,8 @@ import Paddle from '../Game/Paddle';
 import Ball from '../Game/Ball';
 import Walls from '../Game/Wall';
 import LocalGame from '../Game/LocalGame';
+import { createParticleCustomizationPanel } from './CustomParticle';
+
 
 // Window 型拡張
 declare global {

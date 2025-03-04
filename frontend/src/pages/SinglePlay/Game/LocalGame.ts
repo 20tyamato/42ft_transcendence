@@ -210,26 +210,22 @@ export default class LocalGame {
     }
   }
 
-  private updateScoreDisplay() {
-    const playerNameElem = document.getElementById('playerName');
-    const scoreElem = document.getElementById('score');
+  private updateScoreDisplay(): void {
+    // ユーザー名を localStorage から取得
     const username = localStorage.getItem('username') || 'Player';
+    // それぞれの要素を取得
+    const leftNameElem = document.querySelector('#playerName .leftName');
+    const playerScoreElem = document.querySelector('#score .playerScore');
+    const cpuScoreElem = document.querySelector('#score .cpuScore');
 
-    if (playerNameElem) {
-      const leftNameSpan = playerNameElem.querySelector('.leftName');
-      if (leftNameSpan) {
-        leftNameSpan.textContent = username;
-      }
+    if (leftNameElem) {
+      leftNameElem.textContent = username; // ユーザー名を更新
     }
-    if (scoreElem) {
-      const playerScoreSpan = scoreElem.querySelector('.playerScore');
-      const dashSpan = scoreElem.querySelector('.dash');
-      const cpuScoreSpan = scoreElem.querySelector('.cpuScore');
-      if (playerScoreSpan && dashSpan && cpuScoreSpan) {
-        playerScoreSpan.textContent = this.scorePaddleOne.toString();
-        dashSpan.textContent = '-';
-        cpuScoreSpan.textContent = this.scorePaddleTwo.toString();
-      }
+    if (playerScoreElem) {
+      playerScoreElem.textContent = this.scorePaddleOne.toString();
+    }
+    if (cpuScoreElem) {
+      cpuScoreElem.textContent = this.scorePaddleTwo.toString();
     }
   }
 

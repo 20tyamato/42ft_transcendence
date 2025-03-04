@@ -5,6 +5,8 @@
     "prettier": "^3.5.1"
   },
   "dependencies": {
-    "gsap": "^3.12.7"
+    "@types/three": "^0.174.0",
+    "gsap": "^3.12.7",
+    "three": "^0.174.0"
   }
 }

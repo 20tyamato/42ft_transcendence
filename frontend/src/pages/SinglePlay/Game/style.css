@@ -384,7 +384,7 @@ canvas {
 .btn {
   padding: 8px 16px;
   font-size: 1rem;
-  background-color: #3b82f6;
+  background-color: #53c0d1;
   border: none;
   border-radius: 5px;
   color: #fff;
@@ -393,5 +393,7 @@ canvas {
 }
 
 .btn:hover {
-  background-color: #ff7878;
+  background-color: #59757b;
 }
+
+#particleCustomizationContent.hidden { display: none; } 
