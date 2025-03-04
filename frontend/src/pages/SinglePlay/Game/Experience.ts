@@ -13,7 +13,6 @@ import Walls from '../Game/Wall';
 import LocalGame from '../Game/LocalGame';
 import { createParticleCustomizationPanel } from './CustomParticle';
 
-
 // Window 型拡張
 declare global {
   interface Window {
@@ -52,12 +51,7 @@ export default class Experience {
   public ball!: Ball;
   public walls!: Walls;
   public localGame!: LocalGame;
-
   private localGameStarted: boolean = false;
-  // Experience.ts（抜粋）
-  public particleSystem: THREE.Points | null = null;
-  public particleSettings: { color: string; size: string; speed: string; density: string } | null =
-    null;
 
   private constructor(canvas: HTMLCanvasElement) {
     Experience.instance = this;
@@ -108,8 +102,6 @@ export default class Experience {
     }
     this.cameraClass.update();
     this.renderer.update();
-    this.field.updateParticles();
-    // requestAnimationFrame(() => this.update());
     console.log('Experience update running');
   }
 

@@ -81,8 +81,11 @@ const SinglePlayPage = new Page({
 
     const canvas = document.getElementById('gl') as HTMLCanvasElement;
     const experience = Experience.getInstance(canvas);
-
-    const particlePanel = createParticleCustomizationPanel();
+    const fieldInstance = experience.field;
+    const particlePanel = createParticleCustomizationPanel((params) => {
+      fieldInstance.updateParticles(params);
+      console.log('Updating particles with params:', params);
+    });
     document.body.appendChild(particlePanel);
 
     function animate() {

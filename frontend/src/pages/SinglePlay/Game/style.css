@@ -144,7 +144,7 @@ canvas {
   border: none;
   cursor: pointer;
   color: #ffffff;
-  background-color: #3b82f6;
+  background-color: #3bcef6;
   transition:
     transform 0.2s,
     box-shadow 0.3s;
@@ -152,7 +152,7 @@ canvas {
 
 .pause-menu button:hover {
   /* transform: translateY(-3px); */
-  background-color: #ff7878;
+  background-color: #9c9c9c;
   transform: scale(1.1);
 }
 
@@ -318,10 +318,11 @@ canvas {
 }
 
 /* ボタン群 */
-.btn {
+#gameOverRetryBtn.btn,
+#gameOverExitBtn.btn {
   padding: 12px 30px;
   font-size: 24px;
-  background-color: #fff;
+  background-color: #00fffc;
   color: #000;
   border: none;
   border-radius: 5px;
@@ -335,16 +336,23 @@ canvas {
 
 .customization-panel {
   position: fixed;
-  top: 10%;
-  right: 5%;
+  top: 12%;
+  left: 3%;
   width: 300px;
   background: rgba(0, 0, 0, 0.8);
   border-radius: 10px;
-  padding: 20px;
+  padding: 10px;
   color: #fff;
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron';
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-  z-index: 1200;
+  z-index: 1000;
+  text-align: left;
+}
+
+.customization-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 .customization-panel.hidden {
@@ -352,10 +360,11 @@ canvas {
 }
 
 .customization-panel h2 {
-  text-align: center;
-  margin-bottom: 20px;
-  font-size: 1.8rem;
-  color: #00ffc6;
+  margin-left: 20px;
+  padding:10 10px;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  color: #fff;
 }
 
 .customization-option {
@@ -378,22 +387,13 @@ canvas {
 .customization-buttons {
   display: flex;
   justify-content: space-around;
-  margin-top: 20px;
+  margin-top: 0px;
 }
 
 .btn {
-  padding: 8px 16px;
+  padding: 0px 16px;
   font-size: 1rem;
-  background-color: #53c0d1;
-  border: none;
-  border-radius: 5px;
-  color: #fff;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.btn:hover {
-  background-color: #59757b;
+  color: #000;
 }
 
 #particleCustomizationContent.hidden { display: none; } 
