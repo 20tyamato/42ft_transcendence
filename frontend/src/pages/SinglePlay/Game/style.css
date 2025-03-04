@@ -39,15 +39,15 @@ body::before {
 
 #container {
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   position: absolute;
   top: 0;
   left: 0;
 }
 
 canvas {
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   display: block;
 }
 
@@ -86,19 +86,21 @@ canvas {
 }
 
 #pauseBtn {
-  position: absolute;
-  top: 20px;
+  position: fixed;
+  top: 75px;
   right: 20px;
   padding: 10px 20px;
   font-size: 1rem;
-  border: none;
-  box-shadow: 0 4px 12px rgb(220, 220, 220);
+  box-shadow: 0 4px 12px rgb(0, 0, 0, 0.5);
   border-radius: 10px;
-  color: rgb(0, 0, 0);
+  color: #fff;
   border-radius: 5px;
   cursor: pointer;
-  z-index: 20;
+  z-index: 50;
   transition: background-color 0.3s ease;
+  background: rgba(110, 110, 110, 0.4);
+  border: 2px solid #fff;
+  border-radius: 10px;
 }
 
 #pauseBtn:hover {
@@ -128,6 +130,7 @@ canvas {
   border-radius: 10px;
   text-align: center;
   color: white;
+  z-index: 1800;
 }
 
 .pause-menu h1 {
@@ -167,26 +170,29 @@ canvas {
 /* スコア表示エリアの共通設定 */
 #scoreDisplay {
   position: fixed;
-  top: 50px;
+  top: 75px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 800;
-  pointer-events: none;
-  visibility: visible;
+  background: rgba(110, 110, 110, 0.6);
+  border-radius: 10px;
+  padding: 10px;
+  color: #fff;
+  font-family: 'Orbitron';
   display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px 20px; 
+  padding: 5px 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 800;
+  border: 2px solid #fff;
 }
 
-.score-container {
+/* .score-container {
   background-color: rgba(0, 0, 0, 0.6);
   padding: 10px 20px;
   border-radius: 10px;
   text-align: center;
   color: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-}
+} */
 
 /* スコア表示用のコンテナ */
 #finalScoreDisplay {
@@ -339,64 +345,88 @@ canvas {
 
 .customization-panel {
   position: fixed;
-  top: 10%;
-  right: 1%;
+  top:480px;
+  right : 20px;
   width: 300px;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(110, 110, 110, 0.6);
   border-radius: 10px;
-  padding: 10px;
+  padding: 5px 5px 5px 5px;
   color: #fff;
   font-family: 'Orbitron';
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   z-index: 1000;
-  text-align: left;
+  font-size: 0.5rem;
+  transform: rotate(90deg);
+  transform-origin: top right;
 }
 
 .customization-header {
+  transform-origin: top left;
   display: flex;
-  align-items: center;
-  margin-bottom: 10px;
+  width: 100%;
+  text-align: left;
+  padding: 5px;
 }
 
-.customization-panel.hidden {
-  display: none;
-}
-
-.customization-panel h2 {
-  margin-left: 20px;
-  padding:10 10px;
-  margin-bottom: 10px;
+.customization-title {
+  display: flex;
   font-size: 1rem;
-  color: #fff;
+  padding-left : 10px;
+}
+
+#particleCustomizationContent {
+  transform-origin: bottom left;
+  transform: rotate(-90deg)translateY(270px);
+  /* text-align : left; */
 }
 
 .customization-option {
-  margin-bottom: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: block;
+  text-align: left;  
+  /* flex-direction: column; */
+  width: 100%; 
+  padding: 10px 0;
+  
 }
 
 .customization-option label {
-  font-size: 1rem;
-  flex-basis: 40%;
+  
+  display: inline-block;
+  width: 50%;      
+  text-align: left;
+  margin-right: 10px; 
+  margin-left: 10px; 
+  font-size: 0.8rem;  /* フォントサイズも調整可能 */
+}
+
+#particleOpacity {
+  
+  flex-basis: 80%;
 }
 
 .customization-option input[type="color"],
 .customization-option input[type="range"] {
-  flex-basis: 55%;
+  flex-basis: 70%;
+
 }
 
 .customization-buttons {
   display: flex;
   justify-content: space-around;
-  margin-top: 0px;
+  
 }
 
 .btn {
-  padding: 0px 16px;
+  padding: 5px 5px;
   font-size: 1rem;
-  color: #fff;
+  background-color: #fff;
+  border: none;
+  border-radius: 5px;
+  color: #000;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-#particleCustomizationContent.hidden { display: none; } 
+.btn:hover {
+  background-color: #7a7a7a;
+}

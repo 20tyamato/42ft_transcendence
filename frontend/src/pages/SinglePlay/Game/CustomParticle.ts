@@ -104,7 +104,7 @@ export function createParticleCustomizationPanel(
   const toggleBtn = document.createElement('button');
   toggleBtn.id = 'toggleCustomizationPanel';
   toggleBtn.className = 'btn toggle-btn';
-  toggleBtn.textContent = '▼'; // 初期は表示状態を示す▼
+  toggleBtn.textContent = '▶'; // 初期は表示状態を示す▼
   headerContainer.appendChild(toggleBtn);
 
   // タイトル（トグルの右隣に配置）
@@ -116,6 +116,7 @@ export function createParticleCustomizationPanel(
   // パネル内容部分をラップする div（トグル対象）
   const content = document.createElement('div');
   content.id = 'particleCustomizationContent';
+  content.classList.add('hidden');
   panel.appendChild(content);
 
   function createOption(
@@ -192,18 +193,11 @@ export function createParticleCustomizationPanel(
 
   content.appendChild(buttonContainer);
 
-  // // パネルの表示／非表示切替用のトグルボタン
-  // const toggleBtn = document.createElement('button');
-  // toggleBtn.id = 'toggleCustomizationPanel';
-  // toggleBtn.className = 'customization-buttons';
-  // toggleBtn.textContent = '▼';
-  // panel.insertBefore(toggleBtn, content);
-
   // トグルボタンの挙動：内容部分の表示／非表示を切り替える
   toggleBtn.addEventListener('click', () => {
     content.classList.toggle('hidden');
     if (content.classList.contains('hidden')) {
-      toggleBtn.textContent = '▲';
+      toggleBtn.textContent = '▶';
     } else {
       toggleBtn.textContent = '▼';
     }
