@@ -55,10 +55,11 @@ export class MultiplayerGameManager extends BaseGameManager {
     localStorage.setItem('finalScore', JSON.stringify(finalScore));
     localStorage.setItem('gameMode', 'multiplayer');
 
+    console.log('----- onPlayerDisconnected() -----');
     // 結果画面に遷移
-    setTimeout(() => {
-      window.location.href = '/result';
-    }, 1000);
+    // setTimeout(() => {
+    //   window.location.href = '/result';
+    // }, 1000);
   }
 
   protected onConnectionError(): void {
@@ -79,8 +80,9 @@ export class MultiplayerGameManager extends BaseGameManager {
     localStorage.setItem('finalScore', JSON.stringify(finalScore));
     localStorage.setItem('gameMode', 'multiplayer');
 
+    console.log('----- onConnectionError() -----');
     // 結果画面に遷移
-    window.location.href = '/result';
+    // window.location.href = '/result';
   }
 
   protected onError(message: string): void {
@@ -104,9 +106,10 @@ export class MultiplayerGameManager extends BaseGameManager {
     localStorage.setItem('finalScore', JSON.stringify(finalScore));
     localStorage.setItem('gameMode', 'multiplayer');
 
-    setTimeout(() => {
-      window.location.href = '/result';
-    }, 1000);
+    console.log('----- onGameEnd() -----');
+    // setTimeout(() => {
+    //   window.location.href = '/result';
+    // }, 1000);
   }
 
   protected onCleanup(): void {
