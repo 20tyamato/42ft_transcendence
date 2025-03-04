@@ -92,8 +92,9 @@ canvas {
   padding: 10px 20px;
   font-size: 1rem;
   border: none;
-  background-color: #686868;
-  color: white;
+  box-shadow: 0 4px 12px rgb(220, 220, 220);
+  border-radius: 10px;
+  color: rgb(0, 0, 0);
   border-radius: 5px;
   cursor: pointer;
   z-index: 20;
@@ -159,6 +160,8 @@ canvas {
 #pauseOverlay.visible {
   opacity: 1; /* 表示状態 */
   visibility: visible; /* 表示状態 */
+  z-index : 1400;
+
 }
 
 /* スコア表示エリアの共通設定 */
@@ -336,15 +339,15 @@ canvas {
 
 .customization-panel {
   position: fixed;
-  top: 12%;
-  left: 3%;
+  top: 10%;
+  right: 1%;
   width: 300px;
   background: rgba(0, 0, 0, 0.8);
   border-radius: 10px;
   padding: 10px;
   color: #fff;
   font-family: 'Orbitron';
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   z-index: 1000;
   text-align: left;
 }
@@ -393,7 +396,7 @@ canvas {
 .btn {
   padding: 0px 16px;
   font-size: 1rem;
-  color: #000;
+  color: #fff;
 }
 
 #particleCustomizationContent.hidden { display: none; } 
