@@ -1,5 +1,6 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
+import AuthLayout from '@/layouts/AuthLayout';
 import CommonLayout from '@/layouts/common/index';
 import { checkUserAccess } from '@/models/User/auth';
 import { fetchCurrentUser } from '@/models/User/repository';
@@ -76,7 +77,7 @@ const mountModesPage = async (pg: Page): Promise<void> => {
 
 const ModesPage = new Page({
   name: 'Modes',
-  config: { layout: CommonLayout },
+  config: { layout: AuthLayout },
   mounted: async ({ pg }: { pg: Page }) => mountModesPage(pg),
 });
 
