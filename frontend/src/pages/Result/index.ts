@@ -5,6 +5,7 @@ import CommonLayout from '@/layouts/common/index';
 import { checkUserAccess } from '@/models/User/auth';
 import { GameResultService } from '@/models/Result/GameResultService';
 import { ResultPageUI } from '@/models/Result/ResultPageUI';
+import { createMultiplayerGame, createTournamentGame } from '@/models/Game/repository';
 
 /**
  * 結果画面ページコンポーネント
@@ -18,7 +19,7 @@ const ResultPage = new Page({
   mounted: async ({ pg }: { pg: Page }): Promise<void> => {
     // 認証チェック
     checkUserAccess();
-    
+
     // ユーザー名取得
     const username = localStorage.getItem('username');
     if (!username) {
@@ -26,40 +27,48 @@ const ResultPage = new Page({
       window.location.href = '/';
       return;
     }
-    
+
     // 結果データ取得
     const resultData = GameResultService.getStoredResult();
     if (!resultData) {
       console.warn('No game result data found');
       return;
     }
-    
+
     const { score, gameMode } = resultData;
-    
+
     // UI初期化
     const ui = new ResultPageUI();
-    
+
     // 終了ボタン設定
     ui.setupEventHandlers(() => {
       window.location.href = '/modes';
     });
-    
+
     // 勝敗判定
     const winnerInfo = GameResultService.determineWinner(score, username);
-    
+
     // 画面表示更新
     await ui.updateResultView(score, username, {
       message: winnerInfo.message,
       className: winnerInfo.className,
     });
-    
+
     // 結果をサーバーに送信
     try {
-      await GameResultService.sendGameResult(score, gameMode);
+      gameMode === 'multiplayer'
+        ? await createMultiplayerGame({
+            player1Score: score.player1,
+            player2Score: score.player2,
+            opponentName: score.opponent || '',
+          })
+        : await createTournamentGame({
+            playerScore: score.player1,
+          });
     } catch (error) {
       console.error('Error saving game result:', error);
     }
-    
+
     // 保存データのクリア
     GameResultService.clearStoredResult();
   },

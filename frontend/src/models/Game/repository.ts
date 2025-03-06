@@ -54,7 +54,7 @@ export const createSinglePlayGame = async ({
  * @param opponentName 相手の名前
  * @returns ゲームデータ
  */
-export const createMultiPlayGame = async ({
+export const createMultiplayerGame = async ({
   player1Score,
   player2Score,
   opponentName,
@@ -87,8 +87,6 @@ export const createMultiPlayGame = async ({
     credentials: 'include',
     body: JSON.stringify(gameData),
   });
-
-  const responseData = await response.json();
 
   if (!response.ok) {
     throw new Error(`API error: ${response.status}`);
