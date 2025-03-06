@@ -2,7 +2,6 @@ import gsap from 'gsap';
 import Experience from './Experience';
 import * as THREE from 'three';
 let running = true;
-let running = true;
 
 export default class LocalGame {
   private experience: Experience;
@@ -168,18 +167,9 @@ export default class LocalGame {
         running = false;
         this.showGameOverOverlay('YOU WIN!', `${this.scorePaddleOne} - ${this.scorePaddleTwo}`);
         return;
-      if (this.scorePaddleOne >= 3) {
-        running = false;
-        this.showGameOverOverlay('YOU WIN!', `${this.scorePaddleOne} - ${this.scorePaddleTwo}`);
-        return;
       }
     } else {
       this.scorePaddleTwo++;
-      if (this.scorePaddleTwo >= 3) {
-        running = false;
-        // CPUが勝利
-        this.showGameOverOverlay('GAME OVER', `${this.scorePaddleOne} - ${this.scorePaddleTwo}`);
-        return;
       if (this.scorePaddleTwo >= 3) {
         running = false;
         // CPUが勝利
@@ -213,7 +203,6 @@ export default class LocalGame {
     });
   }
   private processPlayerPaddle(deltaTime: number) {
-    const paddleSpeed = 1000; // 1秒間に動くピクセル量
     const paddleSpeed = 1000; // 1秒間に動くピクセル量
 
     if (this.leftKeyPressed && this.paddleOne.position.x > -450) {
@@ -250,36 +239,6 @@ export default class LocalGame {
     this.processCpuPaddle();
     this.processPlayerPaddle(deltaTime);
   }
-}
-
-// Difficulty.ts
-export enum Difficulty {
-  EASY = 1,
-  MEDIUM = 3,
-  HARD = 5,
-  ONI = 10, // ユーザーレベルが5以上の場合のみ選択可能
-}
-
-const selectedLevel = localStorage.getItem('selectedLevel') || 'EASY';
-console.log(`Selected Level: ${selectedLevel}`);
-
-let difficultyFactor: number;
-switch (selectedLevel.toUpperCase()) {
-  case 'EASY':
-    difficultyFactor = Difficulty.EASY;
-    break;
-  case 'MEDIUM':
-    difficultyFactor = Difficulty.MEDIUM;
-    break;
-  case 'HARD':
-    difficultyFactor = Difficulty.HARD;
-    break;
-  case 'ONI':
-    // ユーザーレベルのチェックは別途行い、条件を満たす場合のみ SECRET を適用
-    difficultyFactor = Difficulty.ONI;
-    break;
-  default:
-    difficultyFactor = Difficulty.EASY;
 }
 
 // Difficulty.ts
