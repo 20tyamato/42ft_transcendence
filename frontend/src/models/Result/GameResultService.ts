@@ -96,6 +96,13 @@ export class GameResultService {
    */
   static async sendGameResult(score: IGameResult, gameMode: IGameMode): Promise<boolean> {
     try {
+      // シングルプレイヤーモードのみバックエンドAPIを使用して保存
+      // マルチプレイヤーとトーナメントはWebSocketで既に保存済み
+      if (gameMode !== 'singleplayer') {
+        console.log(`Skipping API call for ${gameMode} mode - already saved via WebSocket`);
+        return true;
+      }
+
       const token = localStorage.getItem('token');
       const username = localStorage.getItem('username');
       
