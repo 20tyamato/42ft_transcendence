@@ -1,22 +1,7 @@
 // src/models/Result/GameResultService.ts
 
 import { API_URL } from '@/config/config';
-
-/**
- * ゲーム結果データの型定義
- */
-export interface GameResultData {
-  player1: number;
-  player2: number;
-  opponent?: string;
-  disconnected?: boolean;
-  disconnectedPlayer?: string;
-}
-
-/**
- * ゲームモードの型定義
- */
-export type GameMode = 'singleplayer' | 'multiplayer' | 'tournament';
+import { IGameResult, IGameMode } from '@/models/interface';
 
 /**
  * ゲーム結果に関するサービスクラス
@@ -26,9 +11,9 @@ export class GameResultService {
   /**
    * ローカルストレージからゲーム結果を取得
    */
-  static getStoredResult(): { score: GameResultData; gameMode: GameMode } | null {
+  static getStoredResult(): { score: IGameResult; gameMode: IGameMode } | null {
     const storedScore = localStorage.getItem('finalScore');
-    const gameMode = localStorage.getItem('gameMode') as GameMode || 'singleplayer';
+    const gameMode = localStorage.getItem('gameMode') as IGameMode || 'singleplayer';
     
     if (!storedScore) return null;
     
@@ -52,7 +37,7 @@ export class GameResultService {
   /**
    * ゲームモードに基づいたAPIリクエストデータを構築
    */
-  static buildGameData(score: GameResultData, gameMode: GameMode, username: string): any {
+  static buildGameData(score: IGameResult, gameMode: IGameMode, username: string): any {
     // 基本データ構造
     const baseData = {
       status: 'COMPLETED',
@@ -109,7 +94,7 @@ export class GameResultService {
   /**
    * ゲーム結果をバックエンドに送信
    */
-  static async sendGameResult(score: GameResultData, gameMode: GameMode): Promise<boolean> {
+  static async sendGameResult(score: IGameResult, gameMode: IGameMode): Promise<boolean> {
     try {
       const token = localStorage.getItem('token');
       const username = localStorage.getItem('username');
@@ -153,7 +138,7 @@ export class GameResultService {
   /**
    * 勝者を判定
    */
-  static determineWinner(score: GameResultData, username: string): {
+  static determineWinner(score: IGameResult, username: string): {
     isWinner: boolean;
     message: string;
     className: string;
