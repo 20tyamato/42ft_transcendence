@@ -54,6 +54,34 @@ export function hideGameStartOverlay() {
   });
 }
 
+export function showGameOverOverlay(message: string, finalScore: string) {
+  const overlay = document.getElementById('gameOverOverlay');
+  const endMessage = document.getElementById('endMessage');
+  const finalScoreElem = document.getElementById('finalScore');
+  const retryBtn = document.getElementById('retryBtn');
+  const exitBtn = document.getElementById('exitBtn');
+  const scoreDisplay = document.getElementById('scoreDisplay');
+
+  if (overlay && endMessage && finalScoreElem && retryBtn && exitBtn && scoreDisplay) {
+    endMessage.textContent = message; // "GAME OVER" または "YOU WIN!"
+    finalScoreElem.textContent = `Score: ${finalScore}`;
+
+    scoreDisplay.classList.add('hidden');
+    // 非表示クラスを削除し、opacity 0 から1にフェードイン
+    overlay.classList.remove('hidden');
+    gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 1 });
+    retryBtn.addEventListener('click', () => {
+      window.location.reload();
+    });
+
+    exitBtn.addEventListener('click', () => {
+      window.location.href = '/singleplay/select';
+    });
+  } else {
+    console.warn('Game over elements are missing.');
+  }
+}
+
 const SinglePlayPage = new Page({
   name: 'SinglePlay/Game',
   config: {
