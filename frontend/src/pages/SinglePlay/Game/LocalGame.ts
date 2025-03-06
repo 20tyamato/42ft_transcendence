@@ -42,12 +42,15 @@ export default class LocalGame {
   private startBallMovement() {
     const direction = Math.random() > 0.5 ? -1 : 1;
     this.ballVelocity = { x: 0, z: direction * 10.0 * difficultyFactor }; //ボールの速度調整
+    this.ballVelocity = { x: 0, z: direction * 10.0 * difficultyFactor }; //ボールの速度調整
     this.ballStopped = false;
   }
 
   private processCpuPaddle() {
     const ballPos = this.ball.position;
     const cpuPos = this.paddleTwo.position;
+    if (cpuPos.x > ballPos.x && cpuPos.x > -450) cpuPos.x -= 5 * difficultyFactor;
+    if (cpuPos.x < ballPos.x && cpuPos.x < 450) cpuPos.x += 5 * difficultyFactor;
     if (cpuPos.x > ballPos.x && cpuPos.x > -450) cpuPos.x -= 5 * difficultyFactor;
     if (cpuPos.x < ballPos.x && cpuPos.x < 450) cpuPos.x += 5 * difficultyFactor;
   }
@@ -91,7 +94,6 @@ export default class LocalGame {
     }
   }
   public showGameOverOverlay(message: string, finalScore: string) {
-    // 非表示にする既存のUIを隠す
     const scoreDisplay = document.getElementById('scoreDisplay');
     if (scoreDisplay) scoreDisplay.style.display = 'none';
     const pauseOverlay = document.getElementById('pauseOverlay');
@@ -99,28 +101,57 @@ export default class LocalGame {
     const gameStartOverlay = document.getElementById('gameStartOverlay');
     if (gameStartOverlay) gameStartOverlay.style.display = 'none';
 
-    // ゲームオーバーオーバーレイの表示
     const overlay = document.getElementById('gameOverOverlay');
     const endMessage = document.getElementById('endMessage');
-    const finalScoreElem = document.getElementById('finalScore');
-    if (overlay && endMessage && finalScoreElem) {
-      endMessage.textContent = message;
-      finalScoreElem.textContent = `Score: ${finalScore}`;
+
+    const finalPlayerNameElem = document.querySelector(
+      '#finalScoreDisplay #finalPlayerName .leftName'
+    );
+    const finalCpuLabelElem = document.querySelector(
+      '#finalScoreDisplay #finalPlayerName .rightName'
+    );
+    const finalPlayerScoreElem = document.querySelector(
+      '#finalScoreDisplay #finalScore .playerScore'
+    );
+    const finalDashElem = document.querySelector('#finalScoreDisplay #finalScore .dash');
+    const finalCpuScoreElem = document.querySelector('#finalScoreDisplay #finalScore .cpuScore');
+
+    if (
+      overlay &&
+      endMessage &&
+      finalPlayerNameElem &&
+      finalCpuLabelElem &&
+      finalPlayerScoreElem &&
+      finalDashElem &&
+      finalCpuScoreElem
+    ) {
+      const username = localStorage.getItem('username') || 'Player';
+      finalPlayerNameElem.textContent = username;
+      // 右側はゲーム内で変更があれば更新
+      finalCpuLabelElem.textContent = 'CPU';
+      // ここでは、finalScore を "X - Y" として受け取る場合、分割して更新する
+      const [playerScore, cpuScore] = finalScore.split('-').map((s) => s.trim());
+      finalPlayerScoreElem.textContent = playerScore;
+      finalDashElem.textContent = '-';
+      finalCpuScoreElem.textContent = cpuScore;
+
+      endMessage.textContent = message; // "GAME OVER" または "YOU WIN!"
+
       overlay.classList.remove('hidden');
       gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 1 });
-    }
 
-    // Retry/Exit ボタンのイベントを登録（重複登録に注意）
-    const retryBtn = document.getElementById('gameOverRetryBtn');
-    if (retryBtn) {
-      retryBtn.onclick = () => window.location.reload();
-    }
-    const exitBtn = document.getElementById('gameOverExitBtn');
-    if (exitBtn) {
-      exitBtn.onclick = () => (window.location.href = '/singleplay/select');
+      const retryBtn = document.getElementById('gameOverRetryBtn');
+      if (retryBtn) {
+        retryBtn.onclick = () => window.location.reload();
+      }
+      const exitBtn = document.getElementById('gameOverExitBtn');
+      if (exitBtn) {
+        exitBtn.onclick = () => (window.location.href = '/singleplay/select');
+      }
+    } else {
+      console.warn('Game over elements are missing.');
     }
   }
-
   private scored(player: string) {
     this.stopBall();
     gsap.to(this.ballMaterial, { opacity: 0, duration: 0.5 });
@@ -182,26 +213,22 @@ export default class LocalGame {
     }
   }
 
-  private updateScoreDisplay() {
-    const playerNameElem = document.getElementById('playerName');
-    const scoreElem = document.getElementById('score');
+  private updateScoreDisplay(): void {
+    // ユーザー名を localStorage から取得
     const username = localStorage.getItem('username') || 'Player';
+    // それぞれの要素を取得
+    const leftNameElem = document.querySelector('#playerName .leftName');
+    const playerScoreElem = document.querySelector('#score .playerScore');
+    const cpuScoreElem = document.querySelector('#score .cpuScore');
 
-    if (playerNameElem) {
-      const leftNameSpan = playerNameElem.querySelector('.leftName');
-      if (leftNameSpan) {
-        leftNameSpan.textContent = username;
-      }
+    if (leftNameElem) {
+      leftNameElem.textContent = username; // ユーザー名を更新
     }
-    if (scoreElem) {
-      const playerScoreSpan = scoreElem.querySelector('.playerScore');
-      const dashSpan = scoreElem.querySelector('.dash');
-      const cpuScoreSpan = scoreElem.querySelector('.cpuScore');
-      if (playerScoreSpan && dashSpan && cpuScoreSpan) {
-        playerScoreSpan.textContent = this.scorePaddleOne.toString();
-        dashSpan.textContent = '-';
-        cpuScoreSpan.textContent = this.scorePaddleTwo.toString();
-      }
+    if (playerScoreElem) {
+      playerScoreElem.textContent = this.scorePaddleOne.toString();
+    }
+    if (cpuScoreElem) {
+      cpuScoreElem.textContent = this.scorePaddleTwo.toString();
     }
   }
 

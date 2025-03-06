@@ -22,29 +22,44 @@
       <div id="gameStartOverlay" class="overlay">
         <h1>GAME START</h1>
       </div>
-      <div id="gameOverOverlay" class="overlay hidden">
-        <div class="gameover-container">
-          <h1 id="endMessage">GAME OVER</h1>
-          <p id="finalScore">Score: 0 - 0</p>
-          <button id="gameOverRetryBtn" class="btn">Retry</button>
-          <button id="gameOverExitBtn" class="btn">Exit</button>
-        </div>
-      </div>
+      <button id="particleCustomizationPanel" class="customization-panel btn toggle-btn"></button>
+      <div id="particleCustomizationContent" class="hidden customization-content"></div>>
       <canvas id="gl"></canvas>
+      
       <div id="scoreDisplay">
         <div class="score-container">
           <div id="playerName">
-            <span class="leftName">Player</span>
+            <span class="leftName">Player </span>
             <span class="vs">VS</span>
-            <span class="rightName">CPU</span>
+            <span class="rightName"> CPU</span>
           </div>
           <div id="score">
-            <span class="playerScore">0</span>
-            <span class="dash">-</span>
-            <span class="cpuScore">0</span>
+            <span class="playerScore">0   </span>
+            <span class="dash">  -  </span>
+            <span class="cpuScore">   0</span>
           </div>
         </div>
       </div>
+      
+      <div id="gameOverOverlay" class="overlay hidden">
+        <div class="gameover-container">
+          <h1 id="endMessage">GAME OVER</h1>
+          <div id="finalScoreDisplay" class="score-container">
+            <div id="finalPlayerName">
+              <span class="leftName">Player</span>
+              <span class="vs">VS</span>
+              <span class="rightName">CPU EASY</span>
+            </div>
+            <div id="finalScore">
+              <span class="playerScore">0</span>
+              <span class="dash">-</span>
+              <span class="cpuScore">0</span>
+            </div>
+          </div>
+          <button id="gameOverRetryBtn" class="btn">Retry</button>
+          <button id="gameOverExitBtn" class="btn">Exit</button>
+        </div>
+      </div>      
     </div>
   </body>
 </html>

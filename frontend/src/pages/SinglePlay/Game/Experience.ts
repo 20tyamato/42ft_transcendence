@@ -11,6 +11,7 @@ import Paddle from '../Game/Paddle';
 import Ball from '../Game/Ball';
 import Walls from '../Game/Wall';
 import LocalGame from '../Game/LocalGame';
+import { createParticleCustomizationPanel } from './CustomParticle';
 
 // Window 型拡張
 declare global {
@@ -50,7 +51,6 @@ export default class Experience {
   public ball!: Ball;
   public walls!: Walls;
   public localGame!: LocalGame;
-
   private localGameStarted: boolean = false;
 
   private constructor(canvas: HTMLCanvasElement) {
@@ -102,8 +102,6 @@ export default class Experience {
     }
     this.cameraClass.update();
     this.renderer.update();
-    this.field.updateParticles();
-    // requestAnimationFrame(() => this.update());
     console.log('Experience update running');
   }
 

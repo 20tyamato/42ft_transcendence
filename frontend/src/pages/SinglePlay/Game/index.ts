@@ -4,6 +4,7 @@ import CommonLayout from '@/layouts/common/index';
 import Ball from './Ball';
 import Experience from './Experience';
 import Field from './Field';
+import { createParticleCustomizationPanel } from './CustomParticle';
 
 let running = true; // ゲームの状態管理
 
@@ -106,9 +107,15 @@ const SinglePlayPage = new Page({
     const selectedLevel = localStorage.getItem('selectedLevel');
     console.log(`Retrieved selected level: ${selectedLevel}`);
 
-    // Three.js の Experience を初期化
     const canvas = document.getElementById('gl') as HTMLCanvasElement;
     const experience = Experience.getInstance(canvas);
+    const fieldInstance = experience.field;
+    const particlePanel = createParticleCustomizationPanel((params) => {
+      fieldInstance.updateParticles(params);
+      console.log('Updating particles with params:', params);
+    });
+    document.body.appendChild(particlePanel);
+
     function animate() {
       if (running) {
         experience.update();
