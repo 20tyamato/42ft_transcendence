@@ -1,6 +1,22 @@
 // src/models/Result/GameResultService.ts
+
 import { API_URL } from '@/config/config';
-import { IGameResult, IGameMode } from '@/models/interface';
+
+/**
+ * ゲーム結果データの型定義
+ */
+export interface GameResultData {
+  player1: number;
+  player2: number;
+  opponent?: string;
+  disconnected?: boolean;
+  disconnectedPlayer?: string;
+}
+
+/**
+ * ゲームモードの型定義
+ */
+export type GameMode = 'singleplayer' | 'multiplayer' | 'tournament';
 
 /**
  * ゲーム結果に関するサービスクラス
@@ -10,12 +26,12 @@ export class GameResultService {
   /**
    * ローカルストレージからゲーム結果を取得
    */
-  static getStoredResult(): { score: IGameResult; gameMode: IGameMode } | null {
+  static getStoredResult(): { score: GameResultData; gameMode: GameMode } | null {
     const storedScore = localStorage.getItem('finalScore');
-    const gameMode = (localStorage.getItem('gameMode') as IGameMode) || 'singleplayer';
-
+    const gameMode = localStorage.getItem('gameMode') as GameMode || 'singleplayer';
+    
     if (!storedScore) return null;
-
+    
     try {
       const score = JSON.parse(storedScore);
       return { score, gameMode };
@@ -24,7 +40,7 @@ export class GameResultService {
       return null;
     }
   }
-
+  
   /**
    * ローカルストレージからゲーム結果をクリア
    */
@@ -32,17 +48,17 @@ export class GameResultService {
     localStorage.removeItem('finalScore');
     localStorage.removeItem('gameMode');
   }
-
+  
   /**
    * ゲームモードに基づいたAPIリクエストデータを構築
    */
-  static buildGameData(score: IGameResult, gameMode: IGameMode, username: string): any {
+  static buildGameData(score: GameResultData, gameMode: GameMode, username: string): any {
     // 基本データ構造
     const baseData = {
       status: 'COMPLETED',
       end_time: new Date().toISOString(),
     };
-
+    
     // ゲームモード別データ構築
     if (gameMode === 'singleplayer') {
       return {
@@ -55,8 +71,8 @@ export class GameResultService {
         is_ai_opponent: true,
         winner: score.player1 > score.player2 ? username : null,
       };
-    }
-
+    } 
+    
     if (gameMode === 'multiplayer') {
       const isWinner = score.player1 > score.player2;
       const gameData = {
@@ -69,15 +85,15 @@ export class GameResultService {
         is_ai_opponent: false,
         winner: isWinner ? username : score.opponent,
       };
-
+      
       // 切断情報処理
       if (score.disconnected) {
         gameData.winner = score.disconnectedPlayer === username ? score.opponent : username;
       }
-
+      
       return gameData;
     }
-
+    
     if (gameMode === 'tournament') {
       // TODO: トーナメントモード用データ構築
       return {
@@ -86,39 +102,27 @@ export class GameResultService {
         // 他のトーナメント固有フィールド
       };
     }
-
+    
     return baseData;
   }
-
+  
   /**
    * ゲーム結果をバックエンドに送信
    */
-  static async sendGameResult(score: IGameResult, gameMode: IGameMode): Promise<boolean> {
+  static async sendGameResult(score: GameResultData, gameMode: GameMode): Promise<boolean> {
     try {
       const token = localStorage.getItem('token');
       const username = localStorage.getItem('username');
-
+      
       if (!token || !username) {
         console.error('Authentication data missing');
         return false;
       }
-
+      
       const gameData = this.buildGameData(score, gameMode, username);
-
-      // HTTPメソッドとエンドポイントの設定
-      // FIXME: これ全部PUTでいいのでは
-      let method = 'PUT'; // デフォルトは PUT
-      let endpoint = `${API_URL}/api/games/`;
-
-      if (gameMode === 'singleplayer') {
-        method = 'POST'; // シングルプレイヤーは POST
-      } else if (gameMode === 'multiplayer' && score.sessionId) {
-        // マルチプレイヤーでセッションIDがある場合、エンドポイントを変更
-        endpoint = `${API_URL}/api/games/session/${score.sessionId}/`;
-      }
-
-      const response = await fetch(endpoint, {
-        method: method,
+      
+      const response = await fetch(`${API_URL}/api/games/`, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Token ${token}`,
@@ -126,19 +130,18 @@ export class GameResultService {
         credentials: 'include',
         body: JSON.stringify(gameData),
       });
-
+      
       // デバッグログ
       console.log('Request payload:', gameData);
       console.log('Response status:', response.status);
-
+      
       const responseData = await response.json();
-      // NOTE: PUTが許可されていないと表示される
       console.log('Response data:', responseData);
-
+      
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`);
       }
-
+      
       console.log('Game result saved successfully');
       return true;
     } catch (error) {
@@ -146,14 +149,11 @@ export class GameResultService {
       return false;
     }
   }
-
+  
   /**
    * 勝者を判定
    */
-  static determineWinner(
-    score: IGameResult,
-    username: string
-  ): {
+  static determineWinner(score: GameResultData, username: string): {
     isWinner: boolean;
     message: string;
     className: string;
@@ -175,7 +175,7 @@ export class GameResultService {
         };
       }
     }
-
+    
     // 通常スコアによる勝敗
     if (score.player1 > score.player2) {
       return {
