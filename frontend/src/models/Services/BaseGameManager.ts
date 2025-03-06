@@ -1,7 +1,7 @@
 // frontend/src/models/Services/BaseGameManager.ts
 import { WebSocketService } from './WebSocketService';
 import { InputHandlerService } from './InputHandlerService';
-import { IGameState, IMoveConfig, IGameConfig } from '@/models/interface';
+import { IGameConfig, IGameState, IMoveConfig } from '../Game/type';
 
 export abstract class BaseGameManager {
   protected wsService: WebSocketService;

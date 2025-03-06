@@ -1,8 +1,3 @@
-export interface IGameScore {
-  player1: number;
-  player2: number;
-}
-
 export enum GameAILevel {
   EASY = 1,
   MEDIUM = 3,

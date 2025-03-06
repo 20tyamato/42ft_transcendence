@@ -2,8 +2,8 @@
 import { WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
+import { IGameConfig } from '@/models/Game/type';
 import { MultiplayerGameManager } from '@/models/MultiPlay/MultiplayerGameManager';
-import { IGameConfig } from '@/models/interface';
 
 const GamePage = new Page({
   name: 'MultiPlay/Game',
@@ -52,12 +52,9 @@ const GamePage = new Page({
       // ゲーム開始
       await gameManager.init();
       console.log('Game initialized successfully');
-
       // クリーンアップ関数を返す
-      return () => {
-        console.log('Game page unmounting, cleaning up resources...');
-        gameManager.cleanup();
-      };
+      gameManager.cleanup();
+      console.log('Game page unmounting, cleaning up resources...');
     } catch (error) {
       console.error('Failed to initialize game:', error);
       // エラーメッセージを表示

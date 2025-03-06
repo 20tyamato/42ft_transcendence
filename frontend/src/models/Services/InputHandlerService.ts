@@ -1,5 +1,6 @@
 // frontend/src/models/Services/InputHandlerService.ts
-import { IMoveConfig } from '@/models/interface';
+
+import { IMoveConfig } from '../Game/type';
 
 export type MoveCallback = (newPosition: number) => void;
 

@@ -1,5 +1,5 @@
-import { IGameState } from '@/models/interface';
 import * as THREE from 'three';
+import { IGameState } from '../Game/type';
 
 export class GameRenderer {
   // フィールド・パドル・ボールなどの定数
@@ -57,6 +57,14 @@ export class GameRenderer {
     this.isPlayer1 = isPlayer1;
     this.paddles = new Map();
     this.scene = new THREE.Scene();
+    this.camera = new THREE.PerspectiveCamera(
+      this.CAMERA_FOV,
+      window.innerWidth / window.innerHeight,
+      this.CAMERA_NEAR,
+      this.CAMERA_FAR
+    );
+    this.renderer = new THREE.WebGLRenderer({ antialias: true });
+    this.ball = new THREE.Mesh();
 
     this.initializeRenderer();
     this.initializeScene(container);
@@ -71,7 +79,6 @@ export class GameRenderer {
 
   // レンダラーの初期化
   private initializeRenderer() {
-    this.renderer = new THREE.WebGLRenderer({ antialias: true });
     this.renderer.setPixelRatio(window.devicePixelRatio);
   }
 
@@ -124,13 +131,6 @@ export class GameRenderer {
 
   // カメラの初期化
   private initializeCamera() {
-    this.camera = new THREE.PerspectiveCamera(
-      this.CAMERA_FOV,
-      window.innerWidth / window.innerHeight,
-      this.CAMERA_NEAR,
-      this.CAMERA_FAR
-    );
-
     if (this.isPlayer1) {
       this.camera.position.set(
         0,
@@ -245,7 +245,8 @@ export class GameRenderer {
       newState.ball.position.z
     );
 
-    Object.entries(newState.players).forEach(([username, position]) => {
+    Object.keys(newState.players).forEach((username) => {
+      const position = newState.players[username];
       this.createOrUpdatePaddle(username, position.x, position.z);
     });
   }
