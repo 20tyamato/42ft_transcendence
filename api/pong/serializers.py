@@ -154,8 +154,15 @@ class GameSerializer(serializers.ModelSerializer):
         # ゲームタイプに基づくバリデーション
         game_type = data.get("game_type", "MULTI")  # デフォルトはマルチプレイヤー
 
+        # AIレベルが指定されている場合は1-4の範囲内か確認
+        if data.get("ai_level") is not None:
+            if data["ai_level"] not in [1, 2, 3, 4]:
+                raise serializers.ValidationError(
+                    "AI level must be between 1 (Beginner) and 4 (Oni)"
+                )
+
         # マルチプレイまたはトーナメントの場合、AIでない限りplayer2が必要
-        if game_type in ["MULTI", "TOURNAMENT"] and data.get("is_ai_opponent") is False:
+        if game_type in ["MULTI", "TOURNAMENT"] and data.get("ai_level") is None:
             if data.get("player2", {}).get("username") is None:
                 raise serializers.ValidationError(
                     "Player2 is required for non-AI multiplayer games"
@@ -216,7 +223,7 @@ class GameSerializer(serializers.ModelSerializer):
             "winner",
             "score_player1",
             "score_player2",
-            "is_ai_opponent",
+            "ai_level",
             "tournament_id",
             "tournament_round",
         ]

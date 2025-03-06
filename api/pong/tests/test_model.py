@@ -105,9 +105,9 @@ class GameModelTests(TestCase):
             status="IN_PROGRESS",
             session_id="game_player1_ai_abc123_1234567890",
             player1=self.user1,
-            is_ai_opponent=True,
+            ai_level=1,
         )
-        self.assertTrue(game.is_ai_opponent)
+        self.assertEqual(game.ai_level, 1)
         expected_str = f"Single Player: {self.user1.display_name} vs AI"
         self.assertEqual(str(game), expected_str)
 

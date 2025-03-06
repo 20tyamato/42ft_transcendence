@@ -53,7 +53,6 @@ export class GameResultService {
         player2: null,
         score_player1: score.player1,
         score_player2: score.player2,
-        is_ai_opponent: true,
         winner: score.player1 > score.player2 ? username : null,
       };
     } 
@@ -67,7 +66,6 @@ export class GameResultService {
         player2: score.opponent,
         score_player1: score.player1,
         score_player2: score.player2,
-        is_ai_opponent: false,
         winner: isWinner ? username : score.opponent,
       };
       

@@ -53,9 +53,8 @@ class GameAdmin(admin.ModelAdmin):
         "winner",
         "score_player1",
         "score_player2",
-        "is_ai_opponent",
     )
-    list_filter = ("is_ai_opponent", "winner", "start_time")
+    list_filter = ("winner", "start_time")
     search_fields = ("player1__display_name", "player2__display_name")
 
 

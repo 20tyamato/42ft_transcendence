@@ -236,7 +236,7 @@ class Migration(migrations.Migration):
                         unique=True,
                     ),
                 ),
-                ("is_ai_opponent", models.BooleanField(default=False)),
+                ("ai_level", models.IntegerField(blank=True, null=True)),
                 ("start_time", models.DateTimeField(auto_now_add=True)),
                 ("end_time", models.DateTimeField(blank=True, null=True)),
                 ("score_player1", models.IntegerField(default=0)),

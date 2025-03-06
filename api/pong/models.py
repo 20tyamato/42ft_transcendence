@@ -87,7 +87,18 @@ class Game(models.Model):
         blank=True,
         on_delete=models.CASCADE,
     )
-    is_ai_opponent = models.BooleanField(default=False)
+    class AILevel(models.IntegerChoices):
+        BEGINNER = 1, 'Beginner'
+        INTERMEDIATE = 2, 'Intermediate' 
+        ADVANCED = 3, 'Advanced'
+        ONI = 4, 'Oni'
+
+    ai_level = models.IntegerField(
+        choices=AILevel.choices,
+        null=True,
+        blank=True,
+        help_text="AI opponent difficulty level"
+    )
 
     # 時間情報
     start_time = models.DateTimeField(auto_now_add=True)
@@ -112,8 +123,8 @@ class Game(models.Model):
 
     def __str__(self):
         opponent = (
-            "AI"
-            if self.is_ai_opponent
+            f"AI ({self.get_ai_level_display()})" 
+            if self.ai_level
             else (self.player2.display_name if self.player2 else "Waiting for opponent")
         )
         return (
