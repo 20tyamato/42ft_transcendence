@@ -107,13 +107,13 @@ class GameConsumer(BaseGameConsumer):
             if len(parts) >= 3:  # game_type + player1 + player2 + timestamp
                 player1_name = parts[1]
                 player2_name = parts[2]
-                
+
                 self.games[self.session_id] = MultiplayerPongGame(
                     session_id=self.session_id,
                     player1_name=player1_name,
                     player2_name=player2_name,
                 )
-                
+
                 # DBゲーム情報を設定
                 game_instance = await self.get_or_create_game()
                 if game_instance:
@@ -156,7 +156,7 @@ class GameConsumer(BaseGameConsumer):
                 del self.games[self.session_id]
         except Exception as e:
             print(f"Error in multiplayer game loop: {e}")
-            
+
     @database_sync_to_async
     def get_or_create_game(self):
         """ゲーム情報をDBから取得または作成"""
@@ -164,15 +164,15 @@ class GameConsumer(BaseGameConsumer):
         if len(parts) < 3:
             print(f"Invalid session ID format: {self.session_id}")
             return None
-            
+
         player1_name = parts[1]
         player2_name = parts[2]
-        
+
         try:
             # プレイヤー情報の取得
             player1 = User.objects.get(username=player1_name)
             player2 = User.objects.get(username=player2_name)
-            
+
             # ゲーム取得または作成
             game, created = Game.objects.get_or_create(
                 session_id=self.session_id,
@@ -180,15 +180,15 @@ class GameConsumer(BaseGameConsumer):
                     "game_type": "MULTI",
                     "status": "IN_PROGRESS",
                     "player1": player1,
-                    "player2": player2
-                }
+                    "player2": player2,
+                },
             )
-            
+
             if created:
                 print(f"Created new multiplayer game: {game.id}")
             else:
                 print(f"Found existing multiplayer game: {game.id}")
-                
+
             return game
         except User.DoesNotExist as e:
             print(f"User not found: {e}")
@@ -196,6 +196,7 @@ class GameConsumer(BaseGameConsumer):
         except Exception as e:
             print(f"Error creating multiplayer game: {e}")
             return None
+
 
 # TODO: BaseGameConsumerを継承してシンプルに
 class TournamentGameConsumer(AsyncWebsocketConsumer):

@@ -8,7 +8,7 @@ from .models import Game, User, TournamentSession, TournamentParticipant
 def generate_session_id(game_type, player1_username, player2_username=None):
     """シンプル化されたセッションIDを生成"""
     timestamp = int(time.time())
-    
+
     # player2がNoneまたは空の場合は'solo'を使用
     p2 = player2_username if player2_username else "solo"
 

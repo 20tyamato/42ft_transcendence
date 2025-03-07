@@ -10,7 +10,7 @@ export class TournamentGameManager extends BaseGameManager {
   private matchId: string;
   private round: number; // 0: 準決勝, 1: 決勝
   private tournamentId: string;
-  
+
   constructor(config: IGameConfig, container: HTMLElement, matchId: string, round: number) {
     super(config);
     this.renderer = new GameRenderer(container, config.isPlayer1);
@@ -19,7 +19,7 @@ export class TournamentGameManager extends BaseGameManager {
     this.matchId = matchId;
     this.round = round;
     this.tournamentId = this.extractTournamentId(this.config.sessionId);
-    
+
     // ラウンド表示の更新
     this.updateRoundDisplay();
   }
@@ -28,7 +28,7 @@ export class TournamentGameManager extends BaseGameManager {
     const parts = sessionId.split('_');
     return parts[parts.length - 1]; // 最後の部分をトーナメントIDとして扱う
   }
-  
+
   private updateRoundDisplay(): void {
     if (this.roundDisplay) {
       this.roundDisplay.textContent = this.round === 0 ? 'Semi-Final' : 'Final';
@@ -42,7 +42,7 @@ export class TournamentGameManager extends BaseGameManager {
       matchId: this.matchId,
       round: this.round,
     });
-    
+
     return Promise.resolve();
   }
 
@@ -146,7 +146,8 @@ export class TournamentGameManager extends BaseGameManager {
 
     const [player1Name, player2Name] = this.getPlayerNames();
     const playerScore = score[this.config.username] || 0;
-    const opponentScore = score[this.config.username === player1Name ? player2Name : player1Name] || 0;
+    const opponentScore =
+      score[this.config.username === player1Name ? player2Name : player1Name] || 0;
 
     this.scoreBoard.textContent = this.config.isPlayer1
       ? `${playerScore} - ${opponentScore}`
