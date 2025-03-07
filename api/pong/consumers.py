@@ -1,6 +1,7 @@
 import asyncio
 import json
 import random
+import time
 
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
@@ -81,7 +82,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
 
             match_data = {
                 "type": "match_found",
-                "session_id": f"game_{player1.username}_{player2.username}",
+                "session_id": f"game_{player1.username}_{player2.username}_{int(time.time())}",
                 "player1": player1.username,
                 "player2": player2.username,
             }
