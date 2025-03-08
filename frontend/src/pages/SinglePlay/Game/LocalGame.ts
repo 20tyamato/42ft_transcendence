@@ -209,10 +209,10 @@ export default class LocalGame {
   private processPlayerPaddle(deltaTime: number) {
     const paddleSpeed = 1000; // 1秒間に動くピクセル量
 
-    if (this.leftKeyPressed && this.paddleOne.position.x > -450) {
+    if (this.leftKeyPressed && this.paddleOne.position.x > -675) {
       this.paddleOne.position.x -= paddleSpeed * deltaTime;
     }
-    if (this.rightKeyPressed && this.paddleOne.position.x < 450) {
+    if (this.rightKeyPressed && this.paddleOne.position.x < 675) {
       this.paddleOne.position.x += paddleSpeed * deltaTime;
     }
   }
