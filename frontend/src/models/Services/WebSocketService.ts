@@ -1,5 +1,6 @@
 // frontend/src/models/Services/WebSocketService.ts
-import { IWSMessageHandler } from '@/models/interface';
+
+import { IWSMessageHandler } from '../Game/type';
 
 export class WebSocketService {
   private socket: WebSocket | null = null;

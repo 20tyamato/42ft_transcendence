@@ -2,7 +2,7 @@
 
 import { API_URL } from '@/config/config';
 import { fetchUserAvatar } from '@/models/User/repository';
-import { GameResultData } from './GameResultService';
+import { IGameResult } from '../Game/type';
 
 /**
  * 結果画面のUI操作を担当するクラス
@@ -116,7 +116,7 @@ export class ResultPageUI {
    * 結果画面全体の更新
    */
   async updateResultView(
-    score: GameResultData,
+    score: IGameResult,
     username: string,
     resultInfo: {
       message: string;

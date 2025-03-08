@@ -5,6 +5,7 @@ import CommonLayout from '@/layouts/common/index';
 import { checkUserAccess } from '@/models/User/auth';
 import { GameResultService } from '@/models/Result/GameResultService';
 import { ResultPageUI } from '@/models/Result/ResultPageUI';
+import { createMultiplayerGame, createTournamentGame } from '@/models/Game/repository';
 
 /**
  * 結果画面ページコンポーネント
@@ -55,7 +56,15 @@ const ResultPage = new Page({
 
     // 結果をサーバーに送信
     try {
-      await GameResultService.sendGameResult(score, gameMode);
+      gameMode === 'multiplayer'
+        ? await createMultiplayerGame({
+            player1Score: score.player1,
+            player2Score: score.player2,
+            opponentName: score.opponent || '',
+          })
+        : await createTournamentGame({
+            playerScore: score.player1,
+          });
     } catch (error) {
       console.error('Error saving game result:', error);
     }

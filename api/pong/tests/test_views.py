@@ -227,7 +227,6 @@ class GameViewTests(APITestCase):
             "player2": None,
             "score_player1": 15,
             "score_player2": 10,
-            "is_ai_opponent": True,
             "winner": self.user.username,
         }
         response = self.client.post(url, data, format="json")

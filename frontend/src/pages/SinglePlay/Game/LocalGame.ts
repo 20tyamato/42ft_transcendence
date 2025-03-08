@@ -1,6 +1,7 @@
 import gsap from 'gsap';
 import Experience from './Experience';
 import * as THREE from 'three';
+import { createSinglePlayGame } from '@/models/Game/repository';
 let running = true;
 
 export default class LocalGame {
@@ -161,21 +162,24 @@ export default class LocalGame {
       this.updateScoreDisplay();
     }, 600);
 
-    if (player === 'paddleOne') {
-      this.scorePaddleOne++;
-      if (this.scorePaddleOne >= 3) {
-        running = false;
-        this.showGameOverOverlay('YOU WIN!', `${this.scorePaddleOne} - ${this.scorePaddleTwo}`);
-        return;
-      }
-    } else {
-      this.scorePaddleTwo++;
-      if (this.scorePaddleTwo >= 3) {
-        running = false;
-        // CPUが勝利
-        this.showGameOverOverlay('GAME OVER', `${this.scorePaddleOne} - ${this.scorePaddleTwo}`);
-        return;
-      }
+    player === 'paddleOne' ? this.scorePaddleOne++ : this.scorePaddleTwo++;
+
+    const isFinishGame = this.scorePaddleOne >= 3 || this.scorePaddleTwo >= 3;
+    if (isFinishGame) {
+      running = false;
+      const isPlayerWin = this.scorePaddleOne >= 3;
+
+      this.showGameOverOverlay(
+        isPlayerWin ? 'YOU WIN!' : 'GAME OVER',
+        `${this.scorePaddleOne} - ${this.scorePaddleTwo}`
+      );
+
+      createSinglePlayGame({
+        playerScore: this.scorePaddleOne,
+        cpuScore: this.scorePaddleTwo,
+        aiLevel: difficultyFactor,
+      });
+      return;
     }
     this.updateScoreDisplay();
   }

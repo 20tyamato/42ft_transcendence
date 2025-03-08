@@ -24,67 +24,6 @@ export interface IRankingUser {
   level: number;
 }
 
-// ==== Result =====
-export interface IGameResult {
-  player1: number;
-  player2: number;
-  opponent?: string;
-  disconnected?: boolean;
-  disconnectedPlayer?: string;
-  sessionId?: string;
-}
-
-export type IGameMode = 'singleplayer' | 'multiplayer' | 'tournament';
-
-// ===== Game =====
-export interface IGameScore {
-  player1: number;
-  player2: number;
-}
-
-export interface IGameState {
-  ball: {
-    position: {
-      x: number;
-      y: number;
-      z: number;
-    };
-    velocity: {
-      x: number;
-      y: number;
-      z: number;
-    };
-  };
-  players: {
-    [key: string]: {
-      x: number;
-      z: number;
-    };
-  };
-  score: {
-    [key: string]: number;
-  };
-  is_active: boolean;
-}
-
-export interface IWSMessageHandler {
-  (data: any): void;
-}
-
-export interface IMoveConfig {
-  currentPosition: number;
-  moveAmount: number;
-  isPlayer1: boolean;
-}
-
-export interface IGameConfig {
-  sessionId: string;
-  username: string;
-  isPlayer1: boolean;
-  wsEndpoint: string;
-  moveAmount?: number;
-}
-
 // ===== Tournament =====
 export interface ITournamentHistory {
   date: string;

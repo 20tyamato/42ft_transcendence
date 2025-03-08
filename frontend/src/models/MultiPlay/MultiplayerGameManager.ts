@@ -1,7 +1,6 @@
-// frontend/src/models/MultiPlay/MultiplayerGameManager.ts
-import { IGameConfig, IGameState } from '@/models/interface';
-import { BaseGameManager } from '@/models/Services/BaseGameManager';
-import { GameRenderer } from '@/models/Services/game_renderer';
+import { IGameConfig, IGameState } from '../Game/type';
+import { BaseGameManager } from '../Services/BaseGameManager';
+import { GameRenderer } from '../Services/game_renderer';
 
 export class MultiplayerGameManager extends BaseGameManager {
   private renderer: GameRenderer;
@@ -115,9 +114,9 @@ export class MultiplayerGameManager extends BaseGameManager {
 
   private updateScoreBoard(score: Record<string, number>): void {
     if (!this.scoreBoard) return;
-
     const playerScore = score[this.config.username] || 0;
-    const opponentEntry = Object.entries(score).find(([id]) => id !== this.config.username);
+    const entries = Object.keys(score).map((key) => [key, score[key]]);
+    const opponentEntry = entries.find(([id]) => id !== this.config.username);
     const opponentScore = opponentEntry?.[1] || 0;
 
     this.scoreBoard.textContent = this.config.isPlayer1

@@ -202,7 +202,6 @@ class GameSerializerTests(TestCase):
             "winner",
             "score_player1",
             "score_player2",
-            "is_ai_opponent",
             "tournament_id",
             "tournament_round",
         ]
