@@ -25,15 +25,15 @@ export class ResultPageUI {
     this.playerScoreElement = document.getElementById('playerScore');
     this.opponentScoreElement = document.getElementById('cpuScore');
     this.resultMessage = document.getElementById('result-message');
-    
+
     // プレイヤー情報要素
     this.playerNameElement = document.getElementById('playerName');
     this.opponentNameElement = document.querySelector('.cpu-side .player-name');
-    
+
     // アバター要素
     this.playerAvatarImg = document.getElementById('player-avatar') as HTMLImageElement;
     this.opponentAvatarImg = document.getElementById('opponent-avatar') as HTMLImageElement;
-    
+
     // 操作ボタン
     this.exitBtn = document.getElementById('exitBtn');
   }
@@ -96,7 +96,7 @@ export class ResultPageUI {
     if (this.playerScoreElement) {
       this.playerScoreElement.textContent = String(player1Score);
     }
-    
+
     if (this.opponentScoreElement) {
       this.opponentScoreElement.textContent = String(player2Score);
     }
@@ -115,19 +115,23 @@ export class ResultPageUI {
   /**
    * 結果画面全体の更新
    */
-  async updateResultView(score: GameResultData, username: string, resultInfo: {
-    message: string;
-    className: string;
-  }): Promise<void> {
+  async updateResultView(
+    score: GameResultData,
+    username: string,
+    resultInfo: {
+      message: string;
+      className: string;
+    }
+  ): Promise<void> {
     // スコア表示
     this.displayScores(score.player1, score.player2);
-    
+
     // プレイヤー名表示
     this.displayPlayerNames(username, score.opponent);
-    
+
     // アバター表示
     await this.displayPlayerAvatars(username, score.opponent);
-    
+
     // 勝敗メッセージ表示
     this.displayResultMessage(resultInfo.message, resultInfo.className);
   }

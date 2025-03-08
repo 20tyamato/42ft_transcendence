@@ -130,6 +130,7 @@ class BaseGameConsumer(AsyncWebsocketConsumer):
                 if winner_name:
                     winner = User.objects.get(username=winner_name)
                     game_instance.winner = winner
+                    game_instance.status = "COMPLETED"
 
             game_instance.save()
         except Game.DoesNotExist:
