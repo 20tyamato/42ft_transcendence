@@ -7,19 +7,11 @@ export const fetchUsers = async () => {
   if (!token) return;
 
   try {
-    const response = await fetch(`${API_URL}/api/users/`, {
+    const { data } = await fetcher('/api/users/', {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${token}`,
-      },
     });
 
-    if (!response.ok) {
-      console.error('Failed to fetch users:', await response.text());
-      return;
-    }
-    return await response.json();
+    return data;
   } catch (error) {
     console.error('Error fetching users:', error);
   }
@@ -27,13 +19,10 @@ export const fetchUsers = async () => {
 
 export const fetchUserAvatar = async (username: string): Promise<Blob | null> => {
   try {
-    const response = await fetch(`${API_URL}/api/users/${username}/avatar/`);
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Failed to fetch user avatar:', errorText);
-      return null;
-    }
-    return await response.blob();
+    const { data } = await fetcher(`/api/users/${username}/avatar/`, {
+      method: 'GET',
+    });
+    return data;
   } catch (error) {
     console.error('Error fetching user avatar:', error);
     return null;
@@ -45,19 +34,10 @@ export const fetchUser = async (username: string) => {
   if (!token) return;
 
   try {
-    const response = await fetch(`${API_URL}/api/users/${username}/`, {
+    const { data } = await fetcher(`/api/users/${username}/`, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${token}`,
-      },
     });
-
-    if (!response.ok) {
-      console.error('Failed to fetch user:', await response.text());
-      return;
-    }
-    return await response.json();
+    return data;
   } catch (error) {
     console.error('Error fetching user:', error);
   }
@@ -87,17 +67,11 @@ export const updateAvatar = async (file: File) => {
   formData.append('avatar', file);
 
   try {
-    const { data, ok } = await fetcher('/api/users/me/avatar/', {
+    const { data } = await fetcher('/api/users/me/avatar/', {
       method: 'PATCH',
-      headers: {
-        Authorization: `Token ${token}`,
-      },
       body: formData,
     });
 
-    if (!ok) {
-      throw new Error('Failed to update avatar');
-    }
     return data;
   } catch (error) {
     console.error('Error updating avatar:', error);
@@ -110,17 +84,11 @@ export const updateUserInfo = async (email: string, displayName: string) => {
   if (!token) return;
 
   try {
-    const { data, ok } = await fetcher('/api/users/me/', {
+    const { data } = await fetcher('/api/users/me/', {
       method: 'PATCH',
-      headers: {
-        Authorization: `Token ${token}`,
-      },
       body: { email, displayName },
     });
 
-    if (!ok) {
-      throw new Error('Failed to update user info');
-    }
     return data;
   } catch (error) {
     console.error('Error updating user info:', error);
@@ -132,22 +100,14 @@ export const updateLanguage = async (language: string) => {
   if (!token) return;
 
   try {
-    const response = await fetch(`${API_URL}/api/users/me/`, {
+    await fetcher('/api/users/me/', {
       method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${token}`,
-      },
-      body: JSON.stringify({ language }),
+      body: { language },
     });
 
-    if (!response.ok) {
-      console.error('Language update failed:', await response.text());
-    } else {
-      localStorage.setItem('language', language);
-      i18next.changeLanguage(i18next.language);
-      console.log('Language updated successfully to ', i18next.language);
-    }
+    localStorage.setItem('language', language);
+    i18next.changeLanguage(i18next.language);
+    console.log('Language updated successfully to ', i18next.language);
   } catch (err) {
     console.error('Error updating language:', err);
   }
@@ -158,21 +118,13 @@ export const updateOnlineStatus = async (is_online: boolean) => {
   if (!token) return;
 
   try {
-    const response = await fetch(`${API_URL}/api/users/me/`, {
+    const { data } = await fetcher('/api/users/me/', {
       method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${token}`,
-      },
-      body: JSON.stringify({ is_online }),
+      body: { is_online },
     });
 
-    if (!response.ok) {
-      console.error('Failed to update online status:', await response.text());
-      return;
-    }
     console.log('Online status updated successfully');
-    return await response.json();
+    return data;
   } catch (error) {
     console.error('Error updating online status:', error);
   }

@@ -28,10 +28,10 @@ type FetcherOptions<Body> = {
  * @param options
  * @returns
  */
-export const fetcher = async <Body = any, Response = any>(
+export const fetcher = async <Response = any, Body = Object>(
   url: string,
   options?: FetcherOptions<Body>
-): Promise<{ data: Response | null; ok: boolean; status: number }> => {
+): Promise<{ data: Response; ok: boolean; status: number }> => {
   const logger = new Logger();
   const token = localStorage.getItem('token');
 
@@ -50,7 +50,7 @@ export const fetcher = async <Body = any, Response = any>(
     const isOk = response.ok;
     if (!isOk) throw new Error(response.statusText);
 
-    const data = isOk ? await response.json() : null;
+    const data = await response.json();
 
     logger.info(`${url} ${response.status} ${response.statusText}`);
     return { data, ok: response.ok, status: response.status };
@@ -58,4 +58,20 @@ export const fetcher = async <Body = any, Response = any>(
     logger.error(error?.toString() ?? 'Unknown error');
     throw error;
   }
+};
+
+/**
+ * ゲストユーザー用の fetcher
+ * @param url
+ * @param options
+ * @returns
+ */
+export const fetcherGuest = async <Body = any, Response = any>(
+  url: string,
+  options?: FetcherOptions<Body>
+): Promise<{ data: Response; ok: boolean; status: number }> => {
+  return await fetcher(url, {
+    ...options,
+    headers: { ...options?.headers, credentials: 'omit', ...options?.headers },
+  });
 };

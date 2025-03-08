@@ -1,3 +1,5 @@
+import { fetcherGuest } from '@/utils/fetcher';
+
 /**
  * ELKにログを送信する
  */
@@ -36,12 +38,9 @@ export class Logger {
         application: 'frontend',
       };
 
-      await fetch(this._logstashUrl, {
+      await fetcherGuest(this._logstashUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(logData),
+        body: logData,
       });
     } catch (error) {
       // エラーが発生した場合はコンソールにフォールバック
