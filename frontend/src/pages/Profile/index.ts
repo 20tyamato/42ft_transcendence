@@ -1,9 +1,10 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
-import { IBlockchainScore, ITournamentHistory, IUserData } from '@/models/interface';
+import { IBlockchainScore, ITournamentHistory } from '@/models/interface';
 import { checkUserAccess } from '@/models/User/auth';
 import { fetchCurrentUser } from '@/models/User/repository';
+import { IUser } from '@/models/User/type';
 import { languageNames, setUserLanguage } from '@/utils/language';
 import { updateInnerHTML, updateText } from '@/utils/updateElements';
 
@@ -51,7 +52,7 @@ const updatePageContent = (): void => {
   }
 };
 
-const updateFrontElements = (userData: IUserData): void => {
+const updateFrontElements = (userData: IUser): void => {
   const usernameEl = document.getElementById('username');
   const emailEl = document.getElementById('email');
   const displayNameEl = document.getElementById('displayName');
@@ -186,7 +187,7 @@ const ProfilePage = new Page({
   mounted: async ({ pg }: { pg: Page }): Promise<void> => {
     try {
       checkUserAccess();
-      const userData: IUserData = await fetchCurrentUser();
+      const userData: IUser = await fetchCurrentUser();
 
       // 言語設定とページ文言の更新
       setUserLanguage(userData.language.toString(), updatePageContent);

@@ -1,7 +1,6 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
-import { IUserData } from '@/models/interface';
 import { checkUserAccess } from '@/models/User/auth';
 import {
   fetchCurrentUser,
@@ -9,6 +8,7 @@ import {
   updateLanguage,
   updateUserInfo,
 } from '@/models/User/repository';
+import { IUser } from '@/models/User/type';
 import { setUserLanguage } from '@/utils/language';
 import { updateAttribute, updatePlaceholder, updateText } from '@/utils/updateElements';
 
@@ -44,7 +44,7 @@ const getSettingsElements = (): SettingsElements => ({
   responseMessage: document.getElementById('response-message'),
 });
 
-const populateUserData = (userData: IUserData, elements: SettingsElements): void => {
+const populateUserData = (userData: IUser, elements: SettingsElements): void => {
   if (userData.avatar) {
     elements.avatarPreviewEl.src = userData.avatar;
   }
@@ -137,7 +137,7 @@ const SettingsUserPage = new Page({
 
     try {
       checkUserAccess();
-      const userData: IUserData = await fetchCurrentUser();
+      const userData: IUser = await fetchCurrentUser();
       setUserLanguage(userData.language.toString(), updatePageContent);
       populateUserData(userData, elements);
     } catch (error) {

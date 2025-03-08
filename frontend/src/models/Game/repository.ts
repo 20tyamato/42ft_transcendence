@@ -98,7 +98,6 @@ export const createTournamentGame = async ({
 }: {
   playerScore: number;
 }): Promise<boolean> => {
-  const token = localStorage.getItem('token');
   const username = localStorage.getItem('username');
 
   const gameData = {

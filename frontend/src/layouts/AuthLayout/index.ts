@@ -1,11 +1,26 @@
 import { Layout } from '@/core/Layout';
-import logoPic from '@/resources/42_logo.svg';
-import avatarPic from '@/resources/avatar.png';
+import { storage } from '@/libs/localStorage';
+import { fetchCurrentUser, updateOnlineStatus } from '@/models/User/repository';
+
+export async function checkUserAccess(): Promise<string> {
+  const token = storage.getUserToken();
+
+  try {
+    if (!token) throw new Error('Token does not exist, redirected to login page.');
+    const user = await fetchCurrentUser();
+    updateOnlineStatus(true);
+    return token;
+  } catch (error) {
+    console.error('Failed to fetch current user:', error);
+    window.location.href = '/login';
+    throw new Error('Token does not exist, redirected to login page.');
+  }
+}
 
 const AuthLayout = new Layout({
   name: 'AuthLayout',
   beforeMounted: async () => {
-    console.log('AuthLayout beforeMounted');
+    await checkUserAccess();
   },
 });
 

@@ -3,9 +3,6 @@ import i18next from '@/config/i18n';
 import { fetcher } from '@/utils/fetcher';
 
 export const fetchUsers = async () => {
-  const token = localStorage.getItem('token');
-  if (!token) return;
-
   try {
     const { data } = await fetcher('/api/users/', {
       method: 'GET',
@@ -30,9 +27,6 @@ export const fetchUserAvatar = async (username: string): Promise<Blob | null> =>
 };
 
 export const fetchUser = async (username: string) => {
-  const token = localStorage.getItem('token');
-  if (!token) return;
-
   try {
     const { data } = await fetcher(`/api/users/${username}/`, {
       method: 'GET',
@@ -44,9 +38,6 @@ export const fetchUser = async (username: string) => {
 };
 
 export const fetchCurrentUser = async () => {
-  const token = localStorage.getItem('token');
-  if (!token) return;
-
   try {
     const { data } = await fetcher('/api/users/me/', {
       method: 'GET',
@@ -80,9 +71,6 @@ export const updateAvatar = async (file: File) => {
 
 // ユーザー情報の更新
 export const updateUserInfo = async (email: string, displayName: string) => {
-  const token = localStorage.getItem('token');
-  if (!token) return;
-
   try {
     const { data } = await fetcher('/api/users/me/', {
       method: 'PATCH',
@@ -96,9 +84,6 @@ export const updateUserInfo = async (email: string, displayName: string) => {
 };
 
 export const updateLanguage = async (language: string) => {
-  const token = localStorage.getItem('token');
-  if (!token) return;
-
   try {
     await fetcher('/api/users/me/', {
       method: 'PATCH',
@@ -114,9 +99,6 @@ export const updateLanguage = async (language: string) => {
 };
 
 export const updateOnlineStatus = async (is_online: boolean) => {
-  const token = localStorage.getItem('token');
-  if (!token) return;
-
   try {
     const { data } = await fetcher('/api/users/me/', {
       method: 'PATCH',
