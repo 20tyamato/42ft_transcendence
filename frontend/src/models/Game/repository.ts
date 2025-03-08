@@ -1,3 +1,4 @@
+import { ICurrentUser } from '@/libs/Auth/currnetUser';
 import { fetcher } from '@/utils/fetcher';
 
 /**
@@ -10,22 +11,22 @@ export const createSinglePlayGame = async ({
   playerScore,
   cpuScore,
   aiLevel,
+  currentUser,
 }: {
   playerScore: number;
   cpuScore: number;
   aiLevel: number;
+  currentUser: ICurrentUser;
 }): Promise<boolean> => {
-  const username = localStorage.getItem('username');
-
   const gameData = {
     status: 'COMPLETED',
     end_time: new Date().toISOString(),
     game_type: 'SINGLE',
-    player1: username,
+    player1: currentUser.username,
     player2: null,
     scorePlayer1: playerScore,
     score_player2: cpuScore,
-    winner: playerScore > cpuScore ? username : null,
+    winner: playerScore > cpuScore ? currentUser.username : null,
     ai_level: aiLevel,
   };
 
@@ -52,23 +53,23 @@ export const createMultiplayerGame = async ({
   player1Score,
   player2Score,
   opponentName,
+  currentUser,
 }: {
   player1Score: number;
   player2Score: number;
   opponentName: string;
+  currentUser: ICurrentUser;
 }): Promise<boolean> => {
-  const username = localStorage.getItem('username');
-
   const isWinner = player1Score > player2Score;
   const gameData = {
     status: 'COMPLETED',
     end_time: new Date().toISOString(),
     game_type: 'MULTI',
-    player1: username,
+    player1: currentUser.username,
     player2: opponentName,
     score_player1: player1Score,
     score_player2: player2Score,
-    winner: isWinner ? username : opponentName,
+    winner: isWinner ? currentUser.username : opponentName,
   };
 
   try {
@@ -98,8 +99,6 @@ export const createTournamentGame = async ({
 }: {
   playerScore: number;
 }): Promise<boolean> => {
-  const username = localStorage.getItem('username');
-
   const gameData = {
     status: 'COMPLETED',
     end_time: new Date().toISOString(),

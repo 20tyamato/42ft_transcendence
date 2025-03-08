@@ -2,6 +2,7 @@ import { API_URL } from '@/config/config';
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
+import { storage } from '@/libs/localStorage';
 import { updateLanguage, updateOnlineStatus } from '@/models/User/repository';
 import { fetcherGuest } from '@/utils/fetcher';
 import { registerLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
@@ -26,8 +27,8 @@ const handleLoginSubmit = async (
 
     if (ok) {
       const result = data;
-      localStorage.setItem('token', result.token);
-      localStorage.setItem('username', result.username);
+      storage.setUserToken(result.token);
+
       i18next.changeLanguage(i18next.language);
       updateLanguage(i18next.language);
       updateOnlineStatus(true);

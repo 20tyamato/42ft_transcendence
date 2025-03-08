@@ -1,3 +1,4 @@
+import { IBeforeMountRes } from '@/main';
 import { Logger } from './Logger';
 
 type LayoutConfig = {
@@ -8,8 +9,8 @@ type LayoutConfig = {
 type LayoutProps = {
   name: string;
   config?: Partial<LayoutConfig>;
-  mounted?: () => Promise<any>;
-  beforeMounted?: () => Promise<any>;
+  mounted?: (props: IBeforeMountRes) => Promise<any>;
+  beforeMounted?: () => Promise<IBeforeMountRes>;
 };
 
 const getDefaultConfig = (name: string, config?: Partial<LayoutConfig>): LayoutConfig => {
@@ -23,8 +24,8 @@ const getDefaultConfig = (name: string, config?: Partial<LayoutConfig>): LayoutC
 export class Layout {
   readonly config: LayoutConfig;
   readonly logger: Logger;
-  mounted?: () => Promise<any>;
-  beforeMounted?: () => Promise<any>;
+  mounted?: (props: IBeforeMountRes) => Promise<any>;
+  beforeMounted?: () => Promise<IBeforeMountRes>;
 
   constructor(props: LayoutProps) {
     this.config = getDefaultConfig(props.name, props.config);

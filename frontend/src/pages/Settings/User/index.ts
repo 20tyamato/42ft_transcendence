@@ -1,13 +1,7 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
-import CommonLayout from '@/layouts/common/index';
-import { checkUserAccess } from '@/models/User/auth';
-import {
-  fetchCurrentUser,
-  updateAvatar,
-  updateLanguage,
-  updateUserInfo,
-} from '@/models/User/repository';
+import AuthLayout from '@/layouts/AuthLayout';
+import { updateAvatar, updateLanguage, updateUserInfo } from '@/models/User/repository';
 import { IUser } from '@/models/User/type';
 import { setUserLanguage } from '@/utils/language';
 import { updateAttribute, updatePlaceholder, updateText } from '@/utils/updateElements';
@@ -129,17 +123,15 @@ const setResponse = (el: HTMLElement | null, message: string, color: string): vo
 const SettingsUserPage = new Page({
   name: 'Settings/User',
   config: {
-    layout: CommonLayout,
+    layout: AuthLayout,
   },
-  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
+  mounted: async ({ pg, user }): Promise<void> => {
     // DOM 要素の取得
     const elements = getSettingsElements();
 
     try {
-      checkUserAccess();
-      const userData: IUser = await fetchCurrentUser();
-      setUserLanguage(userData.language.toString(), updatePageContent);
-      populateUserData(userData, elements);
+      setUserLanguage(user.language, updatePageContent);
+      populateUserData(user, elements);
     } catch (error) {
       console.error('Error fetching user data:', error);
     }

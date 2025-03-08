@@ -1,10 +1,9 @@
 import { API_URL } from '@/config/config';
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
-import CommonLayout from '@/layouts/common/index';
+import AuthLayout from '@/layouts/AuthLayout';
 import { IFriend } from '@/models/interface';
-import { checkUserAccess } from '@/models/User/auth';
-import { fetchCurrentUser } from '@/models/User/repository';
+
 import { fetcher } from '@/utils/fetcher';
 import { setUserLanguage } from '@/utils/language';
 import { updatePlaceholder, updateText } from '@/utils/updateElements';
@@ -118,15 +117,11 @@ function renderFriends(friends: IFriend[]): void {
 const FriendsPage = new Page({
   name: 'Friends',
   config: {
-    layout: CommonLayout,
+    layout: AuthLayout,
   },
-  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
-    // ユーザー認証チェックとユーザーデータの取得
-    checkUserAccess();
-    const userData = await fetchCurrentUser();
-
+  mounted: async ({ pg, user }): Promise<void> => {
     // 言語設定とページ内文言の更新
-    setUserLanguage(userData.language, updatePageContent);
+    setUserLanguage(user.language, updatePageContent);
     loadFriends();
 
     // イベント登録：Enter キーでフレンド追加

@@ -1,8 +1,15 @@
 type StorageKey = 'token' | 'username';
 
 class LocalStorage {
+  /** User */
   getUserToken() {
     return this.getStorage('token');
+  }
+  removeUserToken() {
+    this.removeStorage('token');
+  }
+  setUserToken(token: string) {
+    this.setStorage('token', token);
   }
 
   private getStorage(key: StorageKey) {
@@ -11,6 +18,10 @@ class LocalStorage {
 
   private setStorage(key: StorageKey, value: string) {
     localStorage.setItem(key, value);
+  }
+
+  private removeStorage(key: StorageKey) {
+    localStorage.removeItem(key);
   }
 }
 

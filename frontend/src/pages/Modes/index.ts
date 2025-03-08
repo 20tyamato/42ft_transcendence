@@ -1,10 +1,7 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
-import CommonLayout from '@/layouts/common/index';
-import { checkUserAccess } from '@/models/User/auth';
-import { fetchCurrentUser } from '@/models/User/repository';
-import { initResetTimerListeners, resetTimer } from '@/models/Window/repository';
+import { ICurrentUser } from '@/libs/Auth/currnetUser';
 import { setUserLanguage } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
 
@@ -55,30 +52,18 @@ const updateUserAvatar = (avatar?: string): void => {
   }
 };
 
-const mountModesPage = async (pg: Page): Promise<void> => {
-  try {
-    // resetTimer();
-    checkUserAccess();
-
-    const userData = await fetchCurrentUser();
-    setUserLanguage(userData.language, updatePageContent);
-    updateUserAvatar(userData.avatar);
+const ModesPage = new Page({
+  name: 'Modes',
+  config: { layout: AuthLayout },
+  mounted: async ({ pg, user }) => {
+    setUserLanguage(user.language, updatePageContent);
+    updateUserAvatar(user.avatar);
 
     registerNavigationButtons();
     registerIconNavigation();
 
-    // initResetTimerListeners();
-
     pg.logger.info('ModesPage mounted!');
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-const ModesPage = new Page({
-  name: 'Modes',
-  config: { layout: AuthLayout },
-  mounted: async ({ pg }: { pg: Page }) => mountModesPage(pg),
+  },
 });
 
 export default ModesPage;

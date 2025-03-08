@@ -1,6 +1,7 @@
 // frontend/src/pages/MultiPlay/Waiting/index.ts
 import { WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
+import AuthLayout from '@/layouts/AuthLayout';
 import CommonLayout from '@/layouts/common/index';
 
 /**
@@ -119,10 +120,10 @@ const setupCancelButton = (cancelButton: HTMLElement | null, closeSocketFn: () =
 const WaitingPage = new Page({
   name: 'MultiPlay/Waiting',
   config: {
-    layout: CommonLayout,
+    layout: AuthLayout,
     html: '/src/pages/MultiPlay/Waiting/index.html',
   },
-  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
+  mounted: async ({ pg, user }) => {
     console.log('Waiting page mounting...');
     let socket: WebSocket | null = null;
     const { statusElement, cancelButton } = getDomElements();

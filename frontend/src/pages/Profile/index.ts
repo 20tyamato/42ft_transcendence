@@ -1,9 +1,9 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
-import CommonLayout from '@/layouts/common/index';
+import AuthLayout from '@/layouts/AuthLayout';
+import { ICurrentUser } from '@/libs/Auth/currnetUser';
 import { IBlockchainScore, ITournamentHistory } from '@/models/interface';
-import { checkUserAccess } from '@/models/User/auth';
-import { fetchCurrentUser } from '@/models/User/repository';
+
 import { IUser } from '@/models/User/type';
 import { languageNames, setUserLanguage } from '@/utils/language';
 import { updateInnerHTML, updateText } from '@/utils/updateElements';
@@ -182,19 +182,16 @@ const attachCloseButtonHandlers = (): void => {
 const ProfilePage = new Page({
   name: 'Profile',
   config: {
-    layout: CommonLayout,
+    layout: AuthLayout,
   },
-  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
+  mounted: async ({ pg, user }): Promise<void> => {
     try {
-      checkUserAccess();
-      const userData: IUser = await fetchCurrentUser();
-
       // 言語設定とページ文言の更新
-      setUserLanguage(userData.language.toString(), updatePageContent);
+      setUserLanguage(user.language, updatePageContent);
 
       // フロント側の更新
       const { username, email, display_name, avatar, level, experience, language, is_online } =
-        userData;
+        user;
 
       updateFrontElements({
         username,
