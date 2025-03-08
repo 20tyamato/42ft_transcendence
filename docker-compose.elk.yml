@@ -25,6 +25,8 @@ services:
       - ./ELK/setup/entrypoint.sh:/entrypoint.sh:ro,Z
       - ./ELK/setup/lib.sh:/lib.sh:ro,Z
       - ./ELK/setup/roles:/roles:ro,Z
+      - ./ELK/setup/policies:/policies:ro,Z
+      - ./ELK/setup/templates:/templates:ro,Z
     environment:
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
       LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
