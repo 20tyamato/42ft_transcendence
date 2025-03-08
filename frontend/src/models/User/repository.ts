@@ -1,5 +1,6 @@
 import { API_URL } from '@/config/config';
 import i18next from '@/config/i18n';
+import { fetcher } from '@/utils/fetcher';
 
 export const fetchUsers = async () => {
   const token = localStorage.getItem('token');
@@ -67,25 +68,17 @@ export const fetchCurrentUser = async () => {
   if (!token) return;
 
   try {
-    const response = await fetch(`${API_URL}/api/users/me/`, {
+    const { data } = await fetcher('/api/users/me/', {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${token}`,
-      },
     });
 
-    if (!response.ok) {
-      console.error('Failed to fetch current user:', await response.text());
-      return;
-    }
-    return await response.json();
+    return data;
   } catch (error) {
     console.error('Error fetching current user:', error);
   }
 };
 
-// アバター画像の更新（FormData を利用）
+// アバター画像の更新
 export const updateAvatar = async (file: File) => {
   const token = localStorage.getItem('token');
   if (!token) return;
@@ -94,7 +87,7 @@ export const updateAvatar = async (file: File) => {
   formData.append('avatar', file);
 
   try {
-    const response = await fetch(`${API_URL}/api/users/me/avatar/`, {
+    const { data, ok } = await fetcher('/api/users/me/avatar/', {
       method: 'PATCH',
       headers: {
         Authorization: `Token ${token}`,
@@ -102,36 +95,33 @@ export const updateAvatar = async (file: File) => {
       body: formData,
     });
 
-    if (!response.ok) {
-      console.error('Failed to update avatar:', await response.text());
-      return;
+    if (!ok) {
+      throw new Error('Failed to update avatar');
     }
-    return await response.json();
+    return data;
   } catch (error) {
     console.error('Error updating avatar:', error);
   }
 };
 
-// ユーザー情報（メールと表示名）の更新
+// ユーザー情報の更新
 export const updateUserInfo = async (email: string, displayName: string) => {
   const token = localStorage.getItem('token');
   if (!token) return;
 
   try {
-    const response = await fetch(`${API_URL}/api/users/me/`, {
+    const { data, ok } = await fetcher('/api/users/me/', {
       method: 'PATCH',
       headers: {
-        'Content-Type': 'application/json',
         Authorization: `Token ${token}`,
       },
-      body: JSON.stringify({ email, displayName }),
+      body: { email, displayName },
     });
 
-    if (!response.ok) {
-      console.error('Failed to update user info:', await response.text());
-      return;
+    if (!ok) {
+      throw new Error('Failed to update user info');
     }
-    return await response.json();
+    return data;
   } catch (error) {
     console.error('Error updating user info:', error);
   }

@@ -3,6 +3,7 @@ import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { updateLanguage, updateOnlineStatus } from '@/models/User/repository';
+import { fetcher } from '@/utils/fetcher';
 import { registerLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
 import { registerTogglePassword } from '@/utils/togglePassword';
 import { updateInnerHTML, updateText } from '@/utils/updateElements';
@@ -18,15 +19,13 @@ const handleLoginSubmit = async (
   };
 
   try {
-    const response = await fetch(`${API_URL}/api/login/`, {
+    const { data, ok } = await fetcher('/api/login/', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify(loginData),
+      body: loginData,
     });
 
-    if (response.ok) {
-      const result = await response.json();
+    if (ok) {
+      const result = data;
       localStorage.setItem('token', result.token);
       localStorage.setItem('username', result.username);
       i18next.changeLanguage(i18next.language);
@@ -40,7 +39,7 @@ const handleLoginSubmit = async (
         window.location.href = '/modes';
       }, 1000);
     } else {
-      const error = await response.json();
+      const error = data;
       responseMessage.textContent = i18next.t('errorMessage', {
         error: error.message || i18next.t('invalidCredentials'),
       });

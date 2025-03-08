@@ -1,4 +1,4 @@
-import { API_URL } from '@/config/config';
+import { fetcher } from '@/utils/fetcher';
 import { fetchCurrentUser, updateOnlineStatus } from '@/models/User/repository';
 
 export function checkUserAccess(): string {
@@ -28,25 +28,17 @@ export const executeLogout = async (): Promise<void> => {
     return;
   }
   await updateOnlineStatus(false);
-  console.log('token:', token);
-
-  const url = `${API_URL}/api/logout/`;
-  const data = JSON.stringify({});
 
   try {
-    const response = await fetch(url, {
+    const { ok } = await fetcher('/api/logout/', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         Authorization: `Token ${token}`,
       },
-      body: data,
-      credentials: 'include',
     });
-    if (response.ok) {
+
+    if (ok) {
       localStorage.clear();
-    } else {
-      console.error('Logout API call failed with status:', response.status);
     }
   } catch (error) {
     console.error('Logout API call failed:', error);

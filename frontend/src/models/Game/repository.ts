@@ -1,4 +1,4 @@
-import { API_URL } from '@/config/config';
+import { fetcher } from '@/utils/fetcher';
 
 /**
  * シングルプレイゲームを作成
@@ -15,7 +15,6 @@ export const createSinglePlayGame = async ({
   cpuScore: number;
   aiLevel: number;
 }): Promise<boolean> => {
-  const token = localStorage.getItem('token');
   const username = localStorage.getItem('username');
 
   const gameData = {
@@ -30,14 +29,9 @@ export const createSinglePlayGame = async ({
     ai_level: aiLevel,
   };
 
-  const response = await fetch(`${API_URL}/api/games/`, {
+  const response = await fetcher('/api/games/', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Token ${token}`,
-    },
-    credentials: 'include',
-    body: JSON.stringify(gameData),
+    body: gameData,
   });
 
   if (!response.ok) {
@@ -63,7 +57,6 @@ export const createMultiplayerGame = async ({
   player2Score: number;
   opponentName: string;
 }): Promise<boolean> => {
-  const token = localStorage.getItem('token');
   const username = localStorage.getItem('username');
 
   const isWinner = player1Score > player2Score;
@@ -78,21 +71,21 @@ export const createMultiplayerGame = async ({
     winner: isWinner ? username : opponentName,
   };
 
-  const response = await fetch(`${API_URL}/api/games/`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Token ${token}`,
-    },
-    credentials: 'include',
-    body: JSON.stringify(gameData),
-  });
+  try {
+    const { ok } = await fetcher('/api/games/', {
+      method: 'POST',
+      body: gameData,
+    });
 
-  if (!response.ok) {
-    throw new Error(`API error: ${response.status}`);
+    if (!ok) {
+      throw new Error('Failed to create multiplayer game');
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error creating multiplayer game:', error);
+    throw error;
   }
-
-  return true;
 };
 
 /**
