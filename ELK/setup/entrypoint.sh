@@ -105,3 +105,30 @@ for user in "${!users_passwords[@]}"; do
 		create_user "$user" "${users_passwords[$user]}" "${users_roles[$user]}"
 	fi
 done
+
+# ILMポリシーの適用
+log 'Creating ILM policy'
+curl -X PUT "http://elasticsearch:9200/_ilm/policy/logs_policy" \
+  -H 'Content-Type: application/json' \
+  -u "elastic:${ELASTIC_PASSWORD}" \
+  -d @/policies/logs_policy.json
+
+# インデックステンプレートの適用
+log 'Creating index template'
+curl -X PUT "http://elasticsearch:9200/_index_template/logs_template" \
+  -H 'Content-Type: application/json' \
+  -u "elastic:${ELASTIC_PASSWORD}" \
+  -d @/templates/logs_template.json
+
+# エイリアスの作成
+log 'Creating initial indices and aliases'
+curl -X PUT "http://elasticsearch:9200/logs-000001" \
+  -H 'Content-Type: application/json' \
+  -u "elastic:${ELASTIC_PASSWORD}" \
+  -d '{
+    "aliases": {
+      "logs": {
+        "is_write_index": true
+      }
+    }
+  }'
