@@ -1,9 +1,6 @@
 import gsap from 'gsap';
 import { Page } from '@/core/Page';
-import CommonLayout from '@/layouts/common/index';
-import Ball from './Ball';
 import Experience from './Experience';
-import Field from './Field';
 import { createParticleCustomizationPanel } from './CustomParticle';
 import AuthLayout from '@/layouts/AuthLayout';
 

@@ -1,12 +1,12 @@
 import { WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
-import CommonLayout from '@/layouts/common/index';
+import AuthLayout from '@/layouts/AuthLayout';
 import { ITournamentMatch } from '@/models/interface';
 
 const WaitingPage = new Page({
   name: 'Tournament/Waiting',
   config: {
-    layout: CommonLayout,
+    layout: AuthLayout,
     html: '/src/pages/Tournament/Waiting/index.html',
   },
   mounted: async ({ pg }: { pg: Page }): Promise<void> => {

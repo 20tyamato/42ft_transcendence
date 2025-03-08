@@ -2,7 +2,6 @@
 import { WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
-import CommonLayout from '@/layouts/common/index';
 import { IGameConfig } from '@/models/Game/type';
 import { MultiplayerGameManager } from '@/models/MultiPlay/MultiplayerGameManager';
 

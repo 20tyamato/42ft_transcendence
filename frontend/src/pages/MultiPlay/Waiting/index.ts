@@ -2,7 +2,6 @@
 import { WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
-import CommonLayout from '@/layouts/common/index';
 import { ICurrentUser } from '@/libs/Auth/currnetUser';
 
 /**
