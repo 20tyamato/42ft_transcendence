@@ -1,6 +1,5 @@
 // src/models/Result/GameResultService.ts
 
-import { API_URL } from '@/config/config';
 import { IGameMode, IGameResult } from '../Game/type';
 
 /**

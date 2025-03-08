@@ -3,7 +3,7 @@ import { WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { TournamentGameManager } from '@/models/Tournament/TournamentGameManager';
-import { IGameConfig } from '@/models/interface';
+import { IGameConfig } from '@/models/Game/type';
 import { checkUserAccess } from '@/models/User/auth';
 
 const GamePage = new Page({
@@ -12,7 +12,7 @@ const GamePage = new Page({
     layout: CommonLayout,
     html: '/src/pages/Tournament/Game/index.html',
   },
-  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
+  mounted: async ({ pg }: { pg: Page }) => {
     console.log('Tournament game page mounting...');
 
     // 認証チェック

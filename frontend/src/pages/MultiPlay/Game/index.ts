@@ -10,7 +10,7 @@ const GamePage = new Page({
   config: {
     layout: CommonLayout,
   },
-  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
+  mounted: async ({ pg }: { pg: Page }): Promise<any> => {
     console.log('Game page mounting...');
 
     // URLパラメータの取得と検証
