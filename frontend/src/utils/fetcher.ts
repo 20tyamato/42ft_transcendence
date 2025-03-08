@@ -41,9 +41,9 @@ export const fetcher = async <Response = any, Body = Object>(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Token ${token}`,
+        ...(token ? { Authorization: `Token ${token}` } : {}),
+        ...fetchOptions.headers,
       },
-      credentials: 'include',
       body: body ? JSON.stringify(body) : undefined,
       ...fetchOptions,
     });
@@ -52,7 +52,6 @@ export const fetcher = async <Response = any, Body = Object>(
 
     const data = await response.json();
 
-    logger.info(`${url} ${response.status} ${response.statusText}`);
     return { data, ok: response.ok, status: response.status };
   } catch (error) {
     logger.error(error?.toString() ?? 'Unknown error');
@@ -72,6 +71,9 @@ export const fetcherGuest = async <Body = any, Response = any>(
 ): Promise<{ data: Response; ok: boolean; status: number }> => {
   return await fetcher(url, {
     ...options,
-    headers: { ...options?.headers, credentials: 'omit', ...options?.headers },
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
   });
 };

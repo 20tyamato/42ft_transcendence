@@ -3,7 +3,7 @@ import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { updateLanguage, updateOnlineStatus } from '@/models/User/repository';
-import { fetcher } from '@/utils/fetcher';
+import { fetcherGuest } from '@/utils/fetcher';
 import { registerLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
 import { registerTogglePassword } from '@/utils/togglePassword';
 import { updateInnerHTML, updateText } from '@/utils/updateElements';
@@ -19,7 +19,7 @@ const handleLoginSubmit = async (
   };
 
   try {
-    const { data, ok } = await fetcher('/api/login/', {
+    const { data, ok } = await fetcherGuest('/api/login/', {
       method: 'POST',
       body: loginData,
     });

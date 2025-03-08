@@ -4,7 +4,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from core import logger
+from core.logger import logger
 
 from .serializers import LoginSerializer
 
