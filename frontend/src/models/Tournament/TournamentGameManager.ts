@@ -1,7 +1,7 @@
 // frontend/src/models/Tournament/TournamentGameManager.ts
 import { BaseGameManager } from '@/models/Services/BaseGameManager';
 import { GameRenderer } from '@/models/Services/game_renderer';
-import { IGameConfig, IGameState, ITournamentMatch } from '@/models/interface';
+import { IGameConfig, IGameState } from '@/models/Game/type';
 
 export class TournamentGameManager extends BaseGameManager {
   private renderer: GameRenderer;
