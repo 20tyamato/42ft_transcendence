@@ -154,9 +154,9 @@ class GameSerializer(serializers.ModelSerializer):
 
         # AIレベルが指定されている場合は1-4の範囲内か確認
         if data.get("ai_level") is not None:
-            if data["ai_level"] not in [1, 2, 3, 4]:
+            if data["ai_level"] not in [1, 3, 5, 10]:
                 raise serializers.ValidationError(
-                    "AI level must be between 1 (Beginner) and 4 (Oni)"
+                    "AI level must be between 1 (Beginner) and 10 (Oni)"
                 )
 
         # マルチプレイまたはトーナメントの場合、AIでない限りplayer2が必要

@@ -89,9 +89,9 @@ class Game(models.Model):
     )
     class AILevel(models.IntegerChoices):
         BEGINNER = 1, 'Beginner'
-        INTERMEDIATE = 2, 'Intermediate' 
-        ADVANCED = 3, 'Advanced'
-        ONI = 4, 'Oni'
+        INTERMEDIATE = 3, 'Intermediate' 
+        ADVANCED = 5, 'Advanced'
+        ONI = 10, 'Oni'
 
     ai_level = models.IntegerField(
         choices=AILevel.choices,
