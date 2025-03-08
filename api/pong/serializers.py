@@ -1,8 +1,8 @@
-from django.contrib.auth import authenticate
+import time
+
 from rest_framework import serializers
 
-import time
-from .models import Game, User, TournamentSession, TournamentParticipant
+from .models import Game, TournamentParticipant, TournamentSession, User
 
 
 def generate_session_id(game_type, player1_username, player2_username=None):
@@ -86,27 +86,6 @@ class UserAvatarSerializer(serializers.ModelSerializer):
                 else obj.avatar.url
             )
         return None
-
-
-class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField(required=True)
-    password = serializers.CharField(required=True, write_only=True)
-
-    def validate(self, attrs):
-        username = attrs.get("username")
-        password = attrs.get("password")
-
-        if username and password:
-            user = authenticate(username=username, password=password)
-            if user:
-                if user.is_active:
-                    attrs["user"] = user
-                    return attrs
-                raise serializers.ValidationError("User account is disabled.")
-            raise serializers.ValidationError(
-                "Unable to log in with provided credentials."
-            )
-        raise serializers.ValidationError('Must include "username" and "password".')
 
 
 class GameSerializer(serializers.ModelSerializer):

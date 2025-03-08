@@ -1,16 +1,14 @@
 from django.urls import path
 
+from .modules.Auth.views import LoginView, LogoutView
 from .views import (
     AddFriendView,
     FriendListView,
     GameListCreateView,
     GameRetrieveUpdateDestroyView,
     HealthCheckView,
-    LoginView,
-    LogoutView,
     RemoveFriendView,
     UserAvatarRetrieveView,
-    # TournamentListCreateView
     UserAvatarUpdateView,
     UserListCreateView,
     UserRetrieveUpdateView,
