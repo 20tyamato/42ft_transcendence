@@ -8,8 +8,6 @@ import { fetcher } from '@/utils/fetcher';
 import { setUserLanguage } from '@/utils/language';
 import { updatePlaceholder, updateText } from '@/utils/updateElements';
 
-const token = localStorage.getItem('token');
-
 const updatePageContent = (): void => {
   updateText('title', i18next.t('myFriends'));
   updateText('.container h1', i18next.t('myFriends'));

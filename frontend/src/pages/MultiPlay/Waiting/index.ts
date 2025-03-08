@@ -3,6 +3,7 @@ import { WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
 import CommonLayout from '@/layouts/common/index';
+import { ICurrentUser } from '@/libs/Auth/currnetUser';
 
 /**
  * DOM要素の取得
@@ -65,23 +66,17 @@ const handleSocketMessage = (event: MessageEvent, statusElement: HTMLElement | n
 /**
  * WebSocket接続の初期化
  */
-const initWebSocket = (statusElement: HTMLElement | null): WebSocket => {
+const initWebSocket = (statusElement: HTMLElement | null, user: ICurrentUser): WebSocket => {
   console.log('Initializing WebSocket...');
   const socket = new WebSocket(`${WS_URL}/ws/matchmaking/`);
 
   socket.onopen = () => {
     console.log('WebSocket connection established');
-    const username = localStorage.getItem('username');
-    if (!username) {
-      console.error('No username found');
-      window.location.href = '/multiplay';
-      return;
-    }
     // マッチメイキング参加メッセージの送信
     socket.send(
       JSON.stringify({
         type: 'join_matchmaking',
-        username,
+        username: user.username,
       })
     );
   };
@@ -98,7 +93,7 @@ const initWebSocket = (statusElement: HTMLElement | null): WebSocket => {
     if (statusElement) statusElement.textContent = 'Connection lost. Reconnecting...';
     // 5秒後に再接続を試行
     setTimeout(() => {
-      initWebSocket(statusElement);
+      initWebSocket(statusElement, user);
     }, 5000);
   };
 
@@ -140,7 +135,7 @@ const WaitingPage = new Page({
     });
 
     // WebSocket接続開始
-    socket = initWebSocket(statusElement);
+    socket = initWebSocket(statusElement, user);
 
     // クリーンアップ処理
     return () => {

@@ -51,9 +51,6 @@ export const fetchCurrentUser = async () => {
 
 // アバター画像の更新
 export const updateAvatar = async (file: File) => {
-  const token = localStorage.getItem('token');
-  if (!token) return;
-
   const formData = new FormData();
   formData.append('avatar', file);
 

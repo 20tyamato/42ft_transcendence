@@ -1,17 +1,17 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
-import { isLoggedIn } from '@/models/User/auth';
+import { isLoggedIn } from '@/libs/Auth/currnetUser';
 import { updateLanguage } from '@/models/User/repository';
 import createThreeScene from '@/pages/Home/scene';
 import { registerLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
 
-const registerStartButton = (): void => {
+const registerStartButton = async (): Promise<void> => {
   const startBtn = document.querySelector('a[href="/login"]');
-  startBtn?.addEventListener('click', (event) => {
+  startBtn?.addEventListener('click', async (event) => {
     event.preventDefault();
-    if (isLoggedIn()) {
+    if (await isLoggedIn()) {
       i18next.changeLanguage(i18next.language);
       updateLanguage(i18next.language);
       window.location.href = '/modes';

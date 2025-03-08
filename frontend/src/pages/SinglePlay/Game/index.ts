@@ -5,6 +5,7 @@ import Ball from './Ball';
 import Experience from './Experience';
 import Field from './Field';
 import { createParticleCustomizationPanel } from './CustomParticle';
+import AuthLayout from '@/layouts/AuthLayout';
 
 let running = true; // ゲームの状態管理
 
@@ -85,17 +86,17 @@ export function showGameOverOverlay(message: string, finalScore: string) {
 const SinglePlayPage = new Page({
   name: 'SinglePlay/Game',
   config: {
-    layout: CommonLayout,
+    layout: AuthLayout,
   },
 
-  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
+  mounted: async ({ pg, user }) => {
     // ヘッダーと背景を非表示にする
     const header = document.querySelector('.header');
     const background = document.getElementById('background');
     if (header) header.classList.add('none');
     if (background) background.classList.add('none');
 
-    const username = localStorage.getItem('username') || 'Player';
+    const username = user.username;
     const playerNameDiv = document.getElementById('playerName');
     if (playerNameDiv) {
       const leftNameSpan = playerNameDiv.querySelector('.leftName');

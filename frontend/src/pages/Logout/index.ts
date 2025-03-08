@@ -1,7 +1,7 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
-import CommonLayout from '@/layouts/common/index';
-import { executeLogout } from '@/models/User/auth';
+import AuthLayout from '@/layouts/AuthLayout';
+import { logout } from '@/libs/Auth/currnetUser';
 import { registerLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
 import { updateInnerHTML, updateText } from '@/utils/updateElements';
 
@@ -23,17 +23,16 @@ const updatePageContent = (): void => {
 const LogoutPage = new Page({
   name: 'Logout',
   config: {
-    layout: CommonLayout,
+    layout: AuthLayout,
   },
-  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
+  mounted: async ({ pg }) => {
     updatePageContent();
     updateActiveLanguageButton();
     registerLanguageSwitchers(updatePageContent);
 
     registerLoginButton();
 
-    executeLogout();
-
+    await logout();
     pg.logger.info('LogoutPage mounted!');
   },
 });

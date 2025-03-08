@@ -2,6 +2,7 @@ import { API_URL } from '@/config/config';
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
+import { storage } from '@/libs/localStorage';
 import { validateRegistrationForm } from '@/utils/form';
 import { registerLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
 import { registerTogglePassword } from '@/utils/togglePassword';
@@ -38,8 +39,8 @@ const handleRegistrationSubmit = async (
 
     if (response.ok) {
       const result = await response.json();
-      localStorage.setItem('token', result.token);
-      localStorage.setItem('username', result.username);
+      storage.setUserToken(result.token);
+
       responseMessage.textContent = i18next.t('registerSuccess');
       responseMessage.style.color = 'green';
       setTimeout(() => {
