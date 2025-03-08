@@ -89,7 +89,7 @@ class Game(models.Model):
     )
     class AILevel(models.IntegerChoices):
         BEGINNER = 1, 'Beginner'
-        INTERMEDIATE = 3, 'Intermediate' 
+        INTERMEDIATE = 3, 'Intermediate'
         ADVANCED = 5, 'Advanced'
         ONI = 10, 'Oni'
 
@@ -123,7 +123,7 @@ class Game(models.Model):
 
     def __str__(self):
         opponent = (
-            f"AI ({self.get_ai_level_display()})" 
+            f"AI ({self.get_ai_level_display()})"
             if self.ai_level
             else (self.player2.display_name if self.player2 else "Waiting for opponent")
         )

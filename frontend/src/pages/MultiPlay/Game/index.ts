@@ -53,8 +53,10 @@ const GamePage = new Page({
       await gameManager.init();
       console.log('Game initialized successfully');
       // クリーンアップ関数を返す
-      gameManager.cleanup();
-      console.log('Game page unmounting, cleaning up resources...');
+      return () => {
+        console.log('Game page unmounting, cleaning up resources...');
+        gameManager.cleanup();
+      };
     } catch (error) {
       console.error('Failed to initialize game:', error);
       // エラーメッセージを表示
