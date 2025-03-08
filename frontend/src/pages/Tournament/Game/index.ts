@@ -14,7 +14,7 @@ const GamePage = new Page({
   },
   mounted: async ({ pg }: { pg: Page }): Promise<void> => {
     console.log('Tournament game page mounting...');
-    
+
     // 認証チェック
     checkUserAccess();
 
@@ -27,12 +27,12 @@ const GamePage = new Page({
     const username = localStorage.getItem('username');
 
     // パラメータのログ出力
-    console.log('Game parameters:', { 
-      sessionId, 
-      isPlayer1: isPlayer1Str, 
+    console.log('Game parameters:', {
+      sessionId,
+      isPlayer1: isPlayer1Str,
       matchId,
       round: roundStr,
-      username 
+      username,
     });
 
     // 必要なパラメータがない場合はトーナメントページにリダイレクト

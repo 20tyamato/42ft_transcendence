@@ -211,16 +211,11 @@ class MultiplayerPongGame(BaseGameLogic):
             -self.INITIAL_BALL_SPEED * random.choice([-1, 1]),
         )
 
-# game_logic.py に追加
-from typing import Dict, Optional
-from django.utils import timezone
-
 class TournamentPongGame(BaseGameLogic):
     """トーナメント向けゲームロジック"""
 
     def __init__(self, session_id: str, player1_name: str, player2_name: str, tournament_round: int = 0):
         """トーナメント固有の初期化処理
-        
         Args:
             session_id: ゲームセッションID
             player1_name: プレイヤー1のユーザー名
@@ -231,7 +226,7 @@ class TournamentPongGame(BaseGameLogic):
         self.player1_name = player1_name
         self.player2_name = player2_name
         self.tournament_round = tournament_round
-     
+
         # ゲーム状態の初期化
         self.ball = Vector3D(0, 30, 0)
         self.ball_velocity = Vector3D(
@@ -242,11 +237,11 @@ class TournamentPongGame(BaseGameLogic):
             player2_name: 0,
         }
         self.score = {player1_name: 0, player2_name: 0}
-        
+
         # トーナメント関連の状態
         self.tournament_id = self._extract_tournament_id(session_id)
         self.is_final = tournament_round == 1
-        
+
     # TODO: ここ処理不安。想定フォーマット確認
     def _extract_tournament_id(self, session_id: str) -> str:
         """セッションIDからトーナメントIDを抽出"""
@@ -307,14 +302,14 @@ class TournamentPongGame(BaseGameLogic):
             "score": self.score,
             "is_active": self.is_active,
         }
-        
+
         # トーナメント特有の情報を追加
         tournament_info = {
             "tournament_id": self.tournament_id,
             "is_final": self.is_final,
             "tournament_round": self.tournament_round,
         }
-        
+
         basic_state.update(tournament_info)
         return basic_state
 
@@ -387,7 +382,7 @@ class TournamentPongGame(BaseGameLogic):
             self.score[scoring_player] += 1
 
             winning_threshold = self.WINNING_SCORE
-            
+
             if max(self.score.values()) >= winning_threshold:
                 self.is_active = False
             else:
@@ -397,10 +392,10 @@ class TournamentPongGame(BaseGameLogic):
         """ボールの位置とベロシティをリセット"""
         import random
         self.ball = Vector3D(0, 30, 0)
-        
+
         speed_multiplier = 1.0
         initial_speed = self.INITIAL_BALL_SPEED * speed_multiplier
-        
+
         self.ball_velocity = Vector3D(
             initial_speed * random.choice([-1, 1]),
             0,
