@@ -1,4 +1,4 @@
-import { ICurrentUser } from '@/libs/Auth/currnetUser';
+import { ICurrentUser, useCurrentUser } from '@/libs/Auth/currnetUser';
 import { fetcher } from '@/utils/fetcher';
 
 /**
@@ -11,13 +11,13 @@ export const createSinglePlayGame = async ({
   playerScore,
   cpuScore,
   aiLevel,
-  currentUser,
 }: {
   playerScore: number;
   cpuScore: number;
   aiLevel: number;
-  currentUser: ICurrentUser;
 }): Promise<boolean> => {
+  const currentUser = await useCurrentUser();
+
   const gameData = {
     status: 'COMPLETED',
     end_time: new Date().toISOString(),

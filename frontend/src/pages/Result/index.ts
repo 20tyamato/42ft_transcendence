@@ -49,6 +49,7 @@ const ResultPage = new Page({
             player1Score: score.player1,
             player2Score: score.player2,
             opponentName: score.opponent || '',
+            currentUser: user,
           })
         : await createTournamentGame({
             playerScore: score.player1,
