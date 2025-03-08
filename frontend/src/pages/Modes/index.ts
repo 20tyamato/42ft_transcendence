@@ -56,7 +56,7 @@ const updateUserAvatar = (avatar?: string): void => {
 
 const mountModesPage = async (pg: Page): Promise<void> => {
   try {
-    resetTimer();
+    // resetTimer();
     checkUserAccess();
 
     const userData = await fetchCurrentUser();
@@ -66,7 +66,7 @@ const mountModesPage = async (pg: Page): Promise<void> => {
     registerNavigationButtons();
     registerIconNavigation();
 
-    initResetTimerListeners();
+    // initResetTimerListeners();
 
     pg.logger.info('ModesPage mounted!');
   } catch (error) {

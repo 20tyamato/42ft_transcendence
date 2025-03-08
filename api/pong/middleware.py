@@ -1,8 +1,6 @@
 from datetime import timedelta
 
-from django.contrib.auth import logout
 from django.utils import timezone
-from rest_framework.authtoken.models import Token
 
 
 class UpdateLastActivityMiddleware:
@@ -16,10 +14,10 @@ class UpdateLastActivityMiddleware:
             last_activity = request.user.last_activity
 
             if last_activity and (now - last_activity > threshold):
-                Token.objects.filter(user=request.user).delete()
+                # Token.objects.filter(user=request.user).delete()
                 request.user.is_online = False
                 request.user.save()
-                logout(request)
+                # logout(request)
             else:
                 request.user.last_activity = now
                 request.user.is_online = True

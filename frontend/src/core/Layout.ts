@@ -8,6 +8,8 @@ type LayoutConfig = {
 type LayoutProps = {
   name: string;
   config?: Partial<LayoutConfig>;
+  mounted?: () => Promise<any>;
+  beforeMounted?: () => Promise<any>;
 };
 
 const getDefaultConfig = (name: string, config?: Partial<LayoutConfig>): LayoutConfig => {
@@ -21,10 +23,14 @@ const getDefaultConfig = (name: string, config?: Partial<LayoutConfig>): LayoutC
 export class Layout {
   readonly config: LayoutConfig;
   readonly logger: Logger;
+  mounted?: () => Promise<any>;
+  beforeMounted?: () => Promise<any>;
 
   constructor(props: LayoutProps) {
     this.config = getDefaultConfig(props.name, props.config);
     this.logger = new Logger();
+    this.mounted = props.mounted;
+    this.beforeMounted = props.beforeMounted;
   }
 
   async render() {

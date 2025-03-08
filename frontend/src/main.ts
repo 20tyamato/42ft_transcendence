@@ -56,13 +56,21 @@ async function router(path: string) {
     pathWithoutQuery,
     query: window.location.search,
   });
+
   const targetPage = routes[pathWithoutQuery] ?? NotFoundPage;
+  if (targetPage.config.layout.beforeMounted) {
+    await targetPage.config.layout.beforeMounted();
+  }
+
   const content = await targetPage.render();
   appDiv.innerHTML = content;
   document.title = 'ft_transcendence';
   // replaceStateを使用してブラウザの履歴を適切に管理
   if (!window.location.pathname.startsWith('/multiplay/game')) {
     window.history.pushState({}, '', path);
+  }
+  if (targetPage.config.layout.mounted) {
+    await targetPage.config.layout.mounted();
   }
   if (targetPage.mounted) {
     await targetPage.mounted({ pg: targetPage });
