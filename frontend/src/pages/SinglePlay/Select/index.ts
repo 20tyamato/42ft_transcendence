@@ -1,6 +1,6 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
-import CommonLayout from '@/layouts/common/index';
+import AuthLayout from '@/layouts/AuthLayout';
 import { updateText } from '@/utils/updateElements';
 
 const updatePageContent = () => {
@@ -14,7 +14,7 @@ const updatePageContent = () => {
 const SinglePlaySelectPage = new Page({
   name: 'SinglePlay/Select',
   config: {
-    layout: CommonLayout,
+    layout: AuthLayout,
   },
   mounted: async ({ pg, user }): Promise<void> => {
     i18next.changeLanguage(user.language, updatePageContent);

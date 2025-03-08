@@ -89,7 +89,7 @@ const SinglePlayPage = new Page({
     layout: AuthLayout,
   },
 
-  mounted: async ({ pg, user }) => {
+  mounted: async ({ user }) => {
     // ヘッダーと背景を非表示にする
     const header = document.querySelector('.header');
     const background = document.getElementById('background');
