@@ -2,19 +2,17 @@ from django.contrib.auth import authenticate
 from rest_framework import serializers
 
 import time
-import secrets
 from .models import Game, User, TournamentSession, TournamentParticipant
 
 
 def generate_session_id(game_type, player1_username, player2_username=None):
-    """構造化されたセッションIDを生成"""
-    unique_part = secrets.token_hex(6)  # 12文字のランダム文字列
+    """シンプル化されたセッションIDを生成"""
     timestamp = int(time.time())
 
     # player2がNoneまたは空の場合は'solo'を使用
     p2 = player2_username if player2_username else "solo"
 
-    return f"{game_type.lower()}_{player1_username}_{p2}_{unique_part}_{timestamp}"
+    return f"{game_type.lower()}_{player1_username}_{p2}_{timestamp}"
 
 
 class FriendSerializer(serializers.ModelSerializer):

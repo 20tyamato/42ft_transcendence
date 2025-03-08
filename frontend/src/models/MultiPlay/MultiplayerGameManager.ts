@@ -115,7 +115,7 @@ export class MultiplayerGameManager extends BaseGameManager {
   private updateScoreBoard(score: Record<string, number>): void {
     if (!this.scoreBoard) return;
     const playerScore = score[this.config.username] || 0;
-    const entries = Object.keys(score).map(key => [key, score[key]]);
+    const entries = Object.keys(score).map((key) => [key, score[key]]);
     const opponentEntry = entries.find(([id]) => id !== this.config.username);
     const opponentScore = opponentEntry?.[1] || 0;
 
