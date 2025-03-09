@@ -3,6 +3,7 @@ import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { storage } from '@/libs/localStorage';
+import { fetcherGuest } from '@/utils/fetcher';
 import { validateRegistrationForm } from '@/utils/form';
 import { registerLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
 import { registerTogglePassword } from '@/utils/togglePassword';
@@ -30,16 +31,13 @@ const handleRegistrationSubmit = async (
   };
 
   try {
-    const response = await fetch(`${API_URL}/api/users/`, {
+    const { data, ok } = await fetcherGuest(`/api/users/`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify(userData),
+      body: userData,
     });
 
-    if (response.ok) {
-      const result = await response.json();
-      storage.setUserToken(result.token);
+    if (ok) {
+      storage.setUserToken(data.token);
 
       responseMessage.textContent = i18next.t('registerSuccess');
       responseMessage.style.color = 'green';
@@ -47,7 +45,7 @@ const handleRegistrationSubmit = async (
         window.location.href = '/login';
       }, 1000);
     } else {
-      const error = await response.json();
+      const error = data;
       let errorMessage = i18next.t('somethingWentWrong');
       if (error.username) {
         errorMessage = i18next.t('usernameExists');

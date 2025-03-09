@@ -1,5 +1,6 @@
 import { API_URL } from '@/config/config';
-import { Logger } from '@/core/Logger';
+import { logger } from '@/core/Logger';
+import { storage } from '@/libs/localStorage';
 
 type FetcherOptions<Body> = {
   body?: Body;
@@ -32,8 +33,7 @@ export const fetcher = async <Response = any, Body = Object>(
   url: string,
   options?: FetcherOptions<Body>
 ): Promise<{ data: Response; ok: boolean; status: number }> => {
-  const logger = new Logger();
-  const token = localStorage.getItem('token');
+  const token = storage.getUserToken();
 
   try {
     const { body, ...fetchOptions } = options ?? {};
@@ -65,15 +65,27 @@ export const fetcher = async <Response = any, Body = Object>(
  * @param options
  * @returns
  */
-export const fetcherGuest = async <Body = any, Response = any>(
+export const fetcherGuest = async <Body = Object, Response = any>(
   url: string,
   options?: FetcherOptions<Body>
 ): Promise<{ data: Response; ok: boolean; status: number }> => {
-  return await fetcher(url, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options?.headers,
-    },
-  });
+  try {
+    const { body, ...fetchOptions } = options ?? {};
+
+    const response = await fetch(`${API_URL}${url}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...fetchOptions.headers,
+      },
+      body: JSON.stringify(body),
+      ...fetchOptions,
+    });
+    const data = await response.json();
+
+    return { data, ok: response.ok, status: response.status };
+  } catch (error) {
+    logger.error(error?.toString() ?? 'Unknown error');
+    throw error;
+  }
 };

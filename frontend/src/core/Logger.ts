@@ -38,12 +38,9 @@ export class Logger {
         application: 'frontend',
       };
 
-      await fetch(this._logstashUrl, {
+      await fetcherGuest(this._logstashUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(logData),
+        body: logData,
       });
     } catch (error) {
       // エラーが発生した場合はコンソールにフォールバック
@@ -51,3 +48,5 @@ export class Logger {
     }
   }
 }
+
+export const logger = new Logger();
