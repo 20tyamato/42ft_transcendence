@@ -242,12 +242,19 @@ class TournamentPongGame(BaseGameLogic):
         self.tournament_id = self._extract_tournament_id(session_id)
         self.is_final = tournament_round == 1
 
-    # TODO: ここ処理不安。想定フォーマット確認
+    # NOTE: done update for new ID
     def _extract_tournament_id(self, session_id: str) -> str:
         """セッションIDからトーナメントIDを抽出"""
         parts = session_id.split('_')
-        if len(parts) >= 1:
-            return parts[-1]  # 最後の部分をトーナメントIDとして扱う
+        if len(parts) >= 3 and parts[0] == "tournament":
+            return parts[1]  # tournament_ID_round_player1_player2_timestamp
+        return ""
+        
+    def _extract_round_type(self, session_id: str) -> str:
+        """セッションIDからラウンドタイプを抽出"""
+        parts = session_id.split('_')
+        if len(parts) >= 4 and parts[0] == "tournament":
+            return parts[2]  # tournament_ID_round_player1_player2_timestamp
         return ""
 
     def update(self, delta_time: float) -> Dict:

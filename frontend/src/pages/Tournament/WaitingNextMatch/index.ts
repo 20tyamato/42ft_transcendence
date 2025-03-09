@@ -52,7 +52,7 @@ const WaitingNextMatchPage = new Page({
         const isPlayer1 = username === data.match?.player1;
 
         // ゲームページへ遷移
-        const gameUrl = `/tournament/game?session=${tournamentId}&isPlayer1=${isPlayer1}&matchId=${matchId}&round=1`;
+        const gameUrl = `/tournament/game?tournamentId=${tournamentId}&round=final&isPlayer1=${username === data.match?.player1}`;
         window.location.href = gameUrl;
       });
 

@@ -11,15 +11,11 @@ websocket_urlpatterns = [
     ),
     re_path(r"ws/tournament/$", consumers.TournamentMatchmakingConsumer.as_asgi()),
     re_path(
-        r"ws/tournament/semi-final/(?P<session_id>[^/]+)/(?P<username>[^/]+)/$",
+        r"ws/tournament/game/(?P<round_type>[^/]+)/(?P<tournament_id>[^/]+)/(?P<username>[^/]+)/$",
         consumers.TournamentGameConsumer.as_asgi(),
     ),
     re_path(
         r"ws/tournament/waiting_final/(?P<session_id>[^/]+)/(?P<username>[^/]+)/$",
         consumers.TournamentWaitingFinalConsumer.as_asgi(),
-    ),
-    re_path(
-        r"ws/tournament/final/(?P<session_id>[^/]+)/(?P<username>[^/]+)/$",
-        consumers.TournamentGameConsumer.as_asgi(),
     ),
 ]

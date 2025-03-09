@@ -10,14 +10,14 @@ export class TournamentGameManager extends BaseGameManager {
   private matchId: string;
   private round: number; // 0: 準決勝, 1: 決勝
   private tournamentId: string;
+  private roundType: string;
 
-  constructor(config: IGameConfig, container: HTMLElement, matchId: string, round: number) {
+  constructor(config: IGameConfig, container: HTMLElement, roundType: string) {
     super(config);
     this.renderer = new GameRenderer(container, config.isPlayer1);
     this.scoreBoard = document.getElementById('score-board');
     this.roundDisplay = document.getElementById('round-display');
-    this.matchId = matchId;
-    this.round = round;
+    this.roundType = roundType; // "semi1", "semi2", "final"
     this.tournamentId = this.extractTournamentId(this.config.sessionId);
 
     // ラウンド表示の更新
@@ -26,7 +26,10 @@ export class TournamentGameManager extends BaseGameManager {
 
   private extractTournamentId(sessionId: string): string {
     const parts = sessionId.split('_');
-    return parts[parts.length - 1]; // 最後の部分をトーナメントIDとして扱う
+    if (parts.length >= 3 && parts[0] === 'tournament') {
+      return parts[1]; // tournament_ID_round_player1_player2_timestamp
+    }
+    return sessionId; // フォールバック
   }
 
   private updateRoundDisplay(): void {

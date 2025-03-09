@@ -204,11 +204,12 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
         # URL routeからパラメータを取得
-        self.session_id = self.scope["url_route"]["kwargs"]["session_id"]
+        self.round_type = self.scope["url_route"]["kwargs"]["round_type"]
+        self.tournament_id = self.scope["url_route"]["kwargs"]["tournament_id"]
         self.username = self.scope["url_route"]["kwargs"]["username"]
         self.is_final = "final" in self.scope["url_route"]["pattern"].pattern
         self.game_type = "final" if self.is_final else "semi-final"
-        self.game_group_name = f"tournament_{self.game_type}_{self.session_id}"
+        self.game_group_name = f"tournament_game_{self.round_type}_{self.tournament_id}"
         self.game_task = None
 
         print(f"接続試行: session_id={self.session_id}, username={self.username}, type={self.game_type}")
