@@ -172,11 +172,11 @@ export class TournamentGameManager extends BaseGameManager {
         window.location.href = `/tournament/waiting_next_match?session=${this.tournamentId}`;
       } else {
         // 敗者は結果画面へ
-        window.location.href = '/result';
+        // window.location.href = '/result';
       }
     } else {
       // 決勝後の遷移
-      window.location.href = '/result';
+      // window.location.href = '/result';
     }
   }
 }
