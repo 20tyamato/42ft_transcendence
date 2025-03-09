@@ -10,7 +10,8 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "types": ["vite/client"]
+    "types": ["vite/client"],
+    "lib": ["es2017", "dom", "dom.iterable"]
   },
   "include": ["src/**/*", "src/**/*.ts", "src/types.d.ts"]
 }

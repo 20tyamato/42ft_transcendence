@@ -1,3 +1,5 @@
+import { fetcherGuest } from '@/utils/fetcher';
+
 /**
  * ELKにログを送信する
  */
@@ -7,23 +9,23 @@ export class Logger {
     this._logstashUrl = import.meta.env.VITE_LOGSTASH_URL;
   }
 
-  public async info(message: string) {
-    console.info(message);
+  public async info(message: string, ...args: any[]) {
+    console.info(message, ...args);
     await this._sendToLogstash('info', message);
   }
 
-  public async log(message: string) {
-    console.log(message);
+  public async log(message: string, ...args: any[]) {
+    console.log(message, ...args);
     await this._sendToLogstash('log', message);
   }
 
-  public async error(message: string) {
-    console.error(message);
+  public async error(message: string, ...args: any[]) {
+    console.error(message, ...args);
     await this._sendToLogstash('error', message);
   }
 
-  public async warn(message: string) {
-    console.warn(message);
+  public async warn(message: string, ...args: any[]) {
+    console.warn(message, ...args);
     await this._sendToLogstash('warn', message);
   }
 
@@ -49,3 +51,5 @@ export class Logger {
     }
   }
 }
+
+export const logger = new Logger();

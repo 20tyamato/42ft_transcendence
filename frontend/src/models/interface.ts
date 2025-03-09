@@ -8,17 +8,6 @@ export interface IFriend {
   is_online: boolean;
 }
 
-export interface IUserData {
-  username: string;
-  email: string;
-  display_name: string;
-  avatar: string;
-  level: number;
-  experience: number;
-  language: keyof typeof languageNames;
-  is_online: boolean;
-}
-
 export interface IRankingUser {
   username: string;
   level: number;

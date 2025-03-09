@@ -1,14 +1,12 @@
 import { API_URL } from '@/config/config';
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
-import CommonLayout from '@/layouts/common/index';
+import AuthLayout from '@/layouts/AuthLayout';
 import { IFriend } from '@/models/interface';
-import { checkUserAccess } from '@/models/User/auth';
-import { fetchCurrentUser } from '@/models/User/repository';
+
+import { fetcher } from '@/utils/fetcher';
 import { setUserLanguage } from '@/utils/language';
 import { updatePlaceholder, updateText } from '@/utils/updateElements';
-
-const token = localStorage.getItem('token');
 
 const updatePageContent = (): void => {
   updateText('title', i18next.t('myFriends'));
@@ -20,19 +18,10 @@ const updatePageContent = (): void => {
 
 async function loadFriends(): Promise<void> {
   try {
-    const response = await fetch(`${API_URL}/api/users/me/friends/`, {
+    const { data } = await fetcher<IFriend[]>('/api/users/me/friends/', {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${token}`,
-      },
     });
-    if (!response.ok) {
-      const errorMsg = await response.text();
-      throw new Error(`Failed to load friends: ${errorMsg}`);
-    }
-    const friends: IFriend[] = await response.json();
-    renderFriends(friends);
+    renderFriends(data);
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error('Error loading friends:', error.message);
@@ -44,18 +33,11 @@ async function loadFriends(): Promise<void> {
 
 async function addFriend(username: string): Promise<void> {
   try {
-    const response = await fetch(`${API_URL}/api/users/me/friends/add/`, {
+    await fetcher<IFriend>('/api/users/me/friends/add/', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${token}`,
-      },
-      body: JSON.stringify({ username }),
+      body: { username },
     });
-    if (!response.ok) {
-      const errorMsg = await response.text();
-      throw new Error(`Failed to add friend: ${errorMsg}`);
-    }
+
     await loadFriends();
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -68,17 +50,9 @@ async function addFriend(username: string): Promise<void> {
 
 async function deleteFriend(friendId: number): Promise<void> {
   try {
-    const response = await fetch(`${API_URL}/api/users/me/friends/${friendId}/`, {
+    await fetcher('/api/users/me/friends/${friendId}/', {
       method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${token}`,
-      },
     });
-    if (!response.ok) {
-      const errorMsg = await response.text();
-      throw new Error(`Failed to delete friend: ${errorMsg}`);
-    }
     await loadFriends();
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -141,15 +115,11 @@ function renderFriends(friends: IFriend[]): void {
 const FriendsPage = new Page({
   name: 'Friends',
   config: {
-    layout: CommonLayout,
+    layout: AuthLayout,
   },
-  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
-    // ユーザー認証チェックとユーザーデータの取得
-    checkUserAccess();
-    const userData = await fetchCurrentUser();
-
+  mounted: async ({ pg, user }): Promise<void> => {
     // 言語設定とページ内文言の更新
-    setUserLanguage(userData.language, updatePageContent);
+    setUserLanguage(user.language, updatePageContent);
     loadFriends();
 
     // イベント登録：Enter キーでフレンド追加

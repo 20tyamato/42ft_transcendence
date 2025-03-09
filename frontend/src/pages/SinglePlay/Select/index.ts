@@ -1,8 +1,6 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
-import CommonLayout from '@/layouts/common/index';
-import { checkUserAccess } from '@/models/User/auth';
-import { fetchCurrentUser } from '@/models/User/repository';
+import AuthLayout from '@/layouts/AuthLayout';
 import { updateText } from '@/utils/updateElements';
 
 const updatePageContent = () => {
@@ -16,18 +14,12 @@ const updatePageContent = () => {
 const SinglePlaySelectPage = new Page({
   name: 'SinglePlay/Select',
   config: {
-    layout: CommonLayout,
+    layout: AuthLayout,
   },
-  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
-    checkUserAccess();
+  mounted: async ({ pg, user }): Promise<void> => {
+    i18next.changeLanguage(user.language, updatePageContent);
 
-    const userData = await fetchCurrentUser();
-    if (userData.language) {
-      document.documentElement.lang = userData.language;
-      i18next.changeLanguage(userData.language, updatePageContent);
-    }
-
-    if (userData.level < 5) {
+    if (user.level < 5) {
       const secretLevelCard = document.querySelector('.level-card.secret-level');
       if (secretLevelCard instanceof HTMLElement) {
         secretLevelCard.style.display = 'none';

@@ -1,9 +1,9 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
-import CommonLayout from '@/layouts/common/index';
+import AuthLayout from '@/layouts/AuthLayout';
+import { ICurrentUser } from '@/libs/Auth/currnetUser';
 import { IRankingUser } from '@/models/interface';
-import { checkUserAccess } from '@/models/User/auth';
-import { fetchCurrentUser, fetchUsers } from '@/models/User/repository';
+import { fetchUsers } from '@/models/User/repository';
 import { setUserLanguage } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
 
@@ -37,18 +37,15 @@ const registerBackButton = (backBtn: HTMLElement | null): void => {
 const LeaderboardPage = new Page({
   name: 'Leaderboard',
   config: {
-    layout: CommonLayout,
+    layout: AuthLayout,
   },
-  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
+  mounted: async ({ pg, user }): Promise<void> => {
     const rankingList = document.getElementById('rankingList');
     const backBtn = document.getElementById('backBtn');
 
+    setUserLanguage(user.language, updatePageContent);
+
     try {
-      checkUserAccess();
-      const userData = await fetchCurrentUser();
-
-      setUserLanguage(userData.language, updatePageContent);
-
       const users: IRankingUser[] = await fetchUsers();
       if (rankingList) {
         renderRankingList(users, rankingList);

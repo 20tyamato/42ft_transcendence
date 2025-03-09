@@ -2,7 +2,9 @@ import { API_URL } from '@/config/config';
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
+import { storage } from '@/libs/localStorage';
 import { updateLanguage, updateOnlineStatus } from '@/models/User/repository';
+import { fetcherGuest } from '@/utils/fetcher';
 import { registerLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
 import { registerTogglePassword } from '@/utils/togglePassword';
 import { updateInnerHTML, updateText } from '@/utils/updateElements';
@@ -18,17 +20,15 @@ const handleLoginSubmit = async (
   };
 
   try {
-    const response = await fetch(`${API_URL}/api/login/`, {
+    const { data, ok } = await fetcherGuest('/api/login/', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify(loginData),
+      body: loginData,
     });
 
-    if (response.ok) {
-      const result = await response.json();
-      localStorage.setItem('token', result.token);
-      localStorage.setItem('username', result.username);
+    if (ok) {
+      const result = data;
+      storage.setUserToken(result.token);
+
       i18next.changeLanguage(i18next.language);
       updateLanguage(i18next.language);
       updateOnlineStatus(true);
@@ -40,7 +40,7 @@ const handleLoginSubmit = async (
         window.location.href = '/modes';
       }, 1000);
     } else {
-      const error = await response.json();
+      const error = data;
       responseMessage.textContent = i18next.t('errorMessage', {
         error: error.message || i18next.t('invalidCredentials'),
       });
