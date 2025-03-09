@@ -1,4 +1,4 @@
-type StorageKey = 'token' | 'username';
+type StorageKey = 'token';
 
 class LocalStorage {
   /** User */
