@@ -211,9 +211,12 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
         self.game_group_name = f"tournament_{self.game_type}_{self.session_id}"
         self.game_task = None
 
+        print(f"接続試行: session_id={self.session_id}, username={self.username}, type={self.game_type}")
+   
         # トーナメントセッションの検証
         is_valid = await self.validate_tournament_session()
         if not is_valid:
+            print(f"検証失敗: session_id={self.session_id}, username={self.username}")
             await self.close()
             return
 
