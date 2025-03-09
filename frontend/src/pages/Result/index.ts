@@ -42,22 +42,6 @@ const ResultPage = new Page({
       className: winnerInfo.className,
     });
 
-    // 結果をサーバーに送信
-    try {
-      gameMode === 'multiplayer'
-        ? await createMultiplayerGame({
-            player1Score: score.player1,
-            player2Score: score.player2,
-            opponentName: score.opponent || '',
-            currentUser: user,
-          })
-        : await createTournamentGame({
-            playerScore: score.player1,
-          });
-    } catch (error) {
-      console.error('Error saving game result:', error);
-    }
-
     // 保存データのクリア
     GameResultService.clearStoredResult();
   },
