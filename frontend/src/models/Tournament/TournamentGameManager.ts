@@ -1,7 +1,7 @@
 // frontend/src/models/Tournament/TournamentGameManager.ts
 import { BaseGameManager } from '@/models/Services/BaseGameManager';
 import { GameRenderer } from '@/models/Services/game_renderer';
-import { IGameConfig, IGameState, ITournamentMatch } from '@/models/interface';
+import { IGameConfig, IGameState } from '@/models/Game/type';
 
 export class TournamentGameManager extends BaseGameManager {
   private renderer: GameRenderer;
@@ -86,6 +86,7 @@ export class TournamentGameManager extends BaseGameManager {
     }, 1000);
   }
 
+  // TODO: トーナメント一回戦でコネクションエラー発生している
   protected onConnectionError(): void {
     console.error('Connection error occurred');
 
@@ -106,7 +107,7 @@ export class TournamentGameManager extends BaseGameManager {
     localStorage.setItem('gameMode', 'tournament');
 
     // 結果画面に遷移
-    window.location.href = '/result';
+    // window.location.href = '/result';
   }
 
   protected onError(message: string): void {
