@@ -106,7 +106,7 @@ export class TournamentGameManager extends BaseGameManager {
     localStorage.setItem('gameMode', 'tournament');
 
     // 結果画面に遷移
-    window.location.href = '/result';
+    // window.location.href = '/result';
   }
 
   protected onError(message: string): void {
