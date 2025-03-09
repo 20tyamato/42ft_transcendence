@@ -30,7 +30,11 @@ const closeSocket = (socket: WebSocket | null): WebSocket | null => {
 /**
  * WebSocketのメッセージ受信ハンドラ
  */
-const handleSocketMessage = (event: MessageEvent, statusElement: HTMLElement | null): void => {
+const handleSocketMessage = (
+  event: MessageEvent,
+  statusElement: HTMLElement | null,
+  user: ICurrentUser
+): void => {
   try {
     const data = JSON.parse(event.data);
     console.log('Received websocket message:', data);
@@ -41,7 +45,7 @@ const handleSocketMessage = (event: MessageEvent, statusElement: HTMLElement | n
         break;
       case 'match_found': {
         console.log('Match found:', data);
-        const username = localStorage.getItem('username');
+        const username = user.username;
         if (!username) {
           console.error('No username found');
           window.location.href = '/multiplay';
@@ -80,7 +84,7 @@ const initWebSocket = (statusElement: HTMLElement | null, user: ICurrentUser): W
     );
   };
 
-  socket.onmessage = (event) => handleSocketMessage(event, statusElement);
+  socket.onmessage = (event) => handleSocketMessage(event, statusElement, user);
 
   socket.onerror = (error) => {
     console.error('WebSocket error:', error);
