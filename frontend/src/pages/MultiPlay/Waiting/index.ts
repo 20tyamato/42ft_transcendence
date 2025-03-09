@@ -1,7 +1,8 @@
 // frontend/src/pages/MultiPlay/Waiting/index.ts
 import { WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
-import CommonLayout from '@/layouts/common/index';
+import AuthLayout from '@/layouts/AuthLayout';
+import { ICurrentUser } from '@/libs/Auth/currnetUser';
 
 /**
  * DOM要素の取得
@@ -29,7 +30,11 @@ const closeSocket = (socket: WebSocket | null): WebSocket | null => {
 /**
  * WebSocketのメッセージ受信ハンドラ
  */
-const handleSocketMessage = (event: MessageEvent, statusElement: HTMLElement | null): void => {
+const handleSocketMessage = (
+  event: MessageEvent,
+  statusElement: HTMLElement | null,
+  user: ICurrentUser
+): void => {
   try {
     const data = JSON.parse(event.data);
     console.log('Received websocket message:', data);
@@ -40,7 +45,7 @@ const handleSocketMessage = (event: MessageEvent, statusElement: HTMLElement | n
         break;
       case 'match_found': {
         console.log('Match found:', data);
-        const username = localStorage.getItem('username');
+        const username = user.username;
         if (!username) {
           console.error('No username found');
           window.location.href = '/multiplay';
@@ -64,28 +69,22 @@ const handleSocketMessage = (event: MessageEvent, statusElement: HTMLElement | n
 /**
  * WebSocket接続の初期化
  */
-const initWebSocket = (statusElement: HTMLElement | null): WebSocket => {
+const initWebSocket = (statusElement: HTMLElement | null, user: ICurrentUser): WebSocket => {
   console.log('Initializing WebSocket...');
   const socket = new WebSocket(`${WS_URL}/ws/matchmaking/`);
 
   socket.onopen = () => {
     console.log('WebSocket connection established');
-    const username = localStorage.getItem('username');
-    if (!username) {
-      console.error('No username found');
-      window.location.href = '/multiplay';
-      return;
-    }
     // マッチメイキング参加メッセージの送信
     socket.send(
       JSON.stringify({
         type: 'join_matchmaking',
-        username,
+        username: user.username,
       })
     );
   };
 
-  socket.onmessage = (event) => handleSocketMessage(event, statusElement);
+  socket.onmessage = (event) => handleSocketMessage(event, statusElement, user);
 
   socket.onerror = (error) => {
     console.error('WebSocket error:', error);
@@ -97,7 +96,7 @@ const initWebSocket = (statusElement: HTMLElement | null): WebSocket => {
     if (statusElement) statusElement.textContent = 'Connection lost. Reconnecting...';
     // 5秒後に再接続を試行
     setTimeout(() => {
-      initWebSocket(statusElement);
+      initWebSocket(statusElement, user);
     }, 5000);
   };
 
@@ -119,10 +118,10 @@ const setupCancelButton = (cancelButton: HTMLElement | null, closeSocketFn: () =
 const WaitingPage = new Page({
   name: 'MultiPlay/Waiting',
   config: {
-    layout: CommonLayout,
+    layout: AuthLayout,
     html: '/src/pages/MultiPlay/Waiting/index.html',
   },
-  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
+  mounted: async ({ pg, user }) => {
     console.log('Waiting page mounting...');
     let socket: WebSocket | null = null;
     const { statusElement, cancelButton } = getDomElements();
@@ -139,7 +138,7 @@ const WaitingPage = new Page({
     });
 
     // WebSocket接続開始
-    socket = initWebSocket(statusElement);
+    socket = initWebSocket(statusElement, user);
 
     // クリーンアップ処理
     return () => {

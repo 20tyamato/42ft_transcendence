@@ -1,28 +1,24 @@
 // frontend/src/pages/Tournament/WaitingNextMatch/index.ts
 import { WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
-import CommonLayout from '@/layouts/common/index';
+import AuthLayout from '@/layouts/AuthLayout';
 import { WebSocketService } from '@/models/Services/WebSocketService';
-import { checkUserAccess } from '@/models/User/auth';
 
 const WaitingNextMatchPage = new Page({
   name: 'Tournament/WaitingNextMatch',
   config: {
-    layout: CommonLayout,
+    layout: AuthLayout,
     html: '/src/pages/Tournament/WaitingNextMatch/index.html',
   },
-  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
+  mounted: async ({ pg, user }) => {
     console.log('Tournament waiting next match page mounting...');
-
-    // 認証チェック
-    checkUserAccess();
 
     let wsService: WebSocketService | null = null;
 
     // URLパラメータの取得と検証
     const urlParams = new URLSearchParams(window.location.search);
     const tournamentId = urlParams.get('session');
-    const username = localStorage.getItem('username');
+    const username = user.username;
 
     // DOM要素の取得
     const statusElement = document.getElementById('waiting-status');

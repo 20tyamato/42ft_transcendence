@@ -20,6 +20,9 @@ import TournamentWaitingPage from './pages/Tournament/Waiting';
 import TournamentGamePage from './pages/Tournament/Game/index';
 
 import { Page } from './core/Page';
+import { ICurrentUser } from './libs/Auth/currnetUser';
+
+export type IBeforeMountRes = { user: ICurrentUser };
 
 const appDiv = document.getElementById('app');
 
@@ -56,7 +59,14 @@ async function router(path: string) {
     pathWithoutQuery,
     query: window.location.search,
   });
+
   const targetPage = routes[pathWithoutQuery] ?? NotFoundPage;
+
+  let beforeMountRes: IBeforeMountRes;
+  if (targetPage.config.layout.beforeMounted) {
+    beforeMountRes = await targetPage.config.layout.beforeMounted();
+  }
+
   const content = await targetPage.render();
   appDiv.innerHTML = content;
   document.title = 'ft_transcendence';
@@ -64,8 +74,11 @@ async function router(path: string) {
   if (!window.location.pathname.startsWith('/multiplay/game')) {
     window.history.pushState({}, '', path);
   }
+  if (targetPage.config.layout.mounted) {
+    await targetPage.config.layout.mounted({ ...beforeMountRes! });
+  }
   if (targetPage.mounted) {
-    await targetPage.mounted({ pg: targetPage });
+    await targetPage.mounted({ pg: targetPage, ...beforeMountRes! });
   }
 }
 

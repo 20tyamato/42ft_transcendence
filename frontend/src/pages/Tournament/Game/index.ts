@@ -1,22 +1,18 @@
 // frontend/src/pages/Tournament/Game/index.ts
 import { WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
-import CommonLayout from '@/layouts/common/index';
 import { TournamentGameManager } from '@/models/Tournament/TournamentGameManager';
 import { IGameConfig } from '@/models/Game/type';
-import { checkUserAccess } from '@/models/User/auth';
+import AuthLayout from '@/layouts/AuthLayout';
 
 const GamePage = new Page({
   name: 'Tournament/Game',
   config: {
-    layout: CommonLayout,
+    layout: AuthLayout,
     html: '/src/pages/Tournament/Game/index.html',
   },
-  mounted: async ({ pg }: { pg: Page }) => {
+  mounted: async ({ pg, user }) => {
     console.log('Tournament game page mounting...');
-
-    // 認証チェック
-    checkUserAccess();
 
     // URLパラメータの取得と検証
     const urlParams = new URLSearchParams(window.location.search);
@@ -24,7 +20,7 @@ const GamePage = new Page({
     const isPlayer1Str = urlParams.get('isPlayer1');
     const matchId = urlParams.get('matchId');
     const roundStr = urlParams.get('round');
-    const username = localStorage.getItem('username');
+    const username = user.username;
 
     // パラメータのログ出力
     console.log('Game parameters:', {
@@ -32,11 +28,11 @@ const GamePage = new Page({
       isPlayer1: isPlayer1Str,
       matchId,
       round: roundStr,
-      username,
+      username: user.username,
     });
 
     // 必要なパラメータがない場合はトーナメントページにリダイレクト
-    if (!sessionId || !username || isPlayer1Str === null || !matchId || roundStr === null) {
+    if (!sessionId || isPlayer1Str === null || !matchId || roundStr === null) {
       console.error('Missing required game parameters');
       await new Promise((resolve) => setTimeout(resolve, 2000));
       window.location.href = '/tournament';

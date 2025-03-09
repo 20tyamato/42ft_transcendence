@@ -1,10 +1,10 @@
 import { Page } from '@/core/Page';
-import CommonLayout from '@/layouts/common/index';
+import AuthLayout from '@/layouts/AuthLayout';
 
 const TournamentPage = new Page({
   name: 'Tournament',
   config: {
-    layout: CommonLayout,
+    layout: AuthLayout,
     html: '/src/pages/Tournament/index.html',
   },
   mounted: async ({ pg }: { pg: Page }): Promise<void> => {

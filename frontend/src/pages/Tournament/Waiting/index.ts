@@ -1,15 +1,15 @@
 import { WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
-import CommonLayout from '@/layouts/common/index';
+import AuthLayout from '@/layouts/AuthLayout';
 import { ITournamentMatch } from '@/models/interface';
 
 const WaitingPage = new Page({
   name: 'Tournament/Waiting',
   config: {
-    layout: CommonLayout,
+    layout: AuthLayout,
     html: '/src/pages/Tournament/Waiting/index.html',
   },
-  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
+  mounted: async ({ pg, user }) => {
     console.log('Tournament waiting page mounting...');
     let socket: WebSocket | null = null;
 
@@ -34,7 +34,7 @@ const WaitingPage = new Page({
 
       socket.onopen = () => {
         console.log('WebSocket connection established');
-        const username = localStorage.getItem('username');
+        const username = user.username;
         if (!username) {
           console.error('No username found');
           window.location.href = '/tournament';
@@ -61,7 +61,7 @@ const WaitingPage = new Page({
             }
           } else if (data.type === 'tournament_ready') {
             console.log('Tournament ready:', data);
-            const username = localStorage.getItem('username');
+            const username = user.username;
 
             if (!username) {
               console.error('No username found');
