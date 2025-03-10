@@ -3,6 +3,7 @@ import { BaseGameManager } from '@/models/Services/BaseGameManager';
 import { GameRenderer } from '@/models/Services/game_renderer';
 import { IGameConfig, IGameState } from '@/models/Game/type';
 
+// # TODO: セッションIDの形式変更適用前：tournament_{tournament_id}_{round_type}_{player1}_{player2}_{timestamp}
 export class TournamentGameManager extends BaseGameManager {
   private renderer: GameRenderer;
   private scoreBoard: HTMLElement | null;

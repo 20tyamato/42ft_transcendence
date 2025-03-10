@@ -198,7 +198,7 @@ class GameConsumer(BaseGameConsumer):
             return None
 
 
-# TODO: BaseGameConsumerを継承してシンプルに
+# NOTE: セッションIDの形式変更済：tournament_{tournament_id}_{round_type}_{player1}_{player2}_{timestamp}
 class TournamentGameConsumer(AsyncWebsocketConsumer):
     games = {}  # セッションIDをキーとしたゲームインスタンスの管理
 
