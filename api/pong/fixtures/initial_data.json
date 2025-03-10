@@ -368,5 +368,97 @@
       "tournament_id": null,
       "tournament_round": null
     }
+  },
+  {
+    "model": "pong.tournamentsession",
+    "pk": 1,
+    "fields": {
+      "status": "IN_PROGRESS",
+      "created_at": "2025-03-01T10:00:00Z",
+      "started_at": "2025-03-01T10:30:00Z",
+      "completed_at": null,
+      "max_players": 4,
+      "winner": null
+    }
+  },
+  {
+    "model": "pong.tournamentparticipant",
+    "pk": 1,
+    "fields": {
+      "tournament": 1,
+      "user": 1,
+      "joined_at": "2025-03-01T10:15:00Z",
+      "is_ready": true,
+      "bracket_position": 1
+    }
+  },
+  {
+    "model": "pong.tournamentparticipant",
+    "pk": 2,
+    "fields": {
+      "tournament": 1,
+      "user": 2,
+      "joined_at": "2025-03-01T10:18:00Z",
+      "is_ready": true,
+      "bracket_position": 2
+    }
+  },
+  {
+    "model": "pong.tournamentparticipant",
+    "pk": 3,
+    "fields": {
+      "tournament": 1,
+      "user": 3,
+      "joined_at": "2025-03-01T10:20:00Z",
+      "is_ready": true,
+      "bracket_position": 3
+    }
+  },
+  {
+    "model": "pong.tournamentparticipant",
+    "pk": 4,
+    "fields": {
+      "tournament": 1,
+      "user": 4,
+      "joined_at": "2025-03-01T10:25:00Z",
+      "is_ready": true,
+      "bracket_position": 4
+    }
+  },
+  {
+    "model": "pong.game",
+    "pk": 10,
+    "fields": {
+      "game_type": "TOURNAMENT",
+      "status": "IN_PROGRESS",
+      "session_id": "tournament_semi_1_sample1_sample2_1709323800",
+      "player1": 1,
+      "player2": 2,
+      "start_time": "2025-03-01T10:30:00Z",
+      "end_time": null,
+      "score_player1": 0,
+      "score_player2": 0,
+      "winner": null,
+      "tournament": 1,
+      "tournament_round": 0
+    }
+  },
+  {
+    "model": "pong.game",
+    "pk": 11,
+    "fields": {
+      "game_type": "TOURNAMENT",
+      "status": "WAITING",
+      "session_id": "tournament_semi_2_sample3_sample4_1709323801",
+      "player1": 3,
+      "player2": 4,
+      "start_time": "2025-03-01T10:30:01Z",
+      "end_time": null,
+      "score_player1": 0,
+      "score_player2": 0,
+      "winner": null,
+      "tournament": 1,
+      "tournament_round": 0
+    }
   }
 ]
