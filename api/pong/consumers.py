@@ -8,7 +8,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from django.utils import timezone
 
 from .base_consumers import BaseGameConsumer
-from .game_logic import MultiplayerPongGame
+from .game_logic import MultiplayerPongGame, TournamentPongGame
 from .models import Game, User, TournamentSession, TournamentParticipant
 from .serializers import TournamentParticipantSerializer
 
@@ -198,22 +198,26 @@ class GameConsumer(BaseGameConsumer):
             return None
 
 
-# TODO: BaseGameConsumerを継承してシンプルに
+# NOTE: セッションIDの形式変更済：tournament_{tournament_id}_{round_type}_{player1}_{player2}_{timestamp}
 class TournamentGameConsumer(AsyncWebsocketConsumer):
     games = {}  # セッションIDをキーとしたゲームインスタンスの管理
 
     async def connect(self):
         # URL routeからパラメータを取得
-        self.session_id = self.scope["url_route"]["kwargs"]["session_id"]
+        self.round_type = self.scope["url_route"]["kwargs"]["round_type"]
+        self.tournament_id = self.scope["url_route"]["kwargs"]["tournament_id"]
         self.username = self.scope["url_route"]["kwargs"]["username"]
         self.is_final = "final" in self.scope["url_route"]["pattern"].pattern
         self.game_type = "final" if self.is_final else "semi-final"
-        self.game_group_name = f"tournament_{self.game_type}_{self.session_id}"
+        self.game_group_name = f"tournament_game_{self.round_type}_{self.tournament_id}"
         self.game_task = None
 
+        print(f"接続試行: session_id={self.session_id}, username={self.username}, type={self.game_type}")
+   
         # トーナメントセッションの検証
         is_valid = await self.validate_tournament_session()
         if not is_valid:
+            print(f"検証失敗: session_id={self.session_id}, username={self.username}")
             await self.close()
             return
 
@@ -229,7 +233,7 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
         if self.session_id not in self.games:
             players = await self.get_match_players()
             if players and len(players) == 2:
-                self.games[self.session_id] = MultiplayerPongGame(
+                self.games[self.session_id] = TournamentPongGame(
                     session_id=self.session_id,
                     player1_name=players[0],
                     player2_name=players[1],
@@ -628,6 +632,17 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
         player_list = list(participants)
         random.shuffle(player_list)
 
+        # 各参加者のブラケット位置を一括で更新
+        for i, participant in enumerate(player_list):
+            # 最初の2人は準決勝1（positions 1, 2）、次の2人は準決勝2（positions 3, 4）
+            participant.bracket_position = i + 1
+            participant.save()
+
+        # トーナメントのステータスを更新
+        tournament.status = "IN_PROGRESS"
+        tournament.started_at = timezone.now()
+        tournament.save()
+
         # 準決勝の2試合を作成
         matches = [
             {
@@ -662,12 +677,11 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
 
             # 4人揃ったら準備開始を通知
             if status["participants"].__len__() >= 4:
-                # 対戦カードを生成
-                matches = await self.create_tournament_matches(
-                    tournament, tournament.participants.all()
-                )
+                # 対戦カードを生成（ブラケット位置を設定し、トーナメント状態を更新）
+                matches = await self.setup_tournament(tournament, tournament.participants.all())
 
                 # ステータスに対戦カード情報を追加
+                status = await self.get_tournament_status(tournament)  # 更新されたステータスを再取得
                 status["matches"] = matches
 
                 await self.channel_layer.group_send(
@@ -678,6 +692,64 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
             await self.send(json.dumps({"type": "error", "message": "User not found"}))
         except Exception as e:
             await self.send(json.dumps({"type": "error", "message": str(e)}))
+
+    @database_sync_to_async
+    def setup_tournament(self, tournament, participants):
+        """トーナメントの初期設定を行う"""
+        # 参加者をシャッフルして2試合に分ける
+        player_list = list(participants)
+        random.shuffle(player_list)
+
+        # 各参加者のブラケット位置を一括で更新
+        for i, participant in enumerate(player_list):
+            # 最初の2人は準決勝1（positions 1, 2）、次の2人は準決勝2（positions 3, 4）
+            participant.bracket_position = i + 1
+            participant.save()
+
+        # トーナメントのステータスを更新
+        tournament.status = "IN_PROGRESS"
+        tournament.started_at = timezone.now()
+        tournament.save()
+
+        # 準決勝の試合をデータベースに保存
+        semi_final_1 = Game.objects.create(
+            game_type="TOURNAMENT",
+            status="WAITING",
+            session_id=f"tournament_semi1_{tournament.id}_{int(time.time())}",
+            player1=player_list[0].user,
+            player2=player_list[1].user,
+            tournament=tournament,
+            tournament_round=0  # 準決勝
+        )
+
+        semi_final_2 = Game.objects.create(
+            game_type="TOURNAMENT",
+            status="WAITING",
+            session_id=f"tournament_semi2_{tournament.id}_{int(time.time())}",
+            player1=player_list[2].user,
+            player2=player_list[3].user,
+            tournament=tournament,
+            tournament_round=0  # 準決勝
+        )
+
+        # クライアントに返す対戦カード情報
+        matches = [
+            {
+                "id": semi_final_1.session_id,
+                "round": 0,  # 0: 準決勝
+                "player1": player_list[0].user.username,
+                "player2": player_list[1].user.username,
+                "status": "pending",
+            },
+            {
+                "id": semi_final_2.session_id,
+                "round": 0,
+                "player1": player_list[2].user.username,
+                "player2": player_list[3].user.username,
+                "status": "pending",
+            },
+        ]
+        return matches
 
     async def handle_leave_tournament(self, username):
         """トーナメント離脱処理"""

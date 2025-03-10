@@ -60,17 +60,11 @@ const WaitingPage = new Page({
               statusElement.textContent = `Waiting for players... (${data.participants.length}/4)`;
             }
           } else if (data.type === 'tournament_ready') {
-            console.log('Tournament ready:', data);
             const username = user.username;
-
-            if (!username) {
-              console.error('No username found');
+            const tournamentId = data.sessionId;
+      
+            if (!username || !tournamentId) {
               window.location.href = '/tournament';
-              return;
-            }
-
-            if (!data.matches) {
-              console.error('No matches data received:', data);
               return;
             }
 
@@ -78,10 +72,10 @@ const WaitingPage = new Page({
             const myMatch = matches.find(
               (match) => match.player1 === username || match.player2 === username
             );
-
+      
             if (myMatch) {
-              const gameUrl = `/tournament/game?session=${data.sessionId}&isPlayer1=${username === myMatch.player1}&matchId=${myMatch.id}&round=${myMatch.round}`;
-              console.log('Navigating to tournament game:', gameUrl);
+              const roundType = myMatch.round === 0 ? 'semi1' : 'semi2';
+              const gameUrl = `/tournament/game?tournamentId=${tournamentId}&round=${roundType}&isPlayer1=${username === myMatch.player1}`;
               window.location.href = gameUrl;
             } else {
               console.error('Match not found for user');
