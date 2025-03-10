@@ -212,12 +212,13 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
         self.game_group_name = f"tournament_game_{self.round_type}_{self.tournament_id}"
         self.game_task = None
 
-        print(f"接続試行: session_id={self.session_id}, username={self.username}, type={self.game_type}")
-   
+        self.game_instance_id = f"{self.tournament_id}_{self.round_type}"
+        print(f"接続試行: tournament_id={self.tournament_id}, username={self.username}, type={self.game_type}")
+
         # トーナメントセッションの検証
         is_valid = await self.validate_tournament_session()
         if not is_valid:
-            print(f"検証失敗: session_id={self.session_id}, username={self.username}")
+            print(f"検証失敗: tournament_id={self.tournament_id}, username={self.username}")
             await self.close()
             return
 
@@ -226,15 +227,15 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
         print(
-            f"Player {self.username} connected to tournament {self.game_type} game {self.session_id}"
+            f"Player {self.username} connected to tournament {self.game_type} game {self.tournament_id}"
         )
 
         # ゲームインスタンスの初期化
-        if self.session_id not in self.games:
+        if self.game_instance_id not in self.games:
             players = await self.get_match_players()
             if players and len(players) == 2:
-                self.games[self.session_id] = TournamentPongGame(
-                    session_id=self.session_id,
+                self.games[self.game_instance_id] = TournamentPongGame(
+                    game_instance_id=self.game_instance_id,  # ここはゲームロジックの初期化用
                     player1_name=players[0],
                     player2_name=players[1],
                 )
@@ -252,12 +253,12 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
                 pass
 
         print(
-            f"Player {self.username} disconnected from tournament {self.game_type} game {self.session_id}"
+            f"Player {self.username} disconnected from tournament {self.game_type} game {self.tournament_id}"
         )
 
         # ゲームが存在する場合、切断による敗北処理を実行
-        if self.session_id in self.games:
-            game = self.games[self.session_id]
+        if self.game_instance_id in self.games:
+            game = self.games[self.game_instance_id]
             game.handle_disconnection(self.username)
 
             # 残ったプレイヤーに切断を通知
@@ -269,14 +270,14 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
             # ゲーム状態を保存して終了
             await self.save_game_state(game)
             await self.handle_tournament_db_update(game)
-            del self.games[self.session_id]
+            del self.games[self.game_instance_id]
 
         await self.channel_layer.group_discard(self.game_group_name, self.channel_name)
 
     async def receive(self, text_data):
         try:
             data = json.loads(text_data)
-            game = self.games.get(self.session_id)
+            game = self.games.get(self.game_instance_id)
 
             if game and data["type"] == "move":
                 game.move_player(username=self.username, new_x=data["position"])
@@ -301,8 +302,8 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
         """ゲーム状態の定期更新ループ"""
         try:
             while True:
-                if self.session_id in self.games:
-                    game = self.games[self.session_id]
+                if self.game_instance_id in self.games:
+                    game = self.games[self.game_instance_id]
                     state = game.update(delta_time=0.016)
 
                     await self.channel_layer.group_send(
@@ -331,7 +332,7 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
 
     async def game_state(self, event):
         """ゲーム状態の更新をクライアントに送信"""
-        if self.games.get(self.session_id):
+        if self.games.get(self.game_instance_id):
             await self.send(
                 text_data=json.dumps(
                     {
@@ -364,7 +365,7 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
                     "is_final": self.is_final,
                     "next_stage": "final" if not self.is_final else "complete",
                     "game_type": self.game_type,
-                    "tournament_id": self.session_id,
+                    "tournament_id": self.tournament_id,
                 }
             )
         )
@@ -373,7 +374,7 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
     def validate_tournament_session(self):
         """トーナメントセッションとプレイヤーの参加資格を検証"""
         try:
-            tournament = TournamentSession.objects.get(id=self.session_id)
+            tournament = TournamentSession.objects.get(id=self.tournament_id)
             participant = TournamentParticipant.objects.get(
                 tournament=tournament, user__username=self.username
             )
@@ -401,7 +402,7 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
     def get_match_players(self):
         """現在の試合の対戦プレイヤーを取得"""
         try:
-            tournament = TournamentSession.objects.get(id=self.session_id)
+            tournament = TournamentSession.objects.get(id=self.tournament_id)
 
             # 準決勝か決勝かで取得条件を変更
             if self.is_final:
@@ -456,7 +457,7 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
     def handle_tournament_db_update(self, game):
         """トーナメントゲーム終了時のデータベース更新"""
         try:
-            tournament = TournamentSession.objects.get(id=self.session_id)
+            tournament = TournamentSession.objects.get(id=self.tournament_id)
             winner_name = game.get_winner()
 
             if not winner_name:
@@ -507,7 +508,7 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
             "winner": winner_name,
             "is_final": self.is_final,
             "game_type": self.game_type,
-            "tournament_id": self.session_id,
+            "tournament_id": self.tournament_id,
             "scores": {
                 game.player1_name: game.score[game.player1_name],
                 game.player2_name: game.score[game.player2_name],
@@ -531,7 +532,7 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_send(self.game_group_name, message)
 
         # トーナメント全体のグループにも結果を通知
-        tournament_group = f"tournament_{self.session_id}"
+        tournament_group = f"tournament_{self.tournament_id}"
         await self.channel_layer.group_send(
             tournament_group,
             {

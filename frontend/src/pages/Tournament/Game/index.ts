@@ -51,7 +51,7 @@ const GamePage = new Page({
 
       // ゲーム設定の作成
       const gameConfig: IGameConfig = {
-        sessionId: `tournament_${tournamentId}_${roundType}_${username}_opponent_${Date.now()}`,
+        sessionId: `${tournamentId}_${roundType}`,
         username,
         isPlayer1,
         wsEndpoint,

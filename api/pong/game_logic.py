@@ -215,15 +215,15 @@ class MultiplayerPongGame(BaseGameLogic):
 class TournamentPongGame(BaseGameLogic):
     """トーナメント向けゲームロジック"""
 
-    def __init__(self, session_id: str, player1_name: str, player2_name: str, tournament_round: int = 0):
+    def __init__(self, game_instance_id: str, player1_name: str, player2_name: str, tournament_round: int = 0):
         """トーナメント固有の初期化処理
         Args:
-            session_id: ゲームセッションID
+            game_instance_id: ゲームインスタンスを識別するID（tournament_id_round_type）
             player1_name: プレイヤー1のユーザー名
             player2_name: プレイヤー2のユーザー名
             tournament_round: トーナメントラウンド (0: 準決勝, 1: 決勝)
         """
-        super().__init__(session_id)
+        super().__init__(game_instance_id)
         self.player1_name = player1_name
         self.player2_name = player2_name
         self.tournament_round = tournament_round
@@ -240,21 +240,22 @@ class TournamentPongGame(BaseGameLogic):
         self.score = {player1_name: 0, player2_name: 0}
 
         # トーナメント関連の状態
-        self.tournament_id = self._extract_tournament_id(session_id)
-        self.is_final = tournament_round == 1
+        self.tournament_id = self._extract_tournament_id(game_instance_id)
+        self.round_type = self._extract_round_type(game_instance_id)
+        self.is_final = tournament_round == 1 or "final" in self.round_type
 
-    def _extract_tournament_id(self, session_id: str) -> str:
-        """セッションIDからトーナメントIDを抽出"""
-        parts = session_id.split('_')
-        if len(parts) >= 3 and parts[0] == "tournament":
-            return parts[1]  # tournament_ID_round_player1_player2_timestamp
+    def _extract_tournament_id(self, game_instance_id: str) -> str:
+        """ゲームインスタンスIDからトーナメントIDを抽出"""
+        parts = game_instance_id.split('_')
+        if len(parts) >= 1:
+            return parts[0]  # tournament_id_round_type
         return ""
         
-    def _extract_round_type(self, session_id: str) -> str:
-        """セッションIDからラウンドタイプを抽出"""
-        parts = session_id.split('_')
-        if len(parts) >= 4 and parts[0] == "tournament":
-            return parts[2]  # tournament_ID_round_player1_player2_timestamp
+    def _extract_round_type(self, game_instance_id: str) -> str:
+        """ゲームインスタンスIDからラウンドタイプを抽出"""
+        parts = game_instance_id.split('_')
+        if len(parts) >= 2:
+            return parts[1]  # tournament_id_round_type
         return ""
 
     def update(self, delta_time: float) -> Dict:

@@ -3,7 +3,7 @@ import { BaseGameManager } from '@/models/Services/BaseGameManager';
 import { GameRenderer } from '@/models/Services/game_renderer';
 import { IGameConfig, IGameState } from '@/models/Game/type';
 
-// # TODO: セッションIDの形式変更適用前：tournament_{tournament_id}_{round_type}_{player1}_{player2}_{timestamp}
+// FIXME: WIP. プロパティ修正中
 export class TournamentGameManager extends BaseGameManager {
   private renderer: GameRenderer;
   private scoreBoard: HTMLElement | null;
@@ -12,6 +12,8 @@ export class TournamentGameManager extends BaseGameManager {
   private round: number; // 0: 準決勝, 1: 決勝
   private tournamentId: string;
   private roundType: string;
+  private lastGameState: IGameState | null = null;
+
 
   constructor(config: IGameConfig, container: HTMLElement, roundType: string) {
     super(config);
@@ -25,12 +27,13 @@ export class TournamentGameManager extends BaseGameManager {
     this.updateRoundDisplay();
   }
 
-  private extractTournamentId(sessionId: string): string {
-    const parts = sessionId.split('_');
-    if (parts.length >= 3 && parts[0] === 'tournament') {
-      return parts[1]; // tournament_ID_round_player1_player2_timestamp
+  private extractTournamentId(game_instance_id: string): string {
+    const parts = game_instance_id.split('_');
+    // 新しい形式: "{tournament_id}_{round_type}"
+    if (parts.length >= 1) {
+      return parts[0];
     }
-    return sessionId; // フォールバック
+    return game_instance_id; // フォールバック
   }
 
   private updateRoundDisplay(): void {
@@ -159,12 +162,19 @@ export class TournamentGameManager extends BaseGameManager {
       : `${opponentScore} - ${playerScore}`;
   }
 
+  // getPlayerNames メソッドの修正 - プレイヤー情報の取得方法を変更
   private getPlayerNames(): [string, string] {
-    // セッションIDからプレイヤー名を抽出（形式: "tournament_player1_player2_tournamentId"）
-    const parts = this.config.sessionId.split('_');
-    if (parts.length >= 4) {
-      return [parts[1], parts[2]];
+    // セッションID自体からはプレイヤー名を抽出できなくなったため、
+    // ゲーム状態から取得するか、UI側から提供する必要があります
+    
+    // 以下はゲーム状態からプレイヤー名を取得する例
+    if (this.lastGameState && this.lastGameState.players) {
+      const playerNames = Object.keys(this.lastGameState.players);
+      if (playerNames.length >= 2) {
+        return [playerNames[0], playerNames[1]];
+      }
     }
+    
     // フォールバック: ユーザー名と "opponent"
     return [this.config.username, 'opponent'];
   }
