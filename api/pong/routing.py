@@ -1,7 +1,11 @@
 from django.urls import re_path
 
 from . import consumers
-from .tournament_consumers import TournamentGameConsumer, TournamentMatchmakingConsumer, TournamentWaitingFinalConsumer
+from .tournament_consumers import (
+    TournamentGameConsumer,
+    TournamentMatchmakingConsumer,
+    TournamentWaitingFinalConsumer,
+)
 
 websocket_urlpatterns = [
     re_path(r"ws/test/$", consumers.TestConsumer.as_asgi()),

@@ -1,16 +1,9 @@
-import asyncio
 import json
-import random
-import time
 
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
-from django.utils import timezone
 
 from .base_consumers import BaseGameConsumer
-from .game_logic import TournamentPongGame
-from .models import Game, User, TournamentSession, TournamentParticipant
-from .serializers import TournamentParticipantSerializer
 
 
 # NOTE: セッションID：tournament_{tournament_id}_{round_type}_{player1}_{player2}_{timestamp}
@@ -19,8 +12,8 @@ class TournamentGameConsumer(BaseGameConsumer):
     games = {}  # セッションIDをキーとしたゲームインスタンスの管理
 
     async def connect(self):
-        return 
-    
+        return
+
     async def disconnect(self, close_code):
         return
 
@@ -48,7 +41,6 @@ class TournamentGameConsumer(BaseGameConsumer):
     def save_game_state(self, game):
         """ゲーム状態をデータベースに保存"""
         return
-
 
 
 class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):

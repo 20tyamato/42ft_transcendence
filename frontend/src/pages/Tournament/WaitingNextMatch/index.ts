@@ -9,7 +9,7 @@ const WaitingNextMatchPage = new Page({
   },
   mounted: async ({ pg, user }) => {
     console.log('Tournament waiting next match page - placeholder implementation');
-    
+
     // 戻るボタンの機能だけ実装しておく
     const backButton = document.getElementById('back-button');
     if (backButton) {
@@ -17,7 +17,7 @@ const WaitingNextMatchPage = new Page({
         window.location.href = '/tournament';
       });
     }
-  }
+  },
 });
 
 export default WaitingNextMatchPage;

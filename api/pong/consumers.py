@@ -193,4 +193,3 @@ class GameConsumer(BaseGameConsumer):
         except Exception as e:
             print(f"Error creating multiplayer game: {e}")
             return None
-

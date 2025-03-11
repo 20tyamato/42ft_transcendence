@@ -12,7 +12,7 @@ const GamePage = new Page({
     // 最低限のURLパラメータ取得だけ残しておく
     const urlParams = new URLSearchParams(window.location.search);
     console.log('Game parameters:', Object.fromEntries(urlParams));
-  }
+  },
 });
 
 export default GamePage;

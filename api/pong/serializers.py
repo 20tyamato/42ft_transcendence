@@ -14,7 +14,10 @@ def generate_session_id(game_type, player1_username, player2_username=None):
 
     return f"{game_type.lower()}_{player1_username}_{p2}_{timestamp}"
 
-def generate_tournament_session_id(tournament_id, round_type, player1_username, player2_username):
+
+def generate_tournament_session_id(
+    tournament_id, round_type, player1_username, player2_username
+):
     """トーナメント用セッションID生成関数"""
     timestamp = int(time.time())
     return f"tournament_{tournament_id}_{round_type}_{player1_username}_{player2_username}_{timestamp}"
@@ -91,6 +94,7 @@ class UserAvatarSerializer(serializers.ModelSerializer):
                 else obj.avatar.url
             )
         return None
+
 
 # NOTE: セッションIDの形式変更済：tournament_{tournament_id}_{round_type}_{player1}_{player2}_{timestamp}
 class GameSerializer(serializers.ModelSerializer):
@@ -186,7 +190,9 @@ class GameSerializer(serializers.ModelSerializer):
         # セッションIDの生成
         if game_type == "TOURNAMENT":
             tournament = validated_data.get("tournament")
-            round_type = "semi1" if validated_data.get("tournament_round") == 0 else "final"
+            round_type = (
+                "semi1" if validated_data.get("tournament_round") == 0 else "final"
+            )
             validated_data["session_id"] = generate_tournament_session_id(
                 tournament.id, round_type, player1.username, player2_username
             )
