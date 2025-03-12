@@ -18,16 +18,56 @@ export class TournamentGameManager extends BaseGameManager {
 
   protected onInitialized(): Promise<void> {
     console.log('Tournament game initialized:', {
-      sessionId: this.config.sessionId,
-      username: this.config.username,
-      roundType: this.tournamentInfo.roundType,
-      tournamentId: this.tournamentInfo.tournamentId
+        sessionId: this.config.sessionId,
+        username: this.config.username,
+        roundType: this.tournamentInfo.roundType,
+        tournamentId: this.tournamentInfo.tournamentId
     });
     
     // ラウンド情報をUIに表示
     this.updateRoundDisplay();
     
-    return Promise.resolve();
+    // セッションIDを送信して初期化を開始
+    return new Promise((resolve, reject) => {
+        // 初期化完了イベントを監視
+        const initHandler = (data: any) => {
+            if (data.type === 'game_initialized') {
+                console.log('Game initialization confirmed by server');
+                this.wsService.removeMessageHandler('game_initialized', initHandler);
+                resolve();
+            }
+        };
+        
+        // エラーメッセージを監視
+        const errorHandler = (data: any) => {
+            if (data.type === 'error') {
+                console.error('Game initialization error:', data.message);
+                this.wsService.removeMessageHandler('error', errorHandler);
+                reject(new Error(data.message));
+            }
+        };
+        
+        // ハンドラを登録
+        this.wsService.addMessageHandler('game_initialized', initHandler);
+        this.wsService.addMessageHandler('error', errorHandler);
+        
+        // セッションID初期化メッセージを送信
+        console.log('Sending session_init with ID:', this.config.sessionId);
+        this.wsService.send({
+            type: 'session_init',
+            session_id: this.config.sessionId
+        });
+        
+        // タイムアウト設定（10秒）
+        setTimeout(() => {
+            this.wsService.removeMessageHandler('game_initialized', initHandler);
+            this.wsService.removeMessageHandler('error', errorHandler);
+            reject(new Error('Game initialization timeout'));
+        }, 10000);
+    }).catch(error => {
+        console.error('Failed to initialize game:', error);
+        return Promise.resolve(); // エラーでも続行
+    });
   }
 
   protected onStateUpdate(state: IGameState): void {

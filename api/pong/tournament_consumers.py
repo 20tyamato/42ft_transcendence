@@ -21,24 +21,115 @@ class TournamentGameConsumer(BaseGameConsumer):
     
     async def connect(self):
         """トーナメント特有の接続処理"""
-        await super().connect()
+        # URL パラメータの取得
+        self.round_type = self.scope["url_route"]["kwargs"].get("round_type", "")
+        self.tournament_id = self.scope["url_route"]["kwargs"].get("tournament_id", "")
+        self.username = self.scope["url_route"]["kwargs"].get("username", "")
         
-        if self.session_id not in self.games:
-            parts = self.session_id.split("_")
-            if len(parts) >= 5:
-                self.games[self.session_id] = MultiplayerPongGame(
-                    session_id=self.session_id,
-                    player1_name=parts[3],
-                    player2_name=parts[4],
-                )
+        # グループ名の設定
+        self.game_group_name = f"tournament_game_{self.tournament_id}_{self.round_type}"
+        
+        # グループへの参加
+        await self.channel_layer.group_add(self.game_group_name, self.channel_name)
+        await self.accept()
+        print(f"Player {self.username} connected to tournament game {self.tournament_id}, round {self.round_type}")
+        
+        # 初期状態ではセッションIDを未設定に
+        self.session_id = None
+        self.game_task = None
+    
+    async def receive(self, text_data):
+        """クライアントからのメッセージ受信処理"""
+        try:
+            data = json.loads(text_data)
+            message_type = data.get("type")
+
+            # セッションID初期化メッセージの処理
+            if message_type == "session_init":
+                self.session_id = data.get("session_id", "")
+                print(f"Session ID received from client: {self.session_id}")
+                
+                # セッションIDの検証
+                if not self.session_id or len(self.session_id.split("_")) < 5:
+                    await self.send(text_data=json.dumps({
+                        "type": "error", 
+                        "message": "Invalid session ID format"
+                    }))
+                    return
+                
+                # ゲームの初期化
+                await self.initialize_game()
+                return
             
+            # 移動コマンドなど他のメッセージは、セッションIDがある場合のみ処理
+            if not self.session_id:
+                await self.send(text_data=json.dumps({
+                    "type": "error", 
+                    "message": "Session not initialized. Send session_init first."
+                }))
+                return
+                
+            # その他のメッセージをBaseGameConsumerで処理
+            if message_type == "move":
+                await self.handle_move(data)
+            
+        except json.JSONDecodeError:
+            await self.send(text_data=json.dumps({"type": "error", "message": "Invalid JSON format"}))
+        except Exception as e:
+            await self.send(text_data=json.dumps({"type": "error", "message": str(e)}))
+    
+    async def initialize_game(self):
+        """ゲームの初期化処理"""
+        print(f"Initializing tournament game with session ID: {self.session_id}")
+        
+        # セッションIDからプレイヤー名を抽出
+        parts = self.session_id.split("_")
+        player1_name = parts[3]
+        player2_name = parts[4]
+        
+        # ゲームインスタンスの作成
+        if self.session_id not in self.games:
+            self.games[self.session_id] = MultiplayerPongGame(
+                session_id=self.session_id,
+                player1_name=player1_name,
+                player2_name=player2_name,
+            )
+            
+            # DBゲーム情報を設定
             game_instance = await self.get_or_create_tournament_game()
             if game_instance:
                 self.games[self.session_id].db_game_id = game_instance.id
         
         # ゲーム更新ループの開始
         self.game_task = asyncio.create_task(self.game_loop())
-    
+        
+        # 初期化完了を通知
+        await self.send(text_data=json.dumps({
+            "type": "game_initialized",
+            "session_id": self.session_id
+        }))
+
+    @database_sync_to_async
+    def get_or_fetch_session_id(self):
+        """セッションIDの取得またはセッション情報から生成"""
+        try:
+            # 既存のゲームからセッションIDを取得
+            game = Game.objects.filter(
+                tournament_id=self.tournament_id,
+                tournament_round=0 if self.round_type.startswith("semi") else 1,
+                status__in=["WAITING", "IN_PROGRESS"]
+            ).first()
+            
+            if game and game.session_id:
+                return game.session_id
+            
+            # フロントエンドからの初期メッセージを待つか、適切なエラー処理
+            return None
+            
+        except Exception as e:
+            print(f"Error getting tournament session ID: {e}")
+            return None
+
     async def disconnect(self, close_code):
         """トーナメント特有の切断処理"""
         # ゲームが存在する場合、切断処理を実行
@@ -67,6 +158,7 @@ class TournamentGameConsumer(BaseGameConsumer):
         
         await super().disconnect(close_code)
     
+
     async def game_loop(self):
         """トーナメント特有のゲームループ処理"""
         try:
