@@ -26,17 +26,12 @@ class TournamentGameConsumer(BaseGameConsumer):
         self.tournament_id = self.scope["url_route"]["kwargs"].get("tournament_id", "")
         self.username = self.scope["url_route"]["kwargs"].get("username", "")
         
-        # グループ名の設定
-        self.game_group_name = f"tournament_game_{self.tournament_id}_{self.round_type}"
+        # 初期状態
+        self.session_id = None
+        self.game_group_name = None  # 初期化時にはまだグループに入らない
         
-        # グループへの参加
-        await self.channel_layer.group_add(self.game_group_name, self.channel_name)
         await self.accept()
         print(f"Player {self.username} connected to tournament game {self.tournament_id}, round {self.round_type}")
-        
-        # 初期状態ではセッションIDを未設定に
-        self.session_id = None
-        self.game_task = None
     
     async def receive(self, text_data):
         """クライアントからのメッセージ受信処理"""
@@ -49,13 +44,11 @@ class TournamentGameConsumer(BaseGameConsumer):
                 self.session_id = data.get("session_id", "")
                 print(f"Session ID received from client: {self.session_id}")
                 
-                # セッションIDの検証
-                if not self.session_id or len(self.session_id.split("_")) < 5:
-                    await self.send(text_data=json.dumps({
-                        "type": "error", 
-                        "message": "Invalid session ID format"
-                    }))
-                    return
+                # セッションIDをもとにグループ名を設定
+                self.game_group_name = f"tournament_game_{self.session_id}"
+                
+                # グループへの参加（セッションID受信後）
+                await self.channel_layer.group_add(self.game_group_name, self.channel_name)
                 
                 # ゲームの初期化
                 await self.initialize_game()
