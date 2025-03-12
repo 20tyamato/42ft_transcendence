@@ -34,17 +34,18 @@ export const fetcher = async <Response = any, Body = Object>(
   options?: FetcherOptions<Body>
 ): Promise<{ data: Response; ok: boolean; status: number }> => {
   const token = storage.getUserToken();
+  const isFormData = options?.body instanceof FormData;
 
   try {
     const { body, ...fetchOptions } = options ?? {};
     const response = await fetch(`${API_URL}${url}`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        ...(!isFormData && { 'Content-Type': 'application/json' }),
         ...(token ? { Authorization: `Token ${token}` } : {}),
         ...fetchOptions.headers,
       },
-      body: body ? JSON.stringify(body) : undefined,
+      body: isFormData ? (body as FormData) : body ? JSON.stringify(body) : undefined,
       ...fetchOptions,
     });
     const isOk = response.ok;

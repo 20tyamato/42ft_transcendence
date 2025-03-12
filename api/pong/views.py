@@ -62,6 +62,36 @@ class UserAvatarUpdateView(generics.RetrieveUpdateAPIView):
     def get_object(self):
         return self.request.user
 
+    def patch(self, request):
+        user = request.user
+        if "avatar" not in request.FILES:
+            return Response(
+                {"error": "アバター画像が提供されていません。"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        avatar_file = request.FILES["avatar"]
+
+        # 画像ファイルの検証
+        if not avatar_file.content_type.startswith("image/"):
+            return Response(
+                {"error": "アップロードされたファイルは画像ではありません。"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # 画像サイズの制限（例：5MB）
+        if avatar_file.size > 5 * 1024 * 1024:
+            return Response(
+                {"error": "画像サイズは5MB以下にしてください。"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user.avatar = avatar_file
+        user.save()
+
+        serializer = self.get_serializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class UserAvatarRetrieveView(generics.RetrieveAPIView):
     serializer_class = UserAvatarSerializer
