@@ -21,24 +21,72 @@
   padding: 2rem;
 }
 
-.btn-primary {
-  background-color: #4e73df;
-  border-color: #4e73df;
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(0, 0, 0, 0.1);
+  border-top: 5px solid #4e73df;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
 }
 
-.btn-primary:hover {
-  background-color: #2e59d9;
-  border-color: #2653d4;
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-.text-center {
-  text-align: center;
+.players-list {
+  max-height: 250px;
+  overflow-y: auto;
 }
 
-.d-flex {
+.player-item {
   display: flex;
+  align-items: center;
+  padding: 8px 12px;
 }
 
-.justify-content-center {
-  justify-content: center;
+.player-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 12px;
+  object-fit: cover;
+}
+
+.player-name {
+  font-weight: 500;
+  margin-bottom: 0;
+}
+
+.ready-status {
+  margin-left: auto;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+}
+
+.ready-yes {
+  background-color: #1cc88a;
+  color: white;
+}
+
+.waiting-status {
+  margin-bottom: 25px;
+}
+
+#player-count {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.btn-danger {
+  background-color: #e74a3b;
+  border-color: #e74a3b;
+}
+
+.btn-danger:hover {
+  background-color: #d52a1a;
+  border-color: #c91e0a;
 }
