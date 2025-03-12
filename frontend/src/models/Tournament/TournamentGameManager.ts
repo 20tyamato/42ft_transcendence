@@ -165,15 +165,15 @@ export class TournamentGameManager extends BaseGameManager {
     localStorage.setItem('gameMode', 'tournament');
 
     // 準決勝か決勝かに応じて遷移先を変える
-    setTimeout(() => {
-      if (this.tournamentInfo.roundType.startsWith('semi')) {
-        // 準決勝の場合、決勝待機画面に遷移
-        window.location.href = `/tournament/waiting-next-match?tournamentId=${this.tournamentInfo.tournamentId}`;
-      } else {
-        // 決勝の場合、結果画面に遷移
-        window.location.href = '/result';
-      }
-    }, 1000);
+    // setTimeout(() => {
+    //   if (this.tournamentInfo.roundType.startsWith('semi')) {
+    //     // 準決勝の場合、決勝待機画面に遷移
+    //     window.location.href = `/tournament/waiting-next-match?tournamentId=${this.tournamentInfo.tournamentId}`;
+    //   } else {
+    //     // 決勝の場合、結果画面に遷移
+    //     window.location.href = '/result';
+    //   }
+    // }, 1000);
   }
 
   protected onCleanup(): void {
