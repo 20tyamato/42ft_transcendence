@@ -210,18 +210,3 @@ class MultiplayerPongGame(BaseGameLogic):
             0,
             -self.INITIAL_BALL_SPEED * random.choice([-1, 1]),
         )
-
-
-# NOTE: セッションIDの形式：tournament_{tournament_id}_{round_type}_{player1}_{player2}_{timestamp}
-class TournamentPongGame(BaseGameLogic):
-    """トーナメント向けゲームロジック"""
-
-    def __init__(
-        self,
-        game_instance_id: str,
-        player1_name: str,
-        player2_name: str,
-        tournament_round: int = 0,
-    ):
-        """トーナメント固有の初期化処理"""
-        return
