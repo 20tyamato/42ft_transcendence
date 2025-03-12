@@ -431,7 +431,7 @@
     "fields": {
       "game_type": "TOURNAMENT",
       "status": "IN_PROGRESS",
-      "session_id": "tournament_semi_1_sample1_sample2_1709323800",
+      "session_id": "tournament_1_semi1_sample1_sample2_1709323800",
       "player1": 1,
       "player2": 2,
       "start_time": "2025-03-01T10:30:00Z",
@@ -449,7 +449,7 @@
     "fields": {
       "game_type": "TOURNAMENT",
       "status": "WAITING",
-      "session_id": "tournament_semi_2_sample3_sample4_1709323801",
+      "session_id": "tournament_1_semi2_sample3_sample4_1709323801",
       "player1": 3,
       "player2": 4,
       "start_time": "2025-03-01T10:30:01Z",
