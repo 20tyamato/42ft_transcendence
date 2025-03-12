@@ -13,9 +13,6 @@ export interface IRankingUser {
   level: number;
 }
 
-// ===== Tournament =====
-// TODO: initプロパティ
-
 // FIXME: RM???
 export interface IBlockchainScore {
   txHash: string;

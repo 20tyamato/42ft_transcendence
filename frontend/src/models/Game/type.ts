@@ -59,3 +59,10 @@ export interface IGameResult {
 }
 
 export type IGameMode = 'singleplayer' | 'multiplayer' | 'tournament';
+
+// ===== Tournament =====
+export interface ITournamentInfo {
+  tournamentId: string;
+  roundType: string;
+  matchNumber?: number;
+}
