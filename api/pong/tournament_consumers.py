@@ -52,8 +52,8 @@ class TournamentGameConsumer(BaseGameConsumer):
 class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
     """トーナメント参加者のマッチメイキングを担当するコンシューマ"""
     
-    # クラス変数として待機中の参加者を管理
-    waiting_players = []
+    # 現在アクティブなトーナメントのID（WAITING_PLAYERS状態のもの）
+    active_tournament_id = None
     
     async def connect(self):
         """WebSocket接続時の処理"""
@@ -109,86 +109,204 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
             }))
             return
         
+        # アクティブなトーナメントを取得または作成
+        tournament_id, is_new = await self.get_or_create_active_tournament()
+        
         # 既に参加しているかチェック
-        already_joined = any(p["username"] == username for p in self.waiting_players)
-        if already_joined:
+        if not is_new:
+            already_joined = await self.check_already_joined(tournament_id, username)
+            if already_joined:
+                await self.send(json.dumps({
+                    "type": "error", 
+                    "message": "Already joined tournament"
+                }))
+                return
+        
+        # 参加者をデータベースに登録
+        participant_added = await self.add_tournament_participant(tournament_id, username)
+        if not participant_added:
             await self.send(json.dumps({
                 "type": "error", 
-                "message": "Already joined tournament"
+                "message": "Failed to join tournament"
             }))
             return
         
-        # プレイヤーリストに追加（参加した時点でready状態）
-        player_info = {
-            "consumer": self,
-            "username": username,
-            "display_name": user_data["display_name"],
-            "is_ready": True  # 参加した時点でready
-        }
-        self.waiting_players.append(player_info)
-        
-        # 参加者数を計算
-        player_count = len(self.waiting_players)
+        # 参加者数を取得
+        player_count = await self.get_participant_count(tournament_id)
         
         # 全参加者に現在の状況を通知
-        await self.broadcast_waiting_status()
+        await self.broadcast_waiting_status(tournament_id)
         
-        # 参加者がMAX_PLAYERS人（4人）に達したらトーナメントを開始
+        # 参加者が4人に達したらトーナメントを開始
         if player_count >= 4:
-            await self.create_tournament()
+            await self.start_tournament(tournament_id)
     
     async def handle_leave_tournament(self, username):
         """トーナメント離脱処理"""
-        # 待機中のプレイヤーから削除
-        self.waiting_players = [
-            p for p in self.waiting_players if p["username"] != username
-        ]
+        # 現在アクティブなトーナメントから参加者を削除
+        if TournamentMatchmakingConsumer.active_tournament_id:
+            await self.remove_tournament_participant(
+                TournamentMatchmakingConsumer.active_tournament_id, username
+            )
         
         # 全参加者に現在の状況を通知
-        await self.broadcast_waiting_status()
+        if TournamentMatchmakingConsumer.active_tournament_id:
+            await self.broadcast_waiting_status(TournamentMatchmakingConsumer.active_tournament_id)
     
-    async def broadcast_waiting_status(self):
+    @database_sync_to_async
+    def get_or_create_active_tournament(self):
+        """アクティブなトーナメントを取得または作成"""
+        # 既存のWAITING_PLAYERS状態のトーナメントを検索
+        if TournamentMatchmakingConsumer.active_tournament_id:
+            try:
+                tournament = TournamentSession.objects.get(
+                    id=TournamentMatchmakingConsumer.active_tournament_id,
+                    status="WAITING_PLAYERS"
+                )
+                return tournament.id, False
+            except TournamentSession.DoesNotExist:
+                # 存在しない場合は新規作成
+                pass
+        
+        # 新しいトーナメントを作成
+        tournament = TournamentSession.objects.create(
+            status="WAITING_PLAYERS",
+            max_players=4
+        )
+        TournamentMatchmakingConsumer.active_tournament_id = tournament.id
+        print(f"Created new tournament: {tournament.id}")
+        return tournament.id, True
+    
+    @database_sync_to_async
+    def check_already_joined(self, tournament_id, username):
+        """ユーザーが既にトーナメントに参加しているかチェック"""
+        try:
+            user = User.objects.get(username=username)
+            return TournamentParticipant.objects.filter(
+                tournament_id=tournament_id,
+                user=user
+            ).exists()
+        except User.DoesNotExist:
+            return False
+    
+    @database_sync_to_async
+    def add_tournament_participant(self, tournament_id, username):
+        """トーナメントに参加者を追加"""
+        try:
+            tournament = TournamentSession.objects.get(id=tournament_id)
+            user = User.objects.get(username=username)
+            
+            # 既に参加している場合は何もしない
+            if TournamentParticipant.objects.filter(tournament=tournament, user=user).exists():
+                return True
+            
+            # 参加者を追加
+            TournamentParticipant.objects.create(
+                tournament=tournament,
+                user=user,
+                is_ready=True
+            )
+            return True
+        except Exception as e:
+            print(f"Error adding tournament participant: {e}")
+            return False
+    
+    @database_sync_to_async
+    def remove_tournament_participant(self, tournament_id, username):
+        """トーナメントから参加者を削除"""
+        try:
+            tournament = TournamentSession.objects.get(id=tournament_id)
+            user = User.objects.get(username=username)
+            
+            # 参加者を削除
+            TournamentParticipant.objects.filter(
+                tournament=tournament,
+                user=user
+            ).delete()
+            
+            return True
+        except Exception as e:
+            print(f"Error removing tournament participant: {e}")
+            return False
+    
+    @database_sync_to_async
+    def get_participant_count(self, tournament_id):
+        """トーナメントの参加者数を取得"""
+        try:
+            tournament = TournamentSession.objects.get(id=tournament_id)
+            return tournament.participants.count()
+        except Exception as e:
+            print(f"Error getting participant count: {e}")
+            return 0
+    
+    @database_sync_to_async
+    def get_tournament_participants(self, tournament_id):
+        """トーナメントの参加者を取得"""
+        try:
+            tournament = TournamentSession.objects.get(id=tournament_id)
+            participants = []
+            
+            for participant in tournament.participants.select_related('user').all():
+                participants.append({
+                    "username": participant.user.username,
+                    "display_name": participant.user.display_name,
+                    "is_ready": participant.is_ready,
+                    "joined_at": participant.joined_at.timestamp() if participant.joined_at else 0
+                })
+            
+            return participants
+        except Exception as e:
+            print(f"Error getting tournament participants: {e}")
+            return []
+    
+    async def broadcast_waiting_status(self, tournament_id):
         """待機中の全プレイヤーに現在の状況を通知"""
-        waiting_players_info = [
-            {
-                "username": p["username"],
-                "display_name": p["display_name"],
-                "is_ready": p["is_ready"]
-            } for p in self.waiting_players
-        ]
+        # 参加者情報を取得
+        participants = await self.get_tournament_participants(tournament_id)
+        
+        # 参加者数を取得
+        player_count = len(participants)
         
         status_message = {
             "type": "waiting_status",
-            "players": waiting_players_info,
-            "total_players": len(self.waiting_players),
+            "tournament_id": tournament_id,
+            "players": participants,
+            "total_players": player_count,
             "required_players": 4,
             "timestamp": int(time.time())
         }
         
-        # 全員に送信
-        for player in self.waiting_players:
-            await player["consumer"].send(json.dumps(status_message))
-
-    async def create_tournament(self):
-        """トーナメントを作成し、初回のマッチングを行う"""
-        # 1. 参加者選定
-        tournament_players = await self.select_tournament_players()
-        if not tournament_players:
-            return
-            
-        # 2. トーナメントセッション作成
-        tournament_id = await self.create_tournament_session(
-            [p["username"] for p in tournament_players]
+        # チャンネルグループにブロードキャスト
+        await self.channel_layer.group_send(
+            "tournament_group",
+            {
+                "type": "tournament_update",
+                "message": status_message
+            }
         )
+    
+    async def start_tournament(self, tournament_id):
+        """トーナメントを開始"""
+        # 参加者を取得
+        participants = await self.get_tournament_participants(tournament_id)
         
-        if not tournament_id:
-            await self.handle_tournament_creation_error(tournament_players)
+        if len(participants) < 4:
+            print(f"Not enough participants to start tournament: {len(participants)}/4")
             return
-            
-        # 3. 準決勝の組み合わせ生成
-        semifinal_matches = self.generate_semifinal_matchups(tournament_players, tournament_id)
         
-        # 4. 準決勝プレイヤーへの通知とブラケット位置更新
+        # トーナメントの状態を「IN_PROGRESS」に更新
+        tournament_started = await self.update_tournament_status(tournament_id, "IN_PROGRESS")
+        if not tournament_started:
+            print("Failed to update tournament status")
+            return
+        
+        # アクティブなトーナメントをリセット
+        TournamentMatchmakingConsumer.active_tournament_id = None
+        
+        # 準決勝の組み合わせ生成
+        semifinal_matches = self.generate_semifinal_matchups(participants, tournament_id)
+        
+        # 準決勝の対戦カードに基づいてブラケット位置を更新
         bracket_positions = {}
         
         # 準決勝1の通知
@@ -209,40 +327,35 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
             bracket_positions
         )
         
-        # 5. ブラケット位置の更新
+        # ブラケット位置の更新
         await self.update_bracket_positions(tournament_id, bracket_positions)
     
-    async def select_tournament_players(self):
-        """トーナメント参加者を選定"""
-        if len(self.waiting_players) < 4:
-            return None
+    @database_sync_to_async
+    def update_tournament_status(self, tournament_id, status):
+        """トーナメントの状態を更新"""
+        try:
+            tournament = TournamentSession.objects.get(id=tournament_id)
+            tournament.status = status
             
-        # 先頭の4人を選択
-        tournament_players = self.waiting_players[:4]
-        
-        # 待機リストから削除
-        self.waiting_players = self.waiting_players[4:]
-        
-        return tournament_players
+            if status == "IN_PROGRESS":
+                tournament.started_at = timezone.now()
+            elif status == "COMPLETED":
+                tournament.completed_at = timezone.now()
+                
+            tournament.save()
+            return True
+        except Exception as e:
+            print(f"Error updating tournament status: {e}")
+            return False
     
-    async def handle_tournament_creation_error(self, players):
-        """トーナメント作成エラー時の処理"""
-        error_message = {
-            "type": "error",
-            "message": "Failed to create tournament"
-        }
-        
-        for player in players:
-            await player["consumer"].send(json.dumps(error_message))
-    
-    def generate_semifinal_matchups(self, players, tournament_id):
+    def generate_semifinal_matchups(self, participants, tournament_id):
         """準決勝の組み合わせを生成"""
-        # プレイヤーをランダムに並び替え
-        random.shuffle(players)
+        # 参加者をランダムに並び替え
+        random.shuffle(participants)
         
         # 準決勝の組み合わせ
-        semifinal1_players = players[0:2]
-        semifinal2_players = players[2:4]
+        semifinal1_players = participants[0:2]
+        semifinal2_players = participants[2:4]
         
         # タイムスタンプ生成（両方のマッチで共通）
         timestamp = int(time.time())
@@ -289,8 +402,15 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
                 "bracket_position": position
             }
             
-            # プレイヤーに通知
-            await player["consumer"].send(json.dumps(match_data))
+            # チャンネルグループに特定ユーザー向けメッセージを送信
+            await self.channel_layer.group_send(
+                "tournament_group",
+                {
+                    "type": "tournament_update",
+                    "username": player["username"],
+                    "message": match_data
+                }
+            )
     
     @database_sync_to_async
     def get_user_data(self, username):
@@ -303,35 +423,6 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
                 "display_name": user.display_name
             }
         except User.DoesNotExist:
-            return None
-    
-    @database_sync_to_async
-    def create_tournament_session(self, usernames):
-        """トーナメントセッションをDBに作成"""
-        try:
-            # トーナメントセッションを作成
-            tournament = TournamentSession.objects.create(
-                status="WAITING_PLAYERS",
-                max_players=4
-            )
-            
-            # 参加者を登録
-            for username in usernames:
-                user = User.objects.get(username=username)
-                TournamentParticipant.objects.create(
-                    tournament=tournament,
-                    user=user,
-                    is_ready=True
-                )
-            
-            # トーナメント開始状態に更新
-            tournament.status = "IN_PROGRESS"
-            tournament.started_at = timezone.now()
-            tournament.save()
-            
-            return tournament.id
-        except Exception as e:
-            print(f"Error creating tournament: {e}")
             return None
     
     @database_sync_to_async
@@ -357,8 +448,14 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
     # グループメッセージ受信ハンドラ（他のコンシューマからの通知を受け取る）
     async def tournament_update(self, event):
         """トーナメント更新通知をクライアントに転送"""
-        await self.send(text_data=json.dumps(event))
-
+        # 特定ユーザー向けのメッセージなら、そのユーザーにだけ送信
+        if "username" in event and hasattr(self, "username"):
+            if event["username"] != self.username:
+                return
+        
+        # メッセージを転送
+        if "message" in event:
+            await self.send(text_data=json.dumps(event["message"]))
 
 # TODO
 class TournamentWaitingFinalConsumer(AsyncWebsocketConsumer):
