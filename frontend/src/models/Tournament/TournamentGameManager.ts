@@ -27,7 +27,7 @@ export class TournamentGameManager extends BaseGameManager {
     this.updateRoundDisplay();
 
     // セッションIDを送信して初期化を開始
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       // 初期化完了イベントを監視
       const initHandler = (data: any) => {
         if (data.type === 'game_initialized') {
@@ -65,7 +65,7 @@ export class TournamentGameManager extends BaseGameManager {
       }, 10000);
     }).catch((error) => {
       console.error('Failed to initialize game:', error);
-      return Promise.resolve(); // エラーでも続行
+      return Promise.resolve<void>(); // エラーでも続行
     });
   }
 
