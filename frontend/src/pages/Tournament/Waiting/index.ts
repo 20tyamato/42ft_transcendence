@@ -1,6 +1,7 @@
 // frontend/src/pages/Tournament/Waiting/index.ts
 import { WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
+import { logger } from '@/core/Logger';
 import AuthLayout from '@/layouts/AuthLayout';
 import { API_URL } from '@/config/config';
 
@@ -11,7 +12,7 @@ const WaitingPage = new Page({
     html: '/src/pages/Tournament/Waiting/index.html',
   },
   mounted: async ({ pg, user }) => {
-    console.log('Tournament waiting page - initializing');
+    logger.info('Tournament waiting page - initializing');
 
     // DOM要素の取得
     const connectionStatus = document.getElementById('connection-status');
@@ -26,7 +27,7 @@ const WaitingPage = new Page({
     const handleSocketMessage = (event: MessageEvent) => {
       try {
         const data = JSON.parse(event.data);
-        console.log('Received websocket message:', data);
+        logger.info('Received websocket message:', data);
 
         switch (data.type) {
           case 'error':
@@ -42,7 +43,7 @@ const WaitingPage = new Page({
             break;
         }
       } catch (e) {
-        console.error('Error parsing message:', e);
+        logger.info('Error parsing message:', e);
       }
     };
 
@@ -80,7 +81,7 @@ const WaitingPage = new Page({
 
     // マッチ発見時の処理
     const handleMatchFound = (data: any) => {
-      console.log('Match found!', data);
+      logger.info('Match found!', data);
 
       if (connectionStatus) {
         connectionStatus.textContent = 'Match found! Redirecting to game...';
@@ -102,7 +103,7 @@ const WaitingPage = new Page({
       socket = new WebSocket(`${WS_URL}/ws/tournament/`);
 
       socket.onopen = () => {
-        console.log('WebSocket connection established');
+        logger.info('WebSocket connection established');
 
         // トーナメント参加メッセージの送信
         socket.send(
@@ -120,14 +121,14 @@ const WaitingPage = new Page({
       socket.onmessage = handleSocketMessage;
 
       socket.onerror = (error) => {
-        console.error('WebSocket error:', error);
+        logger.error('WebSocket error:', error);
         if (connectionStatus) {
           connectionStatus.textContent = 'Connection error. Retrying...';
         }
       };
 
       socket.onclose = () => {
-        console.log('WebSocket connection closed');
+        logger.info('WebSocket connection closed');
         if (connectionStatus) {
           connectionStatus.textContent = 'Connection lost. Reconnecting...';
         }

@@ -1,6 +1,7 @@
 // frontend/src/pages/Tournament/WaitingNextMatch/index.ts
 import { WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
+import { logger } from '@/core/Logger';
 import AuthLayout from '@/layouts/AuthLayout';
 
 const WaitingNextMatchPage = new Page({
@@ -10,14 +11,14 @@ const WaitingNextMatchPage = new Page({
     html: '/src/pages/Tournament/WaitingNextMatch/index.html',
   },
   mounted: async ({ pg, user }) => {
-    console.log('Tournament waiting next match page mounting...');
+    logger.info('Tournament waiting next match page mounting...');
     
     // URLパラメーターの取得
     const urlParams = new URLSearchParams(window.location.search);
     const tournamentId = urlParams.get('tournamentId');
     
     if (!tournamentId) {
-      console.error('Tournament ID not provided');
+      logger.error('Tournament ID not provided');
       window.location.href = '/tournament';
       return;
     }
@@ -57,7 +58,7 @@ const WaitingNextMatchPage = new Page({
       socket = new WebSocket(wsEndpoint);
       
       socket.onopen = () => {
-        console.log('Connected to waiting final WebSocket');
+        logger.info('Connected to waiting final WebSocket');
         if (statusMessage) {
           statusMessage.textContent = 'Connected. Waiting for other semi-final to complete...';
         }
@@ -73,7 +74,7 @@ const WaitingNextMatchPage = new Page({
       socket.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          console.log('Received message:', data);
+          logger.info('Received message:', data);
           
           switch (data.type) {
             case 'waiting_status':
@@ -91,19 +92,19 @@ const WaitingNextMatchPage = new Page({
               break;
           }
         } catch (e) {
-          console.error('Error parsing WebSocket message:', e);
+          logger.error('Error parsing WebSocket message:', e);
         }
       };
       
       socket.onerror = (error) => {
-        console.error('WebSocket error:', error);
+        logger.error('WebSocket error:', error);
         if (statusMessage) {
           statusMessage.textContent = 'Connection error. Retrying...';
         }
       };
       
       socket.onclose = (event) => {
-        console.log('WebSocket closed:', event);
+        logger.info('WebSocket closed:', event);
         if (statusMessage) {
           statusMessage.textContent = 'Connection lost. Reconnecting...';
         }
@@ -187,7 +188,7 @@ const WaitingNextMatchPage = new Page({
     
     // ページアンマウント時のクリーンアップ
     return () => {
-      console.log('Tournament waiting next match page unmounting...');
+      logger.info('Tournament waiting next match page unmounting...');
       if (reconnectTimeout) {
         window.clearTimeout(reconnectTimeout);
       }

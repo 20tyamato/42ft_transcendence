@@ -2,7 +2,7 @@
 import { WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
-import { logger } from '@/core/Logger'
+import { logger } from '@/core/Logger';
 import { IGameConfig } from '@/models/Game/type';
 import { TournamentGameManager } from '@/models/Tournament/TournamentGameManager';
 
