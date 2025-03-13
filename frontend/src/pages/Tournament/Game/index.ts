@@ -2,6 +2,7 @@
 import { WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
+import { logger } from '@/core/Logger';
 import { IGameConfig } from '@/models/Game/type';
 import { TournamentGameManager } from '@/models/Tournament/TournamentGameManager';
 
@@ -12,7 +13,7 @@ const GamePage = new Page({
     html: '/src/pages/Tournament/Game/index.html',
   },
   mounted: async ({ pg, user }) => {
-    console.log('Tournament Game page mounting...');
+    logger.info('Tournament Game page mounting...');
 
     // URLパラメータの取得と検証
     const urlParams = new URLSearchParams(window.location.search);
@@ -23,7 +24,7 @@ const GamePage = new Page({
     const isPlayer1 = urlParams.get('isPlayer1') === 'true';
     const username = user.username;
 
-    console.log('Tournament game parameters:', {
+    logger.info('Tournament game parameters:', {
       tournamentId,
       roundType,
       matchNumber,
@@ -73,14 +74,14 @@ const GamePage = new Page({
 
       // ゲーム開始
       await gameManager.init();
-      console.log('Tournament game initialized successfully');
+      logger.info('Tournament game initialized successfully');
 
       // タイトル更新
       document.title = `Tournament ${roundType.startsWith('semi') ? 'Semi-Final' : 'Final'}`;
 
       // クリーンアップ関数を返す
       return () => {
-        console.log('Tournament game page unmounting, cleaning up resources...');
+        logger.info('Tournament game page unmounting, cleaning up resources...');
         gameManager.cleanup();
       };
     } catch (error) {

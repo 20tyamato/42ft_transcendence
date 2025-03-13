@@ -1,52 +1,141 @@
 /* frontend/src/pages/Tournament/WaitingNextMatch/style.css */
-.container {
-  padding-top: 2rem;
-}
-
-.card {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: 0.3s;
-  margin-bottom: 2rem;
-}
-
-.card:hover {
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-.card-header {
-  background-color: #f8f9fa;
-  border-bottom: 1px solid #e3e6f0;
-}
-
-.card-header h2 {
-  margin-bottom: 0;
-  font-weight: 500;
-  color: #333;
-}
-
-.card-body {
+.waiting-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
   padding: 2rem;
 }
 
-.btn-primary {
-  background-color: #4e73df;
-  border-color: #4e73df;
-  padding: 0.5rem 1.5rem;
-}
-
-.btn-primary:hover {
-  background-color: #2e59d9;
-  border-color: #2653d4;
-}
-
-.text-center {
+.waiting-box {
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+  padding: 2rem;
+  width: 100%;
+  max-width: 600px;
   text-align: center;
+  color: #fff;
 }
 
-.d-flex {
+.waiting-title {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #00d4ff;
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+}
+
+.status-section {
+  margin-bottom: 2rem;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(0, 212, 255, 0.15);
+  border-top: 5px solid #00d4ff;
+  border-radius: 50%;
+  margin: 0 auto 1rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+#status-message {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+#player-status {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.players-section {
+  margin-bottom: 2rem;
+}
+
+.players-section h3 {
+  margin-bottom: 1rem;
+  color: #00d4ff;
+}
+
+.players-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.player-item {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 1rem;
+  margin-bottom: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  transition: background-color 0.3s;
 }
 
-.justify-content-center {
-  justify-content: center;
+.player-item:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.player-item.you {
+  border-left: 3px solid #00d4ff;
+}
+
+.player-tag {
+  background-color: #00d4ff;
+  color: #000;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+
+.player-name {
+  flex-grow: 1;
+  text-align: left;
+  margin-left: 0.5rem;
+}
+
+.status-tag {
+  padding: 0.3rem 0.6rem;
+  border-radius: 3px;
+  font-size: 0.8rem;
+}
+
+.status-tag.ready {
+  background-color: #1cc88a;
+  color: white;
+}
+
+.status-tag.waiting {
+  background-color: #f6c23e;
+  color: #333;
+}
+
+.actions-section {
+  margin-top: 2rem;
+}
+
+.cancel-button {
+  padding: 0.8rem 1.5rem;
+  background: linear-gradient(45deg, #ff416c, #ff4b2b);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.cancel-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 75, 43, 0.5);
 }

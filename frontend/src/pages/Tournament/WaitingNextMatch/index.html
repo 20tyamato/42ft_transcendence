@@ -1,17 +1,34 @@
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-      <div class="card">
-        <div class="card-header">
-          <h2 class="text-center">Waiting for Final Match</h2>
-        </div>
-        <div class="card-body">
-          <p class="text-center">Tournament final match functionality is currently under redevelopment.</p>
-          <div class="d-flex justify-content-center">
-            <button id="back-button" class="btn btn-primary">Back to Tournament</button>
-          </div>
-        </div>
+<!-- frontend/src/pages/Tournament/WaitingNextMatch/index.html -->
+<div class="container waiting-container">
+  <div class="waiting-box">
+    <h1 class="waiting-title">Waiting for Final Match</h1>
+    
+    <div class="status-section">
+      <div class="loading-spinner"></div>
+      <p id="status-message">Waiting for other semi-final to complete...</p>
+      <div id="player-status">
+        <span id="completed-count">1</span>/2 semi-finals completed
       </div>
+    </div>
+    
+    <div class="players-section">
+      <h3>Finalists</h3>
+      <ul id="finalists-container" class="players-list">
+        <!-- 決勝進出プレイヤーがここに表示されます -->
+        <li class="player-item you">
+          <span class="player-tag">YOU</span>
+          <span class="player-name" id="your-name">Your Name</span>
+          <span class="status-tag ready">Ready</span>
+        </li>
+        <li class="player-item waiting">
+          <span class="player-name">Waiting for opponent...</span>
+          <span class="status-tag waiting">Waiting</span>
+        </li>
+      </ul>
+    </div>
+    
+    <div class="actions-section">
+      <button id="cancel-button" class="cancel-button">Return to Tournament</button>
     </div>
   </div>
 </div>

@@ -20,7 +20,7 @@ websocket_urlpatterns = [
         TournamentGameConsumer.as_asgi(),
     ),
     re_path(
-        r"ws/tournament/waiting_final/(?P<session_id>[^/]+)/(?P<username>[^/]+)/$",
+        r"ws/tournament/waiting_final/(?P<tournament_id>[^/]+)/(?P<username>[^/]+)/$",
         TournamentWaitingFinalConsumer.as_asgi(),
     ),
 ]

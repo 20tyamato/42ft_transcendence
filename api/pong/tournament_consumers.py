@@ -167,14 +167,38 @@ class TournamentGameConsumer(BaseGameConsumer):
     async def game_loop(self):
         """トーナメント特有のゲームループ処理"""
         try:
-            await super().game_loop()
-            # ゲーム終了時の処理
-            if self.session_id in self.games:
-                game = self.games[self.session_id]
-                await self.save_game_state(game)
-                del self.games[self.session_id]
+            # 親クラスのゲームループ実行
+            while True:
+                if self.session_id in self.games:
+                    game = self.games[self.session_id]
+                    state = game.update(delta_time=0.016)  # 約60FPS
+
+                    # グループにブロードキャスト
+                    await self.channel_layer.group_send(
+                        self.game_group_name, {"type": "game_state", "state": state}
+                    )
+
+                    # ゲーム終了判定
+                    if not game.is_active:
+                        print(f"Game ended for session {self.session_id}")
+                        # ゲーム状態を保存
+                        await self.save_game_state(game)
+                        # トーナメント進行状況を更新
+                        await self.update_tournament_progress()
+                        break
+
+                await asyncio.sleep(0.016)
+
+        except asyncio.CancelledError:
+            # ループのキャンセル（クリーンアップ）
+            pass
         except Exception as e:
-            print(f"Error in multiplayer game loop: {e}")
+            print(f"Error in tournament game loop: {e}")
+
+        # ゲーム終了後のクリーンアップ
+        if self.session_id in self.games:
+            del self.games[self.session_id]
+            print(f"Game instance removed for session {self.session_id}")
 
     @database_sync_to_async
     def get_or_create_tournament_game(self):
@@ -735,17 +759,196 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps(event["message"]))
 
 
-# TODO
 class TournamentWaitingFinalConsumer(AsyncWebsocketConsumer):
-    """決勝戦開始を待機するプレイヤー向けのWebSocketコンシューマ"""
+    """決勝戦開始を待機するプレイヤー向けのWebSocketコンシューマ
+    URL: /ws/tournament/waiting_final/{tournament_id}/{username}/
+    """
 
     async def connect(self):
-        return
+        """WebSocket接続時の処理"""
+        # URLパラメータの取得
+        self.tournament_id = self.scope["url_route"]["kwargs"].get("tournament_id", "")
+        self.username = self.scope["url_route"]["kwargs"].get("username", "")
+
+        # トーナメント待機グループに参加
+        self.group_name = f"tournament_final_waiting_{self.tournament_id}"
+        await self.channel_layer.group_add(self.group_name, self.channel_name)
+
+        # 接続を受け入れる
+        await self.accept()
+        print(
+            f"Player {self.username} connected to tournament final waiting for tournament {self.tournament_id}"
+        )
+
+        # 参加資格検証（準決勝勝者かどうか）
+        is_eligible = await self.verify_eligibility()
+        if not is_eligible:
+            await self.send(
+                text_data=json.dumps(
+                    {
+                        "type": "error",
+                        "message": "You are not eligible for the final match.",
+                    }
+                )
+            )
+            # 接続を閉じる（資格のないユーザー）
+            await self.close()
+            return
 
     async def disconnect(self, close_code):
-        # グループからの離脱
-        return
+        """WebSocket切断時の処理"""
+        # グループから離脱
+        await self.channel_layer.group_discard(self.group_name, self.channel_name)
+        print(f"Player {self.username} disconnected from tournament final waiting")
 
     async def receive(self, text_data):
         """クライアントからのメッセージ受信処理"""
-        return
+        try:
+            data = json.loads(text_data)
+            message_type = data.get("type")
+
+            # ステータス要求メッセージの処理
+            if message_type == "request_status":
+                status_data = await self.get_waiting_status()
+                await self.send(text_data=json.dumps(status_data))
+
+                # 両方の準決勝が完了していれば決勝戦の準備
+                if status_data.get("all_semifinals_completed", False):
+                    await self.check_and_prepare_final()
+
+        except json.JSONDecodeError:
+            await self.send(
+                text_data=json.dumps(
+                    {"type": "error", "message": "Invalid JSON format"}
+                )
+            )
+        except Exception as e:
+            await self.send(text_data=json.dumps({"type": "error", "message": str(e)}))
+
+    @database_sync_to_async
+    def verify_eligibility(self):
+        """ユーザーが決勝戦に参加する資格があるか検証"""
+        try:
+            # トーナメント情報の取得
+            tournament = TournamentSession.objects.get(id=self.tournament_id)
+            user = User.objects.get(username=self.username)
+
+            # ブラケット位置が5（決勝進出者）のプレイヤーであるか確認
+            participant = TournamentParticipant.objects.filter(
+                tournament=tournament,
+                user=user,
+                bracket_position=5,  # 決勝進出者の位置
+            ).exists()
+
+            return participant
+        except (TournamentSession.DoesNotExist, User.DoesNotExist):
+            return False
+        except Exception as e:
+            print(f"Error verifying eligibility: {e}")
+            return False
+
+    @database_sync_to_async
+    def get_waiting_status(self):
+        """決勝待機ステータスの取得"""
+        try:
+            tournament = TournamentSession.objects.get(id=self.tournament_id)
+
+            # 準決勝の完了数をカウント
+            completed_semifinals = Game.objects.filter(
+                tournament=tournament,
+                tournament_round=0,  # 準決勝
+                status="COMPLETED",
+            ).count()
+
+            # 決勝進出者リスト
+            finalists = []
+            for participant in TournamentParticipant.objects.filter(
+                tournament=tournament,
+                bracket_position=5,  # 決勝進出者
+            ).select_related("user"):
+                finalists.append(
+                    {
+                        "username": participant.user.username,
+                        "display_name": participant.user.display_name,
+                    }
+                )
+
+            # 全準決勝完了フラグ
+            all_semifinals_completed = completed_semifinals == 2
+
+            return {
+                "type": "waiting_status",
+                "tournament_id": self.tournament_id,
+                "completed_semifinals": completed_semifinals,
+                "all_semifinals_completed": all_semifinals_completed,
+                "finalists": finalists,
+                "timestamp": timezone.now().timestamp(),
+            }
+        except Exception as e:
+            print(f"Error getting waiting status: {e}")
+            return {"type": "error", "message": f"Error getting status: {str(e)}"}
+
+    async def check_and_prepare_final(self):
+        """決勝戦の準備が整っているか確認し、準備"""
+        try:
+            # 決勝戦情報の取得
+            final_match = await self.get_final_match()
+
+            if not final_match:
+                print("Final match not found or not ready")
+                return
+
+            # 決勝戦の準備が整っている場合、参加プレイヤーに通知
+            await self.channel_layer.group_send(
+                self.group_name,
+                {
+                    "type": "final_ready",
+                    "session_id": final_match["session_id"],
+                    "player1": final_match["player1"],
+                    "player2": final_match["player2"],
+                },
+            )
+        except Exception as e:
+            print(f"Error checking and preparing final: {e}")
+
+    @database_sync_to_async
+    def get_final_match(self):
+        """決勝戦情報の取得"""
+        try:
+            tournament = TournamentSession.objects.get(id=self.tournament_id)
+
+            # 決勝戦の取得
+            final_match = Game.objects.filter(
+                tournament=tournament,
+                tournament_round=1,  # 決勝
+                status__in=["WAITING", "IN_PROGRESS"],
+            ).first()
+
+            if not final_match:
+                return None
+
+            return {
+                "session_id": final_match.session_id,
+                "player1": final_match.player1.username,
+                "player2": final_match.player2.username,
+                "status": final_match.status,
+            }
+        except Exception as e:
+            print(f"Error getting final match: {e}")
+            return None
+
+    async def final_ready(self, event):
+        """決勝戦準備完了通知のハンドラー"""
+        # プレイヤー1か2かを判定
+        is_player1 = self.username == event["player1"]
+
+        # クライアントに通知
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "type": "final_ready",
+                    "session_id": event["session_id"],
+                    "is_player1": is_player1,
+                }
+            )
+        )
