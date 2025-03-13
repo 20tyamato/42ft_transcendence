@@ -110,10 +110,10 @@ const WaitingNextMatchPage = new Page({
         }
         
         // 再接続を試行（5秒後）
-        if (reconnectTimeout) {
-          window.clearTimeout(reconnectTimeout);
-        }
-        reconnectTimeout = window.setTimeout(connectWebSocket, 5000);
+        // if (reconnectTimeout) {
+        //   window.clearTimeout(reconnectTimeout);
+        // }
+        // reconnectTimeout = window.setTimeout(connectWebSocket, 5000);
       };
     };
     

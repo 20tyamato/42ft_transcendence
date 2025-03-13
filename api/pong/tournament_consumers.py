@@ -167,14 +167,39 @@ class TournamentGameConsumer(BaseGameConsumer):
     async def game_loop(self):
         """トーナメント特有のゲームループ処理"""
         try:
-            await super().game_loop()
-            # ゲーム終了時の処理
-            if self.session_id in self.games:
-                game = self.games[self.session_id]
-                await self.save_game_state(game)
-                del self.games[self.session_id]
+            # 親クラスのゲームループ実行
+            while True:
+                if self.session_id in self.games:
+                    game = self.games[self.session_id]
+                    state = game.update(delta_time=0.016)  # 約60FPS
+
+                    # グループにブロードキャスト
+                    await self.channel_layer.group_send(
+                        self.game_group_name, {"type": "game_state", "state": state}
+                    )
+
+                    # ゲーム終了判定
+                    if not game.is_active:
+                        print(f"Game ended for session {self.session_id}")
+                        # ゲーム状態を保存
+                        await self.save_game_state(game)
+                        # トーナメント進行状況を更新
+                        await self.update_tournament_progress()
+                        break
+
+                await asyncio.sleep(0.016)
+                
+        except asyncio.CancelledError:
+            # ループのキャンセル（クリーンアップ）
+            pass
         except Exception as e:
-            print(f"Error in multiplayer game loop: {e}")
+            print(f"Error in tournament game loop: {e}")
+
+        # ゲーム終了後のクリーンアップ
+        if self.session_id in self.games:
+            del self.games[self.session_id]
+            print(f"Game instance removed for session {self.session_id}")
+
 
     @database_sync_to_async
     def get_or_create_tournament_game(self):
