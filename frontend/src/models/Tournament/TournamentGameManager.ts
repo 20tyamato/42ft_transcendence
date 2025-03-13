@@ -2,8 +2,7 @@
 import { BaseGameManager } from '@/models/Services/BaseGameManager';
 import { GameRenderer } from '@/models/Services/game_renderer';
 import { IGameConfig, IGameState, ITournamentInfo } from '@/models/Game/type';
-import { logger } from '@/core/Logger'
-
+import { logger } from '@/core/Logger';
 
 export class TournamentGameManager extends BaseGameManager {
   private renderer: GameRenderer;

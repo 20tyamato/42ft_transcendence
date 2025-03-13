@@ -12,29 +12,29 @@ const WaitingNextMatchPage = new Page({
   },
   mounted: async ({ pg, user }) => {
     logger.info('Tournament waiting next match page mounting...');
-    
+
     // URLパラメーターの取得
     const urlParams = new URLSearchParams(window.location.search);
     const tournamentId = urlParams.get('tournamentId');
-    
+
     if (!tournamentId) {
       logger.error('Tournament ID not provided');
       window.location.href = '/tournament';
       return;
     }
-    
+
     // DOM要素の取得
     const statusMessage = document.getElementById('status-message');
     const completedCount = document.getElementById('completed-count');
     const yourName = document.getElementById('your-name');
     const finalistsContainer = document.getElementById('finalists-container');
     const cancelButton = document.getElementById('cancel-button');
-    
+
     // 現在のユーザー名を表示
     if (yourName && user.username) {
       yourName.textContent = user.display_name || user.username;
     }
-    
+
     // キャンセルボタンのイベントリスナー
     if (cancelButton) {
       cancelButton.addEventListener('click', () => {
@@ -42,49 +42,51 @@ const WaitingNextMatchPage = new Page({
         window.location.href = '/tournament';
       });
     }
-    
+
     // WebSocket接続変数
     let socket: WebSocket | null = null;
-    let reconnectTimeout: number | null = null;
-    
+    const reconnectTimeout: number | null = null;
+
     // WebSocket接続関数
     const connectWebSocket = () => {
       if (socket) {
         socket.close();
       }
-      
+
       const wsEndpoint = `${WS_URL}/ws/tournament/waiting_final/${tournamentId}/${user.username}/`;
-      
+
       socket = new WebSocket(wsEndpoint);
-      
+
       socket.onopen = () => {
         logger.info('Connected to waiting final WebSocket');
         if (statusMessage) {
           statusMessage.textContent = 'Connected. Waiting for other semi-final to complete...';
         }
-        
+
         // 接続成功時にステータス要求メッセージを送信
-        socket.send(JSON.stringify({
-          type: 'request_status',
-          tournament_id: tournamentId,
-          username: user.username
-        }));
+        socket.send(
+          JSON.stringify({
+            type: 'request_status',
+            tournament_id: tournamentId,
+            username: user.username,
+          })
+        );
       };
-      
+
       socket.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
           logger.info('Received message:', data);
-          
+
           switch (data.type) {
             case 'waiting_status':
               updateWaitingStatus(data);
               break;
-              
+
             case 'final_ready':
               handleFinalReady(data);
               break;
-              
+
             case 'error':
               if (statusMessage) {
                 statusMessage.textContent = `Error: ${data.message}`;
@@ -95,20 +97,20 @@ const WaitingNextMatchPage = new Page({
           logger.error('Error parsing WebSocket message:', e);
         }
       };
-      
+
       socket.onerror = (error) => {
         logger.error('WebSocket error:', error);
         if (statusMessage) {
           statusMessage.textContent = 'Connection error. Retrying...';
         }
       };
-      
+
       socket.onclose = (event) => {
         logger.info('WebSocket closed:', event);
         if (statusMessage) {
           statusMessage.textContent = 'Connection lost. Reconnecting...';
         }
-        
+
         // 再接続を試行（5秒後）
         // if (reconnectTimeout) {
         //   window.clearTimeout(reconnectTimeout);
@@ -116,17 +118,17 @@ const WaitingNextMatchPage = new Page({
         // reconnectTimeout = window.setTimeout(connectWebSocket, 5000);
       };
     };
-    
+
     // 待機ステータス更新
     const updateWaitingStatus = (data: any) => {
       if (completedCount) {
         completedCount.textContent = data.completed_semifinals.toString();
       }
-      
+
       if (finalistsContainer) {
         // 既存のリストをクリア
         finalistsContainer.innerHTML = '';
-        
+
         // 自分自身のエントリーを追加
         const selfItem = document.createElement('li');
         selfItem.className = 'player-item you';
@@ -136,7 +138,7 @@ const WaitingNextMatchPage = new Page({
           <span class="status-tag ready">Ready</span>
         `;
         finalistsContainer.appendChild(selfItem);
-        
+
         // 他の決勝進出者（いる場合）
         if (data.finalists && data.finalists.length > 0) {
           data.finalists.forEach((finalist: any) => {
@@ -161,7 +163,7 @@ const WaitingNextMatchPage = new Page({
           finalistsContainer.appendChild(waitingItem);
         }
       }
-      
+
       if (statusMessage) {
         if (data.all_semifinals_completed) {
           statusMessage.textContent = 'All semi-finals completed. Preparing final match...';
@@ -170,22 +172,22 @@ const WaitingNextMatchPage = new Page({
         }
       }
     };
-    
+
     // 決勝戦準備完了処理
     const handleFinalReady = (data: any) => {
       if (statusMessage) {
         statusMessage.textContent = 'Final match is ready! Redirecting...';
       }
-      
+
       // 決勝戦ページへリダイレクト
       setTimeout(() => {
         window.location.href = `/tournament/game?tournamentId=${tournamentId}&round=final&session=${data.session_id}&isPlayer1=${data.is_player1}`;
       }, 2000);
     };
-    
+
     // WebSocket接続開始
     connectWebSocket();
-    
+
     // ページアンマウント時のクリーンアップ
     return () => {
       logger.info('Tournament waiting next match page unmounting...');
