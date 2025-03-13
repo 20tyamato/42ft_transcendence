@@ -3,7 +3,6 @@ import { BaseGameManager } from '@/models/Services/BaseGameManager';
 import { GameRenderer } from '@/models/Services/game_renderer';
 import { IGameConfig, IGameState, ITournamentInfo } from '@/models/Game/type';
 
-
 export class TournamentGameManager extends BaseGameManager {
   private renderer: GameRenderer;
   private scoreBoard: HTMLElement | null;
@@ -18,55 +17,55 @@ export class TournamentGameManager extends BaseGameManager {
 
   protected onInitialized(): Promise<void> {
     console.log('Tournament game initialized:', {
-        sessionId: this.config.sessionId,
-        username: this.config.username,
-        roundType: this.tournamentInfo.roundType,
-        tournamentId: this.tournamentInfo.tournamentId
+      sessionId: this.config.sessionId,
+      username: this.config.username,
+      roundType: this.tournamentInfo.roundType,
+      tournamentId: this.tournamentInfo.tournamentId,
     });
-    
+
     // ラウンド情報をUIに表示
     this.updateRoundDisplay();
-    
+
     // セッションIDを送信して初期化を開始
     return new Promise((resolve, reject) => {
-        // 初期化完了イベントを監視
-        const initHandler = (data: any) => {
-            if (data.type === 'game_initialized') {
-                console.log('Game initialization confirmed by server');
-                this.wsService.removeMessageHandler('game_initialized', initHandler);
-                resolve();
-            }
-        };
-        
-        // エラーメッセージを監視
-        const errorHandler = (data: any) => {
-            if (data.type === 'error') {
-                console.error('Game initialization error:', data.message);
-                this.wsService.removeMessageHandler('error', errorHandler);
-                reject(new Error(data.message));
-            }
-        };
-        
-        // ハンドラを登録
-        this.wsService.addMessageHandler('game_initialized', initHandler);
-        this.wsService.addMessageHandler('error', errorHandler);
-        
-        // セッションID初期化メッセージを送信
-        console.log('Sending session_init with ID:', this.config.sessionId);
-        this.wsService.send({
-            type: 'session_init',
-            session_id: this.config.sessionId
-        });
-        
-        // タイムアウト設定（10秒）
-        setTimeout(() => {
-            this.wsService.removeMessageHandler('game_initialized', initHandler);
-            this.wsService.removeMessageHandler('error', errorHandler);
-            reject(new Error('Game initialization timeout'));
-        }, 10000);
-    }).catch(error => {
-        console.error('Failed to initialize game:', error);
-        return Promise.resolve(); // エラーでも続行
+      // 初期化完了イベントを監視
+      const initHandler = (data: any) => {
+        if (data.type === 'game_initialized') {
+          console.log('Game initialization confirmed by server');
+          this.wsService.removeMessageHandler('game_initialized', initHandler);
+          resolve();
+        }
+      };
+
+      // エラーメッセージを監視
+      const errorHandler = (data: any) => {
+        if (data.type === 'error') {
+          console.error('Game initialization error:', data.message);
+          this.wsService.removeMessageHandler('error', errorHandler);
+          reject(new Error(data.message));
+        }
+      };
+
+      // ハンドラを登録
+      this.wsService.addMessageHandler('game_initialized', initHandler);
+      this.wsService.addMessageHandler('error', errorHandler);
+
+      // セッションID初期化メッセージを送信
+      console.log('Sending session_init with ID:', this.config.sessionId);
+      this.wsService.send({
+        type: 'session_init',
+        session_id: this.config.sessionId,
+      });
+
+      // タイムアウト設定（10秒）
+      setTimeout(() => {
+        this.wsService.removeMessageHandler('game_initialized', initHandler);
+        this.wsService.removeMessageHandler('error', errorHandler);
+        reject(new Error('Game initialization timeout'));
+      }, 10000);
+    }).catch((error) => {
+      console.error('Failed to initialize game:', error);
+      return Promise.resolve(); // エラーでも続行
     });
   }
 
@@ -90,7 +89,8 @@ export class TournamentGameManager extends BaseGameManager {
 
     // セッションIDから対戦相手の情報を抽出
     const sessionInfo = this.parseSessionId();
-    const opponent = sessionInfo.player1 === this.config.username ? sessionInfo.player2 : sessionInfo.player1;
+    const opponent =
+      sessionInfo.player1 === this.config.username ? sessionInfo.player2 : sessionInfo.player1;
 
     const finalScore = {
       player1: state?.score?.[this.config.username] ?? 15, // 切断の場合は残ったプレイヤーが勝利
@@ -99,7 +99,7 @@ export class TournamentGameManager extends BaseGameManager {
       disconnected: true,
       disconnectedPlayer: player,
       tournamentId: this.tournamentInfo.tournamentId,
-      roundType: this.tournamentInfo.roundType
+      roundType: this.tournamentInfo.roundType,
     };
 
     localStorage.setItem('finalScore', JSON.stringify(finalScore));
@@ -122,7 +122,8 @@ export class TournamentGameManager extends BaseGameManager {
 
     // セッションIDから対戦相手の情報を抽出
     const sessionInfo = this.parseSessionId();
-    const opponent = sessionInfo.player1 === this.config.username ? sessionInfo.player2 : sessionInfo.player1;
+    const opponent =
+      sessionInfo.player1 === this.config.username ? sessionInfo.player2 : sessionInfo.player1;
 
     const finalScore = {
       player1: 0, // 自分が切断した場合は敗北
@@ -131,7 +132,7 @@ export class TournamentGameManager extends BaseGameManager {
       disconnected: true,
       disconnectedPlayer: this.config.username,
       tournamentId: this.tournamentInfo.tournamentId,
-      roundType: this.tournamentInfo.roundType
+      roundType: this.tournamentInfo.roundType,
     };
 
     localStorage.setItem('finalScore', JSON.stringify(finalScore));
@@ -151,14 +152,15 @@ export class TournamentGameManager extends BaseGameManager {
 
     // セッションIDから対戦相手の情報を抽出
     const sessionInfo = this.parseSessionId();
-    const opponent = sessionInfo.player1 === this.config.username ? sessionInfo.player2 : sessionInfo.player1;
+    const opponent =
+      sessionInfo.player1 === this.config.username ? sessionInfo.player2 : sessionInfo.player1;
 
     const finalScore = {
       player1: data.state.score[this.config.username] || 0,
       player2: data.state.score[opponent] || 0,
       opponent: opponent,
       tournamentId: this.tournamentInfo.tournamentId,
-      roundType: this.tournamentInfo.roundType
+      roundType: this.tournamentInfo.roundType,
     };
 
     localStorage.setItem('finalScore', JSON.stringify(finalScore));
@@ -183,7 +185,7 @@ export class TournamentGameManager extends BaseGameManager {
 
   private updateScoreBoard(score: Record<string, number>): void {
     if (!this.scoreBoard) return;
-    
+
     const playerScore = score[this.config.username] || 0;
     const entries = Object.keys(score).map((key) => [key, score[key]]);
     const opponentEntry = entries.find(([id]) => id !== this.config.username);
@@ -198,10 +200,10 @@ export class TournamentGameManager extends BaseGameManager {
     // ラウンド情報をUIに表示する（例: ヘッダーテキストを更新）
     const roundElement = document.querySelector('.card-header h2');
     if (roundElement) {
-      const roundName = this.tournamentInfo.roundType.startsWith('semi') 
-        ? 'Semi-Final' 
+      const roundName = this.tournamentInfo.roundType.startsWith('semi')
+        ? 'Semi-Final'
         : 'Final Match';
-      
+
       roundElement.textContent = `Tournament ${roundName}`;
     }
   }
@@ -214,22 +216,22 @@ export class TournamentGameManager extends BaseGameManager {
   } {
     // tournament_{tournament_id}_{round_type}_{player1}_{player2}_{timestamp}
     const parts = this.config.sessionId.split('_');
-    
+
     if (parts.length < 6) {
       console.error('Invalid tournament session ID format:', this.config.sessionId);
       return {
         tournamentId: this.tournamentInfo.tournamentId,
         roundType: this.tournamentInfo.roundType,
         player1: '',
-        player2: ''
+        player2: '',
       };
     }
-    
+
     return {
       tournamentId: parts[1],
       roundType: parts[2],
       player1: parts[3],
-      player2: parts[4]
+      player2: parts[4],
     };
   }
 }

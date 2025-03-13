@@ -23,13 +23,13 @@ const GamePage = new Page({
     const isPlayer1 = urlParams.get('isPlayer1') === 'true';
     const username = user.username;
 
-    console.log('Tournament game parameters:', { 
-      tournamentId, 
-      roundType, 
-      matchNumber, 
-      sessionId, 
-      isPlayer1, 
-      username 
+    console.log('Tournament game parameters:', {
+      tournamentId,
+      roundType,
+      matchNumber,
+      sessionId,
+      isPlayer1,
+      username,
     });
 
     // 必要なパラメータがない場合はトーナメントページにリダイレクト
@@ -65,7 +65,7 @@ const GamePage = new Page({
       const tournamentInfo = {
         tournamentId,
         roundType,
-        matchNumber: matchNumber ? parseInt(matchNumber) : undefined
+        matchNumber: matchNumber ? parseInt(matchNumber) : undefined,
       };
 
       // ゲームマネージャーの初期化
@@ -85,7 +85,7 @@ const GamePage = new Page({
       };
     } catch (error) {
       console.error('Failed to initialize tournament game:', error);
-      
+
       // エラーメッセージを表示
       const errorElement = document.createElement('div');
       errorElement.className = 'error-message';
