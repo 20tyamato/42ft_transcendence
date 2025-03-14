@@ -24,7 +24,7 @@ export const createSinglePlayGame = async ({
     game_type: 'SINGLE',
     player1: currentUser.username,
     player2: null,
-    scorePlayer1: playerScore,
+    score_player1: playerScore,
     score_player2: cpuScore,
     winner: playerScore > cpuScore ? currentUser.username : null,
     ai_level: aiLevel,
