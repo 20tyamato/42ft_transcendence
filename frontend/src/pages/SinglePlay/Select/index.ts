@@ -4,6 +4,8 @@ import CommonLayout from '@/layouts/common/index';
 import { checkUserAccess } from '@/models/User/auth';
 import { fetchCurrentUser } from '@/models/User/repository';
 import { updateText } from '@/utils/updateElements';
+import Background from './Background';
+import * as THREE from 'three';
 
 const updatePageContent = () => {
   updateText('title', i18next.t('levelSelection'));
@@ -19,6 +21,18 @@ const SinglePlaySelectPage = new Page({
     layout: CommonLayout,
   },
   mounted: async ({ pg }: { pg: Page }): Promise<void> => {
+    const canvas = document.getElementById('gl') as HTMLCanvasElement;
+    const renderer = new THREE.WebGLRenderer({ canvas });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+    camera.position.z = 5;
+
     checkUserAccess();
 
     const userData = await fetchCurrentUser();
@@ -27,10 +41,19 @@ const SinglePlaySelectPage = new Page({
       i18next.changeLanguage(userData.language, updatePageContent);
     }
 
-    if (userData.level < 5) {
-      const secretLevelCard = document.querySelector('.level-card.secret-level');
-      if (secretLevelCard instanceof HTMLElement) {
-        secretLevelCard.style.display = 'none';
+    // Oniモードの表示条件をチェック（例: userData.points >= 1000）
+    const oniSelectable = userData.points >= 1000;
+
+    const secretLevelCard = document.querySelector('.level-card.secret-level');
+    if (secretLevelCard instanceof HTMLElement) {
+      if (!oniSelectable) {
+        // ポイントが足りない場合、カードを暗くし、クリック無効にする
+        secretLevelCard.style.opacity = '0.3';
+        secretLevelCard.style.pointerEvents = 'none';
+      } else {
+        // ポイントが足りている場合、通常表示
+        secretLevelCard.style.opacity = '1';
+        secretLevelCard.style.pointerEvents = 'auto';
       }
     }
 
@@ -69,6 +92,15 @@ const SinglePlaySelectPage = new Page({
         }
       });
     });
+
+    const background = new Background(scene);
+
+    function animate() {
+      background.update();
+      requestAnimationFrame(animate);
+      renderer.render(scene, camera);
+    }
+    animate();
   },
 });
 
