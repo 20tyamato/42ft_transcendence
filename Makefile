@@ -60,6 +60,15 @@ ssl-certs:
 	@chmod +x scripts/generate_certs.sh
 	@./scripts/generate_certs.sh
 
+ssl-check:
+	@echo "Checking SSL certificate..."
+	@if [ -f certs/server.crt ]; then \
+		echo "Certificate exists. Details:"; \
+		openssl x509 -in certs/server.crt -text -noout | grep "Subject:\\|Issuer:\\|Validity"; \
+	else \
+		echo "Certificate does not exist. Run 'make ssl-certs' to generate it."; \
+	fi
+
 test:
 	docker exec -it $(API_CONTAINER) python manage.py test pong
 
@@ -150,4 +159,4 @@ help:
 	@echo " make ruff"
 	@echo " make test"
 
-.PHONY: all up down re clean fbuild test makemigrations migrate ruff super_ruff lint api_in front_in db_in api_logs front_logs db_logs help submit
+.PHONY: all up down re clean fbuild test makemigrations migrate ruff super_ruff lint api_in front_in db_in api_logs front_logs db_logs help submit ssl-certs ssl-check

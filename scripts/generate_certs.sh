@@ -8,14 +8,21 @@ cd "$(dirname "$0")/.."
 
 echo "Generating self-signed SSL certificate..."
 
+# Load HOST_IP from .env file if exists
+if [ -f .env ]; then
+  source <(grep -v '^#' .env | sed -E 's/(.*)=(.*)$/export \1="\2"/')
+fi
+
+# Use HOST_IP for the certificate CN
+CERT_CN=${HOST_IP:-localhost}
+echo "Using CN=$CERT_CN for the certificate"
+
 # Generate private key
 openssl genrsa -out certs/server.key 2048
 
 # Generate certificate signing request (CSR)
 echo "Creating certificate signing request (CSR)..."
-# Get hostname for CN or use localhost as default
-HOSTNAME=${HOSTNAME:-localhost}
-openssl req -new -key certs/server.key -out certs/server.csr -subj "/CN=$HOSTNAME"
+openssl req -new -key certs/server.key -out certs/server.csr -subj "/CN=$CERT_CN"
 
 # Generate self-signed certificate
 echo "Creating self-signed certificate..."
