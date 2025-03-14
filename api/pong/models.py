@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models import Q
 
 
 class User(AbstractUser):
@@ -48,6 +49,26 @@ class User(AbstractUser):
     @property
     def total_games_lost(self):
         return self.total_games_played - self.total_games_won
+    
+    @property
+    def tournament_wins_count(self):
+        """ユーザーが優勝したトーナメントの数を返す"""
+        return self.tournaments_won.count()
+
+    def get_recent_matches(self, limit=5):
+        """
+        直近のマッチ履歴を取得する
+        Args:
+            limit: 取得する試合数（デフォルト: 5）            
+        Returns:
+            最新のゲームのクエリセット（日付降順）
+        """
+        # プレイヤー1または2として参加したゲームを取得
+        recent_games = Game.objects.filter(
+            Q(player1=self) | Q(player2=self)
+        ).order_by('-end_time', '-start_time')[:limit]
+
+        return recent_games
 
 
 class Game(models.Model):
