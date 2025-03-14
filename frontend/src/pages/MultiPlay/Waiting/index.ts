@@ -71,7 +71,7 @@ const handleSocketMessage = (
  */
 const initWebSocket = (statusElement: HTMLElement | null, user: ICurrentUser): WebSocket => {
   console.log('Initializing WebSocket...');
-  const socket = new WebSocket(`${WS_URL}/ws/matchmaking/`);
+  const socket = new WebSocket(`${WS_URL}/wss/matchmaking/`);
 
   socket.onopen = () => {
     console.log('WebSocket connection established');

@@ -53,8 +53,7 @@ const WaitingNextMatchPage = new Page({
         socket.close();
       }
 
-      // TODO: replace to wss
-      const wsEndpoint = `${WS_URL}/ws/tournament/waiting_final/${tournamentId}/${user.username}/`;
+      const wsEndpoint = `${WS_URL}/wss/tournament/waiting_final/${tournamentId}/${user.username}/`;
 
       socket = new WebSocket(wsEndpoint);
 
