@@ -153,14 +153,14 @@ make up
   - `https://127.0.0.1:8001/api/users/`
   - `https://127.0.0.1:8001/api/games/`
 
-- [ELK](https://127.0.0.1:5601/)
+- [ELK](http://127.0.0.1:5601/)
 
   - `http://127.0.0.1:5601/`
     - Kibana トップページ
   - username: `elastic`
   - password: `password`
 
-- [DB 可視化ツール（pgweb）](https://127.0.0.1:5433/)
+- [DB 可視化ツール（pgweb）](http://127.0.0.1:5433/)
   - `http://127.0.0.1:5433/`
     - pgweb トップページ
 
