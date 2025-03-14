@@ -100,6 +100,7 @@ const WaitingPage = new Page({
         socket.close();
       }
 
+      // TODO: replace to wss
       socket = new WebSocket(`${WS_URL}/ws/tournament/`);
 
       socket.onopen = () => {

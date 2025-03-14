@@ -42,6 +42,7 @@ const GamePage = new Page({
         sessionId,
         username,
         isPlayer1,
+        // TODO: replace to wss
         wsEndpoint: `${WS_URL}/ws/game/${sessionId}/${username}/`,
         moveAmount: 10,
       };
