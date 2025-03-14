@@ -137,6 +137,13 @@ env.bak/
 venv.bak/
 node_modules
 
+# SSL/TLS certificate files
+certs/
+*.key
+*.crt
+*.csr
+*.pem
+
 # Spyder project settings
 .spyderproject
 .spyproject

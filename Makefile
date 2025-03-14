@@ -6,7 +6,7 @@ DB_CONTAINER := $(PROJECT_NAME)-db-1
 
 all: up
 
-setup: elk-setup
+setup: ssl-certs elk-setup
 
 up: elk-up hostip
 	docker compose up
@@ -22,6 +22,8 @@ re: clean setup upbuild
 clean: down
 	docker volume rm $(shell docker volume ls -q | grep "^$(PROJECT_NAME)") || true
 	docker system prune -f --volumes
+	@echo "Removing SSL certificates..."
+	@rm -rf certs
 
 fbuild: hostip
 	docker compose build --no-cache && docker compose up
@@ -51,6 +53,12 @@ elk-reload:
 # ------------------------------
 # Utilities
 # ------------------------------
+
+# SSL certificate generation
+ssl-certs:
+	@echo "Generating SSL certificates..."
+	@chmod +x scripts/generate_certs.sh
+	@./scripts/generate_certs.sh
 
 test:
 	docker exec -it $(API_CONTAINER) python manage.py test pong
