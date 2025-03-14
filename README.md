@@ -155,13 +155,13 @@ make up
 
 - [ELK](https://127.0.0.1:5601/)
 
-  - `https://127.0.0.1:5601/`
+  - `http://127.0.0.1:5601/`
     - Kibana トップページ
   - username: `elastic`
   - password: `password`
 
 - [DB 可視化ツール（pgweb）](https://127.0.0.1:5433/)
-  - `https://127.0.0.1:5433/`
+  - `http://127.0.0.1:5433/`
     - pgweb トップページ
 
 ## https
