@@ -174,6 +174,7 @@ export default class LocalGame {
         `${this.scorePaddleOne} - ${this.scorePaddleTwo}`
       );
 
+      // TODO: scorePaddleOne, scorePaddleTwoの作成を修正する
       createSinglePlayGame({
         playerScore: this.scorePaddleOne,
         cpuScore: this.scorePaddleTwo,
