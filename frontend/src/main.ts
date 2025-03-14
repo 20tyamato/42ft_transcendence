@@ -5,7 +5,6 @@ import LoginPage from '@/pages/Login/index';
 import ModesPage from '@/pages/Modes/index';
 import GamePage from '@/pages/MultiPlay/Game/index';
 import MultiPlayPage from '@/pages/MultiPlay/index';
-import WebSocketTestPage from '@/pages/MultiPlay/Test/index';
 import WaitingPage from '@/pages/MultiPlay/Waiting/index';
 import ProfilePage from '@/pages/Profile/index';
 import RegisterPage from '@/pages/Register/index';
@@ -41,7 +40,6 @@ const routes: Record<string, Page> = {
   '/singleplay/game': SinglePlayPage,
   '/singleplay/select': SinglePlaySelectPage,
   '/multiplay': MultiPlayPage,
-  '/multiplay/test': WebSocketTestPage,
   '/multiplay/waiting': WaitingPage,
   '/multiplay/game': GamePage,
   '/result': ResultPage,
