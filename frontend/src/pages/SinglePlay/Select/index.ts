@@ -17,9 +17,7 @@ const updatePageContent = () => {
 
 const SinglePlaySelectPage = new Page({
   name: 'SinglePlay/Select',
-  config: {
-    layout: CommonLayout,
-  },
+  config: { layout: CommonLayout },
   mounted: async ({ pg }: { pg: Page }): Promise<void> => {
     const canvas = document.getElementById('gl') as HTMLCanvasElement;
     const renderer = new THREE.WebGLRenderer({ canvas });
@@ -32,10 +30,15 @@ const SinglePlaySelectPage = new Page({
       1000
     );
     camera.position.z = 5;
+    const background = new Background(scene);
 
     checkUserAccess();
 
-    const userData = await fetchCurrentUser();
+    const userData = await fetchCurrentUser().catch((error) => {
+      console.error('Error fetching current user:', error);
+      return { language: 'en', points: 0 }; // 仮のデフォルト値
+    });
+
     if (userData.language) {
       document.documentElement.lang = userData.language;
       i18next.changeLanguage(userData.language, updatePageContent);
@@ -92,8 +95,6 @@ const SinglePlaySelectPage = new Page({
         }
       });
     });
-
-    const background = new Background(scene);
 
     function animate() {
       background.update();
