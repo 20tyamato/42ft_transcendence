@@ -286,3 +286,46 @@ class TournamentSessionSerializer(serializers.ModelSerializer):
                 "Cannot modify tournament after it has started"
             )
         return data
+
+
+class MatchHistorySerializer(serializers.ModelSerializer):
+    opponent = serializers.SerializerMethodField()
+    result = serializers.SerializerMethodField()
+    match_type = serializers.CharField(source="get_game_type_display")
+    date = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Game
+        fields = [
+            "id",
+            "date",
+            "opponent",
+            "result",
+            "match_type",
+            "score_player1",
+            "score_player2",
+            "session_id",
+        ]
+
+    def get_opponent(self, obj):
+        user = self.context.get("user")
+        if user.id == obj.player1_id:
+            return obj.player2.username if obj.player2 else "AI"
+        return obj.player1.username
+
+    def get_result(self, obj):
+        user = self.context.get("user")
+        # 勝者がNoneの場合は引き分け
+        if not obj.winner:
+            return "draw"
+
+        # 自分が勝者の場合
+        if obj.winner_id == user.id:
+            return "win"
+
+        # それ以外は敗北
+        return "lose"
+
+    def get_date(self, obj):
+        # 終了時間がある場合はそれを、なければ開始時間を返す
+        return obj.end_time or obj.start_time

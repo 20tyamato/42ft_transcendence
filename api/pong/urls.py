@@ -12,6 +12,7 @@ from .views import (
     UserAvatarUpdateView,
     UserListCreateView,
     UserRetrieveUpdateView,
+    UserMatchHistoryView,
 )
 
 app_name = "pong"
@@ -56,5 +57,9 @@ urlpatterns = [
     path(
         "games/<int:pk>/", GameRetrieveUpdateDestroyView.as_view(), name="game-detail"
     ),
-    # Tournament
+    # マッチ履歴エンドポイント
+    path(
+        "users/<int:pk>/matches/", UserMatchHistoryView.as_view(), name="user-matches"
+    ),
+    path("users/me/matches/", UserMatchHistoryView.as_view(), name="my-matches"),
 ]
