@@ -31,6 +31,14 @@ class FriendSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True)
+    total_matches = serializers.IntegerField(
+        source="total_games_played", read_only=True
+    )
+    wins = serializers.IntegerField(source="total_games_won", read_only=True)
+    losses = serializers.IntegerField(source="total_games_lost", read_only=True)
+    tournament_wins = serializers.IntegerField(
+        source="tournament_wins_count", read_only=True
+    )
 
     class Meta:
         model = User
@@ -46,6 +54,10 @@ class UserSerializer(serializers.ModelSerializer):
             "language",
             "is_online",
             "friends",
+            "total_matches",
+            "wins",
+            "losses",
+            "tournament_wins",
         ]
         extra_kwargs = {
             "username": {"required": True},
