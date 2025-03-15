@@ -42,7 +42,7 @@ const GamePage = new Page({
         sessionId,
         username,
         isPlayer1,
-        wsEndpoint: `${WS_URL}/ws/game/${sessionId}/${username}/`,
+        wsEndpoint: `${WS_URL}/wss/game/${sessionId}/${username}/`,
         moveAmount: 10,
       };
 

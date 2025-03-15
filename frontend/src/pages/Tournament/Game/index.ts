@@ -51,7 +51,7 @@ const GamePage = new Page({
     try {
       // WebSocketエンドポイントの構築
       // /ws/tournament/game/{round_type}/{tournament_id}/{username}/
-      const wsEndpoint = `${WS_URL}/ws/tournament/game/${roundType}/${tournamentId}/${username}/`;
+      const wsEndpoint = `${WS_URL}/wss/tournament/game/${roundType}/${tournamentId}/${username}/`;
 
       // ゲーム設定の作成
       const gameConfig: IGameConfig = {

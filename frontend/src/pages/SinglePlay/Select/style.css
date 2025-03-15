@@ -1,38 +1,53 @@
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family:'Orbitron', sans-serif;
   background: black;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  overflow: hidden;
 }
 
 .level-container {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px;
+    perspective: 1000px;   /* 3D 効果のための perspective */   
+    width: 100%; 
+    max-width: 1200px;
+    box-sizing: border-box; 
 }
 
+/* 各レベルカード */
 .level-card {
   width: 300px;
   height: 600px;
   border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-  transition:
-    transform 0.3s,
-    background 0.3s;
+  background: rgba(255, 255, 255, 0.2);  /* 半透明 */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px); /* 背景をぼかして透明感を強調 */
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: transform 0.3s ease, background 0.3s ease;
 }
 
 .level-card:hover {
-  transform: scale(1.1);
-  background: rgba(255, 255, 255, 1);
+  transform: translateY(-10px) scale(1.05);
+  background: rgba(255, 255, 255, 0.3);
 }
+
+/* テキストはカードの下部に配置 */
+.level-card h1 {
+  /* position: absolute; */
+  bottom: 50%;
+  left: 50%;
+  font-size: 2rem;
+  color: #000;
+  font-weight: bold;
+  margin :30px;
+}
+
 
 .easy-level {
   background: rgba(255, 255, 255, 0.75);
@@ -53,13 +68,21 @@ body {
 .stars {
   font-size: 3rem;
   color: black;
+  top: 110%;
+  left: 50pxx; /* カードの上部に配置 */
+  margin-top: 100px; /* 上に余白を追加 */
+  text-align: center; /* 中央揃え */
 }
 
 .level-button {
-  background: #007bff;
+  position: absolute; /* カード内で絶対位置を指定 */
+  bottom: 20%; /* カードの上部に配置 */
+  left: 50%;
+  transform: translateX(-50%);
+  background: #3e3e3e;
   color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 20px 40px;
   font-size: 1rem;
   border-radius: 5px;
   cursor: pointer;
@@ -67,7 +90,7 @@ body {
 }
 
 .level-button:hover {
-  background: #0056b3;
+  background: #ffffff;
 }
 
 /*====== ロード画面オーバーレイ ======*/
@@ -142,4 +165,30 @@ body {
   font-weight: bold;
   letter-spacing: 2px;
   text-align: center;
+}
+
+.level-icon {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: auto;
+  opacity: 0.8;
+}
+
+
+#gl {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* 背景として配置するために z-index を負の値に設定 */
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
