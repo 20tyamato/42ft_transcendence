@@ -109,6 +109,7 @@ body {
 .header__logo img {
   height: 40px;
   filter: brightness(0.8);
+  z-index: 10;
 }
 
 .header__profile {

@@ -46,6 +46,10 @@ const registerIconNavigation = (): void => {
   if (profileIcon) {
     profileIcon.addEventListener('click', () => navigateTo('/profile'));
   }
+  const headerLogo = document.querySelector('.header__logo');
+  if (headerLogo) {
+    headerLogo.addEventListener('click', () => navigateTo('/home')); // ホーム画面などに遷移
+  }
 };
 
 const updateUserAvatar = (avatar?: string): void => {
