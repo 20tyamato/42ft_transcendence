@@ -46,6 +46,7 @@ const registerIconNavigation = (): void => {
   if (profileIcon) {
     profileIcon.addEventListener('click', () => navigateTo('/profile'));
   }
+  // TODO: ヘッダーロゴが押せなくなっている
   const headerLogo = document.querySelector('.header__logo');
   if (headerLogo) {
     headerLogo.addEventListener('click', () => navigateTo('/home')); // ホーム画面などに遷移
