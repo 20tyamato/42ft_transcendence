@@ -5,7 +5,6 @@ import LoginPage from '@/pages/Login/index';
 import ModesPage from '@/pages/Modes/index';
 import GamePage from '@/pages/MultiPlay/Game/index';
 import MultiPlayPage from '@/pages/MultiPlay/index';
-import WebSocketTestPage from '@/pages/MultiPlay/Test/index';
 import WaitingPage from '@/pages/MultiPlay/Waiting/index';
 import ProfilePage from '@/pages/Profile/index';
 import RegisterPage from '@/pages/Register/index';
@@ -18,8 +17,12 @@ import SettingsUserPage from './pages/Settings/User/index';
 import TournamentPage from './pages/Tournament';
 import TournamentWaitingPage from './pages/Tournament/Waiting';
 import TournamentGamePage from './pages/Tournament/Game/index';
+import TournamentWaitingNextMatchPage from './pages/Tournament/WaitingNextMatch';
 
 import { Page } from './core/Page';
+import { ICurrentUser } from './libs/Auth/currnetUser';
+
+export type IBeforeMountRes = { user: ICurrentUser };
 
 const appDiv = document.getElementById('app');
 
@@ -37,13 +40,13 @@ const routes: Record<string, Page> = {
   '/singleplay/game': SinglePlayPage,
   '/singleplay/select': SinglePlaySelectPage,
   '/multiplay': MultiPlayPage,
-  '/multiplay/test': WebSocketTestPage,
   '/multiplay/waiting': WaitingPage,
   '/multiplay/game': GamePage,
   '/result': ResultPage,
   '/tournament': TournamentPage,
   '/tournament/waiting': TournamentWaitingPage,
   '/tournament/game': TournamentGamePage,
+  '/tournament/waiting-next-match': TournamentWaitingNextMatchPage,
   '/leaderboard': LeaderboardPage,
   '/friends': FriendsPage,
 };
@@ -56,7 +59,14 @@ async function router(path: string) {
     pathWithoutQuery,
     query: window.location.search,
   });
+
   const targetPage = routes[pathWithoutQuery] ?? NotFoundPage;
+
+  let beforeMountRes: IBeforeMountRes;
+  if (targetPage.config.layout.beforeMounted) {
+    beforeMountRes = await targetPage.config.layout.beforeMounted();
+  }
+
   const content = await targetPage.render();
   appDiv.innerHTML = content;
   document.title = 'ft_transcendence';
@@ -64,8 +74,11 @@ async function router(path: string) {
   if (!window.location.pathname.startsWith('/multiplay/game')) {
     window.history.pushState({}, '', path);
   }
+  if (targetPage.config.layout.mounted) {
+    await targetPage.config.layout.mounted({ ...beforeMountRes! });
+  }
   if (targetPage.mounted) {
-    await targetPage.mounted({ pg: targetPage });
+    await targetPage.mounted({ pg: targetPage, ...beforeMountRes! });
   }
 }
 

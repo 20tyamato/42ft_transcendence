@@ -1,10 +1,10 @@
 // frontend/src/pages/MultiPlay/index.ts
 import { Page } from '@/core/Page';
-import CommonLayout from '@/layouts/common/index';
+import AuthLayout from '@/layouts/AuthLayout';
 
 const MultiPlayPage = new Page({
   name: 'MultiPlay',
-  config: { layout: CommonLayout },
+  config: { layout: AuthLayout },
   mounted: async ({ pg }: { pg: Page }): Promise<void> => {
     document.getElementById('start-matchmaking')?.addEventListener('click', () => {
       window.location.href = '/multiplay/waiting';

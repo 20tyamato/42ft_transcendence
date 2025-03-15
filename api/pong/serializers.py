@@ -1,8 +1,8 @@
-from django.contrib.auth import authenticate
+import time
+
 from rest_framework import serializers
 
-import time
-from .models import Game, User, TournamentSession, TournamentParticipant
+from .models import Game, TournamentParticipant, TournamentSession, User
 
 
 def generate_session_id(game_type, player1_username, player2_username=None):
@@ -13,6 +13,14 @@ def generate_session_id(game_type, player1_username, player2_username=None):
     p2 = player2_username if player2_username else "solo"
 
     return f"{game_type.lower()}_{player1_username}_{p2}_{timestamp}"
+
+
+def generate_tournament_session_id(
+    tournament_id, round_type, player1_username, player2_username
+):
+    """トーナメント用セッションID生成関数"""
+    timestamp = int(time.time())
+    return f"tournament_{tournament_id}_{round_type}_{player1_username}_{player2_username}_{timestamp}"
 
 
 class FriendSerializer(serializers.ModelSerializer):
@@ -88,27 +96,7 @@ class UserAvatarSerializer(serializers.ModelSerializer):
         return None
 
 
-class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField(required=True)
-    password = serializers.CharField(required=True, write_only=True)
-
-    def validate(self, attrs):
-        username = attrs.get("username")
-        password = attrs.get("password")
-
-        if username and password:
-            user = authenticate(username=username, password=password)
-            if user:
-                if user.is_active:
-                    attrs["user"] = user
-                    return attrs
-                raise serializers.ValidationError("User account is disabled.")
-            raise serializers.ValidationError(
-                "Unable to log in with provided credentials."
-            )
-        raise serializers.ValidationError('Must include "username" and "password".')
-
-
+# NOTE: セッションIDの形式変更済：tournament_{tournament_id}_{round_type}_{player1}_{player2}_{timestamp}
 class GameSerializer(serializers.ModelSerializer):
     player1 = serializers.CharField(source="player1.username")
     player2 = serializers.CharField(
@@ -200,9 +188,18 @@ class GameSerializer(serializers.ModelSerializer):
         game_type = validated_data.get("game_type", "MULTI")
 
         # セッションIDの生成
-        validated_data["session_id"] = generate_session_id(
-            game_type, player1.username, player2_username
-        )
+        if game_type == "TOURNAMENT":
+            tournament = validated_data.get("tournament")
+            round_type = (
+                "semi1" if validated_data.get("tournament_round") == 0 else "final"
+            )
+            validated_data["session_id"] = generate_tournament_session_id(
+                tournament.id, round_type, player1.username, player2_username
+            )
+        else:
+            validated_data["session_id"] = generate_session_id(
+                game_type, player1.username, player2_username
+            )
 
         game = Game.objects.create(player1=player1, **validated_data)
         return game

@@ -1,8 +1,6 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
-import CommonLayout from '@/layouts/common/index';
-import { checkUserAccess } from '@/models/User/auth';
-import { fetchCurrentUser } from '@/models/User/repository';
+import AuthLayout from '@/layouts/AuthLayout';
 import { updateText } from '@/utils/updateElements';
 import Background from './Background';
 import * as THREE from 'three';

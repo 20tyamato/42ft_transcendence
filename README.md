@@ -112,46 +112,46 @@ make up
 
 ## Access Links
 
-- [Frontend](http://127.0.0.1:3001)
-  - `http://localhost:3001/`
+- [Frontend](https://127.0.0.1:3001)
+  - `https://localhost:3001/`
     - Welcome ページ
-  - `http://localhost:3001/404`
+  - `https://localhost:3001/404`
     - 404 ページ
-  - `http://localhost:3001/register`
+  - `https://localhost:3001/register`
     - ユーザー登録ページ
-  - `http://localhost:3001/login`
+  - `https://localhost:3001/login`
     - ログインページ
     - username: `sample1`
     - password: `password1`
-  - `http://localhost:3001/profile`
+  - `https://localhost:3001/profile`
     - ユーザープロフィールページ
-  - `http://localhost:3001/modes`
+  - `https://localhost:3001/modes`
     - ゲームモード選択ページ
-  - `http://localhost:3001/settings/game`
+  - `https://localhost:3001/settings/game`
     - ゲーム設定ページ
-  - `http://localhost:3001/settings/account`
+  - `https://localhost:3001/settings/account`
     - ユーザーアカウント設定ページ
-  - `http://localhost:3001/singleplay/select`
+  - `https://localhost:3001/singleplay/select`
     - シングルプレイヤーレベル選択ページ
-  - `http://localhost:3001/singleplay/:gameId`
+  - `https://localhost:3001/singleplay/:gameId`
     - シングルプレイヤーゲームページ
-  - `http://localhost:3001/multiplay/:gameId`
+  - `https://localhost:3001/multiplay/:gameId`
     - マルチプレイヤーゲームページ
-  - `http://localhost:3001/games/:gameId/results`
+  - `https://localhost:3001/games/:gameId/results`
     - マッチ結果ページ
-  - `http://localhost:3001/tournaments`
+  - `https://localhost:3001/tournaments`
     - トーナメント一覧ページ
-  - `http://localhost:3001/tournaments/:tournamentId`
+  - `https://localhost:3001/tournaments/:tournamentId`
     - トーナメント詳細ページ
-  - `http://localhost:3001/leaderboard`
+  - `https://localhost:3001/leaderboard`
     - リーダーボードページ
-- [Backend](http://127.0.0.1:8001/)
+- [Backend](https://127.0.0.1:8001/)
 
-  - `http://127.0.0.1:8001/admin/`
+  - `https://127.0.0.1:8001/admin/`
     - username: `sample`
     - password: `password`
-  - `http://127.0.0.1:8001/api/users/`
-  - `http://127.0.0.1:8001/api/games/`
+  - `https://127.0.0.1:8001/api/users/`
+  - `https://127.0.0.1:8001/api/games/`
 
 - [ELK](http://127.0.0.1:5601/)
 
@@ -164,7 +164,7 @@ make up
   - `http://127.0.0.1:5433/`
     - pgweb トップページ
 
-## HTTPS
+## https
 
 - `GET /users/`
 - `POST /users/`

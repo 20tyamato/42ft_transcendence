@@ -1,6 +1,5 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
-from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -12,7 +11,6 @@ from .permissions import IsPlayerOrReadOnly
 from .serializers import (
     FriendSerializer,
     GameSerializer,
-    LoginSerializer,
     UserAvatarSerializer,
     UserSerializer,
 )
@@ -49,41 +47,6 @@ class UserListCreateView(generics.ListCreateAPIView):
         )
 
 
-class LoginView(APIView):
-    serializer_class = LoginSerializer
-    permission_classes = [AllowAny]
-
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data["user"]
-
-        if Token.objects.filter(user=user).exists():
-            return Response(
-                {"message": "User is already logged in. Logout from the other device."},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
-        token = Token.objects.create(user=user)
-        return Response(
-            {
-                "message": "Login Success",
-                "token": token.key,
-                "user_id": user.id,
-                "username": user.username,
-            },
-            status=status.HTTP_200_OK,
-        )
-
-
-class LogoutView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        Token.objects.filter(user=request.user).delete()
-        return Response({"message": "Logout successful"}, status=status.HTTP_200_OK)
-
-
 class UserRetrieveUpdateView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
@@ -98,6 +61,36 @@ class UserAvatarUpdateView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
+    def patch(self, request):
+        user = request.user
+        if "avatar" not in request.FILES:
+            return Response(
+                {"error": "アバター画像が提供されていません。"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        avatar_file = request.FILES["avatar"]
+
+        # 画像ファイルの検証
+        if not avatar_file.content_type.startswith("image/"):
+            return Response(
+                {"error": "アップロードされたファイルは画像ではありません。"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # 画像サイズの制限（例：5MB）
+        if avatar_file.size > 5 * 1024 * 1024:
+            return Response(
+                {"error": "画像サイズは5MB以下にしてください。"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user.avatar = avatar_file
+        user.save()
+
+        serializer = self.get_serializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class UserAvatarRetrieveView(generics.RetrieveAPIView):

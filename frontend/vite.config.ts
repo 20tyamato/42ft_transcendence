@@ -1,5 +1,6 @@
 import path from 'path';
 import { defineConfig } from 'vite';
+import fs from 'fs';
 
 export default defineConfig({
   resolve: {
@@ -9,6 +10,10 @@ export default defineConfig({
   },
 
   server: {
+    https: {
+      key: fs.readFileSync('/app/certs/server.key'),
+      cert: fs.readFileSync('/app/certs/server.crt'),
+    },
     watch: {
       usePolling: true,
       interval: 100,

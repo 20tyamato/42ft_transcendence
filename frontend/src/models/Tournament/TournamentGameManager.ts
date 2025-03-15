@@ -1,49 +1,73 @@
 // frontend/src/models/Tournament/TournamentGameManager.ts
 import { BaseGameManager } from '@/models/Services/BaseGameManager';
 import { GameRenderer } from '@/models/Services/game_renderer';
-import { IGameConfig, IGameState, ITournamentMatch } from '@/models/interface';
+import { IGameConfig, IGameState, ITournamentInfo } from '@/models/Game/type';
+import { logger } from '@/core/Logger';
 
 export class TournamentGameManager extends BaseGameManager {
   private renderer: GameRenderer;
   private scoreBoard: HTMLElement | null;
-  private roundDisplay: HTMLElement | null;
-  private matchId: string;
-  private round: number; // 0: 準決勝, 1: 決勝
-  private tournamentId: string;
+  private tournamentInfo: ITournamentInfo;
 
-  constructor(config: IGameConfig, container: HTMLElement, matchId: string, round: number) {
+  constructor(config: IGameConfig, container: HTMLElement, tournamentInfo: ITournamentInfo) {
     super(config);
     this.renderer = new GameRenderer(container, config.isPlayer1);
     this.scoreBoard = document.getElementById('score-board');
-    this.roundDisplay = document.getElementById('round-display');
-    this.matchId = matchId;
-    this.round = round;
-    this.tournamentId = this.extractTournamentId(this.config.sessionId);
-
-    // ラウンド表示の更新
-    this.updateRoundDisplay();
-  }
-
-  private extractTournamentId(sessionId: string): string {
-    const parts = sessionId.split('_');
-    return parts[parts.length - 1]; // 最後の部分をトーナメントIDとして扱う
-  }
-
-  private updateRoundDisplay(): void {
-    if (this.roundDisplay) {
-      this.roundDisplay.textContent = this.round === 0 ? 'Semi-Final' : 'Final';
-    }
+    this.tournamentInfo = tournamentInfo;
   }
 
   protected onInitialized(): Promise<void> {
-    console.log('Tournament game initialized:', {
+    logger.info('Tournament game initialized:', {
       sessionId: this.config.sessionId,
       username: this.config.username,
-      matchId: this.matchId,
-      round: this.round,
+      roundType: this.tournamentInfo.roundType,
+      tournamentId: this.tournamentInfo.tournamentId,
     });
 
-    return Promise.resolve();
+    // ラウンド情報をUIに表示
+    this.updateRoundDisplay();
+
+    // セッションIDを送信して初期化を開始
+    return new Promise<void>((resolve, reject) => {
+      // 初期化完了イベントを監視
+      const initHandler = (data: any) => {
+        if (data.type === 'game_initialized') {
+          logger.info('Game initialization confirmed by server');
+          this.wsService.removeMessageHandler('game_initialized', initHandler);
+          resolve();
+        }
+      };
+
+      // エラーメッセージを監視
+      const errorHandler = (data: any) => {
+        if (data.type === 'error') {
+          logger.error('Game initialization error:', data.message);
+          this.wsService.removeMessageHandler('error', errorHandler);
+          reject(new Error(data.message));
+        }
+      };
+
+      // ハンドラを登録
+      this.wsService.addMessageHandler('game_initialized', initHandler);
+      this.wsService.addMessageHandler('error', errorHandler);
+
+      // セッションID初期化メッセージを送信
+      logger.info('Sending session_init with ID:', this.config.sessionId);
+      this.wsService.send({
+        type: 'session_init',
+        session_id: this.config.sessionId,
+      });
+
+      // タイムアウト設定（10秒）
+      setTimeout(() => {
+        this.wsService.removeMessageHandler('game_initialized', initHandler);
+        this.wsService.removeMessageHandler('error', errorHandler);
+        reject(new Error('Game initialization timeout'));
+      }, 10000);
+    }).catch((error) => {
+      logger.error('Failed to initialize game:', error);
+      return Promise.resolve<void>(); // エラーでも続行
+    });
   }
 
   protected onStateUpdate(state: IGameState): void {
@@ -62,11 +86,12 @@ export class TournamentGameManager extends BaseGameManager {
   }
 
   protected onPlayerDisconnected(player: string, state: IGameState): void {
-    console.log('Player disconnected:', player);
+    logger.info('Tournament player disconnected:', player);
 
-    // 切断情報を含めた最終スコアを保存
-    const [player1Name, player2Name] = this.getPlayerNames();
-    const opponent = this.config.username === player1Name ? player2Name : player1Name;
+    // セッションIDから対戦相手の情報を抽出
+    const sessionInfo = this.parseSessionId();
+    const opponent =
+      sessionInfo.player1 === this.config.username ? sessionInfo.player2 : sessionInfo.player1;
 
     const finalScore = {
       player1: state?.score?.[this.config.username] ?? 15, // 切断の場合は残ったプレイヤーが勝利
@@ -74,7 +99,8 @@ export class TournamentGameManager extends BaseGameManager {
       opponent: opponent,
       disconnected: true,
       disconnectedPlayer: player,
-      sessionId: this.tournamentId, // トーナメントIDを含める
+      tournamentId: this.tournamentInfo.tournamentId,
+      roundType: this.tournamentInfo.roundType,
     };
 
     localStorage.setItem('finalScore', JSON.stringify(finalScore));
@@ -82,16 +108,23 @@ export class TournamentGameManager extends BaseGameManager {
 
     // 結果画面に遷移
     setTimeout(() => {
-      this.handleTournamentNavigation(player !== this.config.username);
+      // 準決勝の場合は決勝待機画面へ
+      if (this.tournamentInfo.roundType.startsWith('semi')) {
+        window.location.href = `/tournament/waiting-next-match?tournamentId=${this.tournamentInfo.tournamentId}`;
+      } else {
+        // 決勝の場合は結果画面へ
+        window.location.href = '/result';
+      }
     }, 1000);
   }
 
   protected onConnectionError(): void {
-    console.error('Connection error occurred');
+    logger.error('Tournament connection error occurred');
 
-    // 通信エラー時のスコア保存
-    const [player1Name, player2Name] = this.getPlayerNames();
-    const opponent = this.config.username === player1Name ? player2Name : player1Name;
+    // セッションIDから対戦相手の情報を抽出
+    const sessionInfo = this.parseSessionId();
+    const opponent =
+      sessionInfo.player1 === this.config.username ? sessionInfo.player2 : sessionInfo.player1;
 
     const finalScore = {
       player1: 0, // 自分が切断した場合は敗北
@@ -99,7 +132,8 @@ export class TournamentGameManager extends BaseGameManager {
       opponent: opponent,
       disconnected: true,
       disconnectedPlayer: this.config.username,
-      sessionId: this.tournamentId,
+      tournamentId: this.tournamentInfo.tournamentId,
+      roundType: this.tournamentInfo.roundType,
     };
 
     localStorage.setItem('finalScore', JSON.stringify(finalScore));
@@ -110,73 +144,103 @@ export class TournamentGameManager extends BaseGameManager {
   }
 
   protected onError(message: string): void {
-    console.error('Tournament game error:', message);
+    logger.error('Tournament game error:', message);
     // エラーメッセージ表示などの処理を追加可能
   }
 
   protected onGameEnd(data: any): void {
-    console.log('Tournament game ended:', data);
+    logger.info('Tournament game ended:', data);
 
-    const [player1Name, player2Name] = this.getPlayerNames();
-    const opponent = this.config.username === player1Name ? player2Name : player1Name;
-    const isWinner = data.state.score[this.config.username] > data.state.score[opponent];
+    // セッションIDから対戦相手の情報を抽出
+    const sessionInfo = this.parseSessionId();
+    const opponent =
+      sessionInfo.player1 === this.config.username ? sessionInfo.player2 : sessionInfo.player1;
 
     const finalScore = {
       player1: data.state.score[this.config.username] || 0,
       player2: data.state.score[opponent] || 0,
       opponent: opponent,
-      sessionId: this.tournamentId,
+      tournamentId: this.tournamentInfo.tournamentId,
+      roundType: this.tournamentInfo.roundType,
     };
 
     localStorage.setItem('finalScore', JSON.stringify(finalScore));
     localStorage.setItem('gameMode', 'tournament');
 
+    // 勝者判定（自分のスコアが相手より高いかチェック）
+    const isWinner = finalScore.player1 > finalScore.player2;
+
     setTimeout(() => {
-      this.handleTournamentNavigation(isWinner);
+      // 準決勝の場合
+      if (this.tournamentInfo.roundType.startsWith('semi')) {
+        if (isWinner) {
+          // 勝者は決勝待機画面に遷移
+          window.location.href = `/tournament/waiting-next-match?tournamentId=${this.tournamentInfo.tournamentId}`;
+        } else {
+          // 敗者は結果画面に遷移
+          window.location.href = '/result';
+        }
+      } else {
+        // 決勝の場合、結果画面に遷移
+        window.location.href = '/result';
+      }
     }, 1000);
   }
 
   protected onCleanup(): void {
     this.renderer.dispose();
-    console.log('Tournament game cleanup complete');
+    logger.info('Tournament game cleanup complete');
   }
 
   private updateScoreBoard(score: Record<string, number>): void {
     if (!this.scoreBoard) return;
 
-    const [player1Name, player2Name] = this.getPlayerNames();
     const playerScore = score[this.config.username] || 0;
-    const opponentScore =
-      score[this.config.username === player1Name ? player2Name : player1Name] || 0;
+    const entries = Object.keys(score).map((key) => [key, score[key]]);
+    const opponentEntry = entries.find(([id]) => id !== this.config.username);
+    const opponentScore = opponentEntry?.[1] || 0;
 
     this.scoreBoard.textContent = this.config.isPlayer1
       ? `${playerScore} - ${opponentScore}`
       : `${opponentScore} - ${playerScore}`;
   }
 
-  private getPlayerNames(): [string, string] {
-    // セッションIDからプレイヤー名を抽出（形式: "tournament_player1_player2_tournamentId"）
-    const parts = this.config.sessionId.split('_');
-    if (parts.length >= 4) {
-      return [parts[1], parts[2]];
+  private updateRoundDisplay(): void {
+    // ラウンド情報をUIに表示する（例: ヘッダーテキストを更新）
+    const roundElement = document.querySelector('.card-header h2');
+    if (roundElement) {
+      const roundName = this.tournamentInfo.roundType.startsWith('semi')
+        ? 'Semi-Final'
+        : 'Final Match';
+
+      roundElement.textContent = `Tournament ${roundName}`;
     }
-    // フォールバック: ユーザー名と "opponent"
-    return [this.config.username, 'opponent'];
   }
 
-  private handleTournamentNavigation(isWinner: boolean): void {
-    if (this.round === 0) {
-      // 準決勝後の遷移
-      if (isWinner) {
-        // 勝者は決勝待機画面へ
-        window.location.href = `/tournament/waiting_next_match?session=${this.tournamentId}`;
-      } else {
-        // 敗者は結果画面へ
-        window.location.href = '/result';
-      }
-    } else {
-      // 決勝後の遷移
-      window.location.href = '/result';
+  private parseSessionId(): {
+    tournamentId: string;
+    roundType: string;
+    player1: string;
+    player2: string;
+  } {
+    // tournament_{tournament_id}_{round_type}_{player1}_{player2}_{timestamp}
+    const parts = this.config.sessionId.split('_');
+
+    if (parts.length < 6) {
+      logger.error('Invalid tournament session ID format:', this.config.sessionId);
+      return {
+        tournamentId: this.tournamentInfo.tournamentId,
+        roundType: this.tournamentInfo.roundType,
+        player1: '',
+        player2: '',
+      };
     }
+
+    return {
+      tournamentId: parts[1],
+      roundType: parts[2],
+      player1: parts[3],
+      player2: parts[4],
+    };
   }
 }

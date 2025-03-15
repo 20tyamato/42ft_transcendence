@@ -1,50 +1,45 @@
 // frontend/src/pages/Tournament/Game/index.ts
 import { WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
-import CommonLayout from '@/layouts/common/index';
-import { TournamentGameManager } from '@/models/Tournament/TournamentGameManager';
+import AuthLayout from '@/layouts/AuthLayout';
+import { logger } from '@/core/Logger';
 import { IGameConfig } from '@/models/Game/type';
-import { checkUserAccess } from '@/models/User/auth';
+import { TournamentGameManager } from '@/models/Tournament/TournamentGameManager';
 
 const GamePage = new Page({
   name: 'Tournament/Game',
   config: {
-    layout: CommonLayout,
+    layout: AuthLayout,
     html: '/src/pages/Tournament/Game/index.html',
   },
-  mounted: async ({ pg }: { pg: Page }) => {
-    console.log('Tournament game page mounting...');
-
-    // 認証チェック
-    checkUserAccess();
+  mounted: async ({ pg, user }) => {
+    logger.info('Tournament Game page mounting...');
 
     // URLパラメータの取得と検証
     const urlParams = new URLSearchParams(window.location.search);
+    const tournamentId = urlParams.get('tournamentId');
+    const roundType = urlParams.get('round');
+    const matchNumber = urlParams.get('matchNumber');
     const sessionId = urlParams.get('session');
-    const isPlayer1Str = urlParams.get('isPlayer1');
-    const matchId = urlParams.get('matchId');
-    const roundStr = urlParams.get('round');
-    const username = localStorage.getItem('username');
+    const isPlayer1 = urlParams.get('isPlayer1') === 'true';
+    const username = user.username;
 
-    // パラメータのログ出力
-    console.log('Game parameters:', {
+    logger.info('Tournament game parameters:', {
+      tournamentId,
+      roundType,
+      matchNumber,
       sessionId,
-      isPlayer1: isPlayer1Str,
-      matchId,
-      round: roundStr,
+      isPlayer1,
       username,
     });
 
     // 必要なパラメータがない場合はトーナメントページにリダイレクト
-    if (!sessionId || !username || isPlayer1Str === null || !matchId || roundStr === null) {
-      console.error('Missing required game parameters');
+    if (!tournamentId || !roundType || !sessionId || !username) {
+      console.error('Missing required tournament game parameters');
       await new Promise((resolve) => setTimeout(resolve, 2000));
       window.location.href = '/tournament';
       return;
     }
-
-    const isPlayer1 = isPlayer1Str === 'true';
-    const round = parseInt(roundStr, 10);
 
     // ゲームコンテナの取得
     const container = document.getElementById('game-canvas');
@@ -54,15 +49,9 @@ const GamePage = new Page({
     }
 
     try {
-      // WebSocketエンドポイントの決定
-      let wsEndpoint = '';
-      if (round === 0) {
-        // 準決勝
-        wsEndpoint = `${WS_URL}/ws/tournament/semi-final/${sessionId}/${username}/`;
-      } else {
-        // 決勝
-        wsEndpoint = `${WS_URL}/ws/tournament/final/${sessionId}/${username}/`;
-      }
+      // WebSocketエンドポイントの構築
+      // /ws/tournament/game/{round_type}/{tournament_id}/{username}/
+      const wsEndpoint = `${WS_URL}/wss/tournament/game/${roundType}/${tournamentId}/${username}/`;
 
       // ゲーム設定の作成
       const gameConfig: IGameConfig = {
@@ -73,36 +62,35 @@ const GamePage = new Page({
         moveAmount: 10,
       };
 
+      // トーナメント情報の準備
+      const tournamentInfo = {
+        tournamentId,
+        roundType,
+        matchNumber: matchNumber ? parseInt(matchNumber) : undefined,
+      };
+
       // ゲームマネージャーの初期化
-      const gameManager = new TournamentGameManager(gameConfig, container, matchId, round);
+      const gameManager = new TournamentGameManager(gameConfig, container, tournamentInfo);
 
       // ゲーム開始
       await gameManager.init();
-      console.log('Tournament game initialized successfully');
+      logger.info('Tournament game initialized successfully');
 
-      // ラウンド表示の更新
-      const roundDisplay = document.getElementById('round-display');
-      if (roundDisplay) {
-        roundDisplay.textContent = round === 0 ? 'Semi-Final' : 'Final';
-      }
-
-      // UIの追加要素の設定
-      const playerName = document.getElementById('player-name');
-      if (playerName) {
-        playerName.textContent = username;
-      }
+      // タイトル更新
+      document.title = `Tournament ${roundType.startsWith('semi') ? 'Semi-Final' : 'Final'}`;
 
       // クリーンアップ関数を返す
       return () => {
-        console.log('Tournament game page unmounting, cleaning up resources...');
+        logger.info('Tournament game page unmounting, cleaning up resources...');
         gameManager.cleanup();
       };
     } catch (error) {
       console.error('Failed to initialize tournament game:', error);
+
       // エラーメッセージを表示
       const errorElement = document.createElement('div');
       errorElement.className = 'error-message';
-      errorElement.textContent = 'Failed to initialize game. Please try again.';
+      errorElement.textContent = 'Failed to initialize tournament game. Please try again.';
       container.appendChild(errorElement);
 
       // エラーからの回復を試みる（5秒後にリダイレクト）

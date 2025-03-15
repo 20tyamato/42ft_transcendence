@@ -1,37 +1,92 @@
 /* frontend/src/pages/Tournament/Waiting/style.css */
-.status-container {
-  margin: 2rem 0;
-  padding: 1rem;
-  background-color: rgba(0, 0, 0, 0.05);
-  border-radius: 4px;
+.container {
+  padding-top: 2rem;
 }
 
-.status-text {
-  font-size: 1.2rem;
-  color: #666;
+.card {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: 0.3s;
 }
 
-.participants-container {
-  margin: 2rem 0;
+.card:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-.participants-list {
-  margin-top: 1rem;
-  font-size: 1.1rem;
-  color: #333;
+.card-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e3e6f0;
 }
 
-.btn-secondary {
-  padding: 0.8rem 1.5rem;
-  font-size: 1rem;
-  background-color: #6c757d;
+.card-body {
+  padding: 2rem;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(0, 0, 0, 0.1);
+  border-top: 5px solid #4e73df;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.players-list {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.player-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+}
+
+.player-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 12px;
+  object-fit: cover;
+}
+
+.player-name {
+  font-weight: 500;
+  margin-bottom: 0;
+}
+
+.ready-status {
+  margin-left: auto;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+}
+
+.ready-yes {
+  background-color: #1cc88a;
   color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s;
 }
 
-.btn-secondary:hover {
-  background-color: #5a6268;
+.waiting-status {
+  margin-bottom: 25px;
+}
+
+#player-count {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.btn-danger {
+  background-color: #e74a3b;
+  border-color: #e74a3b;
+}
+
+.btn-danger:hover {
+  background-color: #d52a1a;
+  border-color: #c91e0a;
 }

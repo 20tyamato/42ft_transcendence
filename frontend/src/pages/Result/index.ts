@@ -1,11 +1,10 @@
 // frontend/src/pages/Result/index.ts
 
 import { Page } from '@/core/Page';
-import CommonLayout from '@/layouts/common/index';
-import { checkUserAccess } from '@/models/User/auth';
 import { GameResultService } from '@/models/Result/GameResultService';
 import { ResultPageUI } from '@/models/Result/ResultPageUI';
 import { createMultiplayerGame, createTournamentGame } from '@/models/Game/repository';
+import AuthLayout from '@/layouts/AuthLayout';
 
 /**
  * 結果画面ページコンポーネント
@@ -14,20 +13,9 @@ import { createMultiplayerGame, createTournamentGame } from '@/models/Game/repos
 const ResultPage = new Page({
   name: 'Result',
   config: {
-    layout: CommonLayout,
+    layout: AuthLayout,
   },
-  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
-    // 認証チェック
-    checkUserAccess();
-
-    // ユーザー名取得
-    const username = localStorage.getItem('username');
-    if (!username) {
-      console.error('Username not found in local storage');
-      window.location.href = '/';
-      return;
-    }
-
+  mounted: async ({ pg, user }): Promise<void> => {
     // 結果データ取得
     const resultData = GameResultService.getStoredResult();
     if (!resultData) {
@@ -46,28 +34,13 @@ const ResultPage = new Page({
     });
 
     // 勝敗判定
-    const winnerInfo = GameResultService.determineWinner(score, username);
+    const winnerInfo = GameResultService.determineWinner(score, user.username);
 
     // 画面表示更新
-    await ui.updateResultView(score, username, {
+    await ui.updateResultView(score, user.username, {
       message: winnerInfo.message,
       className: winnerInfo.className,
     });
-
-    // 結果をサーバーに送信
-    try {
-      gameMode === 'multiplayer'
-        ? await createMultiplayerGame({
-            player1Score: score.player1,
-            player2Score: score.player2,
-            opponentName: score.opponent || '',
-          })
-        : await createTournamentGame({
-            playerScore: score.player1,
-          });
-    } catch (error) {
-      console.error('Error saving game result:', error);
-    }
 
     // 保存データのクリア
     GameResultService.clearStoredResult();

@@ -1,40 +1,34 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Waiting for Final Match</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style.css">
-</head>
-<body>
-  <div class="waiting-container">
-    <h1>Tournament Final - Waiting</h1>
+<!-- frontend/src/pages/Tournament/WaitingNextMatch/index.html -->
+<div class="container waiting-container">
+  <div class="waiting-box">
+    <h1 class="waiting-title">Waiting for Final Match</h1>
     
-    <div class="status-panel">
-      <h2>Congratulations!</h2>
-      <p>You've won your semi-final match and advanced to the finals!</p>
-      <p id="waiting-status">Waiting for the other semi-final to complete...</p>
+    <div class="status-section">
+      <div class="loading-spinner"></div>
+      <p id="status-message">Waiting for other semi-final to complete...</p>
+      <div id="player-status">
+        <span id="completed-count">1</span>/2 semi-finals completed
+      </div>
     </div>
     
-    <div class="finalists-panel">
+    <div class="players-section">
       <h3>Finalists</h3>
-      <ul id="finalists-list">
-        <!-- Dynamically populated -->
+      <ul id="finalists-container" class="players-list">
+        <!-- 決勝進出プレイヤーがここに表示されます -->
+        <li class="player-item you">
+          <span class="player-tag">YOU</span>
+          <span class="player-name" id="your-name">Your Name</span>
+          <span class="status-tag ready">Ready</span>
+        </li>
+        <li class="player-item waiting">
+          <span class="player-name">Waiting for opponent...</span>
+          <span class="status-tag waiting">Waiting</span>
+        </li>
       </ul>
     </div>
     
-    <div class="tournament-bracket">
-      <div class="bracket-round semifinal">
-        <div class="bracket-match">Semi-Final 1</div>
-        <div class="bracket-match">Semi-Final 2</div>
-      </div>
-      <div class="bracket-round final">
-        <div class="bracket-match">Final</div>
-      </div>
+    <div class="actions-section">
+      <button id="cancel-button" class="cancel-button">Return to Tournament</button>
     </div>
-    
-    <button id="cancel-button" class="button">Return to Home</button>
   </div>
-</body>
-</html>
+</div>

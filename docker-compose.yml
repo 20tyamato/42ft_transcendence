@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   api:
     build:
@@ -8,6 +7,7 @@ services:
       - "8001:8001"
     volumes:
       - ./api:/code
+      - ./certs:/code/certs:ro  # 証明書マウント
     depends_on:
       db:
         condition: service_healthy
@@ -21,7 +21,10 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
-      HOST_IP: ${HOST_IP} # ホストマシンのIP
+      HOST_IP: ${HOST_IP}
+      # FIXME: 変数化したほうが良い??
+      SSL_CERT_PATH: /code/certs/server.crt
+      SSL_KEY_PATH: /code/certs/server.key
     networks:
       - app-network
     tty: true
@@ -56,11 +59,16 @@ services:
       - "24678:24678"
     volumes:
       - ./frontend:/app
+      - ./certs:/app/certs:ro  # 証明書マウント
       - /app/node_modules
     environment:
       VITE_LOGSTASH_URL: ${FRONTEND_LOGSTASH_URL}
-      VITE_API_URL: http://${HOST_IP}:8001
-      VITE_WS_URL: http://${HOST_IP}:8001
+      VITE_API_URL: https://${HOST_IP}:8001
+      # FIXME: なんでこれhttpで良かったんだっけ???
+      VITE_WS_URL: https://${HOST_IP}:8001
+      # FIXME: 変数化?
+      SSL_CERT_PATH: /app/certs/server.crt
+      SSL_KEY_PATH: /app/certs/server.key
     networks:
       - app-network
 

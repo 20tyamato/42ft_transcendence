@@ -87,17 +87,18 @@ class Game(models.Model):
         blank=True,
         on_delete=models.CASCADE,
     )
+
     class AILevel(models.IntegerChoices):
-        BEGINNER = 1, 'Beginner'
-        INTERMEDIATE = 3, 'Intermediate'
-        ADVANCED = 5, 'Advanced'
-        ONI = 10, 'Oni'
+        BEGINNER = 1, "Beginner"
+        INTERMEDIATE = 3, "Intermediate"
+        ADVANCED = 5, "Advanced"
+        ONI = 10, "Oni"
 
     ai_level = models.IntegerField(
         choices=AILevel.choices,
         null=True,
         blank=True,
-        help_text="AI opponent difficulty level"
+        help_text="AI opponent difficulty level",
     )
 
     # 時間情報

@@ -1,140 +1,141 @@
 /* frontend/src/pages/Tournament/WaitingNextMatch/style.css */
 .waiting-container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  min-height: 80vh;
   padding: 2rem;
+}
+
+.waiting-box {
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+  padding: 2rem;
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
   color: #fff;
-  max-width: 800px;
-  margin: 0 auto;
 }
 
-.waiting-container h1 {
-  font-family: 'Orbitron', sans-serif;
+.waiting-title {
   font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #00d4ff;
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+}
+
+.status-section {
   margin-bottom: 2rem;
-  text-align: center;
-  color: #4a90e2;
-  text-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
 }
 
-.status-panel {
-  background-color: rgba(0, 0, 0, 0.5);
-  border-radius: 8px;
-  padding: 1.5rem;
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(0, 212, 255, 0.15);
+  border-top: 5px solid #00d4ff;
+  border-radius: 50%;
+  margin: 0 auto 1rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+#status-message {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+#player-status {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.players-section {
   margin-bottom: 2rem;
-  width: 100%;
-  text-align: center;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
-.status-panel h2 {
-  color: #4a90e2;
+.players-section h3 {
   margin-bottom: 1rem;
+  color: #00d4ff;
 }
 
-.status-panel p {
-  margin-bottom: 1rem;
-  line-height: 1.5;
-}
-
-#waiting-status {
-  font-weight: bold;
-  color: #ffcc00;
-}
-
-.finalists-panel {
-  background-color: rgba(0, 0, 0, 0.5);
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  width: 100%;
-}
-
-.finalists-panel h3 {
-  color: #4a90e2;
-  margin-bottom: 1rem;
-  text-align: center;
-}
-
-#finalists-list {
+.players-list {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-#finalists-list li {
-  background-color: rgba(0, 0, 0, 0.3);
+.player-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 0.8rem 1rem;
   margin-bottom: 0.5rem;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  transition: background-color 0.3s;
 }
 
-#finalists-list li.current-user {
-  background-color: rgba(74, 144, 226, 0.3);
-  border-left: 4px solid #4a90e2;
+.player-item:hover {
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
-.tournament-bracket {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 2rem;
+.player-item.you {
+  border-left: 3px solid #00d4ff;
 }
 
-.bracket-round {
-  display: flex;
-  margin-bottom: 1rem;
-  width: 100%;
-  justify-content: space-around;
+.player-tag {
+  background-color: #00d4ff;
+  color: #000;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  margin-right: 0.5rem;
 }
 
-.bracket-match {
-  background-color: rgba(0, 0, 0, 0.5);
+.player-name {
+  flex-grow: 1;
+  text-align: left;
+  margin-left: 0.5rem;
+}
+
+.status-tag {
+  padding: 0.3rem 0.6rem;
+  border-radius: 3px;
+  font-size: 0.8rem;
+}
+
+.status-tag.ready {
+  background-color: #1cc88a;
+  color: white;
+}
+
+.status-tag.waiting {
+  background-color: #f6c23e;
+  color: #333;
+}
+
+.actions-section {
+  margin-top: 2rem;
+}
+
+.cancel-button {
   padding: 0.8rem 1.5rem;
-  border-radius: 4px;
-  text-align: center;
-  min-width: 150px;
-}
-
-.semifinal .bracket-match {
-  flex: 1;
-  margin: 0 1rem;
-  border-bottom: 2px solid #666;
-}
-
-.final .bracket-match {
-  border: 2px solid #4a90e2;
-  color: #4a90e2;
-}
-
-.button {
-  background-color: #4a90e2;
+  background: linear-gradient(45deg, #ff416c, #ff4b2b);
   color: white;
   border: none;
-  border-radius: 4px;
-  padding: 0.8rem 1.5rem;
+  border-radius: 5px;
   font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s;
-  font-family: 'Orbitron', sans-serif;
+  transition: all 0.3s;
 }
 
-.button:hover {
-  background-color: #357abd;
-}
-
-/* アニメーション */
-@keyframes pulse {
-  0% { opacity: 0.6; }
-  50% { opacity: 1; }
-  100% { opacity: 0.6; }
-}
-
-#waiting-status {
-  animation: pulse 1.5s infinite;
+.cancel-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 75, 43, 0.5);
 }

@@ -1,134 +1,178 @@
+// frontend/src/pages/Tournament/Waiting/index.ts
 import { WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
-import CommonLayout from '@/layouts/common/index';
-import { ITournamentMatch } from '@/models/interface';
+import { logger } from '@/core/Logger';
+import AuthLayout from '@/layouts/AuthLayout';
+import { API_URL } from '@/config/config';
 
 const WaitingPage = new Page({
   name: 'Tournament/Waiting',
   config: {
-    layout: CommonLayout,
+    layout: AuthLayout,
     html: '/src/pages/Tournament/Waiting/index.html',
   },
-  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
-    console.log('Tournament waiting page mounting...');
-    let socket: WebSocket | null = null;
+  mounted: async ({ pg, user }) => {
+    logger.info('Tournament waiting page - initializing');
 
     // DOM要素の取得
-    const statusElement = document.getElementById('connection-status');
-    const cancelButton = document.getElementById('cancel-button');
+    const connectionStatus = document.getElementById('connection-status');
+    const playerCount = document.getElementById('current-players');
+    const playersContainer = document.getElementById('players-container');
+    const leaveButton = document.getElementById('leave-button');
 
-    // WebSocketの切断と遷移を行う関数
-    const handleNavigation = () => {
+    // WebSocket接続変数
+    let socket: WebSocket | null = null;
+
+    // WebSocketメッセージのハンドリング
+    const handleSocketMessage = (event: MessageEvent) => {
+      try {
+        const data = JSON.parse(event.data);
+        logger.info('Received websocket message:', data);
+
+        switch (data.type) {
+          case 'error':
+            if (connectionStatus) connectionStatus.textContent = `Error: ${data.message}`;
+            break;
+
+          case 'waiting_status':
+            updateWaitingStatus(data);
+            break;
+
+          case 'tournament_match':
+            handleMatchFound(data);
+            break;
+        }
+      } catch (e) {
+        logger.info('Error parsing message:', e);
+      }
+    };
+
+    // 待機状態の更新
+    const updateWaitingStatus = (data: any) => {
+      // プレイヤー数の更新
+      if (playerCount) {
+        playerCount.textContent = data.total_players.toString();
+      }
+
+      // 接続ステータスの更新
+      if (connectionStatus) {
+        connectionStatus.textContent = `Waiting for ${Math.max(0, 4 - data.total_players)} more players...`;
+      }
+
+      // プレイヤーリストの更新
+      if (playersContainer) {
+        playersContainer.innerHTML = '';
+
+        data.players.forEach((player: any) => {
+          const playerItem = document.createElement('li');
+          playerItem.className = 'list-group-item player-item';
+
+          // プレイヤー情報を構築
+          playerItem.innerHTML = `
+            <img src="${API_URL}/media/default_avatar.png" alt="${player.username}" class="player-avatar">
+            <div class="player-name">${player.display_name || player.username}</div>
+            <div class="ready-status ready-yes">Ready</div>
+          `;
+
+          playersContainer.appendChild(playerItem);
+        });
+      }
+    };
+
+    // マッチ発見時の処理
+    const handleMatchFound = (data: any) => {
+      logger.info('Match found!', data);
+
+      if (connectionStatus) {
+        connectionStatus.textContent = 'Match found! Redirecting to game...';
+      }
+
+      // 試合ページへリダイレクト
+      setTimeout(() => {
+        window.location.href = `/tournament/game?tournamentId=${data.tournament_id}&round=${data.match_type}&matchNumber=${data.match_number}&session=${data.session_id}&isPlayer1=${data.is_player1}`;
+      }, 1500);
+    };
+
+    // WebSocketの初期化
+    const initWebSocket = () => {
+      // 既存の接続を閉じる
+      if (socket) {
+        socket.close();
+      }
+
+      socket = new WebSocket(`${WS_URL}/wss/tournament/`);
+
+      socket.onopen = () => {
+        logger.info('WebSocket connection established');
+
+        // トーナメント参加メッセージの送信
+        socket.send(
+          JSON.stringify({
+            type: 'join_tournament',
+            username: user.username,
+          })
+        );
+
+        if (connectionStatus) {
+          connectionStatus.textContent = 'Connected, waiting for players...';
+        }
+      };
+
+      socket.onmessage = handleSocketMessage;
+
+      socket.onerror = (error) => {
+        logger.error('WebSocket error:', error);
+        if (connectionStatus) {
+          connectionStatus.textContent = 'Connection error. Retrying...';
+        }
+      };
+
+      socket.onclose = () => {
+        logger.info('WebSocket connection closed');
+        if (connectionStatus) {
+          connectionStatus.textContent = 'Connection lost. Reconnecting...';
+        }
+
+        // 3秒後に再接続
+        setTimeout(initWebSocket, 3000);
+      };
+    };
+
+    // 離脱ボタンのイベントハンドラ
+    if (leaveButton) {
+      leaveButton.addEventListener('click', () => {
+        if (socket && socket.readyState === WebSocket.OPEN) {
+          socket.send(
+            JSON.stringify({
+              type: 'leave_tournament',
+              username: user.username,
+            })
+          );
+        }
+
+        window.location.href = '/tournament';
+      });
+    }
+
+    // ブラウザの戻る/進むボタン対応
+    const handlePopState = () => {
       if (socket) {
         socket.close();
         socket = null;
       }
     };
-
-    // ブラウザの戻る/進むボタン対応
-    window.addEventListener('popstate', handleNavigation);
-
-    function initWebSocket() {
-      console.log('Initializing Tournament WebSocket...');
-      socket = new WebSocket(`${WS_URL}/ws/tournament/`);
-
-      socket.onopen = () => {
-        console.log('WebSocket connection established');
-        const username = localStorage.getItem('username');
-        if (!username) {
-          console.error('No username found');
-          window.location.href = '/tournament';
-          return;
-        }
-
-        // トーナメント参加のメッセージを送信
-        socket.send(
-          JSON.stringify({
-            type: 'join_tournament',
-            username: username,
-          })
-        );
-      };
-
-      socket.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          console.log('Received tournament message:', data);
-
-          if (data.type === 'tournament_status') {
-            if (statusElement) {
-              statusElement.textContent = `Waiting for players... (${data.participants.length}/4)`;
-            }
-          } else if (data.type === 'tournament_ready') {
-            console.log('Tournament ready:', data);
-            const username = localStorage.getItem('username');
-
-            if (!username) {
-              console.error('No username found');
-              window.location.href = '/tournament';
-              return;
-            }
-
-            if (!data.matches) {
-              console.error('No matches data received:', data);
-              return;
-            }
-
-            const matches = data.matches as ITournamentMatch[];
-            const myMatch = matches.find(
-              (match) => match.player1 === username || match.player2 === username
-            );
-
-            if (myMatch) {
-              const gameUrl = `/tournament/game?session=${data.sessionId}&isPlayer1=${username === myMatch.player1}&matchId=${myMatch.id}&round=${myMatch.round}`;
-              console.log('Navigating to tournament game:', gameUrl);
-              window.location.href = gameUrl;
-            } else {
-              console.error('Match not found for user');
-              window.location.href = '/tournament';
-            }
-          } else if (data.type === 'error') {
-            console.error('Tournament error:', data.message);
-            if (statusElement) {
-              statusElement.textContent = `Error: ${data.message}`;
-            }
-          }
-        } catch (e) {
-          console.error('Error parsing message:', e);
-        }
-      };
-
-      socket.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        if (statusElement) {
-          statusElement.textContent = 'Connection error. Retrying...';
-        }
-      };
-
-      socket.onclose = () => {
-        console.log('WebSocket connection closed');
-        if (statusElement) {
-          statusElement.textContent = 'Connection lost. Reconnecting...';
-        }
-        setTimeout(initWebSocket, 5000);
-      };
-    }
-
-    // キャンセルボタンのイベントリスナー
-    if (cancelButton) {
-      cancelButton.addEventListener('click', () => {
-        handleNavigation();
-        window.location.href = '/tournament';
-      });
-    }
+    window.addEventListener('popstate', handlePopState);
 
     // WebSocket接続開始
     initWebSocket();
 
-    // クリーンアップ
+    // クリーンアップ関数を返す
     return () => {
-      handleNavigation();
-      window.removeEventListener('popstate', handleNavigation);
+      window.removeEventListener('popstate', handlePopState);
+      if (socket) {
+        socket.close();
+        socket = null;
+      }
     };
   },
 });

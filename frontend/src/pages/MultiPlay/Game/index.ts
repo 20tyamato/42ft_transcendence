@@ -1,23 +1,23 @@
 // frontend/src/pages/MultiPlay/Game/index.ts
 import { WS_URL } from '@/config/config';
 import { Page } from '@/core/Page';
-import CommonLayout from '@/layouts/common/index';
+import AuthLayout from '@/layouts/AuthLayout';
 import { IGameConfig } from '@/models/Game/type';
 import { MultiplayerGameManager } from '@/models/MultiPlay/MultiplayerGameManager';
 
 const GamePage = new Page({
   name: 'MultiPlay/Game',
   config: {
-    layout: CommonLayout,
+    layout: AuthLayout,
   },
-  mounted: async ({ pg }: { pg: Page }): Promise<any> => {
+  mounted: async ({ pg, user }) => {
     console.log('Game page mounting...');
 
     // URLパラメータの取得と検証
     const urlParams = new URLSearchParams(window.location.search);
     const sessionId = urlParams.get('session');
     const isPlayer1 = urlParams.get('isPlayer1') === 'true';
-    const username = localStorage.getItem('username');
+    const username = user.username;
 
     console.log('Game parameters:', { sessionId, isPlayer1, username });
 
@@ -42,7 +42,7 @@ const GamePage = new Page({
         sessionId,
         username,
         isPlayer1,
-        wsEndpoint: `${WS_URL}/ws/game/${sessionId}/${username}/`,
+        wsEndpoint: `${WS_URL}/wss/game/${sessionId}/${username}/`,
         moveAmount: 10,
       };
 
