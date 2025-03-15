@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
+    <canvas id="gl"></canvas>
     <div id="loading-overlay" class="hidden">
       <div class="loader-container">
         <div class="ring-loader">
@@ -20,28 +21,32 @@
     </div>
     <div class="level-container">
       <div class="level-card easy-level">
-        <center><h1>Easy</h1></center>
+        <img class="level-icon" src="/public/assets/logo_easy.png" alt="Easy Logo">
+        <!-- <center><h1>Easy</h1></center> -->
         <div class="stars">
-          <center><span>★</span><span>☆</span><span>☆</span></center>
+          <center><span>★</span></center>
         </div>
         <button class="level-button" data-level="EASY">GO</button>
       </div>
       <div class="level-card medium-level">
-        <center><h1>Medium</h1></center>
+        <img class="level-icon" src="/public/assets/logo_medium.png" alt="Medium Logo">
+        <!-- <center><h1>Medium</h1></center> -->
         <div class="stars">
-          <center><span>★</span><span>★</span><span>☆</span></center>
+          <center><span>★</span><span>★</span></center>
         </div>
         <button class="level-button" data-level="MEDIUM">GO</button>
       </div>
       <div class="level-card hard-level">
-        <center><h1>Hard</h1></center>
+        <img class="level-icon" src="/public/assets/logo_hard.png" alt="Hard Logo">
+        <!-- <center><h1>Hard</h1></center> -->
         <div class="stars">
           <center><span>★</span><span>★</span><span>★</span></center>
         </div>
         <button class="level-button" data-level="HARD">GO</button>
       </div>
       <div class="level-card secret-level" data-min-level="5">
-        <center><h1>Oni</h1></center>
+        <img class="level-icon" src="/public/assets/logo_oni.png" alt="Oni Logo">
+        <!-- <center><h1>Oni</h1></center> -->
         <div class="stars">
           <center><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></center>
         </div>
