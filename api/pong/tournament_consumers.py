@@ -761,7 +761,7 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
 
 class TournamentWaitingFinalConsumer(AsyncWebsocketConsumer):
     """決勝戦開始を待機するプレイヤー向けのWebSocketコンシューマ
-    URL: /ws/tournament/waiting_final/{tournament_id}/{username}/
+    URL: /wss/tournament/waiting_final/{tournament_id}/{username}/
     """
 
     async def connect(self):
