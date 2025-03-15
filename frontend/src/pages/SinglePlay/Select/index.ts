@@ -33,7 +33,6 @@ const SinglePlaySelectPage = new Page({
     camera.position.z = 5;
     const background = new Background(scene);
     const stars = new Stars(scene);
-
     const userData = await fetchCurrentUser().catch((error) => {
       console.error('Error fetching current user:', error);
       return { language: 'en', points: 0 }; // 仮のデフォルト値
