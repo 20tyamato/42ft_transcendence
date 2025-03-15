@@ -3,7 +3,9 @@ import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
 import { updateText } from '@/utils/updateElements';
 import Background from './Background';
+import CommonLayout from '@/layouts/common/index';
 import * as THREE from 'three';
+import { fetchCurrentUser } from '@/models/User/repository';
 
 const updatePageContent = () => {
   updateText('title', i18next.t('levelSelection'));
@@ -29,8 +31,6 @@ const SinglePlaySelectPage = new Page({
     );
     camera.position.z = 5;
     const background = new Background(scene);
-
-    checkUserAccess();
 
     const userData = await fetchCurrentUser().catch((error) => {
       console.error('Error fetching current user:', error);
