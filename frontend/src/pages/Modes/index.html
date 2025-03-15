@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Game Modes</title>
     <link rel="stylesheet" href="./style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
   </head>
   <body>
+    <canvas id="gl"></canvas>
     <div class="header">
       <div class="header__logo"></div>
       <div class="header__profile">
@@ -19,11 +22,11 @@
       </div>
     </div>
     <div class="content">
-      <div id="background"></div>
+      <!-- <div id="background"></div> -->
       <div class="game-modes-container">
         <button class="game-mode-button single-mode">SINGLE MODE</button>
         <button class="game-mode-button multi-mode">MULTI MODE</button>
-        <button class="game-mode-button tournament-mode">TOURNAMENT MODE</button>
+        <button class="game-mode-button tournament">TOURNAMENT</button>
       </div>
       <script type="module" src="./index.ts"></script>
     </div>
