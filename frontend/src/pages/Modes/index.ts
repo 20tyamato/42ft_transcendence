@@ -1,9 +1,12 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
-import { ICurrentUser } from '@/libs/Auth/currnetUser';
+import { fetchCurrentUser } from '@/models/User/repository';
 import { setUserLanguage } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
+import Background from './Background';
+import Stars from './Stars';
+import * as THREE from 'three';
 
 const DEFAULT_AVATAR_SRC = '/src/resources/avatar.png';
 let isInternalNavigation = false;
@@ -43,6 +46,11 @@ const registerIconNavigation = (): void => {
   if (profileIcon) {
     profileIcon.addEventListener('click', () => navigateTo('/profile'));
   }
+  // TODO: ヘッダーロゴが押せなくなっている
+  const headerLogo = document.querySelector('.header__logo');
+  if (headerLogo) {
+    headerLogo.addEventListener('click', () => navigateTo('/home')); // ホーム画面などに遷移
+  }
 };
 
 const updateUserAvatar = (avatar?: string): void => {
@@ -63,6 +71,31 @@ const ModesPage = new Page({
     registerIconNavigation();
 
     pg.logger.info('ModesPage mounted!');
+    const canvas = document.getElementById('gl') as HTMLCanvasElement;
+    if (!canvas) {
+      console.error('Canvas element with id="gl" not found.');
+      return;
+    }
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+    camera.position.z = 5;
+    const scene = new THREE.Scene();
+    const background = new Background(scene);
+    const stars = new Stars(scene);
+
+    function animate() {
+      background.update();
+      stars.update();
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+    animate();
   },
 });
 

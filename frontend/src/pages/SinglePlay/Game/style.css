@@ -177,7 +177,6 @@ canvas {
   border-radius: 10px;
   padding: 10px;
   color: #fff;
-  font-family: 'Orbitron';
   display: flex;
   padding: 5px 30px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -301,7 +300,6 @@ canvas {
   align-items: center;
   z-index: 1100;
   opacity: 1;
-  font-family: 'Orbitron', sans-serif;
   transition: opacity 0.5s ease;
 }
 
@@ -352,7 +350,6 @@ canvas {
   border-radius: 10px;
   padding: 5px 5px 5px 5px;
   color: #fff;
-  font-family: 'Orbitron';
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   z-index: 1000;
   font-size: 0.5rem;

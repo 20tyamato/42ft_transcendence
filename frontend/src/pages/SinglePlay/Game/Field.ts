@@ -8,9 +8,12 @@ export default class Field {
   private scene: THREE.Scene;
   private FIELD_WIDTH: number;
   private FIELD_LENGTH: number;
-  private particleSystem: THREE.Points;
-  private particlePositions: Float32Array;
-  private particleSpeeds: Float32Array;
+  private particleSystem: THREE.Points = new THREE.Points(
+    new THREE.BufferGeometry(),
+    new THREE.PointsMaterial()
+  );
+  private particlePositions: Float32Array = new Float32Array();
+  private particleSpeeds: Float32Array = new Float32Array();
 
   private fieldGeometry!: THREE.BoxGeometry;
   private fieldMaterial!: THREE.MeshNormalMaterial;
