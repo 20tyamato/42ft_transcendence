@@ -6,6 +6,7 @@ import Background from './Background';
 import CommonLayout from '@/layouts/common/index';
 import * as THREE from 'three';
 import { fetchCurrentUser } from '@/models/User/repository';
+import Stars from './Stars';
 
 const updatePageContent = () => {
   updateText('title', i18next.t('levelSelection'));
@@ -31,7 +32,7 @@ const SinglePlaySelectPage = new Page({
     );
     camera.position.z = 5;
     const background = new Background(scene);
-
+    const stars = new Stars(scene);
     const userData = await fetchCurrentUser().catch((error) => {
       console.error('Error fetching current user:', error);
       return { language: 'en', points: 0 }; // 仮のデフォルト値
@@ -96,6 +97,7 @@ const SinglePlaySelectPage = new Page({
 
     function animate() {
       background.update();
+      stars.update();
       requestAnimationFrame(animate);
       renderer.render(scene, camera);
     }
