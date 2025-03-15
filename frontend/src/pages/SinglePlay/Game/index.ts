@@ -55,7 +55,7 @@ export function hideGameStartOverlay() {
 export function showGameOverOverlay(message: string, finalScore: string) {
   const overlay = document.getElementById('gameOverOverlay');
   const endMessage = document.getElementById('endMessage');
-  const finalScoreElem = document.getElementById('finalScore');
+  const finalElem = document.getElementById('finalScore');
   const retryBtn = document.getElementById('retryBtn');
   const exitBtn = document.getElementById('exitBtn');
   const scoreDisplay = document.getElementById('scoreDisplay');
