@@ -13,17 +13,17 @@ export default class Background {
   }
 
   private createBackground(): void {
-    // 分割数の多い平面ジオメトリを作成（十分な頂点数で波の変形を可能に）
-    const geometry = new THREE.PlaneGeometry(2000, 2000, 100, 100);
+    // 幅3000、高さ3000、100×100分割の平面ジオメトリ（細かい分割で滑らかな変形が可能）
+    const geometry = new THREE.PlaneGeometry(3000, 3000, 100, 100);
     const material = new THREE.MeshNormalMaterial({
       wireframe: true,
       side: THREE.DoubleSide,
     });
     this.plane = new THREE.Mesh(geometry, material);
-    // 平面を垂直に配置するために X 軸周りに -90° 回転
+    // 上空から見下ろすため、平面を水平に配置（X-Z平面）
     this.plane.rotation.x = -Math.PI / 2;
-    // 位置を若干下げて、カメラからの見た目で奥行きを感じるようにする
-    this.plane.position.y = -10;
+    // 少し下に配置してカメラと被らないように
+    this.plane.position.y = -50;
     this.scene.add(this.plane);
   }
 
@@ -34,19 +34,22 @@ export default class Background {
       return;
     }
     const geometry = this.plane.geometry as THREE.PlaneGeometry;
-    const positions = geometry.attributes.position as THREE.BufferAttribute;
-    const waveAmplitude = 10; // 波の振幅
-    const waveFrequency = 0.005; // 波の周波数
+    const positions = geometry.attributes.position.array as Float32Array;
+    const amplitude = 20; // 波の振幅（調整可能）
+    const frequency = 0.002; // 波の周波数（ゆっくり動く）
+    const phase = time * 0.5; // 時間に応じた位相の変化
 
-    // 各頂点のZ軸（ジオメトリ空間）にサイン波のオフセットを加える
-    for (let i = 0; i < positions.count; i++) {
-      const x = positions.getX(i);
-      // サイン波によりオフセットを計算
-      const offset = Math.sin(x * waveFrequency + time) * waveAmplitude;
-      positions.setZ(i, offset);
+    // 各頂点の z 座標をサイン・コサイン波で変形させる
+    for (let i = 0; i < positions.length; i += 3) {
+      const x = positions[i];
+      const y = positions[i + 1];
+      // 2つの波を組み合わせて、より複雑な動きを実現
+      const offset =
+        Math.sin(x * frequency + phase) * amplitude +
+        Math.cos(y * frequency + phase) * amplitude * 0.5;
+      positions[i + 2] = offset;
     }
-    positions.needsUpdate = true;
-    // 正確なライティングのため、頂点法線を再計算（必要なら）
+    geometry.attributes.position.needsUpdate = true;
     geometry.computeVertexNormals();
   }
 }
