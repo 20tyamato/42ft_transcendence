@@ -268,6 +268,10 @@ class GameListCreateView(generics.ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
         game = serializer.save()
 
+        # Update player level for completed games
+        if game.status == "COMPLETED":
+            game.player1.update_level()
+
         return Response(
             {
                 "game": GameSerializer(

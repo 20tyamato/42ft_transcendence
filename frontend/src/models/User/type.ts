@@ -7,7 +7,6 @@ export interface IUser {
   display_name: string;
   avatar: string;
   level: number;
-  experience: number;
   language: keyof typeof languageNames;
   is_online: boolean;
   total_matches: number; // 総試合数

@@ -133,6 +133,16 @@ class BaseGameConsumer(AsyncWebsocketConsumer):
                     game_instance.status = "COMPLETED"
 
             game_instance.save()
+
+            # Update levels for both players when game ends
+            player1 = User.objects.get(username=game.player1_name)
+            player1.update_level()
+
+            # Also update player2's level if it's not an AI opponent
+            if game.player2_name and not hasattr(game, "ai_level"):
+                player2 = User.objects.get(username=game.player2_name)
+                player2.update_level()
+
         except Game.DoesNotExist:
             print(f"Game with id {game.db_game_id} not found")
         except Exception as e:

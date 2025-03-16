@@ -109,7 +109,6 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("level", models.IntegerField(default=1)),
-                ("experience", models.IntegerField(default=0)),
                 ("language", models.CharField(default="en", max_length=10)),
                 ("is_online", models.BooleanField(default=False)),
                 ("last_activity", models.DateTimeField(blank=True, null=True)),

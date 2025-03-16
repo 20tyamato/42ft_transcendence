@@ -37,9 +37,12 @@ export const checkAuthentication = async (): Promise<ICurrentUser> => {
       display_name: '',
       avatar: '',
       level: 1,
-      experience: 0,
       language: 'en',
       is_online: false,
+      total_matches: 0,
+      wins: 0,
+      losses: 0,
+      tournament_wins: 0,
     };
   }
 };

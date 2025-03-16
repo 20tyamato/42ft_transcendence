@@ -43,8 +43,9 @@ const SinglePlaySelectPage = new Page({
       i18next.changeLanguage(userData.language, updatePageContent);
     }
 
-    // Oniモードの表示条件をチェック（例: userData.points >= 1000）
-    const oniSelectable = userData.points >= 1000;
+    // Oniモードの表示条件をチェック
+    // FIXME: レベル制限を非ハードコーディングにしたい
+    const oniSelectable = userData.level >= 10;
 
     const secretLevelCard = document.querySelector('.level-card.secret-level');
     if (secretLevelCard instanceof HTMLElement) {

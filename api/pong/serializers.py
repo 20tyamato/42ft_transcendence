@@ -50,7 +50,6 @@ class UserSerializer(serializers.ModelSerializer):
             "password",
             "avatar",
             "level",
-            "experience",
             "language",
             "is_online",
             "friends",
@@ -80,7 +79,6 @@ class UserSerializer(serializers.ModelSerializer):
             display_name=validated_data["display_name"],
             avatar=validated_data.get("avatar", ""),
             level=validated_data.get("level", 1),
-            experience=validated_data.get("experience", 0),
             language=validated_data.get("language", "en"),
             is_online=validated_data.get("is_online", False),
         )
