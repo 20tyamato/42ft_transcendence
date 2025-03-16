@@ -20,12 +20,6 @@ body {
   width: 100%; 
   margin: 0; 
   position: relative; 
-  /* 縦並び
-  /* display: flex;
-  flex-direction: column; 
-  justify-content: center;
-  align-items: center; 
-  gap: 20px;  */
 }
 
 .game-mode-button {
