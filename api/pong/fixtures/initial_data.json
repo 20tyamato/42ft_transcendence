@@ -7,7 +7,6 @@
       "email": "sample1@example.com",
       "display_name": "Sample User 1",
       "level": 1,
-      "experience": 0,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$d1SVqv6JNn2TJzcHrQlNNM$9KncMxadPq0mDXp14OF/xgQKdlYx9wQ0lDSk1WjVHxo="
@@ -21,7 +20,6 @@
       "email": "sample2@example.com",
       "display_name": "Sample User 2",
       "level": 2,
-      "experience": 100,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$Mh9ZxqtXGTgpy5WtGgyLRe$qgnJ8T9LuIF+PoGC5vA+0LpDStfJqx5GwtgSh3eBfxg="
@@ -35,7 +33,6 @@
       "email": "sample3@example.com",
       "display_name": "Sample User 3",
       "level": 3,
-      "experience": 200,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$2OHhBX0V5HPXJp9iJt5o9u$ocJdyW7lv3YxNYJppIzFqBLvOZz22vz9U/6FGCLeazw="
@@ -49,7 +46,6 @@
       "email": "sample4@example.com",
       "display_name": "Sample User 4",
       "level": 4,
-      "experience": 300,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$4mPN0uBMUn61H9mxA4lqxo$ZCnPpUkOteD8tynoWUvOvHDiy+i833cChRut6A2/3fo="
@@ -63,7 +59,6 @@
       "email": "sample5@example.com",
       "display_name": "Sample User 5",
       "level": 5,
-      "experience": 400,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$wfo2dFMu3QH5X1zGsdBPlK$1H1MMytNIhODInX/K9y40uN7Vyso/YslNv0XAGWXRhQ="
@@ -77,7 +72,6 @@
       "email": "sample6@example.com",
       "display_name": "Sample User 6",
       "level": 6,
-      "experience": 500,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$KnT3UqtbMfz5ETHpfQZJY2$8w6xolxoILIRkBwaiOsnPcZ/AdF3NRw74I3txJV4v4w="
@@ -91,7 +85,6 @@
       "email": "sample7@example.com",
       "display_name": "Sample User 7",
       "level": 7,
-      "experience": 600,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$zK0rCyfPrh8GnIHqADR5jK$JduM2lD9tePPVvNwEZHOFNB88K1kDQp+MHzIyoKsRq0="
@@ -105,7 +98,6 @@
       "email": "sample8@example.com",
       "display_name": "Sample User 8",
       "level": 8,
-      "experience": 700,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$Pgh45OC1Umrijzcep0sQgL$8up6nvCxHRbzkof5G0xaqHyNNZzfvKC5yx1IXDVKbuA="
@@ -119,7 +111,6 @@
       "email": "sample9@example.com",
       "display_name": "Sample User 9",
       "level": 9,
-      "experience": 800,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$Uuoe8xTRPSOUiOQZeEPRyG$4DlM4JzkP73iALX6oA1H5V6zOZ3PnV/1ABnbPCVivsM="
@@ -133,7 +124,6 @@
       "email": "sample10@example.com",
       "display_name": "Sample User 10",
       "level": 10,
-      "experience": 900,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$F76o8VRowp1bNYaqda7XjU$bXJyyOv96MR7ZfgHIzWuNl9dAR2kADKwO6hr9X7JLts="
@@ -147,7 +137,6 @@
       "email": "sample11@example.com",
       "display_name": "Sample User 11",
       "level": 10,
-      "experience": 900,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$K4nvyWY5NPgr7IaFbAfGbp$cJYOU0mHWUsRVpzORLXyOcpldlctU6L4lF+7fV/aomQ="
@@ -161,7 +150,6 @@
       "email": "sample12@example.com",
       "display_name": "Sample User 12",
       "level": 10,
-      "experience": 900,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$K4nvyWY5NPgr7IaFbAfGbp$cJYOU0mHWUsRVpzORLXyOcpldlctU6L4lF+7fV/aomQ="
@@ -175,7 +163,6 @@
       "email": "sample13@example.com",
       "display_name": "Sample User 13",
       "level": 10,
-      "experience": 900,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$K4nvyWY5NPgr7IaFbAfGbp$cJYOU0mHWUsRVpzORLXyOcpldlctU6L4lF+7fV/aomQ="
@@ -189,7 +176,6 @@
       "email": "sample14@example.com",
       "display_name": "Sample User 14",
       "level": 10,
-      "experience": 900,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$K4nvyWY5NPgr7IaFbAfGbp$cJYOU0mHWUsRVpzORLXyOcpldlctU6L4lF+7fV/aomQ="
@@ -203,7 +189,6 @@
       "email": "sample15@example.com",
       "display_name": "Sample User 15",
       "level": 10,
-      "experience": 900,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$K4nvyWY5NPgr7IaFbAfGbp$cJYOU0mHWUsRVpzORLXyOcpldlctU6L4lF+7fV/aomQ="
@@ -217,7 +202,6 @@
       "email": "sample16@example.com",
       "display_name": "Sample User 16",
       "level": 10,
-      "experience": 900,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$K4nvyWY5NPgr7IaFbAfGbp$cJYOU0mHWUsRVpzORLXyOcpldlctU6L4lF+7fV/aomQ="
@@ -231,7 +215,6 @@
       "email": "sample17@example.com",
       "display_name": "Sample User 17",
       "level": 10,
-      "experience": 900,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$K4nvyWY5NPgr7IaFbAfGbp$cJYOU0mHWUsRVpzORLXyOcpldlctU6L4lF+7fV/aomQ="
@@ -245,7 +228,6 @@
       "email": "sample18@example.com",
       "display_name": "Sample User 18",
       "level": 10,
-      "experience": 900,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$K4nvyWY5NPgr7IaFbAfGbp$cJYOU0mHWUsRVpzORLXyOcpldlctU6L4lF+7fV/aomQ="
@@ -259,7 +241,6 @@
       "email": "sample19@example.com",
       "display_name": "Sample User 19",
       "level": 10,
-      "experience": 900,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$K4nvyWY5NPgr7IaFbAfGbp$cJYOU0mHWUsRVpzORLXyOcpldlctU6L4lF+7fV/aomQ="
@@ -273,7 +254,6 @@
       "email": "sample20@example.com",
       "display_name": "Sample User 20",
       "level": 10,
-      "experience": 900,
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$870000$K4nvyWY5NPgr7IaFbAfGbp$cJYOU0mHWUsRVpzORLXyOcpldlctU6L4lF+7fV/aomQ="

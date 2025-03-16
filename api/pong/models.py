@@ -9,7 +9,6 @@ class User(AbstractUser):
         upload_to="avatars/", null=True, blank=True, default="default_avatar.png"
     )
     level = models.IntegerField(default=1)
-    experience = models.IntegerField(default=0)
     language = models.CharField(max_length=10, default="en")
     is_online = models.BooleanField(default=False)
     last_activity = models.DateTimeField(null=True, blank=True)
@@ -69,6 +68,28 @@ class User(AbstractUser):
         )[:limit]
 
         return recent_games
+    
+    def calculate_level(self):
+        """
+        Calculate user level based on total games played.
+        Starting at level 1, player gains 1 level for every 3 games played.
+        """
+        total_games = self.total_games_played
+        new_level = 1 + (total_games // 3)
+        return new_level
+    
+    def update_level(self):
+        """
+        Update the player's level based on total games played.
+        Returns: (level_changed, old_level, new_level)
+        """
+        new_level = self.calculate_level()
+        if new_level > self.level:
+            old_level = self.level
+            self.level = new_level
+            self.save(update_fields=['level'])
+            return True, old_level, new_level
+        return False, self.level, self.level
 
 
 class Game(models.Model):

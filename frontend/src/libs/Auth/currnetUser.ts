@@ -37,7 +37,6 @@ export const checkAuthentication = async (): Promise<ICurrentUser> => {
       display_name: '',
       avatar: '',
       level: 1,
-      experience: 0,
       language: 'en',
       is_online: false,
       total_matches: 0, 

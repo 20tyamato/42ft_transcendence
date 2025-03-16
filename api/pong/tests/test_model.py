@@ -13,7 +13,6 @@ class UserModelTests(TestCase):
             password="testpass123",
             display_name="Test User",
             level=2,
-            experience=100,
         )
         self.assertIsNotNone(
             user.id, "User should be created successfully and assigned an ID"
@@ -21,7 +20,6 @@ class UserModelTests(TestCase):
         self.assertEqual(user.username, "testuser")
         self.assertEqual(user.display_name, "Test User")
         self.assertEqual(user.level, 2)
-        self.assertEqual(user.experience, 100)
 
     def test_str_representation(self):
         """
