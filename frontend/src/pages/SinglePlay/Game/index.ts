@@ -60,12 +60,11 @@ export function showGameOverOverlay(message: string, finalScore: string) {
   const exitBtn = document.getElementById('exitBtn');
   const scoreDisplay = document.getElementById('scoreDisplay');
 
-  if (overlay && endMessage && finalScoreElem && retryBtn && exitBtn && scoreDisplay) {
+  if (overlay && endMessage && finalElem && retryBtn && exitBtn && scoreDisplay) {
     endMessage.textContent = message; // "GAME OVER" または "YOU WIN!"
-    finalScoreElem.textContent = `Score: ${finalScore}`;
+    finalElem.textContent = `Score: ${finalScore}`;
 
     scoreDisplay.classList.add('hidden');
-    // 非表示クラスを削除し、opacity 0 から1にフェードイン
     overlay.classList.remove('hidden');
     gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 1 });
     retryBtn.addEventListener('click', () => {
