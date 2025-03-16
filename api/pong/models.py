@@ -78,6 +78,8 @@ class User(AbstractUser):
         new_level = 1 + (total_games // 3)
         return new_level
     
+    # NOTE: 初期化データで経験した試合数よりレベルが高いユーザは
+    # 最初にレベルが上昇しないバグがあるように見えるが、これは仕様です.
     def update_level(self):
         """
         Update the player's level based on total games played.
