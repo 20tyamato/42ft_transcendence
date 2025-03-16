@@ -208,3 +208,56 @@ body {
 .level-21-25 {
   background: linear-gradient(135deg, #800080, #cc00cc);
 }
+
+/* User info and stats sections */
+.user-info-section {
+  margin-bottom: 15px;
+}
+
+.stats-section {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.stats-section h2 {
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.stat-item {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 8px;
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* Adjust the profile section layout */
+.profile-section .info {
+  width: 100%;
+  padding-left: 140px; /* Ensure text doesn't overlap with the avatar */
+}
+
+/* Make sure the title (display name) is properly positioned */
+#displayNameTitle {
+  font-weight: bold;
+}
