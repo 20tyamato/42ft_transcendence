@@ -125,7 +125,7 @@ export const getUserMatchHistory = async (
 ): Promise<IMatchHistory[]> => {
   try {
     const endpoint = `/api/users/${userId}/matches/?limit=${limit}`;
-    const response = await fetcher(endpoint);
+    const response = await fetcher(endpoint, { method: 'GET' });
 
     if (!response.ok) {
       throw new Error(`Failed to fetch match history: ${response.status}`);
@@ -144,7 +144,7 @@ export const getUserMatchHistory = async (
 export const getUserWithStats = async (userId: number | string = 'me'): Promise<IUser | null> => {
   try {
     const endpoint = `/api/users/${userId}/`;
-    const response = await fetcher(endpoint);
+    const response = await fetcher(endpoint, { method: 'GET' });
 
     if (!response.ok) {
       throw new Error(`Failed to fetch user profile: ${response.status}`);

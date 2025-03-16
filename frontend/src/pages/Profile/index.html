@@ -66,13 +66,16 @@
           <!-- ▼ Back ▼ -->
           <div class="card-back">
             <button class="close-btn">x</button>
-            <div class="history-section">
-              <h2>Tournament History</h2>
-              <ul id="tournamentHistory"></ul>
-            </div>
-            <div class="score-section">
-              <h2>Blockchain Scores</h2>
-              <ul id="scoreList"></ul>
+            
+            <div class="match-history-section">
+              <h2>Recent Matches</h2>
+              
+              <!-- マッチ履歴リスト -->
+              <div id="matchHistoryList" class="match-history-list">
+                <!-- マッチ履歴アイテムはJSで動的に生成されます -->
+                <div class="loading-spinner" id="matchHistoryLoading"></div>
+                <p id="noMatchesMessage" class="hidden">No match history available.</p>
+              </div>
             </div>
             <p class="tap-hint">Tap or click to show the front</p>
           </div>

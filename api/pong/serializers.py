@@ -327,9 +327,6 @@ class MatchHistorySerializer(serializers.ModelSerializer):
 
     def get_result(self, obj):
         user = self.context.get("user")
-        # 勝者がNoneの場合は引き分け
-        if not obj.winner:
-            return "draw"
 
         # 自分が勝者の場合
         if obj.winner_id == user.id:
