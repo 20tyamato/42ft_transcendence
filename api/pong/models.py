@@ -68,7 +68,7 @@ class User(AbstractUser):
         )[:limit]
 
         return recent_games
-    
+
     def calculate_level(self):
         """
         Calculate user level based on total games played.
@@ -77,7 +77,7 @@ class User(AbstractUser):
         total_games = self.total_games_played
         new_level = 1 + (total_games // 3)
         return new_level
-    
+
     # NOTE: 初期化データで経験した試合数よりレベルが高いユーザは
     # 最初にレベルが上昇しないバグがあるように見えるが、これは仕様です.
     def update_level(self):
@@ -89,7 +89,7 @@ class User(AbstractUser):
         if new_level > self.level:
             old_level = self.level
             self.level = new_level
-            self.save(update_fields=['level'])
+            self.save(update_fields=["level"])
             return True, old_level, new_level
         return False, self.level, self.level
 

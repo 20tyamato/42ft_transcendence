@@ -39,7 +39,7 @@ export const checkAuthentication = async (): Promise<ICurrentUser> => {
       level: 1,
       language: 'en',
       is_online: false,
-      total_matches: 0, 
+      total_matches: 0,
       wins: 0,
       losses: 0,
       tournament_wins: 0,
