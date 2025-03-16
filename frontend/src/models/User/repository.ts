@@ -121,7 +121,7 @@ export const updateOnlineStatus = async (is_online: boolean) => {
  */
 export const getUserMatchHistory = async (
   userId: number | string = 'me',
-  limit: number = 5
+  limit: number = 10
 ): Promise<IMatchHistory[]> => {
   try {
     const endpoint = `/api/users/${userId}/matches/?limit=${limit}`;

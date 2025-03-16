@@ -9,24 +9,10 @@ import { formatDate } from '@/utils/date';
 
 const updatePageContent = (): void => {
   updateText('title', i18next.t('userProfile'));
-
-  // Update myCard テキスト
-  const myCardEl = document.getElementById('mycard');
-  if (myCardEl) {
-    for (const node of myCardEl.childNodes) {
-      if (node.nodeType === Node.TEXT_NODE) {
-        node.textContent = i18next.t('myCard') + ' ';
-        break;
-      }
-    }
-  }
-
   // 基本情報ラベル
   updateText('#username', i18next.t('username'));
   updateText('#email', i18next.t('emailAddress'));
   updateText('#level', i18next.t('level'));
-  updateText('#language', i18next.t('language'));
-  updateText('#onlineStatus', i18next.t('onlineStatus'));
 
   // 統計情報ラベル
   updateText('.stats-section h2', i18next.t('gameStatistics'));
@@ -64,8 +50,6 @@ const updateFrontElements = (userData: IUser): void => {
   const displayNameTitleEl = document.getElementById('displayNameTitle');
   const avatarEl = document.getElementById('avatar') as HTMLImageElement | null;
   const levelEl = document.getElementById('level');
-  const languageEl = document.getElementById('language');
-  const onlineStatusEl = document.getElementById('onlineStatus');
 
   // 基本情報の更新
   if (usernameEl) {
@@ -82,13 +66,6 @@ const updateFrontElements = (userData: IUser): void => {
   }
   if (levelEl) {
     levelEl.textContent = userData.level.toString();
-  }
-  if (languageEl) {
-    languageEl.textContent =
-      userData.language in languageNames ? languageNames[userData.language] : userData.language;
-  }
-  if (onlineStatusEl) {
-    onlineStatusEl.textContent = userData.is_online ? 'Online' : 'Offline';
   }
 
   // 統計情報の更新
@@ -153,6 +130,10 @@ const updateMatchHistory = async (userId: string): Promise<void> => {
 
     // マッチ履歴取得
     const matches = await getUserMatchHistory('me');
+
+    matches.sort((a, b) => {
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
+    });
 
     // ローディング非表示
     if (loadingSpinner) loadingSpinner.style.display = 'none';
