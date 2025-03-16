@@ -47,14 +47,6 @@
   padding: 8px 12px;
 }
 
-.player-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  margin-right: 12px;
-  object-fit: cover;
-}
-
 .player-name {
   font-weight: 500;
   margin-bottom: 0;
