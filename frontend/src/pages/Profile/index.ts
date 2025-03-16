@@ -131,6 +131,10 @@ const updateMatchHistory = async (userId: string): Promise<void> => {
     // マッチ履歴取得
     const matches = await getUserMatchHistory('me');
 
+    matches.sort((a, b) => {
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
+    });
+
     // ローディング非表示
     if (loadingSpinner) loadingSpinner.style.display = 'none';
 

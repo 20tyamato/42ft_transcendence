@@ -121,14 +121,14 @@ body {
 .profile-section .info h1 {
   margin: 4px 0;
   text-align: left;
-  transform: translateX(30px);
+  transform: translateX(40px);
 }
 
 .profile-section .info p {
   margin: 4px 0;
   font-size: 0.9rem;
   text-align: left;
-  transform: translateX(30px);
+  transform: translateX(40px);
 }
 
 .profile-section #edit-btn {
@@ -145,10 +145,13 @@ body {
    タップヒントのスタイル
 ------------------------------ */
 .tap-hint {
-  margin-top: 0.5rem;
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+  text-align: center;
   font-size: 0.85rem;
   opacity: 0.8;
-  text-align: center;
   color: #fff;
 }
 
@@ -230,7 +233,8 @@ body {
 
 /* マッチ履歴セクション */
 .match-history-section {
-  margin-bottom: 1.5rem;
+  position: relative;
+  height: calc(100% - 60px);
 }
 
 .match-history-section h2 {
@@ -243,12 +247,13 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  max-height: 300px;
+  max-height: 280px;
   max-height: 300px;
   overflow-y: auto;
   position: relative;
   min-height: 100px;
   padding-right: 10px;
+  margin-bottom: 40px;
 }
 
 /* マッチ履歴アイテム */
