@@ -9,34 +9,41 @@ export default class ArcadeMachine {
     private scene: THREE.Scene,
     private renderTargetTexture: THREE.Texture
   ) {
-    // 平面ジオメトリを作成
-    const geometry = new THREE.PlaneGeometry(800, 600);
-    // TextureLoader を使ってテクスチャを読み込む
+    // 平面ジオメトリの作成
+    const geometry = new THREE.PlaneGeometry(1800, 1200);
+
+    // TextureLoader を使用してテクスチャを読み込む
     const loader = new THREE.TextureLoader();
     loader.load(
-      '/assets/pongmachine.png',
+      '/assets/pongmachine2.png',
       (texture) => {
-        console.log('Image loaded successfully');
-        // 読み込んだテクスチャをマテリアルに設定
+        // 必要ならミップマップ生成を無効にする
+        texture.generateMipmaps = true;
+        texture.minFilter = THREE.LinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+        // 画像のアルファ情報を無視したい場合は、texture.format を RGBFormat に設定するが、
+        // TextureLoader が適切な形式でロードしている場合は不要
+        // texture.format = THREE.RGBFormat;
         const material = new THREE.MeshBasicMaterial({
           map: texture,
-          transparent: true,
+          transparent: false,
+          opacity: 1,
         });
-        // マシンのメッシュを生成し、シーンに追加
+
         this.machine = new THREE.Mesh(geometry, material);
         this.machine.position.set(0, 0, 0);
         this.scene.add(this.machine);
-        console.log('Machine added to scene:', this.machine);
-        // スクリーン部分のジオメトリとマテリアルの生成
+
+        // スクリーン部分のジオメトリとマテリアルの作成
         const screenGeometry = new THREE.PlaneGeometry(600, 400);
         const screenMaterial = new THREE.MeshBasicMaterial({
           map: this.renderTargetTexture,
           transparent: false,
         });
         this.screenMesh = new THREE.Mesh(screenGeometry, screenMaterial);
+        // スクリーンの位置調整（アセットに合わせて調整してください）
         this.screenMesh.position.set(0, -20, 0.1);
         this.machine.add(this.screenMesh);
-        this.machine.renderOrder = 1;
       },
       undefined,
       (error) => {
