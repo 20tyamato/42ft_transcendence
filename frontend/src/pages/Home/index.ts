@@ -1,45 +1,62 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
-import CommonLayout from '@/layouts/common/index';
-import { isLoggedIn } from '@/libs/Auth/currnetUser';
-import { updateLanguage } from '@/models/User/repository';
-import createThreeScene from '@/pages/Home/scene';
-import { registerLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
+import AuthLayout from '@/layouts/AuthLayout';
+import { fetchCurrentUser } from '@/models/User/repository';
+import { setUserLanguage } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
+import ArcadeMachine from './ArcadeMachine';
+import GameRenderer from './GameRenderer';
+import * as THREE from 'three';
 
-const registerStartButton = async (): Promise<void> => {
-  const startBtn = document.querySelector('a[href="/login"]');
-  startBtn?.addEventListener('click', async (event) => {
-    event.preventDefault();
-    if (await isLoggedIn()) {
-      i18next.changeLanguage(i18next.language);
-      updateLanguage(i18next.language);
-      window.location.href = '/modes';
-    } else {
-      window.location.href = '/login';
-    }
-  });
-};
-
-const updatePageContent = () => {
+const updatePageContent = (): void => {
   updateText('title', i18next.t('home'));
-  updateText('.btn', i18next.t('start'));
 };
 
 const HomePage = new Page({
   name: 'Home',
-  config: {
-    layout: CommonLayout,
-  },
-  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
-    updatePageContent();
-    updateActiveLanguageButton();
+  config: { layout: AuthLayout },
+  mounted: async ({ pg, user }) => {
+    setUserLanguage(user.language, updatePageContent);
 
-    registerLanguageSwitchers(updatePageContent);
-    registerStartButton();
+    // HTML に <canvas id="gl"></canvas> が必要
+    const canvas = document.getElementById('gl') as HTMLCanvasElement;
+    if (!canvas) {
+      console.error('Canvas element not found');
+      return;
+    }
 
-    createThreeScene();
+    // レンダラーの作成
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
 
+    // メインシーンの作成
+    const scene = new THREE.Scene();
+
+    // GameRenderer を作成し、スクリーンに表示するシーンをレンダリング
+    const gameRenderer = new GameRenderer(renderer);
+
+    // ArcadeMachine を作成：renderTarget.texture をスクリーンのテクスチャとして使用
+    const arcadeMachine = new ArcadeMachine(scene, gameRenderer.renderTarget.texture);
+
+    // カメラの作成（Welcome ページ全体を表示するためのカメラ）
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      5000
+    );
+    camera.position.set(0, 1000, 1500);
+    camera.lookAt(0, 0, 0);
+
+    function animate() {
+      gameRenderer.update();
+      // メインシーンをレンダリング
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    // ユーザーデータやその他の UI の処理は省略…
     pg.logger.info('HomePage mounted!');
   },
 });
