@@ -6,6 +6,7 @@ import { setUserLanguage } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
 import ArcadeMachine from './ArcadeMachine';
 import GameRenderer from './GameRenderer';
+import Background from './Background';
 import * as THREE from 'three';
 
 const updatePageContent = (): void => {
@@ -18,39 +19,35 @@ const HomePage = new Page({
   mounted: async ({ pg, user }) => {
     setUserLanguage(user.language, updatePageContent);
 
-    // HTML に <canvas id="gl"></canvas> が必要
     const canvas = document.getElementById('gl') as HTMLCanvasElement;
     if (!canvas) {
       console.error('Canvas element not found');
       return;
     }
 
-    // レンダラーの作成
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
 
-    // メインシーンの作成
     const scene = new THREE.Scene();
 
-    // GameRenderer を作成し、スクリーンに表示するシーンをレンダリング
+    const background = new Background(scene);
     const gameRenderer = new GameRenderer(renderer);
 
-    // ArcadeMachine を作成：renderTarget.texture をスクリーンのテクスチャとして使用
     const arcadeMachine = new ArcadeMachine(scene, gameRenderer.renderTarget.texture);
 
-    // カメラの作成（Welcome ページ全体を表示するためのカメラ）
     const camera = new THREE.PerspectiveCamera(
       75,
       window.innerWidth / window.innerHeight,
       0.1,
-      5000
+      1000
     );
-    camera.position.set(0, 1000, 1500);
-    camera.lookAt(0, 0, 0);
+    camera.position.set(0, 0, 1000);
+    camera.lookAt(0, 0, 5);
 
     function animate() {
       gameRenderer.update();
-      // メインシーンをレンダリング
+      background.update();
+      arcadeMachine.update();
       renderer.render(scene, camera);
       requestAnimationFrame(animate);
     }

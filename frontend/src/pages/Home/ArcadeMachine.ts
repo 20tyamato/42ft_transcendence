@@ -1,41 +1,51 @@
 // ArcadeMachine.ts
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 export default class ArcadeMachine {
-  public machine: THREE.Mesh;
+  public machine: THREE.Mesh | null = null;
   public screenMesh: THREE.Mesh | null = null;
 
   constructor(
     private scene: THREE.Scene,
     private renderTargetTexture: THREE.Texture
   ) {
-    // ここではシンプルに平面ジオメトリにPNGテクスチャを貼る例を示す
+    // 平面ジオメトリを作成
     const geometry = new THREE.PlaneGeometry(800, 600);
-    const textureLoader = new THREE.TextureLoader();
-    // マシンの画像（透明なスクリーン部分があるPNG）
-    const machineTexture = textureLoader.load('/assets/pongmachine.png');
-    // マシン全体のマテリアル
-    const material = new THREE.MeshBasicMaterial({
-      map: machineTexture,
-      transparent: true,
-    });
-    this.machine = new THREE.Mesh(geometry, material);
-    // マシンの配置調整（例: 中央に配置）
-    this.machine.position.set(0, 0, 0);
-    this.scene.add(this.machine);
+    // TextureLoader を使ってテクスチャを読み込む
+    const loader = new THREE.TextureLoader();
+    loader.load(
+      '/assets/pongmachine.png',
+      (texture) => {
+        console.log('Image loaded successfully');
+        // 読み込んだテクスチャをマテリアルに設定
+        const material = new THREE.MeshBasicMaterial({
+          map: texture,
+          transparent: true,
+        });
+        // マシンのメッシュを生成し、シーンに追加
+        this.machine = new THREE.Mesh(geometry, material);
+        this.machine.position.set(0, 0, 0);
+        this.scene.add(this.machine);
+        console.log('Machine added to scene:', this.machine);
+        // スクリーン部分のジオメトリとマテリアルの生成
+        const screenGeometry = new THREE.PlaneGeometry(600, 400);
+        const screenMaterial = new THREE.MeshBasicMaterial({
+          map: this.renderTargetTexture,
+          transparent: false,
+        });
+        this.screenMesh = new THREE.Mesh(screenGeometry, screenMaterial);
+        this.screenMesh.position.set(0, -20, 0.1);
+        this.machine.add(this.screenMesh);
+        this.machine.renderOrder = 1;
+      },
+      undefined,
+      (error) => {
+        console.error('Error loading image:', error);
+      }
+    );
+  }
 
-    // ここで、スクリーン部分の位置・サイズを特定して新たに平面ジオメトリを作成し、レンダーテクスチャを貼る
-    // ※以下の数値はアセットに合わせて調整してください
-    const screenGeometry = new THREE.PlaneGeometry(600, 400);
-    const screenMaterial = new THREE.MeshBasicMaterial({
-      map: renderTargetTexture,
-      transparent: true,
-    });
-    this.screenMesh = new THREE.Mesh(screenGeometry, screenMaterial);
-    // スクリーンの位置調整：マシン画像内でスクリーン部分に配置
-    this.screenMesh.position.set(0, -20, 0.1);
-    // マシンの子オブジェクトとして追加することで、相対位置が保たれる
-    this.machine.add(this.screenMesh);
+  update(): void {
+    // 必要ならアニメーション処理を追加
   }
 }
