@@ -64,22 +64,22 @@ export function createBall(
 /**
  * 数字「4」と「2」の球をグループ化して、左右にわずかにずらして配置する
  */
-export function createBallsGroup(): THREE.Group {
-  const group = new THREE.Group();
-  const radius = 40; // 球の半径
+// export function createBallsGroup(): THREE.Group {
+//   const group = new THREE.Group();
+//   const radius = 40; // 球の半径
 
-  const ball4 = createBall('4', '#ff0000', '#ffffff', radius);
-  const ball2 = createBall('2', '#0000ff', '#ffffff', radius);
+//   const ball4 = createBall('4', '#ff0000', '#ffffff', radius);
+//   const ball2 = createBall('2', '#0000ff', '#ffffff', radius);
 
-  const offset = radius + 0.2;
-  ball4.position.set(-offset, 0, 200);
-  ball2.position.set(offset, 0, 200);
+//   const offset = radius + 0.2;
+//   ball4.position.set(-offset, 0, 200);
+//   ball2.position.set(offset, 0, 200);
 
-  group.add(ball4);
-  group.add(ball2);
+//   group.add(ball4);
+//   group.add(ball2);
 
-  return group;
-}
+//   return group;
+// }
 
 export interface PhysicsBall {
   mesh: THREE.Mesh;
@@ -89,7 +89,7 @@ export interface PhysicsBall {
 
 export class BallsGroup {
   private balls: PhysicsBall[] = [];
-  private gravity = -9.8;
+  private gravity = -7;
   private restitution = 1.0;
   private prevTime: number;
   private group: THREE.Group;
@@ -102,11 +102,13 @@ export class BallsGroup {
     const ball4 = createBall('4', '#ff0000', '#ffffff', radius);
     const ball2 = createBall('2', '#0000ff', '#ffffff', radius);
 
+    const initialHeight = 180;
+
     // ボールの初期設定
     this.balls = [
       {
         mesh: ball4,
-        velocity: new THREE.Vector3(0, 7, 0),
+        velocity: new THREE.Vector3(0, 8, 0),
         radius: radius,
       },
       {
@@ -116,9 +118,9 @@ export class BallsGroup {
       },
     ];
 
-    const offset = radius + 0.2;
-    ball4.position.set(-offset, radius, 0);
-    ball2.position.set(offset, radius, 0);
+    const offset = radius * 2;
+    ball4.position.set(-offset, initialHeight, 50);
+    ball2.position.set(offset, initialHeight, 50);
 
     this.balls.forEach((ball) => this.group.add(ball.mesh));
   }
@@ -130,13 +132,16 @@ export class BallsGroup {
 
     this.balls.forEach((ball) => {
       // 重力
-      ball.velocity.y += this.gravity * dt;
+      ball.velocity.y += this.gravity * dt * 50;
       // 速度に基づく位置更新
-      ball.mesh.position.y += ball.velocity.y * dt;
-
-      // 床との衝突判定
+      const deltaY = ball.velocity.y * dt;
+      ball.mesh.position.y += deltaY;
+      console.log(
+        `Ball position: ${ball.mesh.position.y.toFixed(2)}, velocity: ${ball.velocity.y.toFixed(2)}`
+      );
+      // 床との衝突判定（より安定した判定）
       if (ball.mesh.position.y <= ball.radius) {
-        ball.mesh.position.y = ball.radius;
+        ball.mesh.position.y = ball.radius; // めり込み防止
         ball.velocity.y = -ball.velocity.y * this.restitution;
       }
     });

@@ -8,15 +8,11 @@ export default class Background {
   private clock: THREE.Clock;
   private group: THREE.Group;
 
-  constructor(scene: THREE.Scene) {
+  constructor(scene: THREE.Scene, isGameRenderer: boolean = false, yPosition: number = -50) {
     this.scene = scene;
     this.clock = new THREE.Clock();
     this.group = new THREE.Group();
     this.createBackground();
-
-    const ballsGroup = new BallsGroup();
-    this.group.add(ballsGroup.getGroup());
-    this.scene.add(this.group);
   }
 
   private createBackground(): void {

@@ -52,8 +52,8 @@ const HomePage = new Page({
       background.update();
       arcadeMachine.update();
       ballsGroup.update();
-      renderer.render(scene, camera);
       requestAnimationFrame(animate);
+      renderer.render(scene, camera);
     }
     animate();
 
