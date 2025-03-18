@@ -31,8 +31,6 @@ const HomePage = new Page({
       0.1,
       1000
     );
-    // camera.position.set(0, 0, 1000);
-    // camera.lookAt(0, 0, 5);
     camera.position.set(0, 0, 1000);
     camera.lookAt(0, 0, 5);
 
@@ -40,10 +38,9 @@ const HomePage = new Page({
     renderer.setSize(window.innerWidth, window.innerHeight);
 
     const scene = new THREE.Scene();
-    const background = new Background(scene);
     const gameRenderer = new GameRenderer(renderer);
+    const background = new Background(scene);
     const arcadeMachine = new ArcadeMachine(scene, gameRenderer.renderTarget.texture);
-
     const ballsGroup = new BallsGroup();
     scene.add(ballsGroup.getGroup());
 

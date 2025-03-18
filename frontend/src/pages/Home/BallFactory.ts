@@ -6,7 +6,7 @@ import * as THREE from 'three';
  */
 export function createBallTexture(
   text: string,
-  backgroundColor: string,
+  backgroundColor: string = '#000000',
   textColor: string
 ): THREE.CanvasTexture {
   const size = 512;
@@ -60,26 +60,6 @@ export function createBall(
   group.rotation.y = 300;
   return wrapper;
 }
-
-/**
- * 数字「4」と「2」の球をグループ化して、左右にわずかにずらして配置する
- */
-// export function createBallsGroup(): THREE.Group {
-//   const group = new THREE.Group();
-//   const radius = 40; // 球の半径
-
-//   const ball4 = createBall('4', '#ff0000', '#ffffff', radius);
-//   const ball2 = createBall('2', '#0000ff', '#ffffff', radius);
-
-//   const offset = radius + 0.2;
-//   ball4.position.set(-offset, 0, 200);
-//   ball2.position.set(offset, 0, 200);
-
-//   group.add(ball4);
-//   group.add(ball2);
-
-//   return group;
-// }
 
 export interface PhysicsBall {
   mesh: THREE.Mesh;
@@ -141,7 +121,7 @@ export class BallsGroup {
       );
       // 床との衝突判定（より安定した判定）
       if (ball.mesh.position.y <= ball.radius) {
-        ball.mesh.position.y = ball.radius; // めり込み防止
+        ball.mesh.position.y = ball.radius;
         ball.velocity.y = -ball.velocity.y * this.restitution;
       }
     });

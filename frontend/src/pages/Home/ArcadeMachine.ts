@@ -33,7 +33,7 @@ export default class ArcadeMachine {
         });
 
         this.machine = new THREE.Mesh(geometry, material);
-        this.machine.position.set(0, -130, 50);
+        this.machine.position.set(0, -130, 70);
         this.scene.add(this.machine);
 
         // スクリーン部分のジオメトリとマテリアルの作成
@@ -44,7 +44,7 @@ export default class ArcadeMachine {
         });
         this.screenMesh = new THREE.Mesh(screenGeometry, screenMaterial);
         // スクリーンの位置調整（アセットに合わせて調整してください）
-        this.screenMesh.position.set(0, -20, 0.1);
+        this.screenMesh.position.set(0, -20, 1);
         this.machine.add(this.screenMesh);
       },
       undefined,
