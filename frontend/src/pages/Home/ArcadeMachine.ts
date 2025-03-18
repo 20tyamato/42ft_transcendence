@@ -21,17 +21,19 @@ export default class ArcadeMachine {
         texture.generateMipmaps = true;
         texture.minFilter = THREE.LinearFilter;
         texture.magFilter = THREE.LinearFilter;
-        // 画像のアルファ情報を無視したい場合は、texture.format を RGBFormat に設定するが、
-        // TextureLoader が適切な形式でロードしている場合は不要
-        // texture.format = THREE.RGBFormat;
+
         const material = new THREE.MeshBasicMaterial({
           map: texture,
           transparent: false,
           opacity: 1,
+          alphaTest: 0,
+          depthWrite: true,
+          depthTest: true,
+          side: THREE.FrontSide,
         });
 
         this.machine = new THREE.Mesh(geometry, material);
-        this.machine.position.set(0, 0, 0);
+        this.machine.position.set(0, -130, 50);
         this.scene.add(this.machine);
 
         // スクリーン部分のジオメトリとマテリアルの作成

@@ -1,15 +1,22 @@
 // Background.ts
 import * as THREE from 'three';
+import { BallsGroup } from './BallFactory';
 
 export default class Background {
   private scene: THREE.Scene;
   private plane: THREE.Mesh | null = null;
   private clock: THREE.Clock;
+  private group: THREE.Group;
 
   constructor(scene: THREE.Scene) {
     this.scene = scene;
     this.clock = new THREE.Clock();
+    this.group = new THREE.Group();
     this.createBackground();
+
+    const ballsGroup = new BallsGroup();
+    this.group.add(ballsGroup.getGroup());
+    this.scene.add(this.group);
   }
 
   private createBackground(): void {
