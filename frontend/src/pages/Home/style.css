@@ -4,7 +4,7 @@ html {
   padding: 0;
   width: 100%;
   height: 100%;
-  font-family: 'Arial', sans-serif;
+  font-family: 'Orbitron', sans-serif;
   overflow: hidden;
   color: #f8fafc;
 }
@@ -41,7 +41,6 @@ html {
   color: #000;
 }
 
-/* Three.js の canvas を背景の上に重ねるための設定 */
 #background canvas {
   position: absolute;
   top: 0;
@@ -53,13 +52,12 @@ html {
   text-align: center;
   padding: 30px;
   border-radius: 20px;
-  max-width: 400px;
-  width: 90%;
+  max-width: 360px;
   box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
   position: relative;
   margin: auto;
   top: 0%;
-  transform: translateY(300%);
+  transform: translateY(228%);
 }
 
 h1 {
@@ -79,41 +77,33 @@ main p {
 .button-group {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  margin-top: 20px;
+  /* gap: 20px; */
+  margin-top: 40px;
 }
 
 .btn {
   display: block;
-  padding: 10px;
+  padding: 25px 10px;
   font-size: 1.5rem;
   text-decoration: none;
   color: #fff;
-  border-radius: 8px;
+  border-radius: 20px;
   text-align: center;
   transition:
     transform 0.2s,
     opacity 0.3s;
   width: 100%;
+  background-color: rgba(128, 128, 128, 0.8);  /* 半透明のグレー */
+  backdrop-filter: blur(5px); 
+  border: none;  /* 境界線を削除 */
+  box-shadow: none;  /* シャドウを削除 */
 }
 
 .btn:hover {
   transform: scale(1.05);
-  opacity: 0.9;
+  background-color: rgba(128, 128, 128, 0.7);
 }
 
-.btn-primary {
-  background-color: #3b82f6;
-}
-.btn-secondary {
-  background-color: #9333ea;
-}
-.btn-tertiary {
-  background-color: #ec4899;
-}
-.btn-quaternary {
-  background-color: #f97316;
-}
 
 footer p {
   margin-top: 30px;
@@ -143,8 +133,8 @@ footer .highlight {
   width: 800px; /* ゲーム表示の適切なサイズに変更可能 */
   height: 600px;
   transform: translate(-50%, -50%);
-  z-index: -1; /* 背景の上、UIの下 */
-  background: transparent; /* 背景透過 */
+  z-index: -1; 
+  background: transparent; 
 }
 
 

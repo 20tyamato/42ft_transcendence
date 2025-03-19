@@ -42,8 +42,9 @@ const HomePage = new Page({
     mainScene.add(background.getGroup());
 
     const arcadeMachine = new ArcadeMachine(mainScene, new THREE.Texture());
+    mainScene.add(arcadeMachine.getGroup());
 
-    const background2 = new Background2(mainScene, true);
+    const background2 = new Background2(mainScene, 1); // Replace '1' with the appropriate number if needed
     mainScene.add(background2.getGroup());
 
     function animate() {

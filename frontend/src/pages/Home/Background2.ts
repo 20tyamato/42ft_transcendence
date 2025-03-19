@@ -12,10 +12,19 @@ export default class Background2 {
   private clock: THREE.Clock;
   private group: THREE.Group;
   private balls: PhysicsBall[] = [];
-  private gravity = -7;
-  private restitution = 1.0;
+  private gravity = -9.8;
+  private restitution = 0.92;
   private prevTime: number = 0;
   private plane: THREE.Mesh | null = null;
+  private lowestY = -120;
+  private initialVelocities = {
+    ball4: 8,
+    ball2: 6,
+  };
+  private maxVelocity = {
+    ball4: 12,
+    ball2: 10,
+  };
 
   constructor(scene: THREE.Scene, yPosition: number = -50) {
     this.scene = scene;
@@ -29,41 +38,41 @@ export default class Background2 {
   }
 
   private createBackground() {
-    const geometry = new THREE.PlaneGeometry(300, 200, 128, 128);
+    const geometry = new THREE.PlaneGeometry(3000, 3000, 128, 128);
     const material = new THREE.MeshBasicMaterial({
       color: 0xffffff,
       wireframe: true,
       transparent: true,
-      opacity: 0.8,
+      opacity: 0,
       side: THREE.DoubleSide,
     });
     this.plane = new THREE.Mesh(geometry, material);
     this.plane.rotation.x = -Math.PI / 2;
-    this.plane.position.y = -50;
+    this.plane.position.y = -100;
     this.group.add(this.plane);
   }
 
   private createBalls() {
-    const radius = 40;
+    const radius = 50;
     const ball4 = createBall('4', '#ff0000', '#ffffff', radius);
     const ball2 = createBall('2', '#0000ff', '#ffffff', radius);
 
-    const initialHeight = 180;
+    const initialHeight = 100;
 
     this.balls = [
       {
         mesh: ball4,
-        velocity: new THREE.Vector3(0, 8, 0),
+        velocity: new THREE.Vector3(0, 6, 0),
         radius: radius,
       },
       {
         mesh: ball2,
-        velocity: new THREE.Vector3(0, 6, 0),
+        velocity: new THREE.Vector3(0, 5, 0),
         radius: radius,
       },
     ];
 
-    const offset = radius * 2;
+    const offset = radius * 1.5;
     ball4.position.set(-offset, initialHeight, 50);
     ball2.position.set(offset, initialHeight, 50);
 
@@ -72,21 +81,33 @@ export default class Background2 {
 
   public update(): void {
     const currentTime = performance.now();
-    const dt = (currentTime - this.prevTime) / 1000;
+    const dt = (currentTime - this.prevTime) / 1000; // 経過時間(秒単位)を正しく計算
     this.prevTime = currentTime;
 
     this.balls.forEach((ball) => {
-      ball.velocity.y += this.gravity * dt * 50;
-      ball.mesh.position.y += ball.velocity.y * dt;
+      // 重力で速度更新
+      ball.velocity.y += this.gravity * dt;
 
-      if (ball.mesh.position.y <= ball.radius) {
-        ball.mesh.position.y = ball.radius;
+      // ボールの位置更新
+      ball.mesh.position.y += ball.velocity.y;
+
+      // 床との衝突判定
+      if (ball.mesh.position.y <= this.lowestY + ball.radius) {
+        ball.mesh.position.y = this.lowestY + ball.radius + 30; // ボールを床の位置に正確に戻す
         ball.velocity.y = -ball.velocity.y * this.restitution;
+
+        // ボールの速度が非常に小さい場合、ゼロにして停止させる（任意）
+        if (Math.abs(ball.velocity.y) < 0.01) {
+          ball.velocity.y = 0;
+        }
       }
     });
 
+    // 背景の波動更新（オプション）
     const time = this.clock.getElapsedTime();
-    if (!this.plane) return;
+    if (!this.plane || !this.plane.geometry || !this.plane.geometry.attributes.position) {
+      return;
+    }
     const positions = this.plane.geometry.attributes.position.array;
     const amplitude = 20;
     const frequency = 0.005;
@@ -99,7 +120,6 @@ export default class Background2 {
         Math.sin(x * frequency + phase) * amplitude +
         Math.cos(y * frequency + phase) * amplitude * 0.5;
     }
-
     this.plane.geometry.attributes.position.needsUpdate = true;
     this.plane.geometry.computeVertexNormals();
   }

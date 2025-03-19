@@ -26,7 +26,7 @@ export default class Background {
     });
     this.plane = new THREE.Mesh(geometry, material);
     this.plane.rotation.x = -Math.PI / 2;
-    this.plane.position.y = -50;
+    this.plane.position.y = -120;
     this.scene.add(this.plane);
   }
 
