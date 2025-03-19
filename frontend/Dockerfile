@@ -1,5 +1,7 @@
 FROM node:22.13.0
 
+USER root
+
 WORKDIR /app
 
 COPY package.json package-lock.json ./

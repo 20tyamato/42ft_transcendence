@@ -13,16 +13,37 @@ export type ICurrentUser = {
  */
 export const checkAuthentication = async (): Promise<ICurrentUser> => {
   const token = storage.getUserToken();
+  // 現在のパスを取得
+  const currentPath = window.location.pathname;
 
   try {
-    if (!token) throw new Error('Token does not exist, redirected to login page.');
+    if (!token) throw new Error('Token does not exist.');
     const user = await fetchCurrentUser();
     return { token, ...user };
   } catch (error) {
     console.error('Failed to fetch current user:', error);
     storage.removeUserToken();
-    window.location.href = '/login';
-    throw new Error('Token does not exist, redirected to login page.');
+
+    // ホームページ('/')の場合はリダイレクトしない
+    if (currentPath !== '/') {
+      window.location.href = '/login';
+    }
+
+    // 認証されていないユーザー向けの基本情報を返す
+    return {
+      token: '',
+      username: '',
+      email: '',
+      display_name: '',
+      avatar: '',
+      level: 1,
+      language: 'en',
+      is_online: false,
+      total_matches: 0,
+      wins: 0,
+      losses: 0,
+      tournament_wins: 0,
+    };
   }
 };
 

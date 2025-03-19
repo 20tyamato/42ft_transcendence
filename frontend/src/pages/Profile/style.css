@@ -8,7 +8,7 @@
 }
 
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Orbitron', sans-serif;
   background: #000;
   color: #fff;
   min-height: 100vh;
@@ -28,8 +28,8 @@ body {
    フリップカード用スタイル
 ------------------------------ */
 .profile-card {
-  width: 500px;
-  height: 300px;
+  width: 600px;
+  height: 400px;
   perspective: 1000px;
   position: relative;
   cursor: pointer;
@@ -60,6 +60,7 @@ body {
   color: #fff;
   transform: translateZ(10px);
   border: 3px solid #000;
+  overflow: hidden;
 }
 
 .card-front {
@@ -120,14 +121,14 @@ body {
 .profile-section .info h1 {
   margin: 4px 0;
   text-align: left;
-  transform: translateX(65px);
+  transform: translateX(40px);
 }
 
 .profile-section .info p {
   margin: 4px 0;
   font-size: 0.9rem;
   text-align: left;
-  transform: translateX(65px);
+  transform: translateX(40px);
 }
 
 .profile-section #edit-btn {
@@ -144,45 +145,13 @@ body {
    タップヒントのスタイル
 ------------------------------ */
 .tap-hint {
-  margin-top: 0.5rem;
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+  text-align: center;
   font-size: 0.85rem;
   opacity: 0.8;
-  text-align: center;
-  color: #fff;
-}
-
-/* ------------------------------
-   バック面のセクション
------------------------------- */
-.history-section,
-.score-section {
-  margin-bottom: 1rem;
-}
-
-.history-section h2,
-.score-section h2 {
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
-  color: #ff4c60;
-}
-
-/* ------------------------------
-   ボタン
------------------------------- */
-.btn {
-  padding: 0.5rem 1.2rem;
-  border-radius: 4px;
-  cursor: pointer;
-  border: none;
-}
-
-.btn-primary {
-  background-color: #ff4c60;
-  color: #fff;
-}
-
-.btn-secondary {
-  background-color: #555;
   color: #fff;
 }
 
@@ -207,4 +176,186 @@ body {
 
 .level-21-25 {
   background: linear-gradient(135deg, #800080, #cc00cc);
+}
+
+/* User info and stats sections */
+.user-info-section {
+  margin-bottom: 15px;
+}
+
+.stats-section {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.stats-section h2 {
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.stat-item {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 4px;
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* Adjust the profile section layout */
+.profile-section .info {
+  width: 100%;
+  padding-left: 100px; /* Ensure text doesn't overlap with the avatar */
+}
+
+/* Make sure the title (display name) is properly positioned */
+#displayNameTitle {
+  font-weight: bold;
+}
+
+/* マッチ履歴セクション */
+.match-history-section {
+  position: relative;
+  height: calc(100% - 60px);
+}
+
+.match-history-section h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #ff4c60;
+}
+
+.match-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 280px;
+  max-height: 300px;
+  overflow-y: auto;
+  position: relative;
+  min-height: 100px;
+  padding-right: 10px;
+  margin-bottom: 40px;
+}
+
+/* マッチ履歴アイテム */
+.match-item {
+  display: grid;
+  grid-template-columns: 80px 1fr 80px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  padding: 8px;
+  transition: transform 0.2s;
+}
+
+.match-item:hover {
+  transform: translateY(-2px);
+}
+
+/* マッチ日付 */
+.match-date {
+  font-size: 0.75rem;
+  color: #ccc;
+  align-self: center;
+}
+
+/* マッチ詳細 */
+.match-details {
+  text-align: left;
+}
+
+.match-opponent {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.match-type {
+  font-size: 0.7rem;
+  color: #aaa;
+}
+
+/* マッチ結果 */
+.match-result {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.match-score {
+  font-size: 0.9rem;
+}
+
+.result-badge {
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-align: center;
+  margin-top: 2px;
+}
+
+/* 結果バッジの色分け */
+.match-item.win {
+  border-left: 3px solid #4caf50;
+}
+
+.match-item.lose {
+  border-left: 3px solid #f44336;
+}
+
+.result-badge.win {
+  background-color: #4caf50;
+  color: white;
+}
+
+.result-badge.lose {
+  background-color: #f44336;
+  color: white;
+}
+
+/* ローディング表示 */
+.loading-spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top: 3px solid #ff4c60;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 試合がない場合のメッセージ */
+.hidden {
+  display: none;
+}
+
+#noMatchesMessage {
+  text-align: center;
+  color: #aaa;
+  margin-top: 1rem;
 }

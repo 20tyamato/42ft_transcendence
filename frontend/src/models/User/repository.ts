@@ -1,5 +1,6 @@
 import { API_URL } from '@/config/config';
 import i18next from '@/config/i18n';
+import { IMatchHistory, IUser } from './type';
 import { fetcher } from '@/utils/fetcher';
 
 export const fetchUsers = async () => {
@@ -109,5 +110,49 @@ export const updateOnlineStatus = async (is_online: boolean) => {
     return data;
   } catch (error) {
     console.error('Error updating online status:', error);
+  }
+};
+
+/**
+ * ユーザーのマッチ履歴を取得する
+ * @param userId ユーザーID（未指定時は自分自身）
+ * @param limit 取得する履歴の最大数（デフォルト: 5）
+ * @returns マッチ履歴の配列
+ */
+export const getUserMatchHistory = async (
+  userId: number | string = 'me',
+  limit: number = 10
+): Promise<IMatchHistory[]> => {
+  try {
+    const endpoint = `/api/users/${userId}/matches/?limit=${limit}`;
+    const response = await fetcher(endpoint, { method: 'GET' });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch match history: ${response.status}`);
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user match history:', error);
+    return []; // エラー時は空配列を返す
+  }
+};
+
+/**
+ * ユーザーの統計情報を含むプロファイルを取得する
+ */
+export const getUserWithStats = async (userId: number | string = 'me'): Promise<IUser | null> => {
+  try {
+    const endpoint = `/api/users/${userId}/`;
+    const response = await fetcher(endpoint, { method: 'GET' });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch user profile: ${response.status}`);
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user profile with stats:', error);
+    return null;
   }
 };

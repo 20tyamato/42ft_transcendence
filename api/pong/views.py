@@ -13,6 +13,7 @@ from .serializers import (
     GameSerializer,
     UserAvatarSerializer,
     UserSerializer,
+    MatchHistorySerializer,
 )
 
 
@@ -267,6 +268,10 @@ class GameListCreateView(generics.ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
         game = serializer.save()
 
+        # Update player level for completed games
+        if game.status == "COMPLETED":
+            game.player1.update_level()
+
         return Response(
             {
                 "game": GameSerializer(
@@ -282,3 +287,37 @@ class GameRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
     permission_classes = [IsAuthenticated, IsPlayerOrReadOnly]
+
+
+class UserMatchHistoryView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user_id = kwargs.get("pk")
+        limit = int(request.query_params.get("limit", 5))
+
+        # 'me'の場合は現在のユーザーを対象にする
+        if user_id == "me" or not user_id:
+            user = request.user
+        else:
+            try:
+                user = User.objects.get(id=user_id)
+            except User.DoesNotExist:
+                return Response(
+                    {"error": "User not found"}, status=status.HTTP_404_NOT_FOUND
+                )
+
+        # 権限チェック（自分自身またはフレンドの履歴のみ閲覧可能）
+        if user.id != request.user.id and user not in request.user.friends.all():
+            return Response(
+                {
+                    "error": "You don't have permission to view this user's match history"
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        # マッチ履歴取得
+        matches = user.get_recent_matches(limit)
+        serializer = MatchHistorySerializer(matches, many=True, context={"user": user})
+
+        return Response(serializer.data)

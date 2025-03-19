@@ -12,9 +12,3 @@ export interface IRankingUser {
   username: string;
   level: number;
 }
-
-// FIXME: RM???
-export interface IBlockchainScore {
-  txHash: string;
-  score: number;
-}

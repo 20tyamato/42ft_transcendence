@@ -69,7 +69,6 @@ const WaitingPage = new Page({
 
           // プレイヤー情報を構築
           playerItem.innerHTML = `
-            <img src="${API_URL}/media/default_avatar.png" alt="${player.username}" class="player-avatar">
             <div class="player-name">${player.display_name || player.username}</div>
             <div class="ready-status ready-yes">Ready</div>
           `;

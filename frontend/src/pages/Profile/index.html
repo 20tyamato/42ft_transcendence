@@ -15,27 +15,46 @@
       <div class="profile-card">
         <div class="card-inner">
           <!-- ▼ Front ▼ -->
+          <!-- In the card-front div, modify the info section -->
           <div class="card-front">
             <div class="profile-section">
-              <img
-                id="avatar"
-                src="/src/resources/avatar.png"
-                alt="Avatar"
-                style="cursor: pointer"
-              />
+              <img id="avatar" src="/src/resources/avatar.png" alt="Avatar" style="cursor: pointer" />
               <div class="info">
                 <h1 id="mycard">
-                  My Card
+                  <span id="displayNameTitle"></span>
                   <i id="edit-btn" class="far fa-edit"></i>
                   <i id="friend-btn" class="fa-solid fa-user-group"></i>
                 </h1>
-                <p>Username: <span id="username"></span></p>
-                <p>Email: <span id="email"></span></p>
-                <p>Display name: <span id="displayName"></span></p>
-                <p>Current experience: <span id="experience"></span></p>
-                <p>Level: <span id="level"></span></p>
-                <p>Language: <span id="language"></span></p>
-                <p>Online Status: <span id="onlineStatus"></span></p>
+                
+                <!-- Basic user information -->
+                <div class="user-info-section">
+                  <p>Username: <span id="username"></span></p>
+                  <p>Email: <span id="email"></span></p>
+                  <p>Level: <span id="level"></span></p>
+                </div>
+                
+                <!-- New game statistics section -->
+                <div class="stats-section">
+                  <h2>Game Statistics</h2>
+                  <div class="stats-grid">
+                    <div class="stat-item">
+                      <p class="stat-label">Total Matches</p>
+                      <p class="stat-value" id="totalMatches">0</p>
+                    </div>
+                    <div class="stat-item">
+                      <p class="stat-label">Wins</p>
+                      <p class="stat-value" id="wins">0</p>
+                    </div>
+                    <div class="stat-item">
+                      <p class="stat-label">Losses</p>
+                      <p class="stat-value" id="losses">0</p>
+                    </div>
+                    <div class="stat-item">
+                      <p class="stat-label">Tournament Wins</p>
+                      <p class="stat-value" id="tournamentWins">0</p>
+                    </div>
+                  </div>
+                </div>
                 <button class="close-btn">x</button>
               </div>
             </div>
@@ -45,13 +64,16 @@
           <!-- ▼ Back ▼ -->
           <div class="card-back">
             <button class="close-btn">x</button>
-            <div class="history-section">
-              <h2>Tournament History</h2>
-              <ul id="tournamentHistory"></ul>
-            </div>
-            <div class="score-section">
-              <h2>Blockchain Scores</h2>
-              <ul id="scoreList"></ul>
+            
+            <div class="match-history-section">
+              <h2>Recent Matches</h2>
+              
+              <!-- マッチ履歴リスト -->
+              <div id="matchHistoryList" class="match-history-list">
+                <!-- マッチ履歴アイテムはJSで動的に生成されます -->
+                <div class="loading-spinner" id="matchHistoryLoading"></div>
+                <p id="noMatchesMessage" class="hidden">No match history available.</p>
+              </div>
             </div>
             <p class="tap-hint">Tap or click to show the front</p>
           </div>

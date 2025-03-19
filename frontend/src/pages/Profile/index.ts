@@ -1,36 +1,31 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
-import { ICurrentUser } from '@/libs/Auth/currnetUser';
-import { IBlockchainScore, ITournamentHistory } from '@/models/interface';
-
 import { IUser } from '@/models/User/type';
+import { getUserMatchHistory, getUserWithStats } from '@/models/User/repository';
 import { languageNames, setUserLanguage } from '@/utils/language';
-import { updateInnerHTML, updateText } from '@/utils/updateElements';
+import { updateText } from '@/utils/updateElements';
+import { formatDate } from '@/utils/date';
 
 const updatePageContent = (): void => {
   updateText('title', i18next.t('userProfile'));
+  // 基本情報ラベル
+  updateText('#username', i18next.t('username'));
+  updateText('#email', i18next.t('emailAddress'));
+  updateText('#level', i18next.t('level'));
 
-  // Update myCard テキスト
-  const myCardEl = document.getElementById('mycard');
-  if (myCardEl) {
-    for (const node of myCardEl.childNodes) {
-      if (node.nodeType === Node.TEXT_NODE) {
-        node.textContent = i18next.t('myCard') + ' ';
-        break;
-      }
-    }
-  }
+  // 統計情報ラベル
+  updateText('.stats-section h2', i18next.t('gameStatistics'));
+  updateText('.stat-label:nth-of-type(1)', i18next.t('totalMatches'));
+  updateText('.stat-label:nth-of-type(2)', i18next.t('wins'));
+  updateText('.stat-label:nth-of-type(3)', i18next.t('losses'));
+  updateText('.stat-label:nth-of-type(4)', i18next.t('tournamentWins'));
 
-  updateInnerHTML('username', i18next.t('username'));
-  updateInnerHTML('email', i18next.t('emailAddress'));
-  updateInnerHTML('displayName', i18next.t('displayName'));
-  updateInnerHTML('experience', i18next.t('currentExperience'));
-  updateInnerHTML('level', i18next.t('level'));
-  updateInnerHTML('language', i18next.t('language'));
-  updateInnerHTML('onlineStatus', i18next.t('onlineStatus'));
+  // マッチ履歴
+  updateText('.match-history-section h2', i18next.t('recentMatches'));
+  updateText('#noMatchesMessage', i18next.t('noMatchesAvailable'));
 
-  // Update tap hints
+  // タップヒントとボタン
   const tapHints = document.querySelectorAll('.tap-hint');
   if (tapHints.length > 0) {
     if (tapHints[0]) {
@@ -41,11 +36,7 @@ const updatePageContent = (): void => {
     }
   }
 
-  // Update セクション見出し
-  updateText('.history-section h2', i18next.t('tournamentHistory'));
-  updateText('.score-section h2', i18next.t('blockchainScores'));
-
-  // Update 編集ボタン
+  // 編集ボタン
   const editBtn = document.getElementById('edit-btn');
   if (editBtn) {
     editBtn.title = i18next.t('editProfile');
@@ -53,23 +44,22 @@ const updatePageContent = (): void => {
 };
 
 const updateFrontElements = (userData: IUser): void => {
+  // 基本情報
   const usernameEl = document.getElementById('username');
   const emailEl = document.getElementById('email');
-  const displayNameEl = document.getElementById('displayName');
+  const displayNameTitleEl = document.getElementById('displayNameTitle');
   const avatarEl = document.getElementById('avatar') as HTMLImageElement | null;
   const levelEl = document.getElementById('level');
-  const experienceEl = document.getElementById('experience');
-  const languageEl = document.getElementById('language');
-  const onlineStatusEl = document.getElementById('onlineStatus');
 
+  // 基本情報の更新
   if (usernameEl) {
     usernameEl.textContent = userData.username;
   }
   if (emailEl) {
     emailEl.textContent = userData.email;
   }
-  if (displayNameEl) {
-    displayNameEl.textContent = userData.display_name;
+  if (displayNameTitleEl) {
+    displayNameTitleEl.textContent = userData.display_name;
   }
   if (avatarEl) {
     avatarEl.src = userData.avatar || '/src/resources/avatar.png';
@@ -77,14 +67,24 @@ const updateFrontElements = (userData: IUser): void => {
   if (levelEl) {
     levelEl.textContent = userData.level.toString();
   }
-  if (experienceEl) {
-    experienceEl.textContent = userData.experience.toString();
+
+  // 統計情報の更新
+  const totalMatchesEl = document.getElementById('totalMatches');
+  const winsEl = document.getElementById('wins');
+  const lossesEl = document.getElementById('losses');
+  const tournamentWinsEl = document.getElementById('tournamentWins');
+
+  if (totalMatchesEl) {
+    totalMatchesEl.textContent = userData.total_matches?.toString() || '0';
   }
-  if (languageEl) {
-    languageEl.textContent = languageNames[userData.language];
+  if (winsEl) {
+    winsEl.textContent = userData.wins?.toString() || '0';
   }
-  if (onlineStatusEl) {
-    onlineStatusEl.textContent = userData.is_online ? 'Online' : 'Offline';
+  if (lossesEl) {
+    lossesEl.textContent = userData.losses?.toString() || '0';
+  }
+  if (tournamentWinsEl) {
+    tournamentWinsEl.textContent = userData.tournament_wins?.toString() || '0';
   }
 };
 
@@ -111,26 +111,67 @@ const updateCardColor = (level: number): void => {
   });
 };
 
-const updateBackElements = (
-  tournamentHistory: ITournamentHistory[],
-  blockchainScores: IBlockchainScore[]
-): void => {
-  const tournamentHistoryEl = document.getElementById('tournamentHistory');
-  const scoreListEl = document.getElementById('scoreList');
+// マッチ履歴の表示を担当する新しい関数
+const updateMatchHistory = async (userId: string): Promise<void> => {
+  const matchHistoryList = document.getElementById('matchHistoryList');
+  const loadingSpinner = document.getElementById('matchHistoryLoading');
+  const noMatchesMessage = document.getElementById('noMatchesMessage');
 
-  // トーナメント履歴更新
-  tournamentHistory.forEach((item) => {
-    const li = document.createElement('li');
-    li.textContent = `${item.date} - ${item.result}`;
-    tournamentHistoryEl?.appendChild(li);
-  });
+  if (!matchHistoryList) return;
 
-  // ブロックチェーンスコア更新
-  blockchainScores.forEach((item) => {
-    const li = document.createElement('li');
-    li.textContent = `TxHash: ${item.txHash} | Score: ${item.score}`;
-    scoreListEl?.appendChild(li);
-  });
+  try {
+    // 以前のマッチ履歴をクリア
+    const existingMatches = matchHistoryList.querySelectorAll('.match-item');
+    existingMatches.forEach((item) => item.remove());
+
+    // ローディング表示
+    if (loadingSpinner) loadingSpinner.style.display = 'block';
+    if (noMatchesMessage) noMatchesMessage.classList.add('hidden');
+
+    // マッチ履歴取得
+    const matches = await getUserMatchHistory('me');
+
+    matches.sort((a, b) => {
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
+    });
+
+    // ローディング非表示
+    if (loadingSpinner) loadingSpinner.style.display = 'none';
+
+    // データなしの場合
+    if (!matches || matches.length === 0) {
+      if (noMatchesMessage) noMatchesMessage.classList.remove('hidden');
+      return;
+    }
+
+    // マッチ履歴アイテムの生成
+    matches.forEach((match) => {
+      const matchItem = document.createElement('div');
+      matchItem.className = `match-item ${match.result}`;
+
+      matchItem.innerHTML = `
+        <div class="match-date">${formatDate(match.date)}</div>
+        <div class="match-details">
+          <div class="match-opponent">vs. ${match.opponent}</div>
+          <div class="match-type">${match.match_type}</div>
+        </div>
+        <div class="match-result">
+          <div class="match-score">${match.score_player1} - ${match.score_player2}</div>
+          <div class="result-badge ${match.result}">${match.result.toUpperCase()}</div>
+        </div>
+      `;
+
+      matchHistoryList.appendChild(matchItem);
+    });
+  } catch (error) {
+    console.error('Error updating match history:', error);
+    // エラー処理
+    if (loadingSpinner) loadingSpinner.style.display = 'none';
+    if (noMatchesMessage) {
+      noMatchesMessage.textContent = 'Failed to load match history.';
+      noMatchesMessage.classList.remove('hidden');
+    }
+  }
 };
 
 const attachActionButtonHandlers = (): void => {
@@ -189,32 +230,21 @@ const ProfilePage = new Page({
       // 言語設定とページ文言の更新
       setUserLanguage(user.language, updatePageContent);
 
-      // フロント側の更新
-      const { username, email, display_name, avatar, level, experience, language, is_online } =
-        user;
+      // 統計情報を含むユーザーデータを取得
+      const userWithStats = await getUserWithStats('me');
 
-      updateFrontElements({
-        username,
-        email,
-        display_name,
-        avatar,
-        level,
-        experience,
-        language,
-        is_online,
-      });
-      updateCardColor(level);
+      if (userWithStats) {
+        // 前面の更新（統計情報含む）
+        updateFrontElements(userWithStats);
+        updateCardColor(userWithStats.level);
+      } else {
+        // フォールバック：基本情報のみで表示
+        updateFrontElements(user);
+        updateCardColor(user.level);
+      }
 
-      // サンプルデータ（本来は API 等から取得）
-      const tournamentHistory: ITournamentHistory[] = [
-        { date: '2025-01-01', result: 'Won' },
-        { date: '2025-01-05', result: 'Lost' },
-      ];
-      const blockchainScores: IBlockchainScore[] = [
-        { txHash: '0x123...', score: 100 },
-        { txHash: '0x456...', score: 80 },
-      ];
-      updateBackElements(tournamentHistory, blockchainScores);
+      // マッチ履歴の取得と表示
+      await updateMatchHistory('me');
 
       // 各種ボタンのイベント登録
       attachActionButtonHandlers();

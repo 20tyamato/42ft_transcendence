@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models import Q
 
 
 class User(AbstractUser):
@@ -8,7 +9,6 @@ class User(AbstractUser):
         upload_to="avatars/", null=True, blank=True, default="default_avatar.png"
     )
     level = models.IntegerField(default=1)
-    experience = models.IntegerField(default=0)
     language = models.CharField(max_length=10, default="en")
     is_online = models.BooleanField(default=False)
     last_activity = models.DateTimeField(null=True, blank=True)
@@ -48,6 +48,50 @@ class User(AbstractUser):
     @property
     def total_games_lost(self):
         return self.total_games_played - self.total_games_won
+
+    @property
+    def tournament_wins_count(self):
+        """ユーザーが優勝したトーナメントの数を返す"""
+        return self.tournaments_won.count()
+
+    def get_recent_matches(self, limit=5):
+        """
+        直近のマッチ履歴を取得する
+        Args:
+            limit: 取得する試合数(デフォルト: 5)
+        Returns:
+            最新のゲームのクエリセット（日付降順）
+        """
+        # プレイヤー1または2として参加したゲームを取得
+        recent_games = Game.objects.filter(Q(player1=self) | Q(player2=self)).order_by(
+            "-end_time", "-start_time"
+        )[:limit]
+
+        return recent_games
+
+    def calculate_level(self):
+        """
+        Calculate user level based on total games played.
+        Starting at level 1, player gains 1 level for every 3 games played.
+        """
+        total_games = self.total_games_played
+        new_level = 1 + (total_games // 3)
+        return new_level
+
+    # NOTE: 初期化データで経験した試合数よりレベルが高いユーザは
+    # 最初にレベルが上昇しないバグがあるように見えるが、これは仕様です.
+    def update_level(self):
+        """
+        Update the player's level based on total games played.
+        Returns: (level_changed, old_level, new_level)
+        """
+        new_level = self.calculate_level()
+        if new_level > self.level:
+            old_level = self.level
+            self.level = new_level
+            self.save(update_fields=["level"])
+            return True, old_level, new_level
+        return False, self.level, self.level
 
 
 class Game(models.Model):

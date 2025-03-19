@@ -31,6 +31,14 @@ class FriendSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True)
+    total_matches = serializers.IntegerField(
+        source="total_games_played", read_only=True
+    )
+    wins = serializers.IntegerField(source="total_games_won", read_only=True)
+    losses = serializers.IntegerField(source="total_games_lost", read_only=True)
+    tournament_wins = serializers.IntegerField(
+        source="tournament_wins_count", read_only=True
+    )
 
     class Meta:
         model = User
@@ -42,10 +50,13 @@ class UserSerializer(serializers.ModelSerializer):
             "password",
             "avatar",
             "level",
-            "experience",
             "language",
             "is_online",
             "friends",
+            "total_matches",
+            "wins",
+            "losses",
+            "tournament_wins",
         ]
         extra_kwargs = {
             "username": {"required": True},
@@ -68,7 +79,6 @@ class UserSerializer(serializers.ModelSerializer):
             display_name=validated_data["display_name"],
             avatar=validated_data.get("avatar", ""),
             level=validated_data.get("level", 1),
-            experience=validated_data.get("experience", 0),
             language=validated_data.get("language", "en"),
             is_online=validated_data.get("is_online", False),
         )
@@ -286,3 +296,43 @@ class TournamentSessionSerializer(serializers.ModelSerializer):
                 "Cannot modify tournament after it has started"
             )
         return data
+
+
+class MatchHistorySerializer(serializers.ModelSerializer):
+    opponent = serializers.SerializerMethodField()
+    result = serializers.SerializerMethodField()
+    match_type = serializers.CharField(source="get_game_type_display")
+    date = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Game
+        fields = [
+            "id",
+            "date",
+            "opponent",
+            "result",
+            "match_type",
+            "score_player1",
+            "score_player2",
+            "session_id",
+        ]
+
+    def get_opponent(self, obj):
+        user = self.context.get("user")
+        if user.id == obj.player1_id:
+            return obj.player2.username if obj.player2 else "AI"
+        return obj.player1.username
+
+    def get_result(self, obj):
+        user = self.context.get("user")
+
+        # 自分が勝者の場合
+        if obj.winner_id == user.id:
+            return "win"
+
+        # それ以外は敗北
+        return "lose"
+
+    def get_date(self, obj):
+        # 終了時間がある場合はそれを、なければ開始時間を返す
+        return obj.end_time or obj.start_time
