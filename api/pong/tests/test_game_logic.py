@@ -1,6 +1,7 @@
 import unittest
 from pong.game_logic import MultiplayerPongGame
 
+
 class TestMultiplayerPongGame(unittest.TestCase):
     """MultiplayerPongGameクラスのテスト"""
 

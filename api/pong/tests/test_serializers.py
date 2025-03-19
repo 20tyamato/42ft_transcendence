@@ -10,7 +10,10 @@ from pong.serializers import (
     TournamentParticipantSerializer,
 )
 
-@override_settings(SECURE_SSL_REDIRECT=False, SESSION_COOKIE_SECURE=False, CSRF_COOKIE_SECURE=False)
+
+@override_settings(
+    SECURE_SSL_REDIRECT=False, SESSION_COOKIE_SECURE=False, CSRF_COOKIE_SECURE=False
+)
 class UserSerializerTests(APITestCase):
     def setUp(self):
         """テストの初期設定"""
@@ -117,7 +120,10 @@ class UserSerializerTests(APITestCase):
         self.assertFalse(serializer.is_valid())
         self.assertIn("username", serializer.errors)
 
-@override_settings(SECURE_SSL_REDIRECT=False, SESSION_COOKIE_SECURE=False, CSRF_COOKIE_SECURE=False)
+
+@override_settings(
+    SECURE_SSL_REDIRECT=False, SESSION_COOKIE_SECURE=False, CSRF_COOKIE_SECURE=False
+)
 class GameSerializerTests(TestCase):
     def setUp(self):
         self.user1 = User.objects.create_user(
@@ -202,7 +208,6 @@ class GameSerializerTests(TestCase):
         self.assertEqual(game.tournament_round, 0)
         self.assertEqual(game.game_type, "TOURNAMENT")
 
-
     def test_game_serializer_ai_game(self):
         """AIゲームのシリアライズが正しく機能するかテスト"""
         # AIゲームを作成（player2はNone、ai_levelを設定）
@@ -214,22 +219,25 @@ class GameSerializerTests(TestCase):
             session_id="game_player1_ai_123",
             ai_level=3,  # 中級AIレベル
         )
-        
+
         serializer = GameSerializer(ai_game)
         data = serializer.data
-        
+
         # AI関連フィールドを確認
         self.assertEqual(data["game_type"], "SINGLE")
         self.assertEqual(data["player1"], "player1")
         self.assertIsNone(data["player2"])
         self.assertEqual(data["ai_level"], 3)
 
-@override_settings(SECURE_SSL_REDIRECT=False, SESSION_COOKIE_SECURE=False, CSRF_COOKIE_SECURE=False)
+
+@override_settings(
+    SECURE_SSL_REDIRECT=False, SESSION_COOKIE_SECURE=False, CSRF_COOKIE_SECURE=False
+)
 class TournamentSerializerTests(TestCase):
     def setUp(self):
         """テスト用のユーザーとトーナメントを作成"""
         self.factory = APIRequestFactory()
-        
+
         # テスト用ユーザーを作成
         self.user1 = User.objects.create_user(
             username="player1",
@@ -255,7 +263,7 @@ class TournamentSerializerTests(TestCase):
             password="testpass123",
             display_name="Player Four",
         )
-        
+
         # トーナメントを作成
         self.tournament = TournamentSession.objects.create()
 
@@ -263,15 +271,24 @@ class TournamentSerializerTests(TestCase):
         """空のトーナメントをシリアライズするテスト"""
         serializer = TournamentSessionSerializer(self.tournament)
         data = serializer.data
-        
+
         # 期待されるフィールドが存在することを確認
         expected_fields = [
-            "id", "status", "created_at", "started_at", "completed_at", 
-            "max_players", "current_players_count", "participants", 
-            "games", "winner", "winner_username", "winner_display_name"
+            "id",
+            "status",
+            "created_at",
+            "started_at",
+            "completed_at",
+            "max_players",
+            "current_players_count",
+            "participants",
+            "games",
+            "winner",
+            "winner_username",
+            "winner_display_name",
         ]
         self.assertEqual(set(data.keys()), set(expected_fields))
-        
+
         # 値を確認
         self.assertEqual(data["status"], "WAITING_PLAYERS")
         self.assertEqual(data["max_players"], 4)
@@ -285,38 +302,39 @@ class TournamentSerializerTests(TestCase):
     def test_tournament_serializer_with_participants(self):
         """参加者を含むトーナメントのシリアライズをテスト"""
         # 参加者を追加
+        # ruff: noqa
         participant1 = TournamentParticipant.objects.create(
             tournament=self.tournament,
             user=self.user1,
             bracket_position=1,
-            is_ready=True
+            is_ready=True,
         )
+        # ruff: noqa
         participant2 = TournamentParticipant.objects.create(
             tournament=self.tournament,
             user=self.user2,
             bracket_position=2,
-            is_ready=False
+            is_ready=False,
         )
-        
+
         # シリアライズ
-        request = self.factory.get('/')
+        request = self.factory.get("/")
         serializer = TournamentSessionSerializer(
-            self.tournament, 
-            context={"request": request}
+            self.tournament, context={"request": request}
         )
         data = serializer.data
-        
+
         # 参加者数が正しいことを確認
         self.assertEqual(data["current_players_count"], 2)
         self.assertEqual(len(data["participants"]), 2)
-        
+
         # 参加者情報が正しくシリアライズされているか確認
         participants = sorted(data["participants"], key=lambda x: x["bracket_position"])
         self.assertEqual(participants[0]["username"], "player1")
         self.assertEqual(participants[0]["display_name"], "Player One")
         self.assertEqual(participants[0]["bracket_position"], 1)
         self.assertTrue(participants[0]["is_ready"])
-        
+
         self.assertEqual(participants[1]["username"], "player2")
         self.assertEqual(participants[1]["display_name"], "Player Two")
         self.assertEqual(participants[1]["bracket_position"], 2)
@@ -332,13 +350,13 @@ class TournamentSerializerTests(TestCase):
             player1=self.user1,
             player2=self.user2,
             tournament=self.tournament,
-            tournament_round=0
+            tournament_round=0,
         )
-        
+
         # シリアライズ
         serializer = TournamentSessionSerializer(self.tournament)
         data = serializer.data
-        
+
         # ゲームIDが含まれていることを確認
         self.assertEqual(len(data["games"]), 1)
         self.assertEqual(data["games"][0], semifinal.id)
@@ -351,11 +369,11 @@ class TournamentSerializerTests(TestCase):
         self.tournament.completed_at = completed_time
         self.tournament.winner = self.user1
         self.tournament.save()
-        
+
         # シリアライズ
         serializer = TournamentSessionSerializer(self.tournament)
         data = serializer.data
-        
+
         # 優勝者情報が正しくシリアライズされているか確認
         self.assertEqual(data["winner"], self.user1.id)
         self.assertEqual(data["winner_username"], "player1")
@@ -368,11 +386,9 @@ class TournamentSerializerTests(TestCase):
         self.tournament.status = "IN_PROGRESS"
         self.tournament.started_at = timezone.now()
         self.tournament.save()
-        
+
         serializer = TournamentSessionSerializer(
-            self.tournament, 
-            data={"max_players": 8},
-            partial=True
+            self.tournament, data={"max_players": 8}, partial=True
         )
         self.assertFalse(serializer.is_valid())
         self.assertIn("non_field_errors", serializer.errors)
@@ -384,20 +400,24 @@ class TournamentSerializerTests(TestCase):
             tournament=self.tournament,
             user=self.user1,
             bracket_position=1,
-            is_ready=True
+            is_ready=True,
         )
-        
+
         # シリアライズ
         serializer = TournamentParticipantSerializer(participant)
         data = serializer.data
-        
+
         # フィールドを確認
         expected_fields = [
-            "id", "username", "display_name", "is_ready", 
-            "joined_at", "bracket_position"
+            "id",
+            "username",
+            "display_name",
+            "is_ready",
+            "joined_at",
+            "bracket_position",
         ]
         self.assertEqual(set(data.keys()), set(expected_fields))
-        
+
         # 値を確認
         self.assertEqual(data["username"], "player1")
         self.assertEqual(data["display_name"], "Player One")
@@ -413,35 +433,35 @@ class TournamentSerializerTests(TestCase):
                 tournament=self.tournament,
                 user=user,
                 bracket_position=i,
-                is_ready=(i % 2 == 0)  # 偶数位置の参加者のみ準備完了
+                is_ready=(i % 2 == 0),  # 偶数位置の参加者のみ準備完了
             )
-        
+
         # 全参加者を取得
         participants = TournamentParticipant.objects.filter(tournament=self.tournament)
-        
+
         # シリアライズ
         serializer = TournamentParticipantSerializer(participants, many=True)
         data = serializer.data
-        
+
         # 4人分のデータがあることを確認
         self.assertEqual(len(data), 4)
-        
+
         # 各参加者のデータを確認
         usernames = [item["username"] for item in data]
         self.assertIn("player1", usernames)
         self.assertIn("player2", usernames)
         self.assertIn("player3", usernames)
         self.assertIn("player4", usernames)
-        
+
         # bracket_positionでソートして確認
         sorted_data = sorted(data, key=lambda x: x["bracket_position"])
         self.assertEqual(sorted_data[0]["username"], "player1")
         self.assertEqual(sorted_data[1]["username"], "player2")
         self.assertEqual(sorted_data[2]["username"], "player3")
         self.assertEqual(sorted_data[3]["username"], "player4")
-        
+
         # is_readyが正しくシリアライズされているか確認
         self.assertFalse(sorted_data[0]["is_ready"])  # player1: False
-        self.assertTrue(sorted_data[1]["is_ready"])   # player2: True
+        self.assertTrue(sorted_data[1]["is_ready"])  # player2: True
         self.assertFalse(sorted_data[2]["is_ready"])  # player3: False
-        self.assertTrue(sorted_data[3]["is_ready"])   # player4: True
+        self.assertTrue(sorted_data[3]["is_ready"])  # player4: True

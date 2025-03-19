@@ -1,9 +1,11 @@
 from django.test import TestCase, override_settings
-from django.db import IntegrityError
 from django.utils import timezone
 from pong.models import User, Game, TournamentSession, TournamentParticipant
 
-@override_settings(SECURE_SSL_REDIRECT=False, SESSION_COOKIE_SECURE=False, CSRF_COOKIE_SECURE=False)
+
+@override_settings(
+    SECURE_SSL_REDIRECT=False, SESSION_COOKIE_SECURE=False, CSRF_COOKIE_SECURE=False
+)
 class UserModelTests(TestCase):
     def test_create_user(self):
         """
@@ -33,7 +35,10 @@ class UserModelTests(TestCase):
         )
         self.assertEqual(str(user), "Display Name Test")
 
-@override_settings(SECURE_SSL_REDIRECT=False, SESSION_COOKIE_SECURE=False, CSRF_COOKIE_SECURE=False)
+
+@override_settings(
+    SECURE_SSL_REDIRECT=False, SESSION_COOKIE_SECURE=False, CSRF_COOKIE_SECURE=False
+)
 class GameModelTests(TestCase):
     def setUp(self):
         self.user1 = User.objects.create_user(
@@ -110,7 +115,10 @@ class GameModelTests(TestCase):
         expected_str = f"Single Player: {self.user1.display_name} vs AI (Beginner)"
         self.assertEqual(str(game), expected_str)
 
-@override_settings(SECURE_SSL_REDIRECT=False, SESSION_COOKIE_SECURE=False, CSRF_COOKIE_SECURE=False)
+
+@override_settings(
+    SECURE_SSL_REDIRECT=False, SESSION_COOKIE_SECURE=False, CSRF_COOKIE_SECURE=False
+)
 class TournamentModelTests(TestCase):
     def setUp(self):
         self.user1 = User.objects.create_user(
@@ -140,7 +148,6 @@ class TournamentModelTests(TestCase):
         # 基本的なトーナメントを作成
         self.tournament = TournamentSession.objects.create()
 
-
     def test_tournament_default_values(self):
         """トーナメントがデフォルト値で正しく作成されるかテスト"""
         self.assertEqual(self.tournament.status, "WAITING_PLAYERS")
@@ -158,19 +165,19 @@ class TournamentModelTests(TestCase):
         self.tournament.save()
         self.assertEqual(self.tournament.status, "IN_PROGRESS")
         self.assertIsNotNone(self.tournament.started_at)
-        
+
         # 決勝ラウンド準備完了に変更
         self.tournament.status = "FINAL_READY"
         self.tournament.save()
         self.assertEqual(self.tournament.status, "FINAL_READY")
-        
+
         # 完了に変更
         completed_time = timezone.now()
         self.tournament.status = "COMPLETED"
         self.tournament.completed_at = completed_time
         self.tournament.winner = self.user1
         self.tournament.save()
-        
+
         # データベースから再取得して確認
         refreshed_tournament = TournamentSession.objects.get(id=self.tournament.id)
         self.assertEqual(refreshed_tournament.status, "COMPLETED")
@@ -181,25 +188,24 @@ class TournamentModelTests(TestCase):
         """トーナメント参加者の追加と削除のテスト"""
         # 新しいトーナメントを毎回作成して問題を回避
         unique_tournament = TournamentSession.objects.create(
-            status="WAITING_PLAYERS", 
-            max_players=4
+            status="WAITING_PLAYERS", max_players=4
         )
-        
+
         # 参加者を追加
         participant1 = TournamentParticipant.objects.create(
             tournament=unique_tournament,  # 新しいトーナメントを使用
             user=self.user1,
             bracket_position=1,
-            is_ready=True
+            is_ready=True,
         )
-        
+
         # 参加者が正しく追加されたか確認
         self.assertEqual(unique_tournament.participants.count(), 1)
         self.assertEqual(participant1.tournament, unique_tournament)
         self.assertEqual(participant1.user, self.user1)
         self.assertEqual(participant1.bracket_position, 1)
         self.assertTrue(participant1.is_ready)
-        
+
         # 参加者を削除
         participant1.delete()
         self.assertEqual(unique_tournament.participants.count(), 0)
@@ -208,55 +214,43 @@ class TournamentModelTests(TestCase):
         """ブラケット位置が正しく設定されるかテスト"""
         # 準決勝の参加者（ブラケット位置1-4）
         TournamentParticipant.objects.create(
-            tournament=self.tournament,
-            user=self.user1,
-            bracket_position=1
+            tournament=self.tournament, user=self.user1, bracket_position=1
         )
         TournamentParticipant.objects.create(
-            tournament=self.tournament,
-            user=self.user2,
-            bracket_position=2
+            tournament=self.tournament, user=self.user2, bracket_position=2
         )
         TournamentParticipant.objects.create(
-            tournament=self.tournament,
-            user=self.user3,
-            bracket_position=3
+            tournament=self.tournament, user=self.user3, bracket_position=3
         )
         TournamentParticipant.objects.create(
-            tournament=self.tournament,
-            user=self.user4,
-            bracket_position=4
+            tournament=self.tournament, user=self.user4, bracket_position=4
         )
-        
+
         # 決勝進出者（位置5）に更新
         finalists = self.tournament.participants.filter(bracket_position__in=[1, 2])
         for finalist in finalists:
             finalist.bracket_position = 5
             finalist.save()
-            
+
         # 決勝進出者が2人いることを確認
         self.assertEqual(
-            self.tournament.participants.filter(bracket_position=5).count(),
-            2
+            self.tournament.participants.filter(bracket_position=5).count(), 2
         )
-        
+
         # 優勝者（位置6）に更新
         winner = self.tournament.participants.filter(bracket_position=5).first()
         winner.bracket_position = 6
         winner.save()
-        
+
         # 優勝者が1人いることを確認
         self.assertEqual(
-            self.tournament.participants.filter(bracket_position=6).count(),
-            1
+            self.tournament.participants.filter(bracket_position=6).count(), 1
         )
 
     def test_tournament_participant_string_representation(self):
         """TournamentParticipantの文字列表現テスト"""
         participant = TournamentParticipant.objects.create(
-            tournament=self.tournament,
-            user=self.user1,
-            bracket_position=1
+            tournament=self.tournament, user=self.user1, bracket_position=1
         )
         expected_str = f"{self.user1.display_name} in Tournament {self.tournament.id}"
         self.assertEqual(str(participant), expected_str)
@@ -264,6 +258,7 @@ class TournamentModelTests(TestCase):
     def test_tournament_with_games(self):
         """トーナメントとゲームの関連付けテスト"""
         # 準決勝第1試合
+        # ruff: noqa
         semifinal1 = Game.objects.create(
             game_type="TOURNAMENT",
             status="COMPLETED",
@@ -272,10 +267,11 @@ class TournamentModelTests(TestCase):
             player2=self.user2,
             tournament=self.tournament,
             tournament_round=0,  # 準決勝
-            winner=self.user1
+            winner=self.user1,
         )
-        
+
         # 準決勝第2試合
+        # ruff: noqa
         semifinal2 = Game.objects.create(
             game_type="TOURNAMENT",
             status="COMPLETED",
@@ -284,10 +280,11 @@ class TournamentModelTests(TestCase):
             player2=self.user4,
             tournament=self.tournament,
             tournament_round=0,  # 準決勝
-            winner=self.user3
+            winner=self.user3,
         )
-        
+
         # 決勝戦
+        # ruff: noqa
         final = Game.objects.create(
             game_type="TOURNAMENT",
             status="WAITING",
@@ -297,18 +294,12 @@ class TournamentModelTests(TestCase):
             tournament=self.tournament,
             tournament_round=1,  # 決勝
         )
-        
+
         # トーナメントに関連づけられたゲームの数を確認
         self.assertEqual(self.tournament.games.count(), 3)
-        
+
         # 準決勝のゲーム数を確認
-        self.assertEqual(
-            self.tournament.games.filter(tournament_round=0).count(),
-            2
-        )
-        
+        self.assertEqual(self.tournament.games.filter(tournament_round=0).count(), 2)
+
         # 決勝のゲーム数を確認
-        self.assertEqual(
-            self.tournament.games.filter(tournament_round=1).count(),
-            1
-        )
+        self.assertEqual(self.tournament.games.filter(tournament_round=1).count(), 1)
