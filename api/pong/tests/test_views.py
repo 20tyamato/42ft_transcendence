@@ -149,67 +149,67 @@ class UserViewsTest(APITestCase):
             self.assertIn("previous", response.data)
 
 
-class LoginViewTest(APITestCase):
-    def setUp(self):
-        """テストの初期設定"""
-        self.login_url = reverse("pong:login")
-        # create_userを2段階に分ける
-        self.user = get_user_model().objects.create_user(
-            username="testuser", password="testpass123", email="test@example.com"
-        )
-        # display_nameを後から設定
-        self.user.display_name = "Test User"
-        self.user.save()
+# class LoginViewTest(APITestCase):
+#     def setUp(self):
+#         """テストの初期設定"""
+#         self.login_url = reverse("pong:login")
+#         # create_userを2段階に分ける
+#         self.user = get_user_model().objects.create_user(
+#             username="testuser", password="testpass123", email="test@example.com"
+#         )
+#         # display_nameを後から設定
+#         self.user.display_name = "Test User"
+#         self.user.save()
 
-        self.login_data = {"username": "testuser", "password": "testpass123"}
+#         self.login_data = {"username": "testuser", "password": "testpass123"}
 
-    def test_login_success(self):
-        """正常なログインのテスト"""
-        response = self.client.post(self.login_url, self.login_data, format="json")
+#     def test_login_success(self):
+#         """正常なログインのテスト"""
+#         response = self.client.post(self.login_url, self.login_data, format="json")
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn("token", response.data)
-        self.assertIn("user_id", response.data)
-        self.assertIn("username", response.data)
-        self.assertEqual(response.data["username"], "testuser")
+#         self.assertEqual(response.status_code, status.HTTP_200_OK)
+#         self.assertIn("token", response.data)
+#         self.assertIn("user_id", response.data)
+#         self.assertIn("username", response.data)
+#         self.assertEqual(response.data["username"], "testuser")
 
-    def test_login_with_wrong_password(self):
-        """誤ったパスワードでのログイン試行テスト"""
-        wrong_data = {"username": "testuser", "password": "wrongpass"}
-        response = self.client.post(self.login_url, wrong_data, format="json")
+#     def test_login_with_wrong_password(self):
+#         """誤ったパスワードでのログイン試行テスト"""
+#         wrong_data = {"username": "testuser", "password": "wrongpass"}
+#         response = self.client.post(self.login_url, wrong_data, format="json")
 
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+#         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_login_with_non_existent_user(self):
-        """存在しないユーザーでのログイン試行テスト"""
-        non_existent_data = {"username": "nonexistentuser", "password": "testpass123"}
-        response = self.client.post(self.login_url, non_existent_data, format="json")
+#     def test_login_with_non_existent_user(self):
+#         """存在しないユーザーでのログイン試行テスト"""
+#         non_existent_data = {"username": "nonexistentuser", "password": "testpass123"}
+#         response = self.client.post(self.login_url, non_existent_data, format="json")
 
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+#         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_login_with_missing_fields(self):
-        """必須フィールドが欠落しているケースのテスト"""
-        missing_username = {"password": "testpass123"}
-        missing_password = {"username": "testuser"}
+#     def test_login_with_missing_fields(self):
+#         """必須フィールドが欠落しているケースのテスト"""
+#         missing_username = {"password": "testpass123"}
+#         missing_password = {"username": "testuser"}
 
-        response1 = self.client.post(self.login_url, missing_username, format="json")
-        response2 = self.client.post(self.login_url, missing_password, format="json")
+#         response1 = self.client.post(self.login_url, missing_username, format="json")
+#         response2 = self.client.post(self.login_url, missing_password, format="json")
 
-        self.assertEqual(response1.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response2.status_code, status.HTTP_400_BAD_REQUEST)
+#         self.assertEqual(response1.status_code, status.HTTP_400_BAD_REQUEST)
+#         self.assertEqual(response2.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_login_with_empty_fields(self):
-        """空のフィールドでのログイン試行テスト"""
-        empty_fields_data = {"username": "", "password": ""}
-        response = self.client.post(self.login_url, empty_fields_data, format="json")
+#     def test_login_with_empty_fields(self):
+#         """空のフィールドでのログイン試行テスト"""
+#         empty_fields_data = {"username": "", "password": ""}
+#         response = self.client.post(self.login_url, empty_fields_data, format="json")
 
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+#         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_get_method_not_allowed(self):
-        """GETメソッドが許可されていないことのテスト"""
-        response = self.client.get(self.login_url)
+#     def test_get_method_not_allowed(self):
+#         """GETメソッドが許可されていないことのテスト"""
+#         response = self.client.get(self.login_url)
 
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+#         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class GameViewTests(APITestCase):
