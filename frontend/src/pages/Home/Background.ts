@@ -30,6 +30,10 @@ export default class Background {
     this.scene.add(this.plane);
   }
 
+  getGroup(): THREE.Group {
+    return this.group;
+  }
+
   public update(): void {
     const time = this.clock.getElapsedTime();
     if (!this.plane) {
