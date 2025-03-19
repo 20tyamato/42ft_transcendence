@@ -249,7 +249,7 @@ class GameViewTests(APITestCase):
         }
 
         # デバッグ用出力
-        print(f"AIゲーム作成テスト - リクエストデータ: {data}")
+        # print(f"AIゲーム作成テスト - リクエストデータ: {data}")
 
         response = self.client.post(url, data, format="json")
 
