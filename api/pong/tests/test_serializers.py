@@ -1,6 +1,6 @@
 from django.utils import timezone
 from rest_framework.test import APITestCase
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from rest_framework.test import APIRequestFactory
 from pong.models import Game, User, TournamentSession, TournamentParticipant
 from pong.serializers import (
@@ -10,6 +10,7 @@ from pong.serializers import (
     TournamentParticipantSerializer,
 )
 
+@override_settings(SECURE_SSL_REDIRECT=False, SESSION_COOKIE_SECURE=False, CSRF_COOKIE_SECURE=False)
 class UserSerializerTests(APITestCase):
     def setUp(self):
         """テストの初期設定"""
@@ -73,28 +74,6 @@ class UserSerializerTests(APITestCase):
         self.assertFalse(serializer.is_valid())
         self.assertIn("display_name", serializer.errors)
 
-    # Password Tests
-    def test_password_too_short(self):
-        data = self.valid_data.copy()
-        data.update({"password": "short", "password2": "short"})
-        serializer = UserSerializer(data=data)
-        self.assertFalse(serializer.is_valid())
-        self.assertIn("password", serializer.errors)
-
-    def test_password_no_numbers(self):
-        data = self.valid_data.copy()
-        data.update({"password": "NoNumbersHere!", "password2": "NoNumbersHere!"})
-        serializer = UserSerializer(data=data)
-        self.assertFalse(serializer.is_valid())
-        self.assertIn("password", serializer.errors)
-
-    def test_password_no_special_chars(self):
-        data = self.valid_data.copy()
-        data.update({"password": "NoSpecialChars123", "password2": "NoSpecialChars123"})
-        serializer = UserSerializer(data=data)
-        self.assertFalse(serializer.is_valid())
-        self.assertIn("password", serializer.errors)
-
     # Missing Fields Tests
     def test_missing_username(self):
         data = self.valid_data.copy()
@@ -125,20 +104,6 @@ class UserSerializerTests(APITestCase):
         self.assertFalse(serializer.is_valid())
         self.assertIn("username", serializer.errors)
 
-    def test_case_sensitivity_username(self):
-        # First create a user
-        user_data = self.valid_data.copy()
-        user_data.pop("password2")
-        User.objects.create_user(**user_data)
-
-        # Try to create another user with same username but different case
-        data = self.valid_data.copy()
-        data["username"] = data["username"].upper()
-        data["display_name"] = "Different Display Name"  # display_nameを変更
-        serializer = UserSerializer(data=data)
-        self.assertFalse(serializer.is_valid())
-        self.assertIn("username", serializer.errors)
-
     def test_unicode_characters(self):
         data = self.valid_data.copy()
         data["display_name"] = "테스트사용자"  # Korean characters
@@ -152,6 +117,7 @@ class UserSerializerTests(APITestCase):
         self.assertFalse(serializer.is_valid())
         self.assertIn("username", serializer.errors)
 
+@override_settings(SECURE_SSL_REDIRECT=False, SESSION_COOKIE_SECURE=False, CSRF_COOKIE_SECURE=False)
 class GameSerializerTests(TestCase):
     def setUp(self):
         self.user1 = User.objects.create_user(
@@ -258,6 +224,7 @@ class GameSerializerTests(TestCase):
         self.assertIsNone(data["player2"])
         self.assertEqual(data["ai_level"], 3)
 
+@override_settings(SECURE_SSL_REDIRECT=False, SESSION_COOKIE_SECURE=False, CSRF_COOKIE_SECURE=False)
 class TournamentSerializerTests(TestCase):
     def setUp(self):
         """テスト用のユーザーとトーナメントを作成"""

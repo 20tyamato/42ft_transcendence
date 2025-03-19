@@ -1,9 +1,9 @@
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.db import IntegrityError
 from django.utils import timezone
 from pong.models import User, Game, TournamentSession, TournamentParticipant
 
-
+@override_settings(SECURE_SSL_REDIRECT=False, SESSION_COOKIE_SECURE=False, CSRF_COOKIE_SECURE=False)
 class UserModelTests(TestCase):
     def test_create_user(self):
         """
@@ -33,6 +33,7 @@ class UserModelTests(TestCase):
         )
         self.assertEqual(str(user), "Display Name Test")
 
+@override_settings(SECURE_SSL_REDIRECT=False, SESSION_COOKIE_SECURE=False, CSRF_COOKIE_SECURE=False)
 class GameModelTests(TestCase):
     def setUp(self):
         self.user1 = User.objects.create_user(
@@ -109,6 +110,7 @@ class GameModelTests(TestCase):
         expected_str = f"Single Player: {self.user1.display_name} vs AI (Beginner)"
         self.assertEqual(str(game), expected_str)
 
+@override_settings(SECURE_SSL_REDIRECT=False, SESSION_COOKIE_SECURE=False, CSRF_COOKIE_SECURE=False)
 class TournamentModelTests(TestCase):
     def setUp(self):
         self.user1 = User.objects.create_user(
