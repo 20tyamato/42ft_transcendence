@@ -223,13 +223,32 @@ class GameViewTests(APITestCase):
     def test_create_ai_game(self):
         """Test creating a game against AI"""
         url = reverse("pong:game-list-create")
+        
+        # リクエストデータを更新 - 現在のAPIスキーマに合わせる
         data = {
             "player1": self.user.username,
-            "player2": None,
-            "score_player1": 15,
-            "score_player2": 10,
-            "winner": self.user.username,
+            "game_type": "SINGLE",  # SINGLEタイプの明示
+            "status": "IN_PROGRESS",
+            "ai_level": 1,  # AIレベルを追加
+            "score_player1": 0,
+            "score_player2": 0
         }
+        
+        # デバッグ用出力
+        print(f"AIゲーム作成テスト - リクエストデータ: {data}")
+        
         response = self.client.post(url, data, format="json")
+        
+        # デバッグ用出力
+        if response.status_code != status.HTTP_201_CREATED:
+            print(f"エラーレスポンス内容: {response.data}")
+        
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Game.objects.count(), 1)
+        
+        # 作成されたゲームの属性を検証
+        game = Game.objects.first()
+        self.assertEqual(game.player1, self.user)
+        self.assertIsNone(game.player2)
+        self.assertEqual(game.game_type, "SINGLE")
+        self.assertEqual(game.ai_level, 1)
