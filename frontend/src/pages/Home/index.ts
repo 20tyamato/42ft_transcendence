@@ -1,5 +1,8 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
+import { isLoggedIn } from '@/libs/Auth/currnetUser';
+import { updateLanguage } from '@/models/User/repository';
+import { registerLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
 import AuthLayout from '@/layouts/AuthLayout';
 import { setUserLanguage } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
@@ -7,6 +10,20 @@ import ArcadeMachine from './ArcadeMachine';
 import Background from './Background';
 import Background2 from './Background2';
 import * as THREE from 'three';
+
+const registerStartButton = async (): Promise<void> => {
+  const startBtn = document.querySelector('a[href="/login"]');
+  startBtn?.addEventListener('click', async (event) => {
+    event.preventDefault();
+    if (await isLoggedIn()) {
+      i18next.changeLanguage(i18next.language);
+      updateLanguage(i18next.language);
+      window.location.href = '/modes';
+    } else {
+      window.location.href = '/login';
+    }
+  });
+};
 
 const updatePageContent = (): void => {
   updateText('title', i18next.t('home'));
@@ -16,7 +33,13 @@ const HomePage = new Page({
   name: 'Home',
   config: { layout: AuthLayout },
   mounted: async ({ pg, user }) => {
-    setUserLanguage(user.language, updatePageContent);
+    updatePageContent();
+    updateActiveLanguageButton();
+
+    registerLanguageSwitchers(updatePageContent);
+    registerStartButton();
+    // setUserLanguage(user.language, updatePageContent);
+    // registerStartButton();
 
     const canvas = document.getElementById('gl') as HTMLCanvasElement;
     if (!canvas) {
