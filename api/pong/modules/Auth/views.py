@@ -3,9 +3,6 @@ from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from core.logger import logger
-
 from .serializers import LoginSerializer
 
 
@@ -14,7 +11,6 @@ class LoginView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        # logger.info(f"LoginView: {request.data}")
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data["user"]
