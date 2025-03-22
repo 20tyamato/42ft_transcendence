@@ -68,5 +68,6 @@
   "wins": "Wins",
   "losses": "Losses",
   "recentMatches": "Recent Matches",
-  "noMatchesAvailable": "No matches available"
+  "noMatchesAvailable": "No matches available",
+  "go": "Go"
 }

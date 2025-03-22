@@ -1,11 +1,10 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
-import AuthLayout from '@/layouts/AuthLayout';
-import { updateText } from '@/utils/updateElements';
-import Background from './Background';
 import CommonLayout from '@/layouts/common/index';
-import * as THREE from 'three';
 import { fetchCurrentUser } from '@/models/User/repository';
+import { updateAllText, updateText } from '@/utils/updateElements';
+import * as THREE from 'three';
+import Background from './Background';
 import Stars from './Stars';
 
 const updatePageContent = () => {
@@ -14,6 +13,7 @@ const updatePageContent = () => {
   updateText('.medium-level h1', i18next.t('mediumLevel'));
   updateText('.hard-level h1', i18next.t('hardLevel'));
   updateText('.secret-level h1', i18next.t('secretLevel'));
+  updateAllText('.level-button', i18next.t('go'));
 };
 
 const SinglePlaySelectPage = new Page({
