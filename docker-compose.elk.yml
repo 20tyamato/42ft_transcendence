@@ -42,7 +42,6 @@ services:
       args:
         ELASTIC_VERSION: ${ELASTIC_VERSION}
     volumes:
-      - ./ELK/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z
       - elasticsearch:/usr/share/elasticsearch/data:Z
     ports:
       - 9200:9200
@@ -66,9 +65,6 @@ services:
       context: ELK/logstash/
       args:
         ELASTIC_VERSION: ${ELASTIC_VERSION}
-    volumes:
-      - ./ELK/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro,Z
-      - ./ELK/logstash/pipeline:/usr/share/logstash/pipeline:ro,Z
     ports:
       - "50000:50000"
     environment:
@@ -86,8 +82,6 @@ services:
       context: ELK/kibana/
       args:
         ELASTIC_VERSION: ${ELASTIC_VERSION}
-    volumes:
-      - ./ELK/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro,Z
     ports:
       - 5601:5601
     environment:
