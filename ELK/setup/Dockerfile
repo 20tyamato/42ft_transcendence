@@ -1,8 +1,8 @@
 ARG ELASTIC_VERSION
 
-USER root
 
 # https://www.docker.elastic.co/
 FROM docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-8.17.1}
+USER root
 
 ENTRYPOINT ["/entrypoint.sh"]
