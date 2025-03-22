@@ -68,5 +68,6 @@
   "wins": "勝利",
   "losses": "敗北",
   "recentMatches": "最近の試合",
-  "noMatchesAvailable": "利用可能な試合がありません"
+  "noMatchesAvailable": "利用可能な試合がありません",
+  "go": "進む"
 }

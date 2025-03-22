@@ -3,6 +3,13 @@ export const updateText = (selector: string, text: string): void => {
   if (el) el.textContent = text;
 };
 
+export const updateAllText = (selector: string, text: string): void => {
+  const els = document.querySelectorAll(selector);
+  els.forEach((el) => {
+    el.textContent = text;
+  });
+};
+
 export const updatePlaceholder = (selector: string, placeholder: string): void => {
   const el = document.querySelector(selector) as HTMLInputElement | null;
   if (el) el.placeholder = placeholder;

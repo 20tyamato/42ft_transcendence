@@ -1,15 +1,14 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
+import AuthLayout from '@/layouts/AuthLayout';
 import { isLoggedIn } from '@/libs/Auth/currnetUser';
 import { updateLanguage } from '@/models/User/repository';
 import { registerLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
-import AuthLayout from '@/layouts/AuthLayout';
-import { setUserLanguage } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
+import * as THREE from 'three';
 import ArcadeMachine from './ArcadeMachine';
 import Background from './Background';
 import Background2 from './Background2';
-import * as THREE from 'three';
 
 const registerStartButton = async (): Promise<void> => {
   const startBtn = document.querySelector('a[href="/login"]');
@@ -27,6 +26,7 @@ const registerStartButton = async (): Promise<void> => {
 
 const updatePageContent = (): void => {
   updateText('title', i18next.t('home'));
+  updateText('a[href="/login"]', i18next.t('start'));
 };
 
 const HomePage = new Page({

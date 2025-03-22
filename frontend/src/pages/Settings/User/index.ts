@@ -106,7 +106,7 @@ const handleFormSubmit = async (event: Event, elements: SettingsElements) => {
     }
 
     setResponse(responseMessage, i18next.t('settingsSaved'), 'green');
-    // window.location.href = '/profile';
+    window.location.href = '/profile';
   } catch (error) {
     console.error('Error updating user info:', error);
     alert('Failed to update user information.');
