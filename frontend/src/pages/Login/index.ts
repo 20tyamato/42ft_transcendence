@@ -8,6 +8,8 @@ import { fetcherGuest } from '@/utils/fetcher';
 import { registerLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
 import { registerTogglePassword } from '@/utils/togglePassword';
 import { updateInnerHTML, updateText } from '@/utils/updateElements';
+import Background from './Background';
+import * as THREE from 'three';
 
 const handleLoginSubmit = async (
   form: HTMLFormElement,
@@ -86,6 +88,35 @@ const LoginPage = new Page({
     registerLoginForm();
 
     registerTogglePassword('toggle-password', 'password', 'password-icon');
+    // Three.jsのセットアップ
+    const canvas = document.getElementById('gl') as HTMLCanvasElement;
+    if (!canvas) {
+      console.error('Canvas element not found');
+      return;
+    }
+
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+    camera.position.set(0, 0, 1000);
+    camera.lookAt(0, 0, 5);
+
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    const scene = new THREE.Scene();
+    const background = new Background(scene);
+
+    // アニメーションループ
+    function animate() {
+      requestAnimationFrame(animate);
+      background.update();
+      renderer.render(scene, camera);
+    }
+    animate();
 
     pg.logger.info('LoginPage mounted!');
   },

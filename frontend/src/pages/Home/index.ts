@@ -1,13 +1,14 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
-import AuthLayout from '@/layouts/AuthLayout';
 import { isLoggedIn } from '@/libs/Auth/currnetUser';
 import { updateLanguage } from '@/models/User/repository';
-import { fetchCurrentUser } from '@/models/User/repository';
+import { registerLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
+import AuthLayout from '@/layouts/AuthLayout';
 import { setUserLanguage } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
+import ArcadeMachine from './ArcadeMachine';
 import Background from './Background';
-// import Stars from './Stars';
+import Background2 from './Background2';
 import * as THREE from 'three';
 
 const registerStartButton = async (): Promise<void> => {
@@ -26,51 +27,59 @@ const registerStartButton = async (): Promise<void> => {
 
 const updatePageContent = (): void => {
   updateText('title', i18next.t('home'));
-  // 他のテキスト更新...
 };
 
 const HomePage = new Page({
   name: 'Home',
   config: { layout: AuthLayout },
   mounted: async ({ pg, user }) => {
-    setUserLanguage(user.language, updatePageContent);
-    registerStartButton();
+    updatePageContent();
+    updateActiveLanguageButton();
 
-    // HTML に <canvas id="gl"></canvas> が存在する前提
+    registerLanguageSwitchers(updatePageContent);
+    registerStartButton();
+    // setUserLanguage(user.language, updatePageContent);
+    // registerStartButton();
+
     const canvas = document.getElementById('gl') as HTMLCanvasElement;
     if (!canvas) {
-      console.error('Canvas element with id="gl" not found.');
+      console.error('Canvas element not found');
       return;
     }
 
-    // レンダラーの作成
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-
-    // カメラの作成（上空から平面を垂直に見る）
     const camera = new THREE.PerspectiveCamera(
       75,
       window.innerWidth / window.innerHeight,
       0.1,
       5000
     );
-    camera.position.set(0, 1000, 0);
+    camera.position.set(0, 0, 1000);
     camera.lookAt(0, 0, 0);
 
-    // シーンを作成
-    const scene = new THREE.Scene();
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
 
-    // Background と Stars を生成（シーンに追加）
-    const background = new Background(scene);
-    // const stars = new Stars(scene);
+    const mainScene = new THREE.Scene();
 
-    // アニメーションループ
+    const background = new Background(mainScene, true);
+    mainScene.add(background.getGroup());
+
+    const arcadeMachine = new ArcadeMachine(mainScene, new THREE.Texture());
+    mainScene.add(arcadeMachine.getGroup());
+
+    const background2 = new Background2(mainScene, 1); // Replace '1' with the appropriate number if needed
+    mainScene.add(background2.getGroup());
+
     function animate() {
-      background.update();
-      // stars.update();
-      renderer.render(scene, camera);
       requestAnimationFrame(animate);
+
+      background.update();
+      arcadeMachine.update();
+      background2.update();
+
+      renderer.render(mainScene, camera);
     }
+
     animate();
 
     pg.logger.info('HomePage mounted!');

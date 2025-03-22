@@ -1,6 +1,5 @@
 // Background.ts
 import * as THREE from 'three';
-import { BallsGroup } from './BallFactory';
 
 export default class Background {
   private scene: THREE.Scene;
@@ -8,7 +7,7 @@ export default class Background {
   private clock: THREE.Clock;
   private group: THREE.Group;
 
-  constructor(scene: THREE.Scene, isGameRenderer: boolean = false, yPosition: number = -50) {
+  constructor(scene: THREE.Scene) {
     this.scene = scene;
     this.clock = new THREE.Clock();
     this.group = new THREE.Group();
@@ -26,12 +25,8 @@ export default class Background {
     });
     this.plane = new THREE.Mesh(geometry, material);
     this.plane.rotation.x = -Math.PI / 2;
-    this.plane.position.y = -120;
+    this.plane.position.y = -50;
     this.scene.add(this.plane);
-  }
-
-  getGroup(): THREE.Group {
-    return this.group;
   }
 
   public update(): void {
