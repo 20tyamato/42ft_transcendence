@@ -83,10 +83,9 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 20;
 }
 
-.header {
+.header_specific {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -94,21 +93,15 @@ body {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6);
   position: fixed;
   top: 5px;
-  z-index: 10;
   width: 100%;
   top: 0;
   left: 0;
 }
 
-.header__logo img {
-  height: 40px;
-  filter: brightness(0.8);
-  z-index: 10;
-}
-
 .header__profile {
   display: flex;
   align-items: center;
+  margin-left: auto;
 }
 
 .profile-icon {
