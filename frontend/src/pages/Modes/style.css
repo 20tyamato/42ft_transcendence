@@ -67,7 +67,7 @@ body {
   opacity: 0.9;
 }
 
-.tournament {
+.tournament-mode {
   background: linear-gradient(90deg, #ffd700, #ffae42);
   box-shadow: 0 10 20px rgba(255, 215, 0, 0.7);
   grid-column: 1 / 3; 

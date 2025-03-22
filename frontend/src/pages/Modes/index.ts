@@ -1,12 +1,11 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
-import { fetchCurrentUser } from '@/models/User/repository';
 import { setUserLanguage } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
+import * as THREE from 'three';
 import Background from './Background';
 import Stars from './Stars';
-import * as THREE from 'three';
 
 const DEFAULT_AVATAR_SRC = '/src/resources/avatar.png';
 let isInternalNavigation = false;
@@ -34,7 +33,7 @@ const bindNavigationButton = (selector: string, path: string): void => {
 const registerNavigationButtons = (): void => {
   bindNavigationButton('.single-mode', '/singleplay/select');
   bindNavigationButton('.multi-mode', '/multiplay');
-  bindNavigationButton('.tournament', '/tournament');
+  bindNavigationButton('.tournament-mode', '/tournament');
 };
 
 const registerIconNavigation = (): void => {
