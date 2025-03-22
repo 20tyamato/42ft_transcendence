@@ -62,5 +62,11 @@
   "backHome": "Back to home",
   "home": "Home",
   "modes": "Modes",
-  "levelSelection": "Level Section"
+  "levelSelection": "Level Section",
+  "gameStatistics": "Game Statistics",
+  "totalMatches": "Total Matches",
+  "wins": "Wins",
+  "losses": "Losses",
+  "recentMatches": "Recent Matches",
+  "noMatchesAvailable": "No matches available"
 }

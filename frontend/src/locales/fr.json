@@ -62,5 +62,11 @@
   "backHome": "Retour à l'accueil",
   "home": "Accueil",
   "modes": "Modes",
-  "levelSelection": "Sélection du niveau"
+  "levelSelection": "Sélection du niveau",
+  "gameStatistics": "Statistiques de jeu",
+  "totalMatches": "Matchs totaux",
+  "wins": "Victoires",
+  "losses": "Défaites",
+  "recentMatches": "Matchs récents",
+  "noMatchesAvailable": "Aucun match disponible"
 }
