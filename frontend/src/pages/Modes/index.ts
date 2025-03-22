@@ -33,7 +33,7 @@ const bindNavigationButton = (selector: string, path: string): void => {
 const registerNavigationButtons = (): void => {
   bindNavigationButton('.single-mode', '/singleplay/select');
   bindNavigationButton('.multi-mode', '/multiplay');
-  bindNavigationButton('.tournament-mode', '/tournament');
+  bindNavigationButton('.tournament', '/tournament');
 };
 
 const registerIconNavigation = (): void => {
