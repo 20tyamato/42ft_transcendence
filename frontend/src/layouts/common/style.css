@@ -24,7 +24,6 @@
 .header__logo img {
   height: 40px;
   filter: brightness(0.8);
-  z-index: 1000;
 }
 
 .footer {
