@@ -1,18 +1,19 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
-import { IUser } from '@/models/User/type';
 import { getUserMatchHistory, getUserWithStats } from '@/models/User/repository';
+import { IUser } from '@/models/User/type';
+import { formatDate } from '@/utils/date';
 import { languageNames, setUserLanguage } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
-import { formatDate } from '@/utils/date';
 
 const updatePageContent = (): void => {
   updateText('title', i18next.t('userProfile'));
   // 基本情報ラベル
-  updateText('#username', i18next.t('username'));
-  updateText('#email', i18next.t('emailAddress'));
-  updateText('#level', i18next.t('level'));
+  updateText('#username-label', i18next.t('username'));
+  updateText('#email-label', i18next.t('emailAddress'));
+  updateText('#level-label', i18next.t('level'));
+  updateText('#language-label', i18next.t('language'));
 
   // 統計情報ラベル
   updateText('.stats-section h2', i18next.t('gameStatistics'));
@@ -50,6 +51,7 @@ const updateFrontElements = (userData: IUser): void => {
   const displayNameTitleEl = document.getElementById('displayNameTitle');
   const avatarEl = document.getElementById('avatar') as HTMLImageElement | null;
   const levelEl = document.getElementById('level');
+  const languageEl = document.getElementById('language');
 
   // 基本情報の更新
   if (usernameEl) {
@@ -66,6 +68,9 @@ const updateFrontElements = (userData: IUser): void => {
   }
   if (levelEl) {
     levelEl.textContent = userData.level.toString();
+  }
+  if (languageEl) {
+    languageEl.textContent = languageNames[userData.language];
   }
 
   // 統計情報の更新

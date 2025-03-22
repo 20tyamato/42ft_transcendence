@@ -14,7 +14,7 @@ const updatePageContent = (): void => {
   updateText('title', i18next.t('modes'));
   updateText('.single-mode', i18next.t('singleMode'));
   updateText('.multi-mode', i18next.t('multiMode'));
-  updateText('.tournament-mode', i18next.t('tournamentMode'));
+  updateText('.tournament', i18next.t('tournamentMode'));
 };
 
 const navigateTo = (path: string): void => {
