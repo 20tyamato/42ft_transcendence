@@ -1,9 +1,16 @@
 // frontend/src/pages/MultiPlay/Game/index.ts
 import { WS_URL } from '@/config/config';
+import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
 import { IGameConfig } from '@/models/Game/type';
 import { MultiplayerGameManager } from '@/models/MultiPlay/MultiplayerGameManager';
+import { setUserLanguage } from '@/utils/language';
+import { updateText } from '@/utils/updateElements';
+
+const updatePageContent = (): void => {
+  updateText('title', i18next.t('singlePlay.title'));
+};
 
 const GamePage = new Page({
   name: 'MultiPlay/Game',
@@ -11,6 +18,7 @@ const GamePage = new Page({
     layout: AuthLayout,
   },
   mounted: async ({ pg, user }) => {
+    setUserLanguage(user.language, updatePageContent);
     console.log('Game page mounting...');
 
     // URLパラメータの取得と検証

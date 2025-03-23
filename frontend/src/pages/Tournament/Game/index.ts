@@ -1,10 +1,17 @@
 // frontend/src/pages/Tournament/Game/index.ts
 import { WS_URL } from '@/config/config';
+import i18next from '@/config/i18n';
+import { logger } from '@/core/Logger';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
-import { logger } from '@/core/Logger';
 import { IGameConfig } from '@/models/Game/type';
 import { TournamentGameManager } from '@/models/Tournament/TournamentGameManager';
+import { setUserLanguage } from '@/utils/language';
+import { updateText } from '@/utils/updateElements';
+
+const updatePageContent = (): void => {
+  updateText('title', i18next.t('singlePlay.title'));
+};
 
 const GamePage = new Page({
   name: 'Tournament/Game',
@@ -13,6 +20,7 @@ const GamePage = new Page({
     html: '/src/pages/Tournament/Game/index.html',
   },
   mounted: async ({ pg, user }) => {
+    setUserLanguage(user.language, updatePageContent);
     logger.info('Tournament Game page mounting...');
 
     // URLパラメータの取得と検証

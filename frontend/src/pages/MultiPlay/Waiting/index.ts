@@ -1,8 +1,15 @@
 // frontend/src/pages/MultiPlay/Waiting/index.ts
 import { WS_URL } from '@/config/config';
+import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
 import { ICurrentUser } from '@/libs/Auth/currnetUser';
+import { setUserLanguage } from '@/utils/language';
+import { updateText } from '@/utils/updateElements';
+
+const updatePageContent = (): void => {
+  updateText('title', i18next.t('singlePlay.title'));
+};
 
 /**
  * DOM要素の取得
@@ -122,6 +129,7 @@ const WaitingPage = new Page({
     html: '/src/pages/MultiPlay/Waiting/index.html',
   },
   mounted: async ({ pg, user }) => {
+    setUserLanguage(user.language, updatePageContent);
     console.log('Waiting page mounting...');
     let socket: WebSocket | null = null;
     const { statusElement, cancelButton } = getDomElements();

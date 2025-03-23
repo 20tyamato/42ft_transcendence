@@ -1,8 +1,15 @@
 // frontend/src/pages/Tournament/WaitingNextMatch/index.ts
 import { WS_URL } from '@/config/config';
-import { Page } from '@/core/Page';
+import i18next from '@/config/i18n';
 import { logger } from '@/core/Logger';
+import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
+import { setUserLanguage } from '@/utils/language';
+import { updateText } from '@/utils/updateElements';
+
+const updatePageContent = (): void => {
+  updateText('title', i18next.t('singlePlay.title'));
+};
 
 const WaitingNextMatchPage = new Page({
   name: 'Tournament/WaitingNextMatch',
@@ -11,6 +18,7 @@ const WaitingNextMatchPage = new Page({
     html: '/src/pages/Tournament/WaitingNextMatch/index.html',
   },
   mounted: async ({ pg, user }) => {
+    setUserLanguage(user.language, updatePageContent);
     logger.info('Tournament waiting next match page mounting...');
 
     // URLパラメーターの取得
