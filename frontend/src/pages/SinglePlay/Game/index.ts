@@ -11,20 +11,16 @@ let running = true; // ゲームの状態管理
 
 const updatePageContent = (): void => {
   updateText('title', i18next.t('singlePlay.title'));
+  updateText('#pauseOverlay h1', i18next.t('pauseMenu.title'));
+  updateText('#resumeBtn', i18next.t('pauseMenu.resume'));
+  updateText('#pauseRetryBtn', i18next.t('pauseMenu.retry'));
+  updateText('#pauseExitBtn', i18next.t('pauseMenu.exit'));
 
-  // ポーズメニューのテキスト更新
-  updateText('#pauseOverlay h1', i18next.t('pauseMenu.title')); // 例: "Game Paused"
-  updateText('#resumeBtn', i18next.t('pauseMenu.resume')); // 例: "Resume"
-  updateText('#pauseRetryBtn', i18next.t('pauseMenu.retry')); // 例: "Retry"
-  updateText('#pauseExitBtn', i18next.t('pauseMenu.exit')); // 例: "Exit"
+  updateText('#gameStartOverlay h1', i18next.t('gameStart.title'));
 
-  // ゲーム開始オーバーレイのテキスト更新
-  updateText('#gameStartOverlay h1', i18next.t('gameStart.title')); // 例: "Game Start"
-
-  // ゲームオーバーオーバーレイのテキスト更新
-  updateText('#endMessage', i18next.t('gameOver.title')); // 例: "Game Over" または "You Win!"
-  updateText('#gameOverRetryBtn', i18next.t('gameOver.retry')); // 例: "Retry"
-  updateText('#gameOverExitBtn', i18next.t('gameOver.exit')); // 例: "Exit"
+  updateText('#endMessage', i18next.t('gameOver.title'));
+  updateText('#gameOverRetryBtn', i18next.t('gameOver.retry'));
+  updateText('#gameOverExitBtn', i18next.t('gameOver.exit'));
 };
 
 // Pause メニューのセットアップ関数
