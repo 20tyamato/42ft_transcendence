@@ -22,6 +22,7 @@ export default class LocalGame {
   private scorePaddleTwo: number = 0;
   private ballVelocity: { x: number; z: number } | null = null;
   private ballStopped: boolean = true;
+  private lastScorer: 'paddleOne' | 'paddleTwo' | null = null; // クラスのプロパティとして追加
 
   constructor(canvas: HTMLCanvasElement) {
     /* ゲームエンジンのインスタンスを取得 */
@@ -41,9 +42,20 @@ export default class LocalGame {
   }
 
   private startBallMovement() {
-    const direction = Math.random() > 0.5 ? -1 : 1;
-    this.ballVelocity = { x: 0, z: direction * 10.0 * difficultyFactor }; //ボールの速度調整
-    this.ballVelocity = { x: 0, z: direction * 10.0 * difficultyFactor }; //ボールの速度調整
+    let direction: number;
+    // 最後に得点したプレイヤーの方向にボールを発射
+    if (this.lastScorer === 'paddleOne') {
+      direction = 1;
+    } else if (this.lastScorer === 'paddleTwo') {
+      direction = -1;
+    } else {
+      direction = Math.random() > 0.5 ? -1 : 1; // 初回のみランダム
+    }
+
+    this.ballVelocity = {
+      x: 0,
+      z: direction * 10.0 * difficultyFactor,
+    };
     this.ballStopped = false;
   }
 
@@ -155,6 +167,7 @@ export default class LocalGame {
   }
   private scored(player: string) {
     this.stopBall();
+    this.lastScorer = player as 'paddleOne' | 'paddleTwo';
     gsap.to(this.ballMaterial, { opacity: 0, duration: 0.5 });
 
     setTimeout(() => {
@@ -193,6 +206,18 @@ export default class LocalGame {
     gsap.to(this.ballMaterial, { opacity: 1, duration: 0.5 });
     this.ballVelocity = null;
     this.ballStopped = false;
+    // パドルを初期位置に戻す
+    gsap.to(this.paddleOne.position, {
+      x: 0,
+      duration: 0.5,
+      ease: 'power2.out',
+    });
+
+    gsap.to(this.paddleTwo.position, {
+      x: 0,
+      duration: 0.5,
+      ease: 'power2.out',
+    });
     this.updateScoreDisplay();
   }
 
@@ -218,15 +243,13 @@ export default class LocalGame {
   }
 
   private updateScoreDisplay(): void {
-    // ユーザー名を localStorage から取得
     const username = localStorage.getItem('username') || 'Player';
-    // それぞれの要素を取得
     const leftNameElem = document.querySelector('#playerName .leftName');
     const playerScoreElem = document.querySelector('#score .playerScore');
     const cpuScoreElem = document.querySelector('#score .cpuScore');
 
     if (leftNameElem) {
-      leftNameElem.textContent = username; // ユーザー名を更新
+      leftNameElem.textContent = username;
     }
     if (playerScoreElem) {
       playerScoreElem.textContent = this.scorePaddleOne.toString();
@@ -250,7 +273,7 @@ export enum Difficulty {
   EASY = 1,
   MEDIUM = 3,
   HARD = 5,
-  ONI = 10, // ユーザーレベルが5以上の場合のみ選択可能
+  ONI = 5, // ユーザーレベルが10以上の場合のみ選択可能
 }
 
 const selectedLevel = localStorage.getItem('selectedLevel') || 'EASY';
@@ -268,7 +291,6 @@ switch (selectedLevel.toUpperCase()) {
     difficultyFactor = Difficulty.HARD;
     break;
   case 'ONI':
-    // ユーザーレベルのチェックは別途行い、条件を満たす場合のみ SECRET を適用
     difficultyFactor = Difficulty.ONI;
     break;
   default:
