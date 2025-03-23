@@ -22,7 +22,7 @@ export default class LocalGame {
   private scorePaddleTwo: number = 0;
   private ballVelocity: { x: number; z: number } | null = null;
   private ballStopped: boolean = true;
-  private lastScorer: 'paddleOne' | 'paddleTwo' | null = null; // クラスのプロパティとして追加
+  private lastScorer: 'paddleOne' | 'paddleTwo' | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     /* ゲームエンジンのインスタンスを取得 */
@@ -76,7 +76,7 @@ export default class LocalGame {
     this.ball.position.z += this.ballVelocity?.z ?? 0;
 
     if (this.isSideCollision()) {
-      this.ballVelocity!.x *= -1; // 壁に当たったらボールのX方向を反転
+      this.ballVelocity!.x *= -1;
     }
     if (this.isPaddleCollision(this.paddleOne)) this.hitBallBack(this.paddleOne);
     if (this.isPaddleCollision(this.paddleTwo)) this.hitBallBack(this.paddleTwo);
