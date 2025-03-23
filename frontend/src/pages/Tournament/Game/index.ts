@@ -10,7 +10,23 @@ import { setUserLanguage } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
 
 const updatePageContent = (): void => {
-  updateText('title', i18next.t('singlePlay.title'));
+  // ブラウザタブのタイトルを更新
+  updateText('title', i18next.t('tournament.game.pageTitle'));
+
+  // ラウンド情報の表示を更新
+  updateText('#round-info', i18next.t('tournament.game.roundInfo'));
+
+  // ゲームオーバー時の見出し（例："Game Over"）を更新
+  updateText('#game-over h1', i18next.t('tournament.game.gameOverTitle'));
+
+  // 勝者情報の文言（例："Winner:"）を更新
+  updateText('#game-over p', i18next.t('tournament.game.winnerText'));
+
+  // 「Exit to Tournament」ボタンのテキストを更新
+  updateText('#exit-btn', i18next.t('tournament.game.exitButton'));
+
+  // 次試合待機情報のテキストを更新
+  updateText('#next-info p', i18next.t('tournament.game.waitingNextInfo'));
 };
 
 const GamePage = new Page({

@@ -8,7 +8,17 @@ import { setUserLanguage } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
 
 const updatePageContent = (): void => {
-  updateText('title', i18next.t('singlePlay.title'));
+  // ブラウザタブのタイトルを更新
+  updateText('title', i18next.t('multiplay.waiting.pageTitle'));
+
+  // 待機画面の見出し（例："Finding a Match"）を更新
+  updateText('.waiting-container h1', i18next.t('multiplay.waiting.heading'));
+
+  // 接続状況のテキストを更新（例："Connecting..."）
+  updateText('#connection-status', i18next.t('multiplay.waiting.connectionStatus'));
+
+  // キャンセルボタンのテキストを更新（例："Cancel"）
+  updateText('#cancel-button', i18next.t('multiplay.waiting.cancelButton'));
 };
 
 /**
