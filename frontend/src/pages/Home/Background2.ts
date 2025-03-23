@@ -16,7 +16,7 @@ export default class Background2 {
   private restitution = 0.92;
   private prevTime: number = 0;
   private plane: THREE.Mesh | null = null;
-  private lowestY = -120;
+  private lowestY = -200;
   private initialVelocities = {
     ball4: 8,
     ball2: 6,
@@ -48,12 +48,12 @@ export default class Background2 {
     });
     this.plane = new THREE.Mesh(geometry, material);
     this.plane.rotation.x = -Math.PI / 2;
-    this.plane.position.y = -100;
+    this.plane.position.y = -120;
     this.group.add(this.plane);
   }
 
   private createBalls() {
-    const radius = 50;
+    const radius = 70;
     const ball4 = createBall('4', '#ff0000', '#ffffff', radius);
     const ball2 = createBall('2', '#0000ff', '#ffffff', radius);
 
@@ -73,8 +73,8 @@ export default class Background2 {
     ];
 
     const offset = radius * 1.5;
-    ball4.position.set(-offset, initialHeight, 50);
-    ball2.position.set(offset, initialHeight, 50);
+    ball4.position.set(-offset, initialHeight, -150);
+    ball2.position.set(offset, initialHeight, -150);
 
     this.balls.forEach((ball) => this.group.add(ball.mesh));
   }
@@ -92,8 +92,8 @@ export default class Background2 {
       ball.mesh.position.y += ball.velocity.y;
 
       // 床との衝突判定
-      if (ball.mesh.position.y <= this.lowestY + ball.radius) {
-        ball.mesh.position.y = this.lowestY + ball.radius + 30; // ボールを床の位置に正確に戻す
+      if (ball.mesh.position.y <= this.lowestY + ball.radius + 100) {
+        ball.mesh.position.y = this.lowestY + ball.radius + 120; // ボールを床の位置に正確に戻す
         ball.velocity.y = -ball.velocity.y * this.restitution;
 
         // ボールの速度が非常に小さい場合、ゼロにして停止させる（任意）
