@@ -1,8 +1,25 @@
 // frontend/src/pages/MultiPlay/Waiting/index.ts
 import { WS_URL } from '@/config/config';
+import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
 import { ICurrentUser } from '@/libs/Auth/currnetUser';
+import { setUserLanguage } from '@/utils/language';
+import { updateText } from '@/utils/updateElements';
+
+const updatePageContent = (): void => {
+  // ブラウザタブのタイトルを更新
+  updateText('title', i18next.t('multiplay.waiting.pageTitle'));
+
+  // 待機画面の見出し（例："Finding a Match"）を更新
+  updateText('.waiting-container h1', i18next.t('multiplay.waiting.heading'));
+
+  // 接続状況のテキストを更新（例："Connecting..."）
+  updateText('#connection-status', i18next.t('multiplay.waiting.connectionStatus'));
+
+  // キャンセルボタンのテキストを更新（例："Cancel"）
+  updateText('#cancel-button', i18next.t('multiplay.waiting.cancelButton'));
+};
 
 /**
  * DOM要素の取得
@@ -122,6 +139,7 @@ const WaitingPage = new Page({
     html: '/src/pages/MultiPlay/Waiting/index.html',
   },
   mounted: async ({ pg, user }) => {
+    setUserLanguage(user.language, updatePageContent);
     console.log('Waiting page mounting...');
     let socket: WebSocket | null = null;
     const { statusElement, cancelButton } = getDomElements();

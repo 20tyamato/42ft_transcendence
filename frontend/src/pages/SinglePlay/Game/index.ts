@@ -1,10 +1,31 @@
-import gsap from 'gsap';
+import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
-import Experience from './Experience';
-import { createParticleCustomizationPanel } from './CustomParticle';
 import AuthLayout from '@/layouts/AuthLayout';
+import { setUserLanguage } from '@/utils/language';
+import { updateText } from '@/utils/updateElements';
+import gsap from 'gsap';
+import { createParticleCustomizationPanel } from './CustomParticle';
+import Experience from './Experience';
 
 let running = true; // ゲームの状態管理
+
+const updatePageContent = (): void => {
+  updateText('title', i18next.t('singlePlay.title'));
+
+  // ポーズメニューのテキスト更新
+  updateText('#pauseOverlay h1', i18next.t('pauseMenu.title')); // 例: "Game Paused"
+  updateText('#resumeBtn', i18next.t('pauseMenu.resume')); // 例: "Resume"
+  updateText('#pauseRetryBtn', i18next.t('pauseMenu.retry')); // 例: "Retry"
+  updateText('#pauseExitBtn', i18next.t('pauseMenu.exit')); // 例: "Exit"
+
+  // ゲーム開始オーバーレイのテキスト更新
+  updateText('#gameStartOverlay h1', i18next.t('gameStart.title')); // 例: "Game Start"
+
+  // ゲームオーバーオーバーレイのテキスト更新
+  updateText('#endMessage', i18next.t('gameOver.title')); // 例: "Game Over" または "You Win!"
+  updateText('#gameOverRetryBtn', i18next.t('gameOver.retry')); // 例: "Retry"
+  updateText('#gameOverExitBtn', i18next.t('gameOver.exit')); // 例: "Exit"
+};
 
 // Pause メニューのセットアップ関数
 export function setupPauseMenu() {
@@ -86,6 +107,7 @@ const SinglePlayPage = new Page({
   },
 
   mounted: async ({ user }) => {
+    setUserLanguage(user.language, updatePageContent);
     // ヘッダーと背景を非表示にする
     const header = document.querySelector('.header');
     const background = document.getElementById('background');

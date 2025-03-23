@@ -1,10 +1,33 @@
 // frontend/src/pages/Tournament/Game/index.ts
 import { WS_URL } from '@/config/config';
+import i18next from '@/config/i18n';
+import { logger } from '@/core/Logger';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
-import { logger } from '@/core/Logger';
 import { IGameConfig } from '@/models/Game/type';
 import { TournamentGameManager } from '@/models/Tournament/TournamentGameManager';
+import { setUserLanguage } from '@/utils/language';
+import { updateText } from '@/utils/updateElements';
+
+const updatePageContent = (): void => {
+  // ブラウザタブのタイトルを更新
+  updateText('title', i18next.t('tournament.game.pageTitle'));
+
+  // ラウンド情報の表示を更新
+  updateText('#round-info', i18next.t('tournament.game.roundInfo'));
+
+  // ゲームオーバー時の見出し（例："Game Over"）を更新
+  updateText('#game-over h1', i18next.t('tournament.game.gameOverTitle'));
+
+  // 勝者情報の文言（例："Winner:"）を更新
+  updateText('#game-over p', i18next.t('tournament.game.winnerText'));
+
+  // 「Exit to Tournament」ボタンのテキストを更新
+  updateText('#exit-btn', i18next.t('tournament.game.exitButton'));
+
+  // 次試合待機情報のテキストを更新
+  updateText('#next-info p', i18next.t('tournament.game.waitingNextInfo'));
+};
 
 const GamePage = new Page({
   name: 'Tournament/Game',
@@ -13,6 +36,7 @@ const GamePage = new Page({
     html: '/src/pages/Tournament/Game/index.html',
   },
   mounted: async ({ pg, user }) => {
+    setUserLanguage(user.language, updatePageContent);
     logger.info('Tournament Game page mounting...');
 
     // URLパラメータの取得と検証

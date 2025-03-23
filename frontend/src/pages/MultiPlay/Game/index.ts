@@ -1,9 +1,26 @@
 // frontend/src/pages/MultiPlay/Game/index.ts
 import { WS_URL } from '@/config/config';
+import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
 import { IGameConfig } from '@/models/Game/type';
 import { MultiplayerGameManager } from '@/models/MultiPlay/MultiplayerGameManager';
+import { setUserLanguage } from '@/utils/language';
+import { updateText } from '@/utils/updateElements';
+
+const updatePageContent = (): void => {
+  // ブラウザタブに表示されるタイトルを更新
+  updateText('title', i18next.t('multiplay.game.pageTitle'));
+
+  // ゲーム終了時の見出し (例："Game Over") を更新
+  updateText('#game-over h1', i18next.t('multiplay.game.gameOverTitle'));
+
+  // 勝者情報の文言 (例："Winner:") を更新
+  updateText('#game-over p', i18next.t('multiplay.game.winnerText'));
+
+  // 「Exit to Menu」ボタンのテキストを更新
+  updateText('#exit-btn', i18next.t('multiplay.game.exitButton'));
+};
 
 const GamePage = new Page({
   name: 'MultiPlay/Game',
@@ -11,6 +28,7 @@ const GamePage = new Page({
     layout: AuthLayout,
   },
   mounted: async ({ pg, user }) => {
+    setUserLanguage(user.language, updatePageContent);
     console.log('Game page mounting...');
 
     // URLパラメータの取得と検証

@@ -1,9 +1,28 @@
 // frontend/src/pages/Tournament/Waiting/index.ts
 import { WS_URL } from '@/config/config';
-import { Page } from '@/core/Page';
+import i18next from '@/config/i18n';
 import { logger } from '@/core/Logger';
+import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
-import { API_URL } from '@/config/config';
+import { setUserLanguage } from '@/utils/language';
+import { updateText } from '@/utils/updateElements';
+
+const updatePageContent = (): void => {
+  // ブラウザタブに表示されるページタイトルを更新
+  updateText('title', i18next.t('tournament.waiting.pageTitle'));
+
+  // カードヘッダーの見出し（待機室のタイトル）を更新
+  updateText('.card-header h2', i18next.t('tournament.waiting.roomTitle'));
+
+  // 接続状況のメッセージを更新
+  updateText('#connection-status', i18next.t('tournament.waiting.connectionStatus'));
+
+  // 参加者リストの見出しを更新
+  updateText('.players-list h4', i18next.t('tournament.waiting.participantsHeader'));
+
+  // 離脱ボタンのテキストを更新
+  updateText('#leave-button', i18next.t('tournament.waiting.leaveButton'));
+};
 
 const WaitingPage = new Page({
   name: 'Tournament/Waiting',
@@ -12,6 +31,7 @@ const WaitingPage = new Page({
     html: '/src/pages/Tournament/Waiting/index.html',
   },
   mounted: async ({ pg, user }) => {
+    setUserLanguage(user.language, updatePageContent);
     logger.info('Tournament waiting page - initializing');
 
     // DOM要素の取得

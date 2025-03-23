@@ -1,9 +1,28 @@
 // frontend/src/pages/Tournament/WaitingNextMatch/index.ts
 import { WS_URL } from '@/config/config';
-import { Page } from '@/core/Page';
+import i18next from '@/config/i18n';
 import { logger } from '@/core/Logger';
+import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
+import { setUserLanguage } from '@/utils/language';
+import { updateText } from '@/utils/updateElements';
 
+const updatePageContent = (): void => {
+  // ページタイトルの更新
+  updateText('title', i18next.t('tournament.waitingNextMatch.pageTitle'));
+
+  // 待機画面の見出し更新
+  updateText('.waiting-title', i18next.t('tournament.waitingNextMatch.waitingTitle'));
+
+  // 初期ステータスメッセージの更新
+  updateText('#status-message', i18next.t('tournament.waitingNextMatch.statusWaiting'));
+
+  // プレイヤーリストのセクション見出し更新
+  updateText('.players-section h3', i18next.t('tournament.waitingNextMatch.finalistsHeading'));
+
+  // キャンセルボタンのテキスト更新
+  updateText('#cancel-button', i18next.t('tournament.waitingNextMatch.cancelButton'));
+};
 const WaitingNextMatchPage = new Page({
   name: 'Tournament/WaitingNextMatch',
   config: {
@@ -11,6 +30,7 @@ const WaitingNextMatchPage = new Page({
     html: '/src/pages/Tournament/WaitingNextMatch/index.html',
   },
   mounted: async ({ pg, user }) => {
+    setUserLanguage(user.language, updatePageContent);
     logger.info('Tournament waiting next match page mounting...');
 
     // URLパラメーターの取得
