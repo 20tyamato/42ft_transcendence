@@ -38,7 +38,7 @@ export default class Background2 {
   }
 
   private createBackground() {
-    const geometry = new THREE.PlaneGeometry(3000, 3000, 128, 128);
+    const geometry = new THREE.PlaneGeometry(5000, 5000, 128, 128);
     const material = new THREE.MeshBasicMaterial({
       color: 0xffffff,
       wireframe: true,
@@ -48,7 +48,7 @@ export default class Background2 {
     });
     this.plane = new THREE.Mesh(geometry, material);
     this.plane.rotation.x = -Math.PI / 2;
-    this.plane.position.y = -120;
+    this.plane.position.y = -150;
     this.group.add(this.plane);
   }
 
@@ -72,7 +72,7 @@ export default class Background2 {
       },
     ];
 
-    const offset = radius * 1.5;
+    const offset = radius * 1.2;
     ball4.position.set(-offset, initialHeight, -150);
     ball2.position.set(offset, initialHeight, -150);
 
