@@ -68,5 +68,6 @@
   "wins": "Victoires",
   "losses": "Défaites",
   "recentMatches": "Matchs récents",
-  "noMatchesAvailable": "Aucun match disponible"
+  "noMatchesAvailable": "Aucun match disponible",
+  "go": "Aller"
 }
