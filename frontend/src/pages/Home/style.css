@@ -103,7 +103,10 @@ main p {
   transform: scale(1.05);
   background-color: rgba(128, 128, 128, 0.7);
 }
-
+.btn:active {
+  background-color: rgba(128, 128, 128, 0.7);  /* クリック時も同じ色を維持 */
+  transform: scale(1.05);
+}
 /* .btn-primary {
   background-color: #3b82f6;
 }
@@ -125,7 +128,7 @@ footer p {
 }
 
 footer .highlight {
-  color: #38bdf8;
+  color: #737373;
 }
 
 

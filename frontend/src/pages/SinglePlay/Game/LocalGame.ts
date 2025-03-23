@@ -62,10 +62,10 @@ export default class LocalGame {
   private processCpuPaddle() {
     const ballPos = this.ball.position;
     const cpuPos = this.paddleTwo.position;
-    if (cpuPos.x > ballPos.x && cpuPos.x > -450) cpuPos.x -= 5 * difficultyFactor;
-    if (cpuPos.x < ballPos.x && cpuPos.x < 450) cpuPos.x += 5 * difficultyFactor;
-    if (cpuPos.x > ballPos.x && cpuPos.x > -450) cpuPos.x -= 5 * difficultyFactor;
-    if (cpuPos.x < ballPos.x && cpuPos.x < 450) cpuPos.x += 5 * difficultyFactor;
+    if (cpuPos.x > ballPos.x && cpuPos.x > -650) cpuPos.x -= 5 * difficultyFactor;
+    if (cpuPos.x < ballPos.x && cpuPos.x < 650) cpuPos.x += 5 * difficultyFactor;
+    if (cpuPos.x > ballPos.x && cpuPos.x > -650) cpuPos.x -= 5 * difficultyFactor;
+    if (cpuPos.x < ballPos.x && cpuPos.x < 650) cpuPos.x += 5 * difficultyFactor;
   }
 
   private processBallMovement() {
@@ -232,7 +232,7 @@ export default class LocalGame {
     });
   }
   private processPlayerPaddle(deltaTime: number) {
-    const paddleSpeed = 1000; // 1秒間に動くピクセル量
+    const paddleSpeed = 1500; // 1秒間に動くピクセル量
 
     if (this.leftKeyPressed && this.paddleOne.position.x > -675) {
       this.paddleOne.position.x -= paddleSpeed * deltaTime;
@@ -270,10 +270,10 @@ export default class LocalGame {
 
 // Difficulty.ts
 export enum Difficulty {
-  EASY = 1,
+  EASY = 2,
   MEDIUM = 3,
   HARD = 5,
-  ONI = 5, // ユーザーレベルが10以上の場合のみ選択可能
+  ONI = 10,
 }
 
 const selectedLevel = localStorage.getItem('selectedLevel') || 'EASY';
