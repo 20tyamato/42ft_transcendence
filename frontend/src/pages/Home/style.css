@@ -7,6 +7,8 @@ html {
   font-family: 'Orbitron', sans-serif;
   overflow: hidden;
   color: #f8fafc;
+  min-height: 100vh;
+  min-width: 100vw; 
 }
 
 .highlight {
@@ -48,7 +50,7 @@ html {
   z-index: -1; /* 背景の次層に置く */
 }
 
-.home-container {
+/* .home-container {
   text-align: center;
   padding: 30px;
   border-radius: 20px;
@@ -58,7 +60,22 @@ html {
   margin: auto;
   top: 0%;
   transform: translateY(245%);
+} */
+
+.home-container {
+  text-align: center;
+  padding: 30px;
+  border-radius: 20px;
+  width: clamp(280px, 80vw, 400px);  
+  position: fixed;
+  left: 50%;
+  top: 72%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  /* background-color: rgba(0, 0, 0, 0.1); 背景も見やすく */
+  backdrop-filter: blur(10px); /* グラス感 */
 }
+
 
 h1 {
   font-size: 5rem;
@@ -93,9 +110,9 @@ main p {
     transform 0.2s,
     opacity 0.3s;
   width: 100%;
-  background-color: rgba(128, 128, 128, 0.8);  /* 半透明のグレー */
+  background-color: rgba(128, 128, 128, 0.8); 
   backdrop-filter: blur(5px); 
-  border: none;  /* 境界線を削除 */
+  border: none; 
   box-shadow: none;  /* シャドウを削除 */
 }
 
@@ -125,7 +142,7 @@ footer p {
 }
 
 footer .highlight {
-  color: #38bdf8;
+  color: #737373;
 }
 
 
@@ -155,3 +172,4 @@ canvas {
   height: 100%;
   display: block;
 }
+
