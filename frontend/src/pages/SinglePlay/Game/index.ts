@@ -7,7 +7,7 @@ import gsap from 'gsap';
 import { createParticleCustomizationPanel } from './CustomParticle';
 import Experience from './Experience';
 
-let running = true; // ゲームの状態管理
+let running = false; // ゲームの状態管理
 
 const updatePageContent = (): void => {
   updateText('title', i18next.t('singlePlay.title'));
@@ -53,6 +53,26 @@ export function setupPauseMenu() {
     window.location.href = '/singleplay/select';
   });
 }
+
+// export function hideGameStartOverlay() {
+//   const overlay = document.getElementById('gameStartOverlay');
+//   if (!overlay) return;
+//   console.log('Starting fade-out animation for GAME START overlay');
+  
+//   // ゲームはまだ一時停止状態
+//   gsap.to(overlay, {
+//     duration: 1.5,
+//     opacity: 0.5,
+//     delay: 2,
+//     onComplete: () => {
+//       console.log('Fade-out complete. Hiding overlay and starting game.');
+//       overlay.classList.add('hidden');
+      
+//       // ここでゲームを開始
+//       running = true; // 外部変数 running を true にして開始
+//     },
+//   });
+// }
 
 export function hideGameStartOverlay() {
   const overlay = document.getElementById('gameStartOverlay');
