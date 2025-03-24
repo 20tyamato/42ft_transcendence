@@ -6,7 +6,7 @@ DB_CONTAINER := $(PROJECT_NAME)-db-1
 
 all: up
 
-setup: ssl-certs elk-setup
+setup: hostip ssl-certs elk-setup
 
 up: elk-up hostip
 	docker compose up
