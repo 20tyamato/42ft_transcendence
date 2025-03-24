@@ -6,6 +6,8 @@ import { IUser } from '@/models/User/type';
 import { formatDate } from '@/utils/date';
 import { languageNames, setUserLanguage } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
+import Background from './Background';
+import * as THREE from 'three';
 
 const updatePageContent = (): void => {
   updateText('title', i18next.t('userProfile'));
@@ -232,6 +234,32 @@ const ProfilePage = new Page({
   },
   mounted: async ({ pg, user }): Promise<void> => {
     try {
+      // Three.js の初期化
+      const canvas = document.getElementById('gl') as HTMLCanvasElement;
+      if (!canvas) {
+        console.error('Canvas element not found');
+        return;
+      }
+      const renderer = new THREE.WebGLRenderer({ canvas });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      camera.position.z = 1000;
+
+      const background = new Background(scene);
+      function animate() {
+        background.update(); // ← Backgroundの更新
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+      }
+      animate();
+
       // 言語設定とページ文言の更新
       setUserLanguage(user.language, updatePageContent);
 
