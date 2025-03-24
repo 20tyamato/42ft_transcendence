@@ -5,16 +5,9 @@ import { setUserLanguage } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
 
 const updatePageContent = (): void => {
-  // ページタイトルの更新
   updateText('title', i18next.t('tournament.title'));
-
-  // ページ内のタイトル（h1）の更新
   updateText('.tournament-title', i18next.t('tournament.heading'));
-
-  // 説明文の更新
   updateText('.tournament-info p', i18next.t('tournament.info'));
-
-  // トーナメント参加ボタンのテキスト更新
   updateText('#start-tournament', i18next.t('tournament.startButton'));
 };
 

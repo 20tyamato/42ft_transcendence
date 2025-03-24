@@ -6,13 +6,8 @@ import { setUserLanguage } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
 
 const updatePageContent = (): void => {
-  // ブラウザタブのタイトルを更新
   updateText('title', i18next.t('multiplay.pageTitle'));
-
-  // メイン見出しを更新（例："Multiplayer Mode"）
   updateText('h1', i18next.t('multiplay.heading'));
-
-  // 「Find Match」ボタンのテキストを更新
   updateText('#start-matchmaking', i18next.t('multiplay.startMatchmaking'));
 };
 

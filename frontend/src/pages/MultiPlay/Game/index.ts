@@ -9,16 +9,9 @@ import { setUserLanguage } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
 
 const updatePageContent = (): void => {
-  // ブラウザタブに表示されるタイトルを更新
   updateText('title', i18next.t('multiplay.game.pageTitle'));
-
-  // ゲーム終了時の見出し (例："Game Over") を更新
   updateText('#game-over h1', i18next.t('multiplay.game.gameOverTitle'));
-
-  // 勝者情報の文言 (例："Winner:") を更新
   updateText('#game-over p', i18next.t('multiplay.game.winnerText'));
-
-  // 「Exit to Menu」ボタンのテキストを更新
   updateText('#exit-btn', i18next.t('multiplay.game.exitButton'));
 };
 

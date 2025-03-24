@@ -8,19 +8,10 @@ import { setUserLanguage } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
 
 const updatePageContent = (): void => {
-  // ブラウザタブに表示されるページタイトルを更新
   updateText('title', i18next.t('tournament.waiting.pageTitle'));
-
-  // カードヘッダーの見出し（待機室のタイトル）を更新
   updateText('.card-header h2', i18next.t('tournament.waiting.roomTitle'));
-
-  // 接続状況のメッセージを更新
   updateText('#connection-status', i18next.t('tournament.waiting.connectionStatus'));
-
-  // 参加者リストの見出しを更新
   updateText('.players-list h4', i18next.t('tournament.waiting.participantsHeader'));
-
-  // 離脱ボタンのテキストを更新
   updateText('#leave-button', i18next.t('tournament.waiting.leaveButton'));
 };
 
