@@ -120,7 +120,7 @@ const updateCardColor = (level: number): void => {
 };
 
 // マッチ履歴の表示を担当する新しい関数
-const updateMatchHistory = async (userId: string): Promise<void> => {
+const updateMatchHistory = async (): Promise<void> => {
   const matchHistoryList = document.getElementById('matchHistoryList');
   const loadingSpinner = document.getElementById('matchHistoryLoading');
   const noMatchesMessage = document.getElementById('noMatchesMessage');
