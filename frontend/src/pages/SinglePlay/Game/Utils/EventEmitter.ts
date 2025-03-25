@@ -1,3 +1,5 @@
+import { logger } from '@/core/Logger';
+
 export default class EventEmitter {
   private callbacks: {
     [namespace: string]: { [event: string]: ((...args: unknown[]) => unknown)[] };
@@ -5,7 +7,7 @@ export default class EventEmitter {
 
   on(names: string, callback: (...args: unknown[]) => unknown): this {
     if (!names || !callback) {
-      console.warn('Invalid event name or callback');
+      logger.warn('Invalid event name or callback');
       return this;
     }
 
@@ -21,7 +23,7 @@ export default class EventEmitter {
 
   off(names: string): this {
     if (!names) {
-      console.warn('Invalid event name');
+      logger.warn('Invalid event name');
       return this;
     }
 
@@ -36,7 +38,7 @@ export default class EventEmitter {
 
   trigger(name: string, args: unknown[] = []): unknown {
     if (!name) {
-      console.warn('Invalid event name');
+      logger.warn('Invalid event name');
       return null;
     }
 

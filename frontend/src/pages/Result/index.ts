@@ -1,5 +1,5 @@
 // frontend/src/pages/Result/index.ts
-
+import { logger } from '@/core/Logger';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
 import { GameResultService } from '@/models/Result/GameResultService';
@@ -18,7 +18,7 @@ const ResultPage = new Page({
     // 結果データ取得
     const resultData = GameResultService.getStoredResult();
     if (!resultData) {
-      console.warn('No game result data found');
+      logger.warn('No game result data found');
       return;
     }
 

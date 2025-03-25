@@ -22,7 +22,7 @@ export class Logger {
   }
 
   public async warn(message: string, ...args: unknown[]) {
-    console.warn(message, ...args);
+    logger.warn(message, ...args);
     await this._sendToLogstash('warn', message);
   }
 
