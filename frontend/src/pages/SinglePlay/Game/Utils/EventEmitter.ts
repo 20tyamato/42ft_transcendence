@@ -1,9 +1,11 @@
+import { logger } from '@/core/Logger';
+
 export default class EventEmitter {
   private callbacks: { [namespace: string]: { [event: string]: Function[] } } = { base: {} };
 
   on(names: string, callback: Function): this {
     if (!names || !callback) {
-      console.warn('Invalid event name or callback');
+      logger.warn('Invalid event name or callback');
       return this;
     }
 
@@ -19,7 +21,7 @@ export default class EventEmitter {
 
   off(names: string): this {
     if (!names) {
-      console.warn('Invalid event name');
+      logger.warn('Invalid event name');
       return this;
     }
 
@@ -34,7 +36,7 @@ export default class EventEmitter {
 
   trigger(name: string, args: any[] = []): any {
     if (!name) {
-      console.warn('Invalid event name');
+      logger.warn('Invalid event name');
       return null;
     }
 

@@ -1,6 +1,6 @@
 // Background.ts
+import { logger } from '@/core/Logger';
 import * as THREE from 'three';
-import { BallsGroup } from './BallFactory';
 
 export default class Background {
   private scene: THREE.Scene;
@@ -37,7 +37,7 @@ export default class Background {
   public update(): void {
     const time = this.clock.getElapsedTime();
     if (!this.plane) {
-      console.warn('Plane is not initialized.');
+      logger.warn('Plane is not initialized.');
       return;
     }
     const geometry = this.plane.geometry as THREE.PlaneGeometry;

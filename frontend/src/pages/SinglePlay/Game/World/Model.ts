@@ -20,7 +20,7 @@ export default class Model {
   private loadModel(): void {
     const resource = this.resources.items.scene;
     if (!resource || !resource.scene) {
-      console.error('Model resource is not loaded correctly.');
+      logger.error('Model resource is not loaded correctly.');
       return;
     }
 

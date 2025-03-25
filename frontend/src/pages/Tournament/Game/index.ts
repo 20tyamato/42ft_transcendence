@@ -48,7 +48,7 @@ const GamePage = new Page({
 
     // 必要なパラメータがない場合はトーナメントページにリダイレクト
     if (!tournamentId || !roundType || !sessionId || !username) {
-      console.error('Missing required tournament game parameters');
+      pg.logger.error('Missing required tournament game parameters');
       await new Promise((resolve) => setTimeout(resolve, 2000));
       window.location.href = '/tournament';
       return;
@@ -57,7 +57,7 @@ const GamePage = new Page({
     // ゲームコンテナの取得
     const container = document.getElementById('game-canvas');
     if (!container) {
-      console.error('Game container not found');
+      pg.logger.error('Game container not found');
       return;
     }
 
@@ -98,7 +98,7 @@ const GamePage = new Page({
         gameManager.cleanup();
       };
     } catch (error) {
-      console.error('Failed to initialize tournament game:', error);
+      pg.logger.error('Failed to initialize tournament game:', error);
 
       // エラーメッセージを表示
       const errorElement = document.createElement('div');

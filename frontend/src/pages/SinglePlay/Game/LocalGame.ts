@@ -187,7 +187,7 @@ export default class LocalGame {
         exitBtn.onclick = () => (window.location.href = '/singleplay/select');
       }
     } else {
-      console.warn('Game over elements are missing.');
+      logger.warn('Game over elements are missing.');
     }
   }
   private scored(player: string) {

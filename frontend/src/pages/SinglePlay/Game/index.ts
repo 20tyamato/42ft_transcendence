@@ -33,7 +33,7 @@ export function setupPauseMenu() {
   const pauseExitBtn = document.getElementById('pauseExitBtn');
 
   if (!pauseBtn || !pauseOverlay || !resumeBtn || !pauseRetryBtn || !pauseExitBtn) {
-    console.warn('Pause menu elements are missing.');
+    logger.warn('Pause menu elements are missing.');
     return;
   }
   pauseBtn.addEventListener('click', () => {
@@ -93,7 +93,7 @@ export function showGameOverOverlay(message: string, finalScore: string) {
       window.location.href = '/singleplay/select';
     });
   } else {
-    console.warn('Game over elements are missing.');
+    logger.warn('Game over elements are missing.');
   }
 }
 

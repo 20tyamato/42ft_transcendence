@@ -50,7 +50,7 @@ const LeaderboardPage = new Page({
         renderRankingList(users, rankingList);
       }
     } catch (error) {
-      console.error('Error fetching users:', error);
+      pg.logger.error('Error fetching users:', error);
       if (rankingList) {
         showRankingError(rankingList, i18next.t('failedToFetchUsers') || 'Failed to fetch users');
       }
