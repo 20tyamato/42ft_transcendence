@@ -1,3 +1,4 @@
+// frontend/src/pages/Profile/index.ts
 import i18next from '@/config/i18n';
 import { logger } from '@/core/Logger';
 import { Page } from '@/core/Page';
@@ -254,11 +255,11 @@ const ProfilePage = new Page({
       camera.position.z = 1000;
 
       const background = new Background(scene);
-      function animate() {
+      const animate = () => {
         background.update(); // ← Backgroundの更新
         requestAnimationFrame(animate);
         renderer.render(scene, camera);
-      }
+      };
       animate();
 
       // 言語設定とページ文言の更新
@@ -278,7 +279,7 @@ const ProfilePage = new Page({
       }
 
       // マッチ履歴の取得と表示
-      await updateMatchHistory('me');
+      await updateMatchHistory();
 
       // 各種ボタンのイベント登録
       attachActionButtonHandlers();
