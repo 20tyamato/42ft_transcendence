@@ -1,7 +1,7 @@
 import i18next from '@/config/i18n';
 
 export const validateRequiredFields = (fields: Record<string, string>): string | null => {
-  for (const [key, value] of Object.entries(fields)) {
+  for (const [, value] of Object.entries(fields)) {
     if (!value) {
       return i18next.t('allFieldsRequired');
     }
