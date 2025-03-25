@@ -89,24 +89,3 @@ export const createMultiplayerGame = async ({
     throw error;
   }
 };
-
-/**
- * トーナメントゲームを作成
- * @param playerScore プレイヤーのスコア
- * @returns ゲームデータ
- */
-export const createTournamentGame = async ({
-  playerScore,
-}: {
-  playerScore: number;
-}): Promise<boolean> => {
-  const gameData = {
-    status: 'COMPLETED',
-    end_time: new Date().toISOString(),
-    game_type: 'TOURNAMENT',
-  };
-
-  /** TODO: トーナメントゲームのデータを作成 */
-
-  return true;
-};
