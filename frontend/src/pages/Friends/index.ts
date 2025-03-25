@@ -1,4 +1,5 @@
 import i18next from '@/config/i18n';
+import { logger } from '@/core/Logger';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
 import { IFriend } from '@/models/interface';
@@ -23,9 +24,9 @@ async function loadFriends(): Promise<void> {
     renderFriends(data);
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error('Error loading friends:', error.message);
+      logger.error('Error loading friends:', error.message);
     } else {
-      console.error('Unknown error loading friends');
+      logger.error('Unknown error loading friends');
     }
   }
 }
@@ -40,9 +41,9 @@ async function addFriend(username: string): Promise<void> {
     await loadFriends();
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error('Error adding friend:', error.message);
+      logger.error('Error adding friend:', error.message);
     } else {
-      console.error('Unknown error adding friend');
+      logger.error('Unknown error adding friend');
     }
   }
 }
@@ -55,9 +56,9 @@ async function deleteFriend(friendId: number): Promise<void> {
     await loadFriends();
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error('Error deleting friend:', error.message);
+      logger.error('Error deleting friend:', error.message);
     } else {
-      console.error('Unknown error deleting friend');
+      logger.error('Unknown error deleting friend');
     }
   }
 }
@@ -65,7 +66,7 @@ async function deleteFriend(friendId: number): Promise<void> {
 function renderFriends(friends: IFriend[]): void {
   const friendsContainer = document.getElementById('friends-container') as HTMLUListElement | null;
   if (!friendsContainer) {
-    console.error("Element with ID 'friends-container' not found in the DOM.");
+    logger.error("Element with ID 'friends-container' not found in the DOM.");
     return;
   }
 

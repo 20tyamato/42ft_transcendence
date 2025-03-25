@@ -1,4 +1,5 @@
 import i18next from '@/config/i18n';
+import { logger } from '@/core/Logger';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
 import { setUserLanguage } from '@/utils/language';
@@ -17,7 +18,7 @@ const updatePageContent = (): void => {
 };
 
 const navigateTo = (path: string): void => {
-  console.log(`Navigating to ${path}`);
+  logger.info(`Navigating to ${path}`);
   window.location.href = path;
 };
 

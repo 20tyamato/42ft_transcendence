@@ -1,3 +1,4 @@
+import { logger } from '@/core/Logger';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import EventEmitter from './EventEmitter';
 import { Source } from './sources';
@@ -33,14 +34,14 @@ export default class Loaders extends EventEmitter {
 
         const exists = await this.checkGLBExists(modelUrl);
         if (!exists) {
-          console.error(`GLBモデルが見つかりません: ${modelUrl}`);
+          console.error(`GLB model not found: ${modelUrl}`);
           continue;
         }
 
         this.loaders.gltfLoader.load(
           modelUrl,
           (gltf: THREE.GLTF) => {
-            console.log('GLTFモデルがロードされました:', gltf);
+            logger.info('GLTF model loaded:', gltf);
             this.sourceLoaded(source, gltf);
           },
           undefined,
@@ -52,19 +53,19 @@ export default class Loaders extends EventEmitter {
       this.loaders.gltfLoader.load(
         '/models/scene.glb',
         (gltf: THREE.GLTF) => {
-          console.log('GLTFモデルがロードされました:', gltf);
+          logger.info('GLTF model loaded:', gltf);
           this.sourceLoaded(source, gltf);
         },
         undefined,
         (error: ErrorEvent) => {
-          console.error('GLTFモデルのロードエラー:', error);
+          console.error('Error loading GLTF model:', error);
         }
       );
     }
   }
 
   private sourceLoaded(source: Source, file: unknown): void {
-    console.log(`Loaded: ${source.name}`, file);
+    logger.info(`Loaded: ${source.name}`, file);
     this.items[source.name] = file;
     this.loaded++;
     if (this.loaded === this.toLoad) {

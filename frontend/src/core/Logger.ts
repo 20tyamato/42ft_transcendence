@@ -1,6 +1,5 @@
-/**
- * ELKにログを送信する
- */
+import { logger } from '@/core/Logger';
+
 export class Logger {
   private _logstashUrl: string;
   constructor() {
@@ -13,12 +12,12 @@ export class Logger {
   }
 
   public async log(message: string, ...args: unknown[]) {
-    console.log(message, ...args);
+    logger.info(message, ...args);
     await this._sendToLogstash('log', message);
   }
 
   public async error(message: string, ...args: unknown[]) {
-    console.error(message, ...args);
+    logger.error(message, ...args);
     await this._sendToLogstash('error', message);
   }
 
@@ -45,7 +44,7 @@ export class Logger {
       });
     } catch (error) {
       // エラーが発生した場合はコンソールにフォールバック
-      console.error('Logstashへの送信に失敗:', error);
+      logger.error('Logstashへの送信に失敗:', error);
     }
   }
 }

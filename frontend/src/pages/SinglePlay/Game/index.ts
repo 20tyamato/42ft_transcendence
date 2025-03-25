@@ -1,4 +1,5 @@
 import i18next from '@/config/i18n';
+import { logger } from '@/core/Logger';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
 import { setUserLanguage } from '@/utils/language';
@@ -57,13 +58,13 @@ export function setupPauseMenu() {
 export function hideGameStartOverlay() {
   const overlay = document.getElementById('gameStartOverlay');
   if (!overlay) return;
-  console.log('Starting fade-out animation for GAME START overlay');
+  logger.info('Starting fade-out animation for GAME START overlay');
   gsap.to(overlay, {
     duration: 1.5, // 2秒かけてフェードアウト
     opacity: 0.5,
     delay: 2, // 2秒後に開始
     onComplete: () => {
-      console.log('Fade-out complete. Hiding overlay.');
+      logger.info('Fade-out complete. Hiding overlay.');
       overlay.classList.add('hidden'); // CSSで非表示にする
     },
   });

@@ -1,3 +1,4 @@
+import { logger } from '@/core/Logger';
 import { fetchCurrentUser, updateOnlineStatus } from '@/models/User/repository';
 import { IUser } from '@/models/User/type';
 import { fetcher } from '@/utils/fetcher';
@@ -21,7 +22,7 @@ export const checkAuthentication = async (): Promise<ICurrentUser> => {
     const user = await fetchCurrentUser();
     return { token, ...user };
   } catch (error) {
-    console.error('Failed to fetch current user:', error);
+    logger.error('Failed to fetch current user:', error);
     storage.removeUserToken();
 
     // ホームページ('/')の場合はリダイレクトしない
@@ -85,7 +86,7 @@ export const logout = async (): Promise<void> => {
       },
     });
   } catch (error) {
-    console.error('Failed to logout:', error);
+    logger.error('Failed to logout:', error);
   } finally {
     storage.removeUserToken();
   }

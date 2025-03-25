@@ -1,5 +1,5 @@
 // src/models/Result/GameResultService.ts
-
+import { logger } from '@/core/Logger';
 import { IGameMode, IGameResult } from '../Game/type';
 
 /**
@@ -20,7 +20,7 @@ export class GameResultService {
       const score = JSON.parse(storedScore);
       return { score, gameMode };
     } catch (error) {
-      console.error('Failed to parse stored score:', error);
+      logger.error('Failed to parse stored score:', error);
       return null;
     }
   }

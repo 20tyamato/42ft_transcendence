@@ -1,4 +1,5 @@
 // Field.ts
+import { logger } from '@/core/Logger';
 import * as THREE from 'three';
 import Experience from './Experience';
 
@@ -47,10 +48,10 @@ export default class Field {
 
     this.field = new THREE.Mesh(this.fieldGeometry, this.fieldMaterial);
     this.field.position.set(0, -5, 0);
-    console.log('Field position:', this.field.position);
+    logger.info('Field position:', this.field.position);
 
     this.scene.add(this.field);
-    console.log('Field added to scene:', this.field);
+    logger.info('Field added to scene:', this.field);
 
     this.setBackgroundParticles();
   }
@@ -88,7 +89,7 @@ export default class Field {
 
     this.particleSystem = new THREE.Points(particlesGeometry, particlesMaterial);
     this.scene.add(this.particleSystem);
-    console.log('Background particles added');
+    logger.info('Background particles added');
   } // Add your particle update logic here
 
   /**

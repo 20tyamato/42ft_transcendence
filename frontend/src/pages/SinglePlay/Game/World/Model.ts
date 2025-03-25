@@ -1,3 +1,4 @@
+import { logger } from '@/core/Logger';
 import * as THREE from 'three';
 import Experience from '../Experience';
 
@@ -24,7 +25,7 @@ export default class Model {
     }
 
     this.model = resource.scene;
-    console.log('GLTF resource structure:', resource);
+    logger.info('GLTF resource structure:', resource);
     this.model.scale.set(12, 12, 12);
     this.model.position.set(0, -350, 600);
     this.scene.add(this.model);

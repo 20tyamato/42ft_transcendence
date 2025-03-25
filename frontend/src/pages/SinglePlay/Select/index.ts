@@ -1,4 +1,5 @@
 import i18next from '@/config/i18n';
+import { logger } from '@/core/Logger';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { fetchCurrentUser } from '@/models/User/repository';
@@ -88,7 +89,7 @@ const SinglePlaySelectPage = new Page({
         const level = button.getAttribute('data-level');
         if (level) {
           localStorage.setItem('selectedLevel', level);
-          console.log(`Selected level: ${level}`);
+          logger.info(`Selected level: ${level}`);
           showLoadingScreen('/singleplay/game');
         } else {
           console.error('Level attribute not found on button.');

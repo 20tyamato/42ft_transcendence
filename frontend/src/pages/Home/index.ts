@@ -1,4 +1,5 @@
 import i18next from '@/config/i18n';
+import { logger } from '@/core/Logger';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
 import { isLoggedIn } from '@/libs/Auth/currentUser';
@@ -41,7 +42,7 @@ const HomePage = new Page({
 
     const canvas = document.getElementById('gl') as HTMLCanvasElement;
     if (!canvas) {
-      console.error('Canvas element not found');
+      logger.error('Canvas element not found');
       return;
     }
 

@@ -1,4 +1,5 @@
 // frontend/src/models/Services/BaseGameManager.ts
+import { logger } from '@/core/Logger';
 import { IGameConfig, IGameState, IMoveConfig } from '../Game/type';
 import { InputHandlerService } from './InputHandlerService';
 import { WebSocketService } from './WebSocketService';
@@ -47,13 +48,13 @@ export abstract class BaseGameManager {
       this.inputHandler.init(this.handleMovement.bind(this));
 
       await this.onInitialized();
-      console.log('Game manager initialized successfully:', {
+      logger.info('Game manager initialized successfully:', {
         sessionId: this.config.sessionId,
         username: this.config.username,
         isPlayer1: this.config.isPlayer1,
       });
     } catch (error) {
-      console.error('Failed to initialize game:', error);
+      logger.error('Failed to initialize game:', error);
       this.handleConnectionError();
     }
   }
@@ -87,7 +88,7 @@ export abstract class BaseGameManager {
   }
 
   protected handleError(data: { message: string }): void {
-    console.error('Game error:', data.message);
+    logger.error('Game error:', data.message);
     this.onError(data.message);
   }
 

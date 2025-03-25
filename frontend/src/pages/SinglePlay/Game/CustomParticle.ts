@@ -1,3 +1,4 @@
+import { logger } from '@/core/Logger';
 import * as THREE from 'three';
 import Experience from './Experience';
 
@@ -230,7 +231,7 @@ export function createParticleCustomizationPanel(
     const opacity = (document.getElementById('particleOpacity') as HTMLInputElement).value;
     const settings = { color, size, speed, density, opacity };
     localStorage.setItem('particleSettings', JSON.stringify(settings));
-    console.log('Particle settings saved:', settings);
+    logger.info('Particle settings saved:', settings);
   });
 
   // Reset ボタンのイベント：初期設定に戻す
@@ -247,7 +248,7 @@ export function createParticleCustomizationPanel(
       density: 10000,
       opacity: 0.8,
     });
-    console.log('Particle settings reset to defaults');
+    logger.info('Particle settings reset to defaults');
   });
 
   return panel;

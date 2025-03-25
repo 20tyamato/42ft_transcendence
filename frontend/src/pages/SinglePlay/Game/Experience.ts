@@ -1,3 +1,4 @@
+import { logger } from '@/core/Logger';
 import * as THREE from 'three';
 import Ball from '../Game/Ball';
 import Field from '../Game/Field';
@@ -101,7 +102,7 @@ export default class Experience {
     }
     this.cameraClass.update();
     this.renderer.update();
-    console.log('Experience update running');
+    logger.info('Experience update running');
   }
 
   public destroy(): void {

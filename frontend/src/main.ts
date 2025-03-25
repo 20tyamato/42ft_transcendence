@@ -1,3 +1,4 @@
+import { logger } from '@/core/Logger';
 import NotFoundPage from '@/pages/404/index';
 import HomePage from '@/pages/Home/index';
 import LeaderboardPage from '@/pages/Leaderboard/index';
@@ -54,7 +55,7 @@ const routes: Record<string, Page> = {
 async function router(path: string) {
   if (!appDiv) return;
   const [pathWithoutQuery] = path.split('?');
-  console.log('Router handling:', {
+  logger.info('Router handling:', {
     fullPath: path,
     pathWithoutQuery,
     query: window.location.search,
