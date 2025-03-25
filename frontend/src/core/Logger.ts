@@ -1,5 +1,3 @@
-import { logger } from '@/core/Logger';
-
 /**
  * ELKにログを送信する
  */
@@ -15,7 +13,7 @@ export class Logger {
   }
 
   public async log(message: string, ...args: any[]) {
-    logger.log(message, ...args);
+    console.log(message, ...args);
     await this._sendToLogstash('log', message);
   }
 

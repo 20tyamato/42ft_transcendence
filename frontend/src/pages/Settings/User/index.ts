@@ -134,7 +134,7 @@ const SettingsUserPage = new Page({
       setUserLanguage(user.language, updatePageContent);
       populateUserData(user, elements);
     } catch (error) {
-      logger.error('Error fetching user data:', error);
+      pg.logger.error('Error fetching user data:', error);
     }
 
     registerAvatarPreview(elements.avatarUploadInput, elements.avatarPreviewEl);

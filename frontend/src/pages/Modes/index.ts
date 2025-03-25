@@ -1,5 +1,4 @@
 import i18next from '@/config/i18n';
-import { logger } from '@/core/Logger';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
 import { setUserLanguage } from '@/utils/language';
@@ -70,7 +69,7 @@ const ModesPage = new Page({
     pg.logger.info('ModesPage mounted!');
     const canvas = document.getElementById('gl') as HTMLCanvasElement;
     if (!canvas) {
-      logger.error('Canvas element with id="gl" not found.');
+      pg.logger.error('Canvas element with id="gl" not found.');
       return;
     }
     const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });

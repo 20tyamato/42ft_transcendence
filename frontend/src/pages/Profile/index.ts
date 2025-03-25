@@ -7,8 +7,8 @@ import { IUser } from '@/models/User/type';
 import { formatDate } from '@/utils/date';
 import { languageNames, setUserLanguage } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
-import Background from './Background';
 import * as THREE from 'three';
+import Background from './Background';
 
 const updatePageContent = (): void => {
   updateText('title', i18next.t('userProfile'));
@@ -287,7 +287,7 @@ const ProfilePage = new Page({
 
       pg.logger.info('ProfilePage mounted!');
     } catch (error) {
-      logger.error('Error in mounted():', error);
+      pg.logger.error('Error in mounted():', error);
     }
   },
 });
