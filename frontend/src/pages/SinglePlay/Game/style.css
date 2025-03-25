@@ -90,8 +90,8 @@ canvas {
   top: 75px;
   right: 20px;
   padding: 10px 20px;
-  font-size: 1rem;
-  box-shadow: 0 4px 12px rgb(0, 0, 0, 0.5);
+  font-size: 1.3rem;
+  box-shadow: 0 4px 12px rgb(0, 0, 0, 0.6);
   border-radius: 10px;
   color: #fff;
   border-radius: 5px;
@@ -184,15 +184,6 @@ canvas {
   border: 2px solid #fff;
 }
 
-/* .score-container {
-  background-color: rgba(0, 0, 0, 0.6);
-  padding: 10px 20px;
-  border-radius: 10px;
-  text-align: center;
-  color: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-} */
-
 /* スコア表示用のコンテナ */
 #finalScoreDisplay {
   margin-bottom: 30px;
@@ -225,6 +216,7 @@ canvas {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
+  font-size: 1.3rem;
 }
 
 /* 左右のテキストは左右揃え */
@@ -348,7 +340,7 @@ canvas {
   width: 300px;
   background: rgba(110, 110, 110, 0.6);
   border-radius: 10px;
-  padding: 5px 5px 5px 5px;
+  padding: 5px;
   color: #fff;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   z-index: 1000;
