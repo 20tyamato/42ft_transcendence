@@ -32,14 +32,12 @@ const updatePageContent = (): void => {
 const HomePage = new Page({
   name: 'Home',
   config: { layout: AuthLayout },
-  mounted: async ({ pg, user }) => {
+  mounted: async ({ pg }) => {
     updatePageContent();
     updateActiveLanguageButton();
 
     registerLanguageSwitchers(updatePageContent);
     registerStartButton();
-    // setUserLanguage(user.language, updatePageContent);
-    // registerStartButton();
 
     const canvas = document.getElementById('gl') as HTMLCanvasElement;
     if (!canvas) {

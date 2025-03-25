@@ -1,10 +1,10 @@
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import EventEmitter from './EventEmitter';
-import sources, { Source } from './sources';
+import { Source } from './sources';
 
 export default class Loaders extends EventEmitter {
   private sources: Source[];
-  private items: { [key: string]: any } = {};
+  private items: { [key: string]: unknown } = {};
   private loaders: { gltfLoader: GLTFLoader };
   private toLoad: number;
   private loaded: number = 0;
@@ -39,24 +39,24 @@ export default class Loaders extends EventEmitter {
 
         this.loaders.gltfLoader.load(
           modelUrl,
-          (gltf) => {
+          (gltf: THREE.GLTF) => {
             console.log('GLTFモデルがロードされました:', gltf);
             this.sourceLoaded(source, gltf);
           },
           undefined,
-          (error) => {
+          (error: ErrorEvent) => {
             console.error('GLTFモデルのロードエラー:', error);
           }
         );
       }
       this.loaders.gltfLoader.load(
         '/models/scene.glb',
-        (gltf) => {
+        (gltf: THREE.GLTF) => {
           console.log('GLTFモデルがロードされました:', gltf);
           this.sourceLoaded(source, gltf);
         },
         undefined,
-        (error) => {
+        (error: ErrorEvent) => {
           console.error('GLTFモデルのロードエラー:', error);
         }
       );
