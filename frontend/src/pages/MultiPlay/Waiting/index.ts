@@ -58,7 +58,7 @@ const handleSocketMessage = (
         logger.info('Match found:', data);
         const username = user.username;
         if (!username) {
-          console.error('No username found');
+          logger.error('No username found');
           window.location.href = '/multiplay';
           return;
         }
@@ -73,7 +73,7 @@ const handleSocketMessage = (
         break;
     }
   } catch (e) {
-    console.error('Error parsing message:', e);
+    logger.error('Error parsing message:', e);
   }
 };
 
@@ -98,7 +98,7 @@ const initWebSocket = (statusElement: HTMLElement | null, user: ICurrentUser): W
   socket.onmessage = (event) => handleSocketMessage(event, statusElement, user);
 
   socket.onerror = (error) => {
-    console.error('WebSocket error:', error);
+    logger.error('WebSocket error:', error);
     if (statusElement) statusElement.textContent = 'Connection error. Retrying...';
   };
 

@@ -35,7 +35,7 @@ const SinglePlaySelectPage = new Page({
     const background = new Background(scene);
     const stars = new Stars(scene);
     const userData = await fetchCurrentUser().catch((error) => {
-      console.error('Error fetching current user:', error);
+      logger.error('Error fetching current user:', error);
       return { language: 'en', points: 0 }; // 仮のデフォルト値
     });
 
@@ -92,7 +92,7 @@ const SinglePlaySelectPage = new Page({
           logger.info(`Selected level: ${level}`);
           showLoadingScreen('/singleplay/game');
         } else {
-          console.error('Level attribute not found on button.');
+          logger.error('Level attribute not found on button.');
         }
       });
     });

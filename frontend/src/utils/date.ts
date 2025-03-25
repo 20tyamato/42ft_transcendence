@@ -1,4 +1,6 @@
 // frontend/src/utils/date.ts
+import { logger } from '@/core/Logger';
+
 /**
  * ISO形式の日時文字列を読みやすい形式に変換
  * @param isoString ISO形式の日時文字列
@@ -24,7 +26,7 @@ export function formatDate(isoString: string): string {
       minute: '2-digit',
     });
   } catch (error) {
-    console.error('Error formatting date:', error);
+    logger.error('Error formatting date:', error);
     return 'Error';
   }
 }

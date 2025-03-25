@@ -22,7 +22,7 @@ export default class Loaders extends EventEmitter {
       const response = await fetch(url, { method: 'HEAD' });
       return response.ok;
     } catch (error) {
-      console.error('GLBファイルの存在チェックに失敗:', error);
+      logger.error('Failed to check the existence of the GLB file:', error);
       return false;
     }
   }
@@ -34,7 +34,7 @@ export default class Loaders extends EventEmitter {
 
         const exists = await this.checkGLBExists(modelUrl);
         if (!exists) {
-          console.error(`GLB model not found: ${modelUrl}`);
+          logger.error(`GLB model not found: ${modelUrl}`);
           continue;
         }
 
@@ -46,7 +46,7 @@ export default class Loaders extends EventEmitter {
           },
           undefined,
           (error: ErrorEvent) => {
-            console.error('GLTFモデルのロードエラー:', error);
+            logger.error('Error loading GLTF model:', error);
           }
         );
       }
@@ -58,7 +58,7 @@ export default class Loaders extends EventEmitter {
         },
         undefined,
         (error: ErrorEvent) => {
-          console.error('Error loading GLTF model:', error);
+          logger.error('Error loading GLTF model:', error);
         }
       );
     }

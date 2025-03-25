@@ -71,7 +71,7 @@ const ModesPage = new Page({
     pg.logger.info('ModesPage mounted!');
     const canvas = document.getElementById('gl') as HTMLCanvasElement;
     if (!canvas) {
-      console.error('Canvas element with id="gl" not found.');
+      logger.error('Canvas element with id="gl" not found.');
       return;
     }
     const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });

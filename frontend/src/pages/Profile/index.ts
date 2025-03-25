@@ -1,4 +1,5 @@
 import i18next from '@/config/i18n';
+import { logger } from '@/core/Logger';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
 import { getUserMatchHistory, getUserWithStats } from '@/models/User/repository';
@@ -169,7 +170,7 @@ const updateMatchHistory = async (): Promise<void> => {
       matchHistoryList.appendChild(matchItem);
     });
   } catch (error) {
-    console.error('Error updating match history:', error);
+    logger.error('Error updating match history:', error);
     // エラー処理
     if (loadingSpinner) loadingSpinner.style.display = 'none';
     if (noMatchesMessage) {
@@ -258,7 +259,7 @@ const ProfilePage = new Page({
 
       pg.logger.info('ProfilePage mounted!');
     } catch (error) {
-      console.error('Error in mounted():', error);
+      logger.error('Error in mounted():', error);
     }
   },
 });

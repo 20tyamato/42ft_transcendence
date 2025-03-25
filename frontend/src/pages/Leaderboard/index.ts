@@ -1,4 +1,5 @@
 import i18next from '@/config/i18n';
+import { logger } from '@/core/Logger';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
 import { IRankingUser } from '@/models/interface';
@@ -50,7 +51,7 @@ const LeaderboardPage = new Page({
         renderRankingList(users, rankingList);
       }
     } catch (error) {
-      console.error('Error fetching users:', error);
+      logger.error('Error fetching users:', error);
       if (rankingList) {
         showRankingError(rankingList, i18next.t('failedToFetchUsers') || 'Failed to fetch users');
       }

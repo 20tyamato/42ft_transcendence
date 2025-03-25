@@ -1,6 +1,7 @@
 // frontend/src/pages/MultiPlay/Game/index.ts
 import { WS_URL } from '@/config/config';
 import i18next from '@/config/i18n';
+import { logger } from '@/core/Logger';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
 import { IGameConfig } from '@/models/Game/type';
@@ -34,7 +35,7 @@ const GamePage = new Page({
 
     // 必要なパラメータがない場合はゲーム選択ページにリダイレクト
     if (!sessionId || !username) {
-      console.error('Missing required game parameters');
+      logger.error('Missing required game parameters');
       await new Promise((resolve) => setTimeout(resolve, 2000));
       window.location.href = '/multiplay';
       return;
@@ -43,7 +44,7 @@ const GamePage = new Page({
     // ゲームコンテナの取得
     const container = document.getElementById('game-canvas');
     if (!container) {
-      console.error('Game container not found');
+      logger.error('Game container not found');
       return;
     }
 
@@ -69,7 +70,7 @@ const GamePage = new Page({
         gameManager.cleanup();
       };
     } catch (error) {
-      console.error('Failed to initialize game:', error);
+      logger.error('Failed to initialize game:', error);
       // エラーメッセージを表示
       const errorElement = document.createElement('div');
       errorElement.className = 'error-message';

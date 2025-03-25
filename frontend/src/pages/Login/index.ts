@@ -1,4 +1,5 @@
 import i18next from '@/config/i18n';
+import { logger } from '@/core/Logger';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { storage } from '@/libs/localStorage';
@@ -48,7 +49,7 @@ const handleLoginSubmit = async (
       responseMessage.style.color = 'red';
     }
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     // エラー文も多様化する必要あり
     responseMessage.textContent = i18next.t('unexpectedError');
     responseMessage.style.color = 'red';
@@ -90,7 +91,7 @@ const LoginPage = new Page({
     // Three.jsのセットアップ
     const canvas = document.getElementById('gl') as HTMLCanvasElement;
     if (!canvas) {
-      console.error('Canvas element not found');
+      logger.error('Canvas element not found');
       return;
     }
 

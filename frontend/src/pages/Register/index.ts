@@ -1,4 +1,5 @@
 import i18next from '@/config/i18n';
+import { logger } from '@/core/Logger';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { storage } from '@/libs/localStorage';
@@ -61,7 +62,7 @@ const handleRegistrationSubmit = async (
       responseMessage.style.color = 'red';
     }
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     responseMessage.textContent = i18next.t('unexpectedError');
     responseMessage.style.color = 'red';
   }
