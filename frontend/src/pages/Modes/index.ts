@@ -8,7 +8,6 @@ import Background from './Background';
 import Stars from './Stars';
 
 const DEFAULT_AVATAR_SRC = '/src/resources/avatar.png';
-let isInternalNavigation = false;
 
 const updatePageContent = (): void => {
   updateText('title', i18next.t('modes'));
@@ -18,8 +17,6 @@ const updatePageContent = (): void => {
 };
 
 const navigateTo = (path: string): void => {
-  isInternalNavigation = true;
-  console.log(`Navigating to ${path}`);
   window.location.href = path;
 };
 
@@ -62,7 +59,7 @@ const updateUserAvatar = (avatar?: string): void => {
 const ModesPage = new Page({
   name: 'Modes',
   config: { layout: AuthLayout },
-  mounted: async ({ pg, user }) => {
+  mounted: async ({ pg, user }): Promise<void> => {
     setUserLanguage(user.language, updatePageContent);
     updateUserAvatar(user.avatar);
 
@@ -72,7 +69,7 @@ const ModesPage = new Page({
     pg.logger.info('ModesPage mounted!');
     const canvas = document.getElementById('gl') as HTMLCanvasElement;
     if (!canvas) {
-      console.error('Canvas element with id="gl" not found.');
+      pg.logger.error('Canvas element with id="gl" not found.');
       return;
     }
     const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });

@@ -1,4 +1,5 @@
 import i18next from '@/config/i18n';
+import { logger } from '@/core/Logger';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
 import { getUserMatchHistory, getUserWithStats } from '@/models/User/repository';
@@ -6,8 +7,8 @@ import { IUser } from '@/models/User/type';
 import { formatDate } from '@/utils/date';
 import { languageNames, setUserLanguage } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
-import Background from './Background';
 import * as THREE from 'three';
+import Background from './Background';
 
 const updatePageContent = (): void => {
   updateText('title', i18next.t('userProfile'));
@@ -171,7 +172,7 @@ const updateMatchHistory = async (userId: string): Promise<void> => {
       matchHistoryList.appendChild(matchItem);
     });
   } catch (error) {
-    console.error('Error updating match history:', error);
+    logger.error('Error updating match history:', error);
     // エラー処理
     if (loadingSpinner) loadingSpinner.style.display = 'none';
     if (noMatchesMessage) {
@@ -237,7 +238,7 @@ const ProfilePage = new Page({
       // Three.js の初期化
       const canvas = document.getElementById('gl') as HTMLCanvasElement;
       if (!canvas) {
-        console.error('Canvas element not found');
+        pg.logger.error('Canvas element not found');
         return;
       }
       const renderer = new THREE.WebGLRenderer({ canvas });
@@ -286,7 +287,7 @@ const ProfilePage = new Page({
 
       pg.logger.info('ProfilePage mounted!');
     } catch (error) {
-      console.error('Error in mounted():', error);
+      pg.logger.error('Error in mounted():', error);
     }
   },
 });

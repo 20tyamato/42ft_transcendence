@@ -1,6 +1,7 @@
+import { logger } from '@/core/Logger';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import EventEmitter from './EventEmitter';
-import sources, { Source } from './sources';
+import { Source } from './sources';
 
 export default class Loaders extends EventEmitter {
   private sources: Source[];
@@ -21,7 +22,7 @@ export default class Loaders extends EventEmitter {
       const response = await fetch(url, { method: 'HEAD' });
       return response.ok;
     } catch (error) {
-      console.error('GLBファイルの存在チェックに失敗:', error);
+      logger.error('Failed to check the existence of GLB file:', error);
       return false;
     }
   }
@@ -33,38 +34,38 @@ export default class Loaders extends EventEmitter {
 
         const exists = await this.checkGLBExists(modelUrl);
         if (!exists) {
-          console.error(`GLBモデルが見つかりません: ${modelUrl}`);
+          logger.error(`GLB model not found: ${modelUrl}`);
           continue;
         }
 
         this.loaders.gltfLoader.load(
           modelUrl,
           (gltf) => {
-            console.log('GLTFモデルがロードされました:', gltf);
+            logger.log('GLTF model loaded:', gltf);
             this.sourceLoaded(source, gltf);
           },
           undefined,
           (error) => {
-            console.error('GLTFモデルのロードエラー:', error);
+            logger.error('Error loading GLTF model:', error);
           }
         );
       }
       this.loaders.gltfLoader.load(
         '/models/scene.glb',
         (gltf) => {
-          console.log('GLTFモデルがロードされました:', gltf);
+          logger.log('GLTF model loaded:', gltf);
           this.sourceLoaded(source, gltf);
         },
         undefined,
         (error) => {
-          console.error('GLTFモデルのロードエラー:', error);
+          logger.error('Error loading GLTF model:', error);
         }
       );
     }
   }
 
   private sourceLoaded(source: Source, file: any): void {
-    console.log(`Loaded: ${source.name}`, file);
+    logger.log(`Loaded: ${source.name}`, file);
     this.items[source.name] = file;
     this.loaded++;
     if (this.loaded === this.toLoad) {

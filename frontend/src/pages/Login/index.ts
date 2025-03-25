@@ -1,5 +1,5 @@
-import { API_URL } from '@/config/config';
 import i18next from '@/config/i18n';
+import { logger } from '@/core/Logger';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { storage } from '@/libs/localStorage';
@@ -8,8 +8,8 @@ import { fetcherGuest } from '@/utils/fetcher';
 import { registerLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
 import { registerTogglePassword } from '@/utils/togglePassword';
 import { updateInnerHTML, updateText } from '@/utils/updateElements';
-import Background from './Background';
 import * as THREE from 'three';
+import Background from './Background';
 
 const handleLoginSubmit = async (
   form: HTMLFormElement,
@@ -49,7 +49,7 @@ const handleLoginSubmit = async (
       responseMessage.style.color = 'red';
     }
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     // エラー文も多様化する必要あり
     responseMessage.textContent = i18next.t('unexpectedError');
     responseMessage.style.color = 'red';
@@ -79,7 +79,7 @@ const updatePageContent = (): void => {
 const LoginPage = new Page({
   name: 'Login',
   config: { layout: CommonLayout },
-  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
+  mounted: async ({ pg }): Promise<void> => {
     updatePageContent();
     updateActiveLanguageButton();
 
@@ -91,7 +91,7 @@ const LoginPage = new Page({
     // Three.jsのセットアップ
     const canvas = document.getElementById('gl') as HTMLCanvasElement;
     if (!canvas) {
-      console.error('Canvas element not found');
+      logger.error('Canvas element not found');
       return;
     }
 

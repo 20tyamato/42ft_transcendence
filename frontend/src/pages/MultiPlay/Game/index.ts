@@ -20,9 +20,9 @@ const GamePage = new Page({
   config: {
     layout: AuthLayout,
   },
-  mounted: async ({ pg, user }) => {
+  mounted: async ({ pg, user }): Promise<void> => {
     setUserLanguage(user.language, updatePageContent);
-    console.log('Game page mounting...');
+    pg.logger.info('Game page mounting...');
 
     // URLパラメータの取得と検証
     const urlParams = new URLSearchParams(window.location.search);
@@ -30,11 +30,11 @@ const GamePage = new Page({
     const isPlayer1 = urlParams.get('isPlayer1') === 'true';
     const username = user.username;
 
-    console.log('Game parameters:', { sessionId, isPlayer1, username });
+    pg.logger.info('Game parameters:', { sessionId, isPlayer1, username });
 
     // 必要なパラメータがない場合はゲーム選択ページにリダイレクト
     if (!sessionId || !username) {
-      console.error('Missing required game parameters');
+      pg.logger.error('Missing required game parameters');
       await new Promise((resolve) => setTimeout(resolve, 2000));
       window.location.href = '/multiplay';
       return;
@@ -43,7 +43,7 @@ const GamePage = new Page({
     // ゲームコンテナの取得
     const container = document.getElementById('game-canvas');
     if (!container) {
-      console.error('Game container not found');
+      pg.logger.error('Game container not found');
       return;
     }
 
@@ -62,14 +62,14 @@ const GamePage = new Page({
 
       // ゲーム開始
       await gameManager.init();
-      console.log('Game initialized successfully');
+      pg.logger.info('Game initialized successfully');
       // クリーンアップ関数を返す
       return () => {
-        console.log('Game page unmounting, cleaning up resources...');
+        pg.logger.info('Game page unmounting, cleaning up resources...');
         gameManager.cleanup();
       };
     } catch (error) {
-      console.error('Failed to initialize game:', error);
+      pg.logger.error('Failed to initialize game:', error);
       // エラーメッセージを表示
       const errorElement = document.createElement('div');
       errorElement.className = 'error-message';

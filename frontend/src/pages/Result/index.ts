@@ -28,11 +28,11 @@ const ResultPage = new Page({
     // 結果データ取得
     const resultData = GameResultService.getStoredResult();
     if (!resultData) {
-      console.warn('No game result data found');
+      pg.logger.warn('No game result data found');
       return;
     }
 
-    const { score, gameMode } = resultData;
+    const { score } = resultData;
 
     // UI初期化
     const ui = new ResultPageUI();

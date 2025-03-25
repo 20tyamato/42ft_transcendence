@@ -1,4 +1,5 @@
 // ArcadeMachine.ts
+import { logger } from '@/core/Logger';
 import * as THREE from 'three';
 
 export default class ArcadeMachine {
@@ -39,7 +40,7 @@ export default class ArcadeMachine {
       },
       undefined,
       (error) => {
-        console.error('Error loading image:', error);
+        logger.error('Error loading image:', error);
       }
     );
   }

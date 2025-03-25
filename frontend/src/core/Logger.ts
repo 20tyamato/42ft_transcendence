@@ -1,5 +1,3 @@
-import { fetcherGuest } from '@/utils/fetcher';
-
 /**
  * ELKにログを送信する
  */

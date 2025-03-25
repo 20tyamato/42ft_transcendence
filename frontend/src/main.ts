@@ -1,3 +1,4 @@
+import { logger } from '@/core/Logger';
 import NotFoundPage from '@/pages/404/index';
 import HomePage from '@/pages/Home/index';
 import LeaderboardPage from '@/pages/Leaderboard/index';
@@ -15,12 +16,12 @@ import LogoutPage from './pages/Logout';
 import ResultPage from './pages/Result/index';
 import SettingsUserPage from './pages/Settings/User/index';
 import TournamentPage from './pages/Tournament';
-import TournamentWaitingPage from './pages/Tournament/Waiting';
 import TournamentGamePage from './pages/Tournament/Game/index';
+import TournamentWaitingPage from './pages/Tournament/Waiting';
 import TournamentWaitingNextMatchPage from './pages/Tournament/WaitingNextMatch';
 
 import { Page } from './core/Page';
-import { ICurrentUser } from './libs/Auth/currnetUser';
+import { ICurrentUser } from './libs/Auth/currentUser';
 
 export type IBeforeMountRes = { user: ICurrentUser };
 
@@ -54,7 +55,7 @@ const routes: Record<string, Page> = {
 async function router(path: string) {
   if (!appDiv) return;
   const [pathWithoutQuery] = path.split('?');
-  console.log('Router handling:', {
+  logger.log('Router handling:', {
     fullPath: path,
     pathWithoutQuery,
     query: window.location.search,

@@ -1,4 +1,5 @@
 import i18next from '@/config/i18n';
+import { logger } from '@/core/Logger';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
 import { updateAvatar, updateLanguage, updateUserInfo } from '@/models/User/repository';
@@ -108,7 +109,7 @@ const handleFormSubmit = async (event: Event, elements: SettingsElements) => {
     setResponse(responseMessage, i18next.t('settingsSaved'), 'green');
     window.location.href = '/profile';
   } catch (error) {
-    console.error('Error updating user info:', error);
+    logger.error('Error updating user info:', error);
     alert('Failed to update user information.');
   }
 };
@@ -133,7 +134,7 @@ const SettingsUserPage = new Page({
       setUserLanguage(user.language, updatePageContent);
       populateUserData(user, elements);
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      pg.logger.error('Error fetching user data:', error);
     }
 
     registerAvatarPreview(elements.avatarUploadInput, elements.avatarPreviewEl);

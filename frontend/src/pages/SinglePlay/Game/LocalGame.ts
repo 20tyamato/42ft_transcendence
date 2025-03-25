@@ -1,4 +1,5 @@
 import i18next from '@/config/i18n';
+import { logger } from '@/core/Logger';
 import { createSinglePlayGame } from '@/models/Game/repository';
 import gsap from 'gsap';
 import * as THREE from 'three';
@@ -192,7 +193,7 @@ export default class LocalGame {
         exitBtn.onclick = () => (window.location.href = '/singleplay/select');
       }
     } else {
-      console.warn('Game over elements are missing.');
+      logger.warn('Game over elements are missing.');
     }
   }
   private scored(player: string) {
@@ -307,7 +308,7 @@ export enum Difficulty {
 }
 
 const selectedLevel = localStorage.getItem('selectedLevel') || 'EASY';
-console.log(`Selected Level: ${selectedLevel}`);
+logger.log(`Selected Level: ${selectedLevel}`);
 
 let difficultyFactor: number;
 switch (selectedLevel.toUpperCase()) {

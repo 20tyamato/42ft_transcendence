@@ -1,3 +1,4 @@
+import { logger } from '@/core/Logger';
 import * as THREE from 'three';
 import Experience from './Experience';
 
@@ -33,14 +34,14 @@ export default class Ball {
 
     this.ball = new THREE.Mesh(this.ballGeometry, this.ballMaterial);
 
-    console.log('Ball created:', this.ball.uuid);
-    console.log('Ball initial position:', this.ball.position);
+    logger.log('Ball created:', this.ball.uuid);
+    logger.log('Ball initial position:', this.ball.position);
 
     this.scene.add(this.ball);
 
     this.camera.lookAt(this.ball.position);
     this.ball.position.set(0, 0, 0);
-    console.log('Ball position after set:', this.ball.position);
+    logger.log('Ball position after set:', this.ball.position);
   }
 
   public update(): void {

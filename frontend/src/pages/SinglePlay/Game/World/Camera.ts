@@ -1,3 +1,4 @@
+import { logger } from '@/core/Logger';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import Experience from '../Experience';
@@ -35,8 +36,8 @@ export default class Camera {
     this.instance = this.createCamera();
     this.controls = this.createControls();
     this.addResizeListener();
-    console.log('Camera position:', this.instance.position);
-    console.log('Camera lookAt target:', this.controls.target); // OrbitControlsを使っているなら
+    logger.log('Camera position:', this.instance.position);
+    logger.log('Camera lookAt target:', this.controls.target); // OrbitControlsを使っているなら
   }
 
   private createCamera(): THREE.PerspectiveCamera {

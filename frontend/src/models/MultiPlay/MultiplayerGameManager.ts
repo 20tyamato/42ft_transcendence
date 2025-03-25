@@ -1,3 +1,4 @@
+import { logger } from '@/core/Logger';
 import { IGameConfig, IGameState } from '../Game/type';
 import { BaseGameManager } from '../Services/BaseGameManager';
 import { GameRenderer } from '../Services/game_renderer';
@@ -13,7 +14,7 @@ export class MultiplayerGameManager extends BaseGameManager {
   }
 
   protected onInitialized(): Promise<void> {
-    console.log('Multiplayer game initialized:', {
+    logger.log('Multiplayer game initialized:', {
       sessionId: this.config.sessionId,
       username: this.config.username,
     });
@@ -37,7 +38,7 @@ export class MultiplayerGameManager extends BaseGameManager {
   }
 
   protected onPlayerDisconnected(player: string, state: IGameState): void {
-    console.log('Player disconnected:', player);
+    logger.log('Player disconnected:', player);
 
     // 切断情報を含めた最終スコアを保存
     const [player1Name, player2Name] = this.config.sessionId?.split('_').slice(1, 3) || [];
@@ -61,7 +62,7 @@ export class MultiplayerGameManager extends BaseGameManager {
   }
 
   protected onConnectionError(): void {
-    console.error('Connection error occurred');
+    logger.error('Connection error occurred');
 
     // 通信エラー時のスコア保存
     const [player1Name, player2Name] = this.config.sessionId?.split('_').slice(1, 3) || [];
@@ -83,12 +84,12 @@ export class MultiplayerGameManager extends BaseGameManager {
   }
 
   protected onError(message: string): void {
-    console.error('Game error:', message);
+    logger.error('Game error:', message);
     // エラーメッセージ表示などの処理を追加可能
   }
 
   protected onGameEnd(data: any): void {
-    console.log('Game ended:', data);
+    logger.log('Game ended:', data);
 
     const [player1Name, player2Name] = this.config.sessionId?.split('_').slice(1, 3) || [];
     const opponent = this.config.username === player1Name ? player2Name : player1Name;
@@ -109,7 +110,7 @@ export class MultiplayerGameManager extends BaseGameManager {
 
   protected onCleanup(): void {
     this.renderer.dispose();
-    console.log('Multiplayer game cleanup complete');
+    logger.log('Multiplayer game cleanup complete');
   }
 
   private updateScoreBoard(score: Record<string, number>): void {

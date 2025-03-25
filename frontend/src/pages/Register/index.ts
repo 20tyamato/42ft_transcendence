@@ -1,5 +1,5 @@
-import { API_URL } from '@/config/config';
 import i18next from '@/config/i18n';
+import { logger } from '@/core/Logger';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
 import { storage } from '@/libs/localStorage';
@@ -62,7 +62,7 @@ const handleRegistrationSubmit = async (
       responseMessage.style.color = 'red';
     }
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     responseMessage.textContent = i18next.t('unexpectedError');
     responseMessage.style.color = 'red';
   }
@@ -94,7 +94,7 @@ const updatePageContent = (): void => {
 const RegisterPage = new Page({
   name: 'Register',
   config: { layout: CommonLayout },
-  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
+  mounted: async ({ pg }): Promise<void> => {
     updatePageContent();
     updateActiveLanguageButton();
 

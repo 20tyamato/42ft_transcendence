@@ -1,7 +1,6 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
-import { ICurrentUser } from '@/libs/Auth/currnetUser';
 import { IRankingUser } from '@/models/interface';
 import { fetchUsers } from '@/models/User/repository';
 import { setUserLanguage } from '@/utils/language';
@@ -51,7 +50,7 @@ const LeaderboardPage = new Page({
         renderRankingList(users, rankingList);
       }
     } catch (error) {
-      console.error('Error fetching users:', error);
+      pg.logger.error('Error fetching users:', error);
       if (rankingList) {
         showRankingError(rankingList, i18next.t('failedToFetchUsers') || 'Failed to fetch users');
       }
