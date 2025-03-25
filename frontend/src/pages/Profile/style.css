@@ -122,6 +122,7 @@ body {
   margin: 4px 0;
   text-align: left;
   transform: translateX(40px);
+  font-size: 2rem;
 }
 
 .profile-section .info p {
@@ -133,12 +134,12 @@ body {
 
 .profile-section #edit-btn {
   color: #fff;
-  font-size: 1.5rem;
+  font-size: 2rem;
 }
 
 .profile-section #friend-btn {
   color: #fff;
-  font-size: 1.5rem;
+  font-size: 2rem;
 }
 
 /* ------------------------------
@@ -229,6 +230,7 @@ body {
 /* Make sure the title (display name) is properly positioned */
 #displayNameTitle {
   font-weight: bold;
+  margin-right: 30px;
 }
 
 /* マッチ履歴セクション */
