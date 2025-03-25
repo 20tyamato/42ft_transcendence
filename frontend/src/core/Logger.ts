@@ -1,5 +1,3 @@
-import { logger } from '@/core/Logger';
-
 export class Logger {
   private _logstashUrl: string;
   constructor() {
@@ -12,17 +10,17 @@ export class Logger {
   }
 
   public async log(message: string, ...args: unknown[]) {
-    logger.info(message, ...args);
+    console.info(message, ...args);
     await this._sendToLogstash('log', message);
   }
 
   public async error(message: string, ...args: unknown[]) {
-    logger.error(message, ...args);
+    console.error(message, ...args);
     await this._sendToLogstash('error', message);
   }
 
   public async warn(message: string, ...args: unknown[]) {
-    logger.warn(message, ...args);
+    console.warn(message, ...args);
     await this._sendToLogstash('warn', message);
   }
 
