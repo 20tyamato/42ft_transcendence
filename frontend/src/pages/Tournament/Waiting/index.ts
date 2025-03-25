@@ -42,7 +42,10 @@ const WaitingPage = new Page({
 
         switch (data.type) {
           case 'error':
-            if (connectionStatus) connectionStatus.textContent = `Error: ${data.message}`;
+            if (connectionStatus)
+              connectionStatus.textContent = i18next.t('tournament.waiting.error', {
+                error: data.message,
+              });
             break;
 
           case 'waiting_status':
@@ -65,9 +68,11 @@ const WaitingPage = new Page({
         playerCount.textContent = data.total_players.toString();
       }
 
-      // 接続ステータスの更新
+      // 接続ステータスの更新（例: "Waiting for X more players..."）
       if (connectionStatus) {
-        connectionStatus.textContent = `Waiting for ${Math.max(0, 4 - data.total_players)} more players...`;
+        connectionStatus.textContent = i18next.t('tournament.waiting.waitingPlayers', {
+          count: Math.max(0, 4 - data.total_players),
+        });
       }
 
       // プレイヤーリストの更新
@@ -78,10 +83,10 @@ const WaitingPage = new Page({
           const playerItem = document.createElement('li');
           playerItem.className = 'list-group-item player-item';
 
-          // プレイヤー情報を構築
+          // プレイヤー情報を構築（"Ready" の文言も翻訳キーで）
           playerItem.innerHTML = `
             <div class="player-name">${player.display_name || player.username}</div>
-            <div class="ready-status ready-yes">Ready</div>
+            <div class="ready-status ready-yes">${i18next.t('tournament.waiting.ready')}</div>
           `;
 
           playersContainer.appendChild(playerItem);
@@ -94,7 +99,7 @@ const WaitingPage = new Page({
       logger.info('Match found!', data);
 
       if (connectionStatus) {
-        connectionStatus.textContent = 'Match found! Redirecting to game...';
+        connectionStatus.textContent = i18next.t('tournament.waiting.matchFound');
       }
 
       // 試合ページへリダイレクト
@@ -124,7 +129,7 @@ const WaitingPage = new Page({
         );
 
         if (connectionStatus) {
-          connectionStatus.textContent = 'Connected, waiting for players...';
+          connectionStatus.textContent = i18next.t('tournament.waiting.connectedPlayers');
         }
       };
 
@@ -133,14 +138,14 @@ const WaitingPage = new Page({
       socket.onerror = (error) => {
         logger.error('WebSocket error:', error);
         if (connectionStatus) {
-          connectionStatus.textContent = 'Connection error. Retrying...';
+          connectionStatus.textContent = i18next.t('tournament.waiting.connectionError');
         }
       };
 
       socket.onclose = () => {
         logger.info('WebSocket connection closed');
         if (connectionStatus) {
-          connectionStatus.textContent = 'Connection lost. Reconnecting...';
+          connectionStatus.textContent = i18next.t('tournament.waiting.connectionLost');
         }
 
         // 3秒後に再接続

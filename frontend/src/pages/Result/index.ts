@@ -1,10 +1,18 @@
 // frontend/src/pages/Result/index.ts
-
+import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
+import AuthLayout from '@/layouts/AuthLayout';
 import { GameResultService } from '@/models/Result/GameResultService';
 import { ResultPageUI } from '@/models/Result/ResultPageUI';
-import { createMultiplayerGame, createTournamentGame } from '@/models/Game/repository';
-import AuthLayout from '@/layouts/AuthLayout';
+import { setUserLanguage } from '@/utils/language';
+import { updateText } from '@/utils/updateElements';
+
+const updatePageContent = (): void => {
+  updateText('title', i18next.t('result.pageTitle'));
+  updateText('.results-container h1', i18next.t('result.resultTitle'));
+  updateText('#result-message', i18next.t('result.resultMessage'));
+  updateText('#exitBtn', i18next.t('result.exitButton'));
+};
 
 /**
  * 結果画面ページコンポーネント
@@ -16,6 +24,7 @@ const ResultPage = new Page({
     layout: AuthLayout,
   },
   mounted: async ({ pg, user }): Promise<void> => {
+    setUserLanguage(user.language, updatePageContent);
     // 結果データ取得
     const resultData = GameResultService.getStoredResult();
     if (!resultData) {
