@@ -15,12 +15,12 @@ import LogoutPage from './pages/Logout';
 import ResultPage from './pages/Result/index';
 import SettingsUserPage from './pages/Settings/User/index';
 import TournamentPage from './pages/Tournament';
-import TournamentWaitingPage from './pages/Tournament/Waiting';
 import TournamentGamePage from './pages/Tournament/Game/index';
+import TournamentWaitingPage from './pages/Tournament/Waiting';
 import TournamentWaitingNextMatchPage from './pages/Tournament/WaitingNextMatch';
 
 import { Page } from './core/Page';
-import { ICurrentUser } from './libs/Auth/currnetUser';
+import { ICurrentUser } from './libs/Auth/currentUser';
 
 export type IBeforeMountRes = { user: ICurrentUser };
 

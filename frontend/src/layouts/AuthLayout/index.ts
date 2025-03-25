@@ -1,5 +1,5 @@
 import { Layout } from '@/core/Layout';
-import { checkAuthentication } from '@/libs/Auth/currnetUser';
+import { checkAuthentication } from '@/libs/Auth/currentUser';
 import { IBeforeMountRes } from '@/main';
 
 const AuthLayout = new Layout({

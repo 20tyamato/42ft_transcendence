@@ -1,7 +1,7 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
-import { isLoggedIn } from '@/libs/Auth/currnetUser';
+import { isLoggedIn } from '@/libs/Auth/currentUser';
 import { updateLanguage } from '@/models/User/repository';
 import { registerLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
