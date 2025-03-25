@@ -1,7 +1,3 @@
-// frontend/src/models/interface.ts
-import { languageNames } from '@/utils/language';
-
-// ===== User =====
 export interface IFriend {
   id: number;
   username: string;

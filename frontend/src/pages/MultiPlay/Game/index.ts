@@ -22,7 +22,7 @@ const GamePage = new Page({
   },
   mounted: async ({ pg, user }) => {
     setUserLanguage(user.language, updatePageContent);
-    console.log('Game page mounting...');
+    pg.logger.info('Game page mounting...');
 
     // URLパラメータの取得と検証
     const urlParams = new URLSearchParams(window.location.search);
@@ -30,7 +30,7 @@ const GamePage = new Page({
     const isPlayer1 = urlParams.get('isPlayer1') === 'true';
     const username = user.username;
 
-    console.log('Game parameters:', { sessionId, isPlayer1, username });
+    pg.logger.info('Game parameters:', { sessionId, isPlayer1, username });
 
     // 必要なパラメータがない場合はゲーム選択ページにリダイレクト
     if (!sessionId || !username) {
@@ -62,10 +62,10 @@ const GamePage = new Page({
 
       // ゲーム開始
       await gameManager.init();
-      console.log('Game initialized successfully');
+      pg.logger.info('Game initialized successfully');
       // クリーンアップ関数を返す
       return () => {
-        console.log('Game page unmounting, cleaning up resources...');
+        pg.logger.info('Game page unmounting, cleaning up resources...');
         gameManager.cleanup();
       };
     } catch (error) {

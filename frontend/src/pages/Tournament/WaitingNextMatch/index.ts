@@ -21,9 +21,9 @@ const WaitingNextMatchPage = new Page({
     layout: AuthLayout,
     html: '/src/pages/Tournament/WaitingNextMatch/index.html',
   },
-  mounted: async ({ pg, user }) => {
+  mounted: async ({ pg, user }): Promise<void> => {
     setUserLanguage(user.language, updatePageContent);
-    logger.info('Tournament waiting next match page mounting...');
+    pg.logger.info('Tournament waiting next match page mounting...');
 
     // URLパラメーターの取得
     const urlParams = new URLSearchParams(window.location.search);
@@ -70,13 +70,13 @@ const WaitingNextMatchPage = new Page({
       socket = new WebSocket(wsEndpoint);
 
       socket.onopen = () => {
-        logger.info('Connected to waiting final WebSocket');
+        pg.logger.info('Connected to waiting final WebSocket');
         if (statusMessage) {
           statusMessage.textContent = 'Connected. Waiting for other semi-final to complete...';
         }
 
         // 接続成功時にステータス要求メッセージを送信
-        socket.send(
+        socket?.send(
           JSON.stringify({
             type: 'request_status',
             tournament_id: tournamentId,
@@ -88,7 +88,7 @@ const WaitingNextMatchPage = new Page({
       socket.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          logger.info('Received message:', data);
+          pg.logger.info('Received message:', data);
 
           switch (data.type) {
             case 'waiting_status':
@@ -118,7 +118,7 @@ const WaitingNextMatchPage = new Page({
       };
 
       socket.onclose = (event) => {
-        logger.info('WebSocket closed:', event);
+        pg.logger.info('WebSocket closed:', event);
         if (statusMessage) {
           statusMessage.textContent = 'Connection lost. Reconnecting...';
         }
@@ -132,7 +132,11 @@ const WaitingNextMatchPage = new Page({
     };
 
     // 待機ステータス更新
-    const updateWaitingStatus = (data: any) => {
+    const updateWaitingStatus = (data: {
+      completed_semifinals: number;
+      finalists: { username: string; display_name: string }[];
+      all_semifinals_completed: boolean;
+    }) => {
       if (completedCount) {
         completedCount.textContent = data.completed_semifinals.toString();
       }
@@ -153,7 +157,7 @@ const WaitingNextMatchPage = new Page({
 
         // 他の決勝進出者（いる場合）
         if (data.finalists && data.finalists.length > 0) {
-          data.finalists.forEach((finalist: any) => {
+          data.finalists.forEach((finalist: { username: string; display_name: string }) => {
             if (finalist.username !== user.username) {
               const finalistItem = document.createElement('li');
               finalistItem.className = 'player-item';
@@ -186,7 +190,7 @@ const WaitingNextMatchPage = new Page({
     };
 
     // 決勝戦準備完了処理
-    const handleFinalReady = (data: any) => {
+    const handleFinalReady = (data: { session_id: string; is_player1: boolean }) => {
       if (statusMessage) {
         statusMessage.textContent = 'Final match is ready! Redirecting...';
       }
@@ -202,7 +206,7 @@ const WaitingNextMatchPage = new Page({
 
     // ページアンマウント時のクリーンアップ
     return () => {
-      logger.info('Tournament waiting next match page unmounting...');
+      pg.logger.info('Tournament waiting next match page unmounting...');
       if (reconnectTimeout) {
         window.clearTimeout(reconnectTimeout);
       }

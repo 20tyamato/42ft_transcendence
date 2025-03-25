@@ -9,7 +9,7 @@ type LayoutConfig = {
 type LayoutProps = {
   name: string;
   config?: Partial<LayoutConfig>;
-  mounted?: (props: IBeforeMountRes) => Promise<any>;
+  mounted?: (props: IBeforeMountRes) => Promise<void>;
   beforeMounted?: () => Promise<IBeforeMountRes>;
 };
 

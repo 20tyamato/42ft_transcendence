@@ -1,7 +1,7 @@
 // frontend/src/models/Services/BaseGameManager.ts
-import { WebSocketService } from './WebSocketService';
-import { InputHandlerService } from './InputHandlerService';
 import { IGameConfig, IGameState, IMoveConfig } from '../Game/type';
+import { InputHandlerService } from './InputHandlerService';
+import { WebSocketService } from './WebSocketService';
 
 export abstract class BaseGameManager {
   protected wsService: WebSocketService;
@@ -33,12 +33,15 @@ export abstract class BaseGameManager {
       await this.wsService.connect(this.config.wsEndpoint);
 
       // メッセージハンドラの登録
-      this.wsService.addMessageHandler('state_update', this.handleStateUpdate.bind(this));
-      this.wsService.addMessageHandler(
+      this.wsService.addMessageHandler<{ state: IGameState }>(
+        'state_update',
+        this.handleStateUpdate.bind(this)
+      );
+      this.wsService.addMessageHandler<{ disconnected_player: string; state: IGameState }>(
         'player_disconnected',
         this.handlePlayerDisconnected.bind(this)
       );
-      this.wsService.addMessageHandler('error', this.handleError.bind(this));
+      this.wsService.addMessageHandler<{ message: string }>('error', this.handleError.bind(this));
 
       // 入力ハンドラの初期化
       this.inputHandler.init(this.handleMovement.bind(this));
@@ -93,7 +96,7 @@ export abstract class BaseGameManager {
     this.onConnectionError();
   }
 
-  protected handleGameEnd(data: any): void {
+  protected handleGameEnd(data: unknown): void {
     this.onGameEnd(data);
   }
 
@@ -110,6 +113,6 @@ export abstract class BaseGameManager {
   protected abstract onPlayerDisconnected(player: string, state: IGameState): void;
   protected abstract onConnectionError(): void;
   protected abstract onError(message: string): void;
-  protected abstract onGameEnd(data: any): void;
+  protected abstract onGameEnd(data: unknown): void;
   protected abstract onCleanup(): void;
 }

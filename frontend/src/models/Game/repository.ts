@@ -1,4 +1,4 @@
-import { ICurrentUser, useCurrentUser } from '@/libs/Auth/currnetUser';
+import { ICurrentUser, useCurrentUser } from '@/libs/Auth/currentUser';
 import { fetcher } from '@/utils/fetcher';
 
 /**
@@ -91,20 +91,9 @@ export const createMultiplayerGame = async ({
 
 /**
  * トーナメントゲームを作成
- * @param playerScore プレイヤーのスコア
  * @returns ゲームデータ
  */
-export const createTournamentGame = async ({
-  playerScore,
-}: {
-  playerScore: number;
-}): Promise<boolean> => {
-  const gameData = {
-    status: 'COMPLETED',
-    end_time: new Date().toISOString(),
-    game_type: 'TOURNAMENT',
-  };
-
+export const createTournamentGame = async (): Promise<boolean> => {
   /** TODO: トーナメントゲームのデータを作成 */
 
   return true;

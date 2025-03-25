@@ -1,10 +1,9 @@
 // frontend/src/pages/Result/index.ts
 
 import { Page } from '@/core/Page';
+import AuthLayout from '@/layouts/AuthLayout';
 import { GameResultService } from '@/models/Result/GameResultService';
 import { ResultPageUI } from '@/models/Result/ResultPageUI';
-import { createMultiplayerGame, createTournamentGame } from '@/models/Game/repository';
-import AuthLayout from '@/layouts/AuthLayout';
 
 /**
  * 結果画面ページコンポーネント
@@ -44,6 +43,7 @@ const ResultPage = new Page({
 
     // 保存データのクリア
     GameResultService.clearStoredResult();
+    pg.logger.info('ResultPage mounted!');
   },
 });
 

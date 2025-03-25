@@ -21,9 +21,9 @@ const WaitingPage = new Page({
     layout: AuthLayout,
     html: '/src/pages/Tournament/Waiting/index.html',
   },
-  mounted: async ({ pg, user }) => {
+  mounted: async ({ pg, user }): Promise<void> => {
     setUserLanguage(user.language, updatePageContent);
-    logger.info('Tournament waiting page - initializing');
+    pg.logger.info('Tournament waiting page - initializing');
 
     // DOM要素の取得
     const connectionStatus = document.getElementById('connection-status');
@@ -35,10 +35,10 @@ const WaitingPage = new Page({
     let socket: WebSocket | null = null;
 
     // WebSocketメッセージのハンドリング
-    const handleSocketMessage = (event: MessageEvent) => {
+    const handleSocketMessage = (event: MessageEvent<string>) => {
       try {
         const data = JSON.parse(event.data);
-        logger.info('Received websocket message:', data);
+        pg.logger.info('Received websocket message:', data);
 
         switch (data.type) {
           case 'error':
@@ -54,12 +54,15 @@ const WaitingPage = new Page({
             break;
         }
       } catch (e) {
-        logger.info('Error parsing message:', e);
+        pg.logger.info('Error parsing message:', e);
       }
     };
 
     // 待機状態の更新
-    const updateWaitingStatus = (data: any) => {
+    const updateWaitingStatus = (data: {
+      total_players: number;
+      players: { display_name?: string; username: string }[];
+    }) => {
       // プレイヤー数の更新
       if (playerCount) {
         playerCount.textContent = data.total_players.toString();
@@ -90,8 +93,14 @@ const WaitingPage = new Page({
     };
 
     // マッチ発見時の処理
-    const handleMatchFound = (data: any) => {
-      logger.info('Match found!', data);
+    const handleMatchFound = (data: {
+      tournament_id: string;
+      match_type: string;
+      match_number: number;
+      session_id: string;
+      is_player1: boolean;
+    }) => {
+      pg.logger.info('Match found!', data);
 
       if (connectionStatus) {
         connectionStatus.textContent = 'Match found! Redirecting to game...';
@@ -113,7 +122,7 @@ const WaitingPage = new Page({
       socket = new WebSocket(`${WS_URL}/wss/tournament/`);
 
       socket.onopen = () => {
-        logger.info('WebSocket connection established');
+        pg.logger.info('WebSocket connection established');
 
         // トーナメント参加メッセージの送信
         socket.send(
@@ -138,7 +147,7 @@ const WaitingPage = new Page({
       };
 
       socket.onclose = () => {
-        logger.info('WebSocket connection closed');
+        pg.logger.info('WebSocket connection closed');
         if (connectionStatus) {
           connectionStatus.textContent = 'Connection lost. Reconnecting...';
         }
@@ -151,7 +160,7 @@ const WaitingPage = new Page({
     // 離脱ボタンのイベントハンドラ
     if (leaveButton) {
       leaveButton.addEventListener('click', () => {
-        if (socket && socket.readyState === WebSocket.OPEN) {
+        if (socket?.readyState === WebSocket.OPEN) {
           socket.send(
             JSON.stringify({
               type: 'leave_tournament',

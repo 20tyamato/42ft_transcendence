@@ -1,7 +1,7 @@
 import CommonLayout from '@/layouts/common/index';
+import { IBeforeMountRes } from '@/main';
 import { Layout } from './Layout';
 import { Logger } from './Logger';
-import { IBeforeMountRes } from '@/main';
 
 type PageConfig = {
   html: string;
@@ -12,7 +12,7 @@ type PageConfig = {
 type PageProps = {
   name: string;
   config?: Partial<PageConfig>;
-  mounted?: ({ pg, ...props }: { pg: Page } & IBeforeMountRes) => Promise<any>;
+  mounted?: ({ pg, ...props }: { pg: Page } & IBeforeMountRes) => Promise<void>;
 };
 
 const getDefaultConfig = (name: string, config?: Partial<PageConfig>): PageConfig => {
@@ -27,7 +27,7 @@ const getDefaultConfig = (name: string, config?: Partial<PageConfig>): PageConfi
 export class Page {
   readonly config: PageConfig;
   readonly logger: Logger;
-  mounted?: ({ pg, user }: { pg: Page } & IBeforeMountRes) => Promise<any>;
+  mounted?: ({ pg, user }: { pg: Page } & IBeforeMountRes) => Promise<void>;
 
   constructor(props: PageProps) {
     this.config = getDefaultConfig(props.name, props.config);

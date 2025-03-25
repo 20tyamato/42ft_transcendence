@@ -17,14 +17,6 @@ export default class Background2 {
   private prevTime: number = 0;
   private plane: THREE.Mesh | null = null;
   private lowestY = -200;
-  private initialVelocities = {
-    ball4: 8,
-    ball2: 6,
-  };
-  private maxVelocity = {
-    ball4: 12,
-    ball2: 10,
-  };
 
   constructor(scene: THREE.Scene, yPosition: number = -50) {
     this.scene = scene;
@@ -34,7 +26,6 @@ export default class Background2 {
     this.clock = new THREE.Clock();
 
     this.createBackground();
-    this.createBalls();
   }
 
   private createBackground() {

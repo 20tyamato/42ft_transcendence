@@ -1,6 +1,5 @@
 // Background.ts
 import * as THREE from 'three';
-import { BallsGroup } from './BallFactory';
 
 export default class Background {
   private scene: THREE.Scene;
@@ -9,7 +8,6 @@ export default class Background {
   private group: THREE.Group;
 
   constructor(scene: THREE.Scene, isGameRenderer: boolean = false, yPosition: number = -50) {
-    this.scene = scene;
     this.clock = new THREE.Clock();
     this.group = new THREE.Group();
     this.createBackground();

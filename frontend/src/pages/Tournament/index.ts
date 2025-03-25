@@ -25,6 +25,7 @@ const TournamentPage = new Page({
         window.location.href = '/tournament/waiting';
       });
     }
+    pg.logger.info('TournamentPage mounted!');
   },
 });
 

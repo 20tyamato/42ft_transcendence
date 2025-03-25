@@ -1,4 +1,3 @@
-import { API_URL } from '@/config/config';
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
@@ -8,8 +7,8 @@ import { fetcherGuest } from '@/utils/fetcher';
 import { registerLanguageSwitchers, updateActiveLanguageButton } from '@/utils/language';
 import { registerTogglePassword } from '@/utils/togglePassword';
 import { updateInnerHTML, updateText } from '@/utils/updateElements';
-import Background from './Background';
 import * as THREE from 'three';
+import Background from './Background';
 
 const handleLoginSubmit = async (
   form: HTMLFormElement,

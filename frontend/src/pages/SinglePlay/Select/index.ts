@@ -103,6 +103,7 @@ const SinglePlaySelectPage = new Page({
       renderer.render(scene, camera);
     }
     animate();
+    pg.logger.info('SinglePlaySelectPage mounted!');
   },
 });
 

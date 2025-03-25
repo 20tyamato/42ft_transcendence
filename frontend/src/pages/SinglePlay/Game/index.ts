@@ -102,7 +102,7 @@ const SinglePlayPage = new Page({
     layout: AuthLayout,
   },
 
-  mounted: async ({ user }) => {
+  mounted: async ({ pg, user }) => {
     setUserLanguage(user.language, updatePageContent);
     // ヘッダーと背景を非表示にする
     const header = document.querySelector('.header');
@@ -120,14 +120,14 @@ const SinglePlayPage = new Page({
     }
 
     const selectedLevel = localStorage.getItem('selectedLevel');
-    console.log(`Retrieved selected level: ${selectedLevel}`);
+    pg.logger.info(`Retrieved selected level: ${selectedLevel}`);
 
     const canvas = document.getElementById('gl') as HTMLCanvasElement;
     const experience = Experience.getInstance(canvas);
     const fieldInstance = experience.field;
     const particlePanel = createParticleCustomizationPanel((params) => {
       fieldInstance.updateParticles(params);
-      console.log('Updating particles with params:', params);
+      pg.logger.info('Updating particles with params:', params);
     });
     document.body.appendChild(particlePanel);
 

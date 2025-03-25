@@ -133,7 +133,7 @@ const WaitingPage = new Page({
   },
   mounted: async ({ pg, user }) => {
     setUserLanguage(user.language, updatePageContent);
-    console.log('Waiting page mounting...');
+    pg.logger.info('Waiting page mounting...');
     let socket: WebSocket | null = null;
     const { statusElement, cancelButton } = getDomElements();
 
