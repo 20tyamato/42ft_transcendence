@@ -82,6 +82,8 @@
   "multiplay.heading": "Mode multijoueur",
   "multiplay.startMatchmaking": "Trouver un match",
   "singlePlay.title": "Joueur unique",
+  "singlePlay.youWin": "VOUS AVEZ GAGNÉ !",
+  "singlePlay.gameOver": "FIN DE PARTIE",
   "pauseMenu.title": "Jeu en pause",
   "pauseMenu.resume": "Reprendre",
   "pauseMenu.retry": "Réessayer",
@@ -109,5 +111,13 @@
   "tournament.title": "Tournoi",
   "tournament.heading": "Mode tournoi",
   "tournament.info": "Rejoignez un tournoi à 4 joueurs et concourez pour la victoire !",
-  "tournament.startButton": "Rejoindre le tournoi"
+  "tournament.startButton": "Rejoindre le tournoi",
+  "particleSettings.title": "Paramètres des particules",
+  "particleSettings.color": "Couleur",
+  "particleSettings.size": "Taille",
+  "particleSettings.speed": "Vitesse",
+  "particleSettings.density": "Densité",
+  "particleSettings.opacity": "Opacité",
+  "particleSettings.save": "Sauvegarder",
+  "particleSettings.reset": "Réinitialiser"
 }

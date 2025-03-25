@@ -82,6 +82,8 @@
   "multiplay.heading": "マルチプレイヤーモード",
   "multiplay.startMatchmaking": "マッチを探す",
   "singlePlay.title": "シングルプレイヤー",
+  "singlePlay.youWin": "あなたの勝ち！",
+  "singlePlay.gameOver": "ゲームオーバー",
   "pauseMenu.title": "ゲーム一時停止",
   "pauseMenu.resume": "再開",
   "pauseMenu.retry": "再試行",
@@ -109,5 +111,13 @@
   "tournament.title": "トーナメント",
   "tournament.heading": "トーナメントモード",
   "tournament.info": "4人のトーナメントに参加して勝利を目指そう！",
-  "tournament.startButton": "トーナメントに参加"
+  "tournament.startButton": "トーナメントに参加",
+  "particleSettings.title": "パーティクル設定",
+  "particleSettings.color": "色",
+  "particleSettings.size": "サイズ",
+  "particleSettings.speed": "速度",
+  "particleSettings.density": "密度",
+  "particleSettings.opacity": "不透明度",
+  "particleSettings.save": "保存",
+  "particleSettings.reset": "リセット"
 }

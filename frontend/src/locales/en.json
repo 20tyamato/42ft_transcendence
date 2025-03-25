@@ -82,6 +82,8 @@
   "multiplay.heading": "Multiplayer Mode",
   "multiplay.startMatchmaking": "Find a Match",
   "singlePlay.title": "Single Player",
+  "singlePlay.youWin": "YOU WIN!",
+  "singlePlay.gameOver": "GAME OVER",
   "pauseMenu.title": "Game Paused",
   "pauseMenu.resume": "Resume",
   "pauseMenu.retry": "Retry",
@@ -109,5 +111,13 @@
   "tournament.title": "Tournament",
   "tournament.heading": "Tournament Mode",
   "tournament.info": "Join a 4-player tournament and compete for victory!",
-  "tournament.startButton": "Join Tournament"
+  "tournament.startButton": "Join Tournament",
+  "particleSettings.title": "Particle Settings",
+  "particleSettings.color": "Color",
+  "particleSettings.size": "Size",
+  "particleSettings.speed": "Speed",
+  "particleSettings.density": "Density",
+  "particleSettings.opacity": "Opacity",
+  "particleSettings.save": "Save",
+  "particleSettings.reset": "Reset"
 }
