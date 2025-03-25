@@ -1,4 +1,5 @@
 // BallFactory.ts
+import { logger } from '@/core/Logger';
 import * as THREE from 'three';
 
 /**
@@ -116,7 +117,7 @@ export class BallsGroup {
       // 速度に基づく位置更新
       const deltaY = ball.velocity.y * dt;
       ball.mesh.position.y += deltaY;
-      console.log(
+      logger.log(
         `Ball position: ${ball.mesh.position.y.toFixed(2)}, velocity: ${ball.velocity.y.toFixed(2)}`
       );
       // 床との衝突判定（より安定した判定）

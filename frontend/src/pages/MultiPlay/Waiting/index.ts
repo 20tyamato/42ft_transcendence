@@ -1,9 +1,10 @@
 // frontend/src/pages/MultiPlay/Waiting/index.ts
 import { WS_URL } from '@/config/config';
 import i18next from '@/config/i18n';
+import { logger } from '@/core/Logger';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
-import { ICurrentUser } from '@/libs/Auth/currnetUser';
+import { ICurrentUser } from '@/libs/Auth/currentUser';
 import { setUserLanguage } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
 
@@ -47,14 +48,14 @@ const handleSocketMessage = (
 ): void => {
   try {
     const data = JSON.parse(event.data);
-    console.log('Received websocket message:', data);
+    logger.log('Received websocket message:', data);
 
     switch (data.type) {
       case 'waiting':
         if (statusElement) statusElement.textContent = data.message;
         break;
       case 'match_found': {
-        console.log('Match found:', data);
+        logger.log('Match found:', data);
         const username = user.username;
         if (!username) {
           console.error('No username found');
@@ -64,7 +65,7 @@ const handleSocketMessage = (
         const gameUrl = `/multiplay/game?session=${data.session_id}&isPlayer1=${
           username === data.player1
         }`;
-        console.log('Navigating to:', gameUrl);
+        logger.log('Navigating to:', gameUrl);
         window.location.href = gameUrl;
         break;
       }
@@ -80,11 +81,11 @@ const handleSocketMessage = (
  * WebSocket接続の初期化
  */
 const initWebSocket = (statusElement: HTMLElement | null, user: ICurrentUser): WebSocket => {
-  console.log('Initializing WebSocket...');
+  logger.log('Initializing WebSocket...');
   const socket = new WebSocket(`${WS_URL}/wss/matchmaking/`);
 
   socket.onopen = () => {
-    console.log('WebSocket connection established');
+    logger.log('WebSocket connection established');
     // マッチメイキング参加メッセージの送信
     socket.send(
       JSON.stringify({
@@ -102,7 +103,7 @@ const initWebSocket = (statusElement: HTMLElement | null, user: ICurrentUser): W
   };
 
   socket.onclose = () => {
-    console.log('WebSocket connection closed');
+    logger.log('WebSocket connection closed');
     if (statusElement) statusElement.textContent = 'Connection lost. Reconnecting...';
     // 5秒後に再接続を試行
     setTimeout(() => {
@@ -131,9 +132,9 @@ const WaitingPage = new Page({
     layout: AuthLayout,
     html: '/src/pages/MultiPlay/Waiting/index.html',
   },
-  mounted: async ({ pg, user }) => {
+  mounted: async ({ pg, user }): Promise<void> => {
     setUserLanguage(user.language, updatePageContent);
-    console.log('Waiting page mounting...');
+    pg.logger.log('Waiting page mounting...');
     let socket: WebSocket | null = null;
     const { statusElement, cancelButton } = getDomElements();
 

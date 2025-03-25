@@ -21,7 +21,7 @@ const WaitingPage = new Page({
     layout: AuthLayout,
     html: '/src/pages/Tournament/Waiting/index.html',
   },
-  mounted: async ({ pg, user }) => {
+  mounted: async ({ pg, user }): Promise<void> => {
     setUserLanguage(user.language, updatePageContent);
     logger.info('Tournament waiting page - initializing');
 

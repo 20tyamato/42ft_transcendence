@@ -1,4 +1,4 @@
-import { ICurrentUser, useCurrentUser } from '@/libs/Auth/currnetUser';
+import { ICurrentUser, useCurrentUser } from '@/libs/Auth/currentUser';
 import { fetcher } from '@/utils/fetcher';
 
 /**

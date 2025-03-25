@@ -1,4 +1,5 @@
 import i18next from '@/config/i18n';
+import { logger } from '@/core/Logger';
 import { createSinglePlayGame } from '@/models/Game/repository';
 import gsap from 'gsap';
 import * as THREE from 'three';
@@ -301,7 +302,7 @@ export enum Difficulty {
 }
 
 const selectedLevel = localStorage.getItem('selectedLevel') || 'EASY';
-console.log(`Selected Level: ${selectedLevel}`);
+logger.log(`Selected Level: ${selectedLevel}`);
 
 let difficultyFactor: number;
 switch (selectedLevel.toUpperCase()) {

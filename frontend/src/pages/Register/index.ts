@@ -1,4 +1,3 @@
-import { API_URL } from '@/config/config';
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import CommonLayout from '@/layouts/common/index';
@@ -94,7 +93,7 @@ const updatePageContent = (): void => {
 const RegisterPage = new Page({
   name: 'Register',
   config: { layout: CommonLayout },
-  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
+  mounted: async ({ pg }): Promise<void> => {
     updatePageContent();
     updateActiveLanguageButton();
 

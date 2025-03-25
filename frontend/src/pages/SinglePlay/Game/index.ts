@@ -1,4 +1,5 @@
 import i18next from '@/config/i18n';
+import { logger } from '@/core/Logger';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
 import { setUserLanguage } from '@/utils/language';
@@ -57,13 +58,13 @@ export function setupPauseMenu() {
 export function hideGameStartOverlay() {
   const overlay = document.getElementById('gameStartOverlay');
   if (!overlay) return;
-  console.log('Starting fade-out animation for GAME START overlay');
+  logger.log('Starting fade-out animation for GAME START overlay');
   gsap.to(overlay, {
     duration: 1.5, // 2秒かけてフェードアウト
     opacity: 0.5,
     delay: 2, // 2秒後に開始
     onComplete: () => {
-      console.log('Fade-out complete. Hiding overlay.');
+      logger.log('Fade-out complete. Hiding overlay.');
       overlay.classList.add('hidden'); // CSSで非表示にする
     },
   });
@@ -102,7 +103,7 @@ const SinglePlayPage = new Page({
     layout: AuthLayout,
   },
 
-  mounted: async ({ user }) => {
+  mounted: async ({ pg, user }): Promise<void> => {
     setUserLanguage(user.language, updatePageContent);
     // ヘッダーと背景を非表示にする
     const header = document.querySelector('.header');
@@ -120,14 +121,14 @@ const SinglePlayPage = new Page({
     }
 
     const selectedLevel = localStorage.getItem('selectedLevel');
-    console.log(`Retrieved selected level: ${selectedLevel}`);
+    pg.logger.log(`Retrieved selected level: ${selectedLevel}`);
 
     const canvas = document.getElementById('gl') as HTMLCanvasElement;
     const experience = Experience.getInstance(canvas);
     const fieldInstance = experience.field;
     const particlePanel = createParticleCustomizationPanel((params) => {
       fieldInstance.updateParticles(params);
-      console.log('Updating particles with params:', params);
+      pg.logger.log('Updating particles with params:', params);
     });
     document.body.appendChild(particlePanel);
 

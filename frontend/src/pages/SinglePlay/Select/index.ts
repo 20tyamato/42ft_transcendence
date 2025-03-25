@@ -19,7 +19,7 @@ const updatePageContent = () => {
 const SinglePlaySelectPage = new Page({
   name: 'SinglePlay/Select',
   config: { layout: CommonLayout },
-  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
+  mounted: async ({ pg }): Promise<void> => {
     const canvas = document.getElementById('gl') as HTMLCanvasElement;
     const renderer = new THREE.WebGLRenderer({ canvas });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -34,7 +34,7 @@ const SinglePlaySelectPage = new Page({
     const background = new Background(scene);
     const stars = new Stars(scene);
     const userData = await fetchCurrentUser().catch((error) => {
-      console.error('Error fetching current user:', error);
+      pg.logger.error('Error fetching current user:', error);
       return { language: 'en', points: 0 }; // 仮のデフォルト値
     });
 
@@ -88,10 +88,10 @@ const SinglePlaySelectPage = new Page({
         const level = button.getAttribute('data-level');
         if (level) {
           localStorage.setItem('selectedLevel', level);
-          console.log(`Selected level: ${level}`);
+          pg.logger.info(`Selected level: ${level}`);
           showLoadingScreen('/singleplay/game');
         } else {
-          console.error('Level attribute not found on button.');
+          pg.logger.error('Level attribute not found on button.');
         }
       });
     });

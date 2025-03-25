@@ -1,4 +1,4 @@
-import { fetcherGuest } from '@/utils/fetcher';
+import { logger } from '@/core/Logger';
 
 /**
  * ELKにログを送信する
@@ -15,7 +15,7 @@ export class Logger {
   }
 
   public async log(message: string, ...args: any[]) {
-    console.log(message, ...args);
+    logger.log(message, ...args);
     await this._sendToLogstash('log', message);
   }
 

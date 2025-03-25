@@ -1,7 +1,7 @@
 import { fetchCurrentUser, updateOnlineStatus } from '@/models/User/repository';
 import { IUser } from '@/models/User/type';
-import { storage } from '../localStorage';
 import { fetcher } from '@/utils/fetcher';
+import { storage } from '../localStorage';
 
 export type ICurrentUser = {
   token: string;

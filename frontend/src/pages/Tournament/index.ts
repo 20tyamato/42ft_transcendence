@@ -17,7 +17,7 @@ const TournamentPage = new Page({
     layout: AuthLayout,
     html: '/src/pages/Tournament/index.html',
   },
-  mounted: async ({ pg, user }) => {
+  mounted: async ({ pg, user }): Promise<void> => {
     setUserLanguage(user.language, updatePageContent);
     const startTournament = document.getElementById('start-tournament');
     if (startTournament) {
