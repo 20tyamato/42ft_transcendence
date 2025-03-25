@@ -26,8 +26,9 @@ export default class Background2 {
     ball2: 10,
   };
 
-  constructor(scene: THREE.Scene, yPosition: number = -50) {
+  constructor(scene: THREE.Scene) {
     this.scene = scene;
+    1;
     this.group = new THREE.Group();
     this.scene.add(this.group);
 
