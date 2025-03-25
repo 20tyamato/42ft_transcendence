@@ -1,5 +1,5 @@
 // frontend/src/models/Services/WebSocketService.ts
-
+import { logger } from '@/core/Logger';
 import { IWSMessageHandler } from '../Game/type';
 
 export class WebSocketService {
@@ -16,7 +16,7 @@ export class WebSocketService {
         this.socket = new WebSocket(url);
 
         this.socket.onopen = () => {
-          console.log('WebSocket connected:', { url, timestamp: new Date().toISOString() });
+          logger.log('WebSocket connected:', { url, timestamp: new Date().toISOString() });
           resolve();
         };
 
@@ -25,7 +25,7 @@ export class WebSocketService {
         };
 
         this.socket.onerror = (error) => {
-          console.error('WebSocket error:', error);
+          logger.error('WebSocket error:', error);
           if (this.connectionErrorHandler) {
             this.connectionErrorHandler();
           }
@@ -33,14 +33,14 @@ export class WebSocketService {
         };
 
         this.socket.onclose = () => {
-          console.log('WebSocket connection closed:', {
+          logger.log('WebSocket connection closed:', {
             url: this.url,
             timestamp: new Date().toISOString(),
           });
           this.socket = null;
         };
       } catch (error) {
-        console.error('Error establishing WebSocket connection:', error);
+        logger.error('Error establishing WebSocket connection:', error);
         reject(error);
       }
     });
@@ -58,7 +58,7 @@ export class WebSocketService {
         }
       }
     } catch (e) {
-      console.error('Error handling WebSocket message:', e);
+      logger.error('Error handling WebSocket message:', e);
     }
   }
 
@@ -83,7 +83,7 @@ export class WebSocketService {
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.socket.send(JSON.stringify(message));
     } else {
-      console.error('WebSocket not connected', { url: this.url, message });
+      logger.error('WebSocket not connected', { url: this.url, message });
     }
   }
 

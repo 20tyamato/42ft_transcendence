@@ -1,3 +1,4 @@
+import { logger } from '@/core/Logger';
 import i18next from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
@@ -16,7 +17,7 @@ i18next.use(LanguageDetector).init(
     },
   },
   (err) => {
-    if (err) console.error(err);
+    if (err) logger.error(err);
   }
 );
 

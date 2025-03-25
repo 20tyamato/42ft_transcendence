@@ -1,3 +1,4 @@
+import { logger } from '@/core/Logger';
 import { ICurrentUser, useCurrentUser } from '@/libs/Auth/currentUser';
 import { fetcher } from '@/utils/fetcher';
 
@@ -84,7 +85,7 @@ export const createMultiplayerGame = async ({
 
     return true;
   } catch (error) {
-    console.error('Error creating multiplayer game:', error);
+    logger.error('Error creating multiplayer game:', error);
     throw error;
   }
 };

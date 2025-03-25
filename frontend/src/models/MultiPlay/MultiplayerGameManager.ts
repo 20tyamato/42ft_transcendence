@@ -62,7 +62,7 @@ export class MultiplayerGameManager extends BaseGameManager {
   }
 
   protected onConnectionError(): void {
-    console.error('Connection error occurred');
+    logger.error('Connection error occurred');
 
     // 通信エラー時のスコア保存
     const [player1Name, player2Name] = this.config.sessionId?.split('_').slice(1, 3) || [];
@@ -84,7 +84,7 @@ export class MultiplayerGameManager extends BaseGameManager {
   }
 
   protected onError(message: string): void {
-    console.error('Game error:', message);
+    logger.error('Game error:', message);
     // エラーメッセージ表示などの処理を追加可能
   }
 

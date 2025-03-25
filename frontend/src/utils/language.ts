@@ -1,4 +1,5 @@
 import i18next from '@/config/i18n';
+import { logger } from '@/core/Logger';
 
 export const languageNames = {
   en: 'English',
@@ -24,7 +25,7 @@ export const setUserLanguage = (language: string, updatePageContent: () => void)
     document.documentElement.lang = language;
     i18next.changeLanguage(language, updatePageContent);
   } else {
-    console.error('Language not found in user data');
+    logger.error('Language not found in user data');
   }
 };
 

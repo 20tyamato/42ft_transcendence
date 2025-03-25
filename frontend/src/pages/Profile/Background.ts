@@ -1,4 +1,5 @@
 // Background.ts
+import { logger } from '@/core/Logger';
 import * as THREE from 'three';
 
 export default class Background {
@@ -30,7 +31,7 @@ export default class Background {
   public update(): void {
     const time = this.clock.getElapsedTime();
     if (!this.plane) {
-      console.warn('Plane is not initialized.');
+      logger.warn('Plane is not initialized.');
       return;
     }
     const geometry = this.plane.geometry as THREE.PlaneGeometry;

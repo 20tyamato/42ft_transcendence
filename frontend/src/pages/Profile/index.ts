@@ -238,7 +238,7 @@ const ProfilePage = new Page({
       // Three.js の初期化
       const canvas = document.getElementById('gl') as HTMLCanvasElement;
       if (!canvas) {
-        console.error('Canvas element not found');
+        pg.logger.error('Canvas element not found');
         return;
       }
       const renderer = new THREE.WebGLRenderer({ canvas });

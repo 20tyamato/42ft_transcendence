@@ -1,7 +1,8 @@
 import { API_URL } from '@/config/config';
 import i18next from '@/config/i18n';
-import { IMatchHistory, IUser } from './type';
+import { logger } from '@/core/Logger';
 import { fetcher } from '@/utils/fetcher';
+import { IMatchHistory, IUser } from './type';
 
 export const fetchUsers = async () => {
   try {
@@ -11,7 +12,7 @@ export const fetchUsers = async () => {
 
     return data;
   } catch (error) {
-    console.error('Error fetching users:', error);
+    logger.error('Error fetching users:', error);
   }
 };
 
@@ -20,12 +21,12 @@ export const fetchUserAvatar = async (username: string): Promise<Blob | null> =>
     const response = await fetch(`${API_URL}/api/users/${username}/avatar/`);
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Failed to fetch user avatar:', errorText);
+      logger.error('Failed to fetch user avatar:', errorText);
       return null;
     }
     return await response.blob();
   } catch (error) {
-    console.error('Error fetching user avatar:', error);
+    logger.error('Error fetching user avatar:', error);
     return null;
   }
 };
@@ -37,7 +38,7 @@ export const fetchUser = async (username: string) => {
     });
     return data;
   } catch (error) {
-    console.error('Error fetching user:', error);
+    logger.error('Error fetching user:', error);
   }
 };
 
@@ -49,7 +50,7 @@ export const fetchCurrentUser = async () => {
 
     return data;
   } catch (error) {
-    console.error('Error fetching current user:', error);
+    logger.error('Error fetching current user:', error);
   }
 };
 
@@ -66,7 +67,7 @@ export const updateAvatar = async (file: File) => {
 
     return data;
   } catch (error) {
-    console.error('Error updating avatar:', error);
+    logger.error('Error updating avatar:', error);
   }
 };
 
@@ -80,7 +81,7 @@ export const updateUserInfo = async (email: string, displayName: string) => {
 
     return data;
   } catch (error) {
-    console.error('Error updating user info:', error);
+    logger.error('Error updating user info:', error);
   }
 };
 
@@ -93,9 +94,9 @@ export const updateLanguage = async (language: string) => {
 
     localStorage.setItem('language', language);
     i18next.changeLanguage(i18next.language);
-    console.log('Language updated successfully to ', i18next.language);
+    logger.log('Language updated successfully to ', i18next.language);
   } catch (err) {
-    console.error('Error updating language:', err);
+    logger.error('Error updating language:', err);
   }
 };
 
@@ -106,10 +107,10 @@ export const updateOnlineStatus = async (is_online: boolean) => {
       body: { is_online },
     });
 
-    console.log('Online status updated successfully');
+    logger.log('Online status updated successfully');
     return data;
   } catch (error) {
-    console.error('Error updating online status:', error);
+    logger.error('Error updating online status:', error);
   }
 };
 
@@ -133,7 +134,7 @@ export const getUserMatchHistory = async (
 
     return response.data;
   } catch (error) {
-    console.error('Error fetching user match history:', error);
+    logger.error('Error fetching user match history:', error);
     return []; // エラー時は空配列を返す
   }
 };
@@ -152,7 +153,7 @@ export const getUserWithStats = async (userId: number | string = 'me'): Promise<
 
     return response.data;
   } catch (error) {
-    console.error('Error fetching user profile with stats:', error);
+    logger.error('Error fetching user profile with stats:', error);
     return null;
   }
 };
