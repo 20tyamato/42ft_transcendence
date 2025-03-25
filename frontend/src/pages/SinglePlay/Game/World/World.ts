@@ -1,6 +1,6 @@
+import * as THREE from 'three';
 import Experience from '../Experience';
 import Model from './Model';
-import * as THREE from 'three';
 
 export default class World {
   private experience: Experience;

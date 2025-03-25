@@ -77,7 +77,7 @@ const WaitingPage = new Page({
       if (playersContainer) {
         playersContainer.innerHTML = '';
 
-        data.players.forEach((player: any) => {
+        data.players.forEach((player: { display_name?: string; username: string }) => {
           const playerItem = document.createElement('li');
           playerItem.className = 'list-group-item player-item';
 
@@ -186,13 +186,13 @@ const WaitingPage = new Page({
     initWebSocket();
 
     // クリーンアップ関数を返す
-    return () => {
+    window.addEventListener('beforeunload', () => {
       window.removeEventListener('popstate', handlePopState);
       if (socket) {
         socket.close();
         socket = null;
       }
-    };
+    });
   },
 });
 

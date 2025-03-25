@@ -4,7 +4,7 @@
 export class Logger {
   private _logstashUrl: string;
   constructor() {
-    this._logstashUrl = (import.meta as any).env.VITE_LOGSTASH_URL;
+    this._logstashUrl = (import.meta as ImportMeta).env.VITE_LOGSTASH_URL;
   }
 
   public async info(message: string, ...args: unknown[]) {

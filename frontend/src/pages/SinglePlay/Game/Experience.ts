@@ -1,17 +1,16 @@
 import * as THREE from 'three';
+import Ball from '../Game/Ball';
+import Field from '../Game/Field';
+import LocalGame from '../Game/LocalGame';
+import Paddle from '../Game/Paddle';
+import Walls from '../Game/Wall';
+import Loaders from './Utils/Loaders';
+import Renderer from './Utils/Renderer';
 import Sizes from './Utils/Sizez';
+import sources from './Utils/sources';
 import Time from './Utils/Time';
 import Camera from './World/Camera';
-import Renderer from './Utils/Renderer';
 import World from './World/World';
-import Loaders from './Utils/Loaders';
-import sources from './Utils/sources';
-import Field from '../Game/Field';
-import Paddle from '../Game/Paddle';
-import Ball from '../Game/Ball';
-import Walls from '../Game/Wall';
-import LocalGame from '../Game/LocalGame';
-import { createParticleCustomizationPanel } from './CustomParticle';
 
 // Window 型拡張
 declare global {

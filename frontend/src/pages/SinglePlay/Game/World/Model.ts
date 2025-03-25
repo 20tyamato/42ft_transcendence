@@ -1,10 +1,10 @@
-import Experience from '../Experience';
 import * as THREE from 'three';
+import Experience from '../Experience';
 
 export default class Model {
   private experience: Experience;
   private scene: THREE.Scene;
-  private resources: any;
+  private resources: THREE.LoadingManager;
   private model!: THREE.Object3D;
 
   constructor(canvas: HTMLCanvasElement) {

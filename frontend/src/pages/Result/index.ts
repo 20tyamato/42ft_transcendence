@@ -22,7 +22,7 @@ const ResultPage = new Page({
       return;
     }
 
-    const { score, gameMode } = resultData;
+    const { score } = resultData;
 
     // UI初期化
     const ui = new ResultPageUI();

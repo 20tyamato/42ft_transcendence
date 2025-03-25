@@ -63,7 +63,7 @@ export default class Loaders extends EventEmitter {
     }
   }
 
-  private sourceLoaded(source: Source, file: any): void {
+  private sourceLoaded(source: Source, file: unknown): void {
     console.log(`Loaded: ${source.name}`, file);
     this.items[source.name] = file;
     this.loaded++;

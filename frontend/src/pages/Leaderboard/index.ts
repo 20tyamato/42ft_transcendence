@@ -1,7 +1,6 @@
 import i18next from '@/config/i18n';
 import { Page } from '@/core/Page';
 import AuthLayout from '@/layouts/AuthLayout';
-import { ICurrentUser } from '@/libs/Auth/currnetUser';
 import { IRankingUser } from '@/models/interface';
 import { fetchUsers } from '@/models/User/repository';
 import { setUserLanguage } from '@/utils/language';

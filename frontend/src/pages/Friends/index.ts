@@ -49,7 +49,7 @@ async function addFriend(username: string): Promise<void> {
 
 async function deleteFriend(friendId: number): Promise<void> {
   try {
-    await fetcher('/api/users/me/friends/${friendId}/', {
+    await fetcher(`/api/users/me/friends/${friendId}/`, {
       method: 'DELETE',
     });
     await loadFriends();

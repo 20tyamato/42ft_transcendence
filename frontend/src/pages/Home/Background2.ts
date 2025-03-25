@@ -18,7 +18,7 @@ export default class Background2 {
   private plane: THREE.Mesh | null = null;
   private lowestY = -200;
 
-  constructor(scene: THREE.Scene, yPosition: number = -50) {
+  constructor(scene: THREE.Scene) {
     this.scene = scene;
     this.group = new THREE.Group();
     this.scene.add(this.group);
