@@ -1,7 +1,9 @@
 export default class EventEmitter {
-  private callbacks: { [namespace: string]: { [event: string]: Function[] } } = { base: {} };
+  private callbacks: {
+    [namespace: string]: { [event: string]: ((...args: unknown[]) => unknown)[] };
+  } = { base: {} };
 
-  on(names: string, callback: Function): this {
+  on(names: string, callback: (...args: unknown[]) => unknown): this {
     if (!names || !callback) {
       console.warn('Invalid event name or callback');
       return this;
@@ -32,14 +34,14 @@ export default class EventEmitter {
     return this;
   }
 
-  trigger(name: string, args: any[] = []): any {
+  trigger(name: string, args: unknown[] = []): unknown {
     if (!name) {
       console.warn('Invalid event name');
       return null;
     }
 
     const { namespace, value } = this.resolveName(name);
-    let finalResult: any = null;
+    let finalResult: unknown = null;
 
     if (namespace === 'base') {
       for (const ns in this.callbacks) {

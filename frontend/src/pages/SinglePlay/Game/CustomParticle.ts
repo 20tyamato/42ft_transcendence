@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import Experience from './Experience';
-import Field from './Field';
 
 let particleMaterial: THREE.PointsMaterial;
 let particleGeometry: THREE.BufferGeometry;
