@@ -72,7 +72,7 @@ const WaitingNextMatchPage = new Page({
       socket.onopen = () => {
         logger.info('Connected to waiting final WebSocket');
         if (statusMessage) {
-          statusMessage.textContent = 'Connected. Waiting for other semi-final to complete...';
+          statusMessage.textContent = i18next.t('tournament.waitingNextMatch.socket.connected');
         }
 
         // 接続成功時にステータス要求メッセージを送信
@@ -101,7 +101,9 @@ const WaitingNextMatchPage = new Page({
 
             case 'error':
               if (statusMessage) {
-                statusMessage.textContent = `Error: ${data.message}`;
+                statusMessage.textContent = i18next.t('tournament.waitingNextMatch.socket.error', {
+                  error: data.message,
+                });
               }
               break;
           }
@@ -113,17 +115,21 @@ const WaitingNextMatchPage = new Page({
       socket.onerror = (error) => {
         logger.error('WebSocket error:', error);
         if (statusMessage) {
-          statusMessage.textContent = 'Connection error. Retrying...';
+          statusMessage.textContent = i18next.t(
+            'tournament.waitingNextMatch.socket.connectionError'
+          );
         }
       };
 
       socket.onclose = (event) => {
         logger.info('WebSocket closed:', event);
         if (statusMessage) {
-          statusMessage.textContent = 'Connection lost. Reconnecting...';
+          statusMessage.textContent = i18next.t(
+            'tournament.waitingNextMatch.socket.connectionLost'
+          );
         }
 
-        // 再接続を試行（5秒後）
+        // 再接続を試行（コメントアウトしているが、必要に応じて有効化）
         // if (reconnectTimeout) {
         //   window.clearTimeout(reconnectTimeout);
         // }
@@ -145,9 +151,9 @@ const WaitingNextMatchPage = new Page({
         const selfItem = document.createElement('li');
         selfItem.className = 'player-item you';
         selfItem.innerHTML = `
-          <span class="player-tag">YOU</span>
+          <span class="player-tag">${i18next.t('tournament.waitingNextMatch.youTag')}</span>
           <span class="player-name">${user.display_name || user.username}</span>
-          <span class="status-tag ready">Ready</span>
+          <span class="status-tag ready">${i18next.t('tournament.waitingNextMatch.statusReady')}</span>
         `;
         finalistsContainer.appendChild(selfItem);
 
@@ -159,7 +165,7 @@ const WaitingNextMatchPage = new Page({
               finalistItem.className = 'player-item';
               finalistItem.innerHTML = `
                 <span class="player-name">${finalist.display_name || finalist.username}</span>
-                <span class="status-tag ready">Ready</span>
+                <span class="status-tag ready">${i18next.t('tournament.waitingNextMatch.statusReady')}</span>
               `;
               finalistsContainer.appendChild(finalistItem);
             }
@@ -169,8 +175,8 @@ const WaitingNextMatchPage = new Page({
           const waitingItem = document.createElement('li');
           waitingItem.className = 'player-item waiting';
           waitingItem.innerHTML = `
-            <span class="player-name">Waiting for opponent...</span>
-            <span class="status-tag waiting">Waiting</span>
+            <span class="player-name">${i18next.t('tournament.waitingNextMatch.waitingForOpponent')}</span>
+            <span class="status-tag waiting">${i18next.t('tournament.waitingNextMatch.statusWaiting')}</span>
           `;
           finalistsContainer.appendChild(waitingItem);
         }
@@ -178,9 +184,11 @@ const WaitingNextMatchPage = new Page({
 
       if (statusMessage) {
         if (data.all_semifinals_completed) {
-          statusMessage.textContent = 'All semi-finals completed. Preparing final match...';
+          statusMessage.textContent = i18next.t('tournament.waitingNextMatch.socket.allSemifinals');
         } else {
-          statusMessage.textContent = 'Waiting for other semi-final to complete...';
+          statusMessage.textContent = i18next.t(
+            'tournament.waitingNextMatch.socket.waitingForSemiFinal'
+          );
         }
       }
     };
@@ -188,7 +196,7 @@ const WaitingNextMatchPage = new Page({
     // 決勝戦準備完了処理
     const handleFinalReady = (data: any) => {
       if (statusMessage) {
-        statusMessage.textContent = 'Final match is ready! Redirecting...';
+        statusMessage.textContent = i18next.t('tournament.waitingNextMatch.socket.finalMatchReady');
       }
 
       // 決勝戦ページへリダイレクト

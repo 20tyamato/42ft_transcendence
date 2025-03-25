@@ -1,5 +1,6 @@
 // src/models/Result/GameResultService.ts
 
+import i18next from '@/config/i18n';
 import { IGameMode, IGameResult } from '../Game/type';
 
 /**
@@ -50,13 +51,13 @@ export class GameResultService {
       if (wasDisconnected) {
         return {
           isWinner: false,
-          message: 'You Disconnected - Opponent Wins',
+          message: i18next.t('gameResult.disconnected.self'),
           className: 'result-message lose',
         };
       } else {
         return {
           isWinner: true,
-          message: 'Opponent Disconnected - You Win!',
+          message: i18next.t('gameResult.disconnected.opponent'),
           className: 'result-message win',
         };
       }
@@ -66,19 +67,19 @@ export class GameResultService {
     if (score.player1 > score.player2) {
       return {
         isWinner: true,
-        message: 'You Win!',
+        message: i18next.t('gameResult.win'),
         className: 'result-message win',
       };
     } else if (score.player1 < score.player2) {
       return {
         isWinner: false,
-        message: 'Opponent Wins!',
+        message: i18next.t('gameResult.lose'),
         className: 'result-message lose',
       };
     } else {
       return {
         isWinner: false,
-        message: 'Draw!',
+        message: i18next.t('gameResult.draw'),
         className: 'result-message draw',
       };
     }

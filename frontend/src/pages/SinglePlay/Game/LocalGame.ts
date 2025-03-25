@@ -1,7 +1,8 @@
-import gsap from 'gsap';
-import Experience from './Experience';
-import * as THREE from 'three';
+import i18next from '@/config/i18n';
 import { createSinglePlayGame } from '@/models/Game/repository';
+import gsap from 'gsap';
+import * as THREE from 'three';
+import Experience from './Experience';
 let running = true;
 
 export default class LocalGame {
@@ -61,32 +62,30 @@ export default class LocalGame {
 
   private cpuTargetX: number = 0;
   private cpuDecisionTimer: number = 0;
-  
+
   private processCpuPaddle() {
     const ballPos = this.ball.position;
     const cpuPos = this.paddleTwo.position;
-    
+
     // 一定間隔でのみ新しい目標位置を決定（難易度に応じて頻度変更）
     this.cpuDecisionTimer -= 1;
     if (this.cpuDecisionTimer <= 0) {
       // 低難易度ほど意思決定間隔が長い（動きがゆっくり変わる）
       this.cpuDecisionTimer = 30 - difficultyFactor * 2; // 10~26フレーム間隔
-      
+
       // 難易度に応じたボール位置の「見誤り」
-      const errorAmount = (Math.random() - 0.5) * 300 * (11 - difficultyFactor) / 10;
+      const errorAmount = ((Math.random() - 0.5) * 300 * (11 - difficultyFactor)) / 10;
       this.cpuTargetX = ballPos.x + errorAmount;
     }
-    
+
     // 目標位置に向かってスムーズに移動（イージングのような効果）
-    const moveSpeed = 2 + (difficultyFactor / 3); // 2.7~5.3の範囲
+    const moveSpeed = 2 + difficultyFactor / 3; // 2.7~5.3の範囲
     const distanceToTarget = this.cpuTargetX - cpuPos.x;
-    
+
     // 距離に応じた移動速度（近いほど遅く、スムーズに減速）
-    const movement = Math.sign(distanceToTarget) * Math.min(
-      Math.abs(distanceToTarget) * 0.1, 
-      moveSpeed
-    );
-    
+    const movement =
+      Math.sign(distanceToTarget) * Math.min(Math.abs(distanceToTarget) * 0.1, moveSpeed);
+
     // 移動制限を適用
     if ((movement < 0 && cpuPos.x > -650) || (movement > 0 && cpuPos.x < 650)) {
       cpuPos.x += movement;
@@ -208,7 +207,7 @@ export default class LocalGame {
       const isPlayerWin = this.scorePaddleOne >= 3;
 
       this.showGameOverOverlay(
-        isPlayerWin ? 'YOU WIN!' : 'GAME OVER',
+        isPlayerWin ? i18next.t('singlePlay.youWin') : i18next.t('singlePlay.gameOver'),
         `${this.scorePaddleOne} - ${this.scorePaddleTwo}`
       );
 

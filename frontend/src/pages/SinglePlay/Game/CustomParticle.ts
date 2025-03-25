@@ -1,6 +1,6 @@
+import i18next from '@/config/i18n';
 import * as THREE from 'three';
 import Experience from './Experience';
-import Field from './Field';
 
 let particleMaterial: THREE.PointsMaterial;
 let particleGeometry: THREE.BufferGeometry;
@@ -93,9 +93,9 @@ export function createParticleCustomizationPanel(
   const panel =
     document.getElementById('particleCustomizationPanel') || document.createElement('div');
   panel.id = 'particleCustomizationPanel';
-  panel.className = 'customization-panel'; // 初期状態は表示
+  panel.className = 'customization-panel';
 
-  // ヘッダーコンテナ作成（Flexレイアウトでトグルボタンとタイトルを横並びに）
+  // ヘッダーコンテナ作成
   const headerContainer = document.createElement('div');
   headerContainer.className = 'customization-header';
   panel.appendChild(headerContainer);
@@ -104,16 +104,16 @@ export function createParticleCustomizationPanel(
   const toggleBtn = document.createElement('button');
   toggleBtn.id = 'toggleCustomizationPanel';
   toggleBtn.className = 'btn toggle-btn';
-  toggleBtn.textContent = '▶'; // 初期は表示状態を示す▼
+  toggleBtn.textContent = '▶';
   headerContainer.appendChild(toggleBtn);
 
-  // タイトル（トグルの右隣に配置）
+  // タイトル（翻訳キーを使用）
   const title = document.createElement('h2');
-  title.textContent = 'Particle Settings';
+  title.textContent = i18next.t('particleSettings.title'); // 例: "Particle Settings"
   title.className = 'customization-title';
   headerContainer.appendChild(title);
 
-  // パネル内容部分をラップする div（トグル対象）
+  // パネル内容部分をラップする div
   const content = document.createElement('div');
   content.id = 'particleCustomizationContent';
   content.classList.add('hidden');
@@ -142,32 +142,45 @@ export function createParticleCustomizationPanel(
     return container;
   }
 
-  // カラー設定
-  content.appendChild(createOption('Color:', 'color', 'particleColor', '#ffffff'));
+  // 各設定項目（翻訳キーに置き換え）
+  content.appendChild(
+    createOption(i18next.t('particleSettings.color'), 'color', 'particleColor', '#ffffff')
+  );
 
-  // サイズ設定
-  const sizeOption = createOption('Size:', 'range', 'particleSize', '2');
+  const sizeOption = createOption(i18next.t('particleSettings.size'), 'range', 'particleSize', '2');
   (sizeOption.querySelector('input') as HTMLInputElement).min = '1';
   (sizeOption.querySelector('input') as HTMLInputElement).max = '200';
   (sizeOption.querySelector('input') as HTMLInputElement).step = '1';
   content.appendChild(sizeOption);
 
-  // 速度設定
-  const speedOption = createOption('Speed:', 'range', 'particleSpeed', '1');
+  const speedOption = createOption(
+    i18next.t('particleSettings.speed'),
+    'range',
+    'particleSpeed',
+    '1'
+  );
   (speedOption.querySelector('input') as HTMLInputElement).min = '0.1';
   (speedOption.querySelector('input') as HTMLInputElement).max = '10';
   (speedOption.querySelector('input') as HTMLInputElement).step = '0.1';
   content.appendChild(speedOption);
 
-  // 密度設定
-  const densityOption = createOption('Density:', 'range', 'particleDensity', '10000');
+  const densityOption = createOption(
+    i18next.t('particleSettings.density'),
+    'range',
+    'particleDensity',
+    '10000'
+  );
   (densityOption.querySelector('input') as HTMLInputElement).min = '1000';
   (densityOption.querySelector('input') as HTMLInputElement).max = '20000';
   (densityOption.querySelector('input') as HTMLInputElement).step = '1000';
   content.appendChild(densityOption);
 
-  // 透明度設定
-  const opacityOption = createOption('Opacity:', 'range', 'particleOpacity', '0.8');
+  const opacityOption = createOption(
+    i18next.t('particleSettings.opacity'),
+    'range',
+    'particleOpacity',
+    '0.8'
+  );
   (opacityOption.querySelector('input') as HTMLInputElement).min = '0';
   (opacityOption.querySelector('input') as HTMLInputElement).max = '1';
   (opacityOption.querySelector('input') as HTMLInputElement).step = '0.05';
@@ -177,23 +190,23 @@ export function createParticleCustomizationPanel(
   const buttonContainer = document.createElement('div');
   buttonContainer.className = 'customization-buttons';
 
-  // Save ボタン
+  // Save ボタン（翻訳キーを利用）
   const saveBtn = document.createElement('button');
   saveBtn.id = 'saveParticleSettings';
   saveBtn.className = 'btn';
-  saveBtn.textContent = 'Save';
+  saveBtn.textContent = i18next.t('particleSettings.save');
   buttonContainer.appendChild(saveBtn);
 
-  // Reset ボタン
+  // Reset ボタン（翻訳キーを利用）
   const resetBtn = document.createElement('button');
   resetBtn.id = 'resetParticleSettings';
   resetBtn.className = 'btn';
-  resetBtn.textContent = 'Reset';
+  resetBtn.textContent = i18next.t('particleSettings.reset');
   buttonContainer.appendChild(resetBtn);
 
   content.appendChild(buttonContainer);
 
-  // トグルボタンの挙動：内容部分の表示／非表示を切り替える
+  // トグルボタンの挙動
   toggleBtn.addEventListener('click', () => {
     content.classList.toggle('hidden');
     if (content.classList.contains('hidden')) {
@@ -203,7 +216,7 @@ export function createParticleCustomizationPanel(
     }
   });
 
-  // リアルタイム更新用イベントリスナー：各入力の値変更で updateParticles を呼ぶ
+  // 入力変更でリアルタイム更新
   content.querySelectorAll('input').forEach((input) => {
     input.addEventListener('input', () => {
       const color = (document.getElementById('particleColor') as HTMLInputElement).value;

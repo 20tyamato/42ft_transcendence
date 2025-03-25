@@ -17,10 +17,10 @@ const updatePageContent = (): void => {
 
   // 統計情報ラベル
   updateText('.stats-section h2', i18next.t('gameStatistics'));
-  updateText('.stat-label:nth-of-type(1)', i18next.t('totalMatches'));
-  updateText('.stat-label:nth-of-type(2)', i18next.t('wins'));
-  updateText('.stat-label:nth-of-type(3)', i18next.t('losses'));
-  updateText('.stat-label:nth-of-type(4)', i18next.t('tournamentWins'));
+  updateText('.stats-grid .stat-item:nth-of-type(1) .stat-label', i18next.t('totalMatches'));
+  updateText('.stats-grid .stat-item:nth-of-type(2) .stat-label', i18next.t('wins'));
+  updateText('.stats-grid .stat-item:nth-of-type(3) .stat-label', i18next.t('losses'));
+  updateText('.stats-grid .stat-item:nth-of-type(4) .stat-label', i18next.t('tournamentWins'));
 
   // マッチ履歴
   updateText('.match-history-section h2', i18next.t('recentMatches'));
