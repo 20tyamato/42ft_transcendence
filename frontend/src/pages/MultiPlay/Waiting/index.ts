@@ -131,7 +131,7 @@ const WaitingPage = new Page({
     layout: AuthLayout,
     html: '/src/pages/MultiPlay/Waiting/index.html',
   },
-  mounted: async ({ pg, user }) => {
+  mounted: async ({ pg, user }): Promise<void> => {
     setUserLanguage(user.language, updatePageContent);
     pg.logger.info('Waiting page mounting...');
     let socket: WebSocket | null = null;

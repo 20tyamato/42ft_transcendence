@@ -60,7 +60,7 @@ const updateUserAvatar = (avatar?: string): void => {
 const ModesPage = new Page({
   name: 'Modes',
   config: { layout: AuthLayout },
-  mounted: async ({ pg, user }) => {
+  mounted: async ({ pg, user }): Promise<void> => {
     setUserLanguage(user.language, updatePageContent);
     updateUserAvatar(user.avatar);
 

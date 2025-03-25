@@ -14,7 +14,7 @@ const updatePageContent = (): void => {
 const MultiPlayPage = new Page({
   name: 'MultiPlay',
   config: { layout: AuthLayout },
-  mounted: async ({ pg, user }) => {
+  mounted: async ({ pg, user }): Promise<void> => {
     setUserLanguage(user.language, updatePageContent);
     document.getElementById('start-matchmaking')?.addEventListener('click', () => {
       window.location.href = '/multiplay/waiting';

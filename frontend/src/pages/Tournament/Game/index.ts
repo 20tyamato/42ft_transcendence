@@ -23,7 +23,7 @@ const GamePage = new Page({
     layout: AuthLayout,
     html: '/src/pages/Tournament/Game/index.html',
   },
-  mounted: async ({ pg, user }) => {
+  mounted: async ({ pg, user }): Promise<void> => {
     setUserLanguage(user.language, updatePageContent);
     pg.logger.info('Tournament Game page mounting...');
 

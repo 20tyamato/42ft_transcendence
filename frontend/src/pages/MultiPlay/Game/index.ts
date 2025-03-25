@@ -20,7 +20,7 @@ const GamePage = new Page({
   config: {
     layout: AuthLayout,
   },
-  mounted: async ({ pg, user }) => {
+  mounted: async ({ pg, user }): Promise<void> => {
     setUserLanguage(user.language, updatePageContent);
     pg.logger.info('Game page mounting...');
 
