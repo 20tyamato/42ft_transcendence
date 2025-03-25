@@ -59,12 +59,13 @@ export function hideGameStartOverlay() {
   if (!overlay) return;
   console.log('Starting fade-out animation for GAME START overlay');
   gsap.to(overlay, {
-    duration: 1.5, // 2秒かけてフェードアウト
-    opacity: 0.5,
-    delay: 2, // 2秒後に開始
+    duration: 1.5,
+    opacity: 0,
+    delay: 0.5,
+    ease: 'power1.out',
     onComplete: () => {
       console.log('Fade-out complete. Hiding overlay.');
-      overlay.classList.add('hidden'); // CSSで非表示にする
+      overlay.classList.add('hidden');
     },
   });
 }
