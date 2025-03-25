@@ -25,6 +25,7 @@ export default class LocalGame {
   private ballVelocity: { x: number; z: number } | null = null;
   private ballStopped: boolean = true;
   private lastScorer: 'paddleOne' | 'paddleTwo' | null = null;
+  private gameStarted: boolean = false;
 
   constructor(canvas: HTMLCanvasElement) {
     /* ゲームエンジンのインスタンスを取得 */
@@ -38,6 +39,11 @@ export default class LocalGame {
     this.ballMaterial = this.experience.ball.ballMaterial;
     this.paddleTwo = this.experience.paddle.paddleTwo;
     this.paddleOne = this.experience.paddle.paddleOne;
+
+    setTimeout(() => {
+      this.gameStarted = true;
+      this.startBallMovement();
+    }, 1500);
 
     this.startBallMovement();
     this.handleKeyboard();
@@ -285,7 +291,7 @@ export default class LocalGame {
   }
 
   update() {
-    if (!running) return;
+    if (!running || !this.gameStarted) return;
     const deltaTime = this.time.getDelta();
     this.processBallMovement();
     this.processCpuPaddle();

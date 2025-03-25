@@ -63,7 +63,7 @@ canvas {
     0 0 10px #00ffc6,
     0 0 20px #00ffc6;
   z-index: 10;
-  animation: fadeInOut 3s ease-out;
+  animation: fadeInOut 1.5s ease-out;
 }
 
 @keyframes fadeInOut {
