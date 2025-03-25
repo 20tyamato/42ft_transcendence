@@ -10,7 +10,7 @@ export class Logger {
   }
 
   public async log(message: string, ...args: unknown[]) {
-    console.info(message, ...args);
+    console.log(message, ...args);
     await this._sendToLogstash('log', message);
   }
 
