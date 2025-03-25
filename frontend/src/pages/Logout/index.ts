@@ -25,7 +25,7 @@ const LogoutPage = new Page({
   config: {
     layout: AuthLayout,
   },
-  mounted: async ({ pg }) => {
+  mounted: async ({ pg }): Promise<void> => {
     updatePageContent();
     updateActiveLanguageButton();
     registerLanguageSwitchers(updatePageContent);

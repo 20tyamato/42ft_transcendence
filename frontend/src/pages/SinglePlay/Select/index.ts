@@ -19,7 +19,7 @@ const updatePageContent = () => {
 const SinglePlaySelectPage = new Page({
   name: 'SinglePlay/Select',
   config: { layout: CommonLayout },
-  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
+  mounted: async ({ pg }): Promise<void> => {
     const canvas = document.getElementById('gl') as HTMLCanvasElement;
     const renderer = new THREE.WebGLRenderer({ canvas });
     renderer.setSize(window.innerWidth, window.innerHeight);

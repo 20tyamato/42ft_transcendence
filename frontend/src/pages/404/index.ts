@@ -26,7 +26,7 @@ const NotFoundPage = new Page({
   config: {
     layout: CommonLayout,
   },
-  mounted: async ({ pg }: { pg: Page }): Promise<void> => {
+  mounted: async ({ pg }): Promise<void> => {
     updatePageContent();
     updateActiveLanguageButton();
 

@@ -32,7 +32,7 @@ const updatePageContent = (): void => {
 const HomePage = new Page({
   name: 'Home',
   config: { layout: AuthLayout },
-  mounted: async ({ pg }) => {
+  mounted: async ({ pg }): Promise<void> => {
     updatePageContent();
     updateActiveLanguageButton();
 
