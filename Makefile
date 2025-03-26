@@ -17,7 +17,7 @@ upbuild: setup elk-upbuild
 down: elk-down
 	docker compose down
 
-re: clean setup upbuild
+re: clean upbuild
 
 clean: down
 	docker volume rm $(shell docker volume ls -q | grep "^$(PROJECT_NAME)") || true
