@@ -29,7 +29,7 @@ type FetcherOptions<Body> = {
  * @param options
  * @returns
  */
-export const fetcher = async <Response = any, Body = Object>(
+export const fetcher = async <Response = unknown, Body = Record<string, unknown>>(
   url: string,
   options?: FetcherOptions<Body>
 ): Promise<{ data: Response; ok: boolean; status: number }> => {
@@ -66,7 +66,7 @@ export const fetcher = async <Response = any, Body = Object>(
  * @param options
  * @returns
  */
-export const fetcherGuest = async <Body = Object, Response = any>(
+export const fetcherGuest = async <Response = unknown, Body = Record<string, unknown>>(
   url: string,
   options?: FetcherOptions<Body>
 ): Promise<{ data: Response; ok: boolean; status: number }> => {

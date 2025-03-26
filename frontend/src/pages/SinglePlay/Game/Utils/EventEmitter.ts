@@ -1,3 +1,4 @@
+// FIXME: このファイルのlintを修正しようとすると画面が真っ白になる
 import { logger } from '@/core/Logger';
 
 export default class EventEmitter {

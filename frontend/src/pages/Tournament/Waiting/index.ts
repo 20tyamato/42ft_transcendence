@@ -7,6 +7,28 @@ import AuthLayout from '@/layouts/AuthLayout';
 import { setUserLanguage } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
 
+// NOTE: lint用の型定義
+interface WaitingStatusData {
+  total_players: number;
+  players: Array<{
+    username: string;
+    display_name?: string;
+  }>;
+}
+
+interface MatchFoundData {
+  tournament_id: string;
+  match_type: string;
+  match_number: number;
+  session_id: string;
+  is_player1: boolean;
+}
+
+interface WebSocketErrorData {
+  type: string;
+  message: string;
+}
+
 const updatePageContent = (): void => {
   updateText('title', i18next.t('tournament.waiting.pageTitle'));
   updateText('.card-header h2', i18next.t('tournament.waiting.roomTitle'));
@@ -21,7 +43,7 @@ const WaitingPage = new Page({
     layout: AuthLayout,
     html: '/src/pages/Tournament/Waiting/index.html',
   },
-  mounted: async ({ pg, user }): Promise<void> => {
+  mounted: async ({ user }): Promise<void> => {
     setUserLanguage(user.language, updatePageContent);
     logger.info('Tournament waiting page - initializing');
 
@@ -42,18 +64,20 @@ const WaitingPage = new Page({
 
         switch (data.type) {
           case 'error':
-            if (connectionStatus)
+            if (connectionStatus) {
+              const errorData = data as WebSocketErrorData;
               connectionStatus.textContent = i18next.t('tournament.waiting.error', {
-                error: data.message,
+                error: errorData.message,
               });
+            }
             break;
 
           case 'waiting_status':
-            updateWaitingStatus(data);
+            updateWaitingStatus(data as WaitingStatusData);
             break;
 
           case 'tournament_match':
-            handleMatchFound(data);
+            handleMatchFound(data as MatchFoundData);
             break;
         }
       } catch (e) {
@@ -62,7 +86,7 @@ const WaitingPage = new Page({
     };
 
     // 待機状態の更新
-    const updateWaitingStatus = (data: any) => {
+    const updateWaitingStatus = (data: WaitingStatusData) => {
       // プレイヤー数の更新
       if (playerCount) {
         playerCount.textContent = data.total_players.toString();
@@ -79,7 +103,7 @@ const WaitingPage = new Page({
       if (playersContainer) {
         playersContainer.innerHTML = '';
 
-        data.players.forEach((player: any) => {
+        data.players.forEach((player) => {
           const playerItem = document.createElement('li');
           playerItem.className = 'list-group-item player-item';
 
@@ -95,7 +119,7 @@ const WaitingPage = new Page({
     };
 
     // マッチ発見時の処理
-    const handleMatchFound = (data: any) => {
+    const handleMatchFound = (data: MatchFoundData) => {
       logger.info('Match found!', data);
 
       if (connectionStatus) {
