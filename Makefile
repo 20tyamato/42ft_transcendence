@@ -8,10 +8,10 @@ all: up
 
 setup: hostip ssl-certs elk-setup
 
-up: elk-up hostip
+up: setup elk-up
 	docker compose up
 
-upbuild: elk-upbuild
+upbuild: setup elk-upbuild
 	docker compose up --build
 
 down: elk-down
