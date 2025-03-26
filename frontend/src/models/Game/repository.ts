@@ -1,5 +1,6 @@
 import { logger } from '@/core/Logger';
 import { ICurrentUser, useCurrentUser } from '@/libs/Auth/currentUser';
+import { Difficulty, getAiLevel } from '@/pages/SinglePlay/Game/LocalGame';
 import { fetcher } from '@/utils/fetcher';
 
 /**
@@ -11,13 +12,15 @@ import { fetcher } from '@/utils/fetcher';
 export const createSinglePlayGame = async ({
   playerScore,
   cpuScore,
-  aiLevel,
+  difficultyFactor,
 }: {
   playerScore: number;
   cpuScore: number;
-  aiLevel: number;
+  difficultyFactor: Difficulty;
 }): Promise<boolean> => {
   const currentUser = await useCurrentUser();
+
+  const ai_level = getAiLevel(difficultyFactor);
 
   const gameData = {
     status: 'COMPLETED',
@@ -28,7 +31,7 @@ export const createSinglePlayGame = async ({
     score_player1: playerScore,
     score_player2: cpuScore,
     winner: playerScore > cpuScore ? currentUser.username : null,
-    ai_level: aiLevel,
+    ai_level: ai_level,
   };
 
   const response = await fetcher('/api/games/', {
