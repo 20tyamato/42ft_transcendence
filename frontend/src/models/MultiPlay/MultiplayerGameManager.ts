@@ -1,5 +1,5 @@
 import { logger } from '@/core/Logger';
-import { IGameConfig, IGameState } from '../Game/type';
+import { IGameConfig, IGameResult, IGameState } from '../Game/type';
 import { BaseGameManager } from '../Services/BaseGameManager';
 import { GameRenderer } from '../Services/game_renderer';
 
@@ -44,7 +44,7 @@ export class MultiplayerGameManager extends BaseGameManager {
     const [player1Name, player2Name] = this.config.sessionId?.split('_').slice(1, 3) || [];
     const opponent = this.config.username === player1Name ? player2Name : player1Name;
 
-    const finalScore = {
+    const finalScore: IGameResult = {
       player1: state?.score?.[this.config.username] ?? 15, // 切断の場合は残ったプレイヤーが勝利
       player2: state?.score?.[opponent] ?? 0,
       opponent: opponent,
@@ -68,7 +68,7 @@ export class MultiplayerGameManager extends BaseGameManager {
     const [player1Name, player2Name] = this.config.sessionId?.split('_').slice(1, 3) || [];
     const opponent = this.config.username === player1Name ? player2Name : player1Name;
 
-    const finalScore = {
+    const finalScore: IGameResult = {
       player1: 0, // 自分が切断した場合は敗北
       player2: 15, // 相手が勝利
       opponent: opponent,
@@ -85,16 +85,15 @@ export class MultiplayerGameManager extends BaseGameManager {
 
   protected onError(message: string): void {
     logger.error('Game error:', message);
-    // エラーメッセージ表示などの処理を追加可能
   }
 
-  protected onGameEnd(data: any): void {
+  protected onGameEnd(data: { state: IGameState }): void {
     logger.log('Game ended:', data);
 
     const [player1Name, player2Name] = this.config.sessionId?.split('_').slice(1, 3) || [];
     const opponent = this.config.username === player1Name ? player2Name : player1Name;
 
-    const finalScore = {
+    const finalScore: IGameResult = {
       player1: data.state.score[this.config.username] || 0,
       player2: data.state.score[opponent] || 0,
       opponent: opponent,
