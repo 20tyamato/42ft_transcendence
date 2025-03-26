@@ -1,5 +1,4 @@
 import i18next from '@/config/i18n';
-import { logger } from '@/core/Logger';
 import * as THREE from 'three';
 import Experience from './Experience';
 
@@ -245,7 +244,7 @@ export function createParticleCustomizationPanel(
     const opacity = (document.getElementById('particleOpacity') as HTMLInputElement).value;
     const settings = { color, size, speed, density, opacity };
     localStorage.setItem('particleSettings', JSON.stringify(settings));
-    logger.log('Particle settings saved:', settings);
+    console.log('Particle settings saved:', settings);
   });
 
   // Reset ボタンのイベント：初期設定に戻す
@@ -262,7 +261,7 @@ export function createParticleCustomizationPanel(
       density: 10000,
       opacity: 0.8,
     });
-    logger.log('Particle settings reset to defaults');
+    console.log('Particle settings reset to defaults');
   });
 
   return panel;
