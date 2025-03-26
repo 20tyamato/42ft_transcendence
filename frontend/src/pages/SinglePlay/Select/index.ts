@@ -33,10 +33,10 @@ const SinglePlaySelectPage = new Page({
     camera.position.z = 5;
     const background = new Background(scene);
     const stars = new Stars(scene);
-    const userData = await fetchCurrentUser().catch((error) => {
+    const userData = (await fetchCurrentUser().catch((error) => {
       pg.logger.error('Error fetching current user:', error);
       return { language: 'en', points: 0 }; // 仮のデフォルト値
-    });
+    })) as { language: string; points: number; level?: number };
 
     if (userData.language) {
       document.documentElement.lang = userData.language;
@@ -45,7 +45,7 @@ const SinglePlaySelectPage = new Page({
 
     // Oniモードの表示条件をチェック
     // FIXME: レベル制限を非ハードコーディングにしたい
-    const oniSelectable = userData.level >= 10;
+    const oniSelectable = (userData.level ?? 0) >= 10;
 
     const secretLevelCard = document.querySelector('.level-card.secret-level');
     if (secretLevelCard instanceof HTMLElement) {
