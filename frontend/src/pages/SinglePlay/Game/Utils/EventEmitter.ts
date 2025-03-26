@@ -35,7 +35,7 @@ export default class EventEmitter {
     return this;
   }
 
-  trigger(name: string, args: Array<any> = []): any {
+  trigger(name: string, args: unknown[] = []): unknown {
     if (!name) {
       logger.warn('Invalid event name');
       return null;
