@@ -1,11 +1,12 @@
 import { logger } from '@/core/Logger';
+import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import EventEmitter from './EventEmitter';
 import { Source } from './sources';
 
 export default class Loaders extends EventEmitter {
   private sources: Source[];
-  private items: { [key: string]: any } = {};
+  private items: { [key: string]: GLTF } = {};
   private loaders: { gltfLoader: GLTFLoader };
   private toLoad: number;
   private loaded: number = 0;
@@ -40,31 +41,31 @@ export default class Loaders extends EventEmitter {
 
         this.loaders.gltfLoader.load(
           modelUrl,
-          (gltf) => {
+          (gltf: GLTF) => {
             logger.log('GLTF model loaded:', gltf);
             this.sourceLoaded(source, gltf);
           },
           undefined,
-          (error) => {
+          (error: ErrorEvent) => {
             logger.error('Error loading GLTF model:', error);
           }
         );
       }
       this.loaders.gltfLoader.load(
         '/models/scene.glb',
-        (gltf) => {
+        (gltf: GLTF) => {
           logger.log('GLTF model loaded:', gltf);
           this.sourceLoaded(source, gltf);
         },
         undefined,
-        (error) => {
+        (error: ErrorEvent) => {
           logger.error('Error loading GLTF model:', error);
         }
       );
     }
   }
 
-  private sourceLoaded(source: Source, file: any): void {
+  private sourceLoaded(source: Source, file: GLTF): void {
     logger.log(`Loaded: ${source.name}`, file);
     this.items[source.name] = file;
     this.loaded++;

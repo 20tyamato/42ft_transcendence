@@ -7,22 +7,22 @@ export class Logger {
     this._logstashUrl = import.meta.env.VITE_LOGSTASH_URL;
   }
 
-  public async info(message: string, ...args: any[]) {
+  public async info(message: string, ...args: unknown[]) {
     console.info(message, ...args);
     await this._sendToLogstash('info', message);
   }
 
-  public async log(message: string, ...args: any[]) {
+  public async log(message: string, ...args: unknown[]) {
     console.log(message, ...args);
     await this._sendToLogstash('log', message);
   }
 
-  public async error(message: string, ...args: any[]) {
+  public async error(message: string, ...args: unknown[]) {
     console.error(message, ...args);
     await this._sendToLogstash('error', message);
   }
 
-  public async warn(message: string, ...args: any[]) {
+  public async warn(message: string, ...args: unknown[]) {
     console.warn(message, ...args);
     await this._sendToLogstash('warn', message);
   }

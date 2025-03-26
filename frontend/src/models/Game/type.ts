@@ -31,7 +31,7 @@ export interface IGameState {
 }
 
 export interface IWSMessageHandler {
-  (data: any): void;
+  (data: unknown): void;
 }
 
 export interface IMoveConfig {

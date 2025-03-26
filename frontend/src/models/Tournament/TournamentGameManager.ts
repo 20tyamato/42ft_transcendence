@@ -1,8 +1,8 @@
 // frontend/src/models/Tournament/TournamentGameManager.ts
+import { logger } from '@/core/Logger';
+import { IGameConfig, IGameState, ITournamentInfo } from '@/models/Game/type';
 import { BaseGameManager } from '@/models/Services/BaseGameManager';
 import { GameRenderer } from '@/models/Services/game_renderer';
-import { IGameConfig, IGameState, ITournamentInfo } from '@/models/Game/type';
-import { logger } from '@/core/Logger';
 
 export class TournamentGameManager extends BaseGameManager {
   private renderer: GameRenderer;
@@ -30,7 +30,7 @@ export class TournamentGameManager extends BaseGameManager {
     // セッションIDを送信して初期化を開始
     return new Promise<void>((resolve, reject) => {
       // 初期化完了イベントを監視
-      const initHandler = (data: any) => {
+      const initHandler = (data: { type: string }) => {
         if (data.type === 'game_initialized') {
           logger.info('Game initialization confirmed by server');
           this.wsService.removeMessageHandler('game_initialized', initHandler);
@@ -39,7 +39,7 @@ export class TournamentGameManager extends BaseGameManager {
       };
 
       // エラーメッセージを監視
-      const errorHandler = (data: any) => {
+      const errorHandler = (data: { type: string; message: string }) => {
         if (data.type === 'error') {
           logger.error('Game initialization error:', data.message);
           this.wsService.removeMessageHandler('error', errorHandler);
@@ -148,7 +148,7 @@ export class TournamentGameManager extends BaseGameManager {
     // エラーメッセージ表示などの処理を追加可能
   }
 
-  protected onGameEnd(data: any): void {
+  protected onGameEnd(data: { state: IGameState }): void {
     logger.info('Tournament game ended:', data);
 
     // セッションIDから対戦相手の情報を抽出

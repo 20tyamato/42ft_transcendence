@@ -35,14 +35,14 @@ export default class EventEmitter {
     return this;
   }
 
-  trigger(name: string, args: any[] = []): any {
+  trigger(name: string, args: unknown[] = []): unknown {
     if (!name) {
       logger.warn('Invalid event name');
       return null;
     }
 
     const { namespace, value } = this.resolveName(name);
-    let finalResult: any = null;
+    let finalResult: unknown = null;
 
     if (namespace === 'base') {
       for (const ns in this.callbacks) {

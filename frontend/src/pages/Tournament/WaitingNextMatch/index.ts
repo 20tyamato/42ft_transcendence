@@ -6,6 +6,31 @@ import AuthLayout from '@/layouts/AuthLayout';
 import { setUserLanguage } from '@/utils/language';
 import { updateText } from '@/utils/updateElements';
 
+interface WaitingStatus {
+  type: 'waiting_status';
+  completed_semifinals: number;
+  finalists: Finalist[];
+  all_semifinals_completed: boolean;
+}
+
+interface Finalist {
+  username: string;
+  display_name: string | null;
+}
+
+interface FinalReady {
+  type: 'final_ready';
+  session_id: string;
+  is_player1: boolean;
+}
+
+interface ErrorMessage {
+  type: 'error';
+  message: string;
+}
+
+type WebSocketData = WaitingStatus | FinalReady | ErrorMessage;
+
 const updatePageContent = (): void => {
   updateText('title', i18next.t('tournament.waitingNextMatch.pageTitle'));
   updateText('.waiting-title', i18next.t('tournament.waitingNextMatch.waitingTitle'));
@@ -86,7 +111,7 @@ const WaitingNextMatchPage = new Page({
 
       socket.onmessage = (event) => {
         try {
-          const data = JSON.parse(event.data);
+          const data: WebSocketData = JSON.parse(event.data);
           pg.logger.info('Received message:', data);
 
           switch (data.type) {
@@ -137,7 +162,7 @@ const WaitingNextMatchPage = new Page({
     };
 
     // 待機ステータス更新
-    const updateWaitingStatus = (data: any) => {
+    const updateWaitingStatus = (data: WaitingStatus) => {
       if (completedCount) {
         completedCount.textContent = data.completed_semifinals.toString();
       }
@@ -158,7 +183,7 @@ const WaitingNextMatchPage = new Page({
 
         // 他の決勝進出者（いる場合）
         if (data.finalists && data.finalists.length > 0) {
-          data.finalists.forEach((finalist: any) => {
+          data.finalists.forEach((finalist: Finalist) => {
             if (finalist.username !== user.username) {
               const finalistItem = document.createElement('li');
               finalistItem.className = 'player-item';
@@ -193,7 +218,7 @@ const WaitingNextMatchPage = new Page({
     };
 
     // 決勝戦準備完了処理
-    const handleFinalReady = (data: any) => {
+    const handleFinalReady = (data: FinalReady) => {
       if (statusMessage) {
         statusMessage.textContent = i18next.t('tournament.waitingNextMatch.socket.finalMatchReady');
       }

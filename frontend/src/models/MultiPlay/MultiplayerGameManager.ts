@@ -85,10 +85,8 @@ export class MultiplayerGameManager extends BaseGameManager {
 
   protected onError(message: string): void {
     logger.error('Game error:', message);
-    // エラーメッセージ表示などの処理を追加可能
   }
-
-  protected onGameEnd(data: any): void {
+  protected onGameEnd(data: { state: IGameState }): void {
     logger.log('Game ended:', data);
 
     const [player1Name, player2Name] = this.config.sessionId?.split('_').slice(1, 3) || [];
