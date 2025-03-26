@@ -79,7 +79,7 @@ export class WebSocketService {
     }
   }
 
-  send(message: any): void {
+  send(message: Record<string, unknown>): void {
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.socket.send(JSON.stringify(message));
     } else {

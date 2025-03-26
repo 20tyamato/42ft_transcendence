@@ -94,7 +94,7 @@ export abstract class BaseGameManager {
     this.onConnectionError();
   }
 
-  protected handleGameEnd(data: any): void {
+  protected handleGameEnd(data: { state: IGameState }): void {
     this.onGameEnd(data);
   }
 
@@ -111,6 +111,6 @@ export abstract class BaseGameManager {
   protected abstract onPlayerDisconnected(player: string, state: IGameState): void;
   protected abstract onConnectionError(): void;
   protected abstract onError(message: string): void;
-  protected abstract onGameEnd(data: any): void;
+  protected abstract onGameEnd(data: { state: IGameState }): void;
   protected abstract onCleanup(): void;
 }
