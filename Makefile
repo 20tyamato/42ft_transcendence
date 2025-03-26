@@ -8,16 +8,16 @@ all: up
 
 setup: hostip ssl-certs elk-setup
 
-up: elk-up hostip
+up: setup elk-up
 	docker compose up
 
-upbuild: elk-upbuild
+upbuild: setup elk-upbuild
 	docker compose up --build
 
 down: elk-down
 	docker compose down
 
-re: clean setup upbuild
+re: clean upbuild
 
 clean: down
 	docker volume rm $(shell docker volume ls -q | grep "^$(PROJECT_NAME)") || true
@@ -25,8 +25,6 @@ clean: down
 	@echo "Removing SSL certificates..."
 	@rm -rf certs
 
-fbuild: hostip
-	docker compose build --no-cache && docker compose up
 
 # ------------------------------
 # ELK
@@ -137,7 +135,6 @@ help:
 	@echo " down - docker compose down"
 	@echo " re - down up"
 	@echo " clean - down and docker system prune"
-	@echo " fbuild - docker compose up --build --no-cache"
 	@echo " test - run tests"
 	@echo " makemigrations - make migrations"
 	@echo " migrate - apply migrations"
@@ -159,4 +156,4 @@ help:
 	@echo " make ruff"
 	@echo " make test"
 
-.PHONY: all up down re clean fbuild test makemigrations migrate ruff super_ruff lint api_in front_in db_in api_logs front_logs db_logs help submit ssl-certs ssl-check
+.PHONY: all up down re clean test makemigrations migrate ruff super_ruff lint api_in front_in db_in api_logs front_logs db_logs help submit ssl-certs ssl-check
