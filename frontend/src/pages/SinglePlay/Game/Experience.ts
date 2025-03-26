@@ -1,4 +1,3 @@
-import { logger } from '@/core/Logger';
 import * as THREE from 'three';
 import Ball from '../Game/Ball';
 import Field from '../Game/Field';
