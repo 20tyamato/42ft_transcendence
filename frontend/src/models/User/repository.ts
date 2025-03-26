@@ -72,11 +72,11 @@ export const updateAvatar = async (file: File) => {
 };
 
 // ユーザー情報の更新
-export const updateUserInfo = async (email: string, displayName: string) => {
+export const updateUserInfo = async (email: string, display_name: string) => {
   try {
     const { data } = await fetcher('/api/users/me/', {
       method: 'PATCH',
-      body: { email, displayName },
+      body: { email, display_name },
     });
 
     return data;
