@@ -9,7 +9,7 @@ type LayoutConfig = {
 type LayoutProps = {
   name: string;
   config?: Partial<LayoutConfig>;
-  mounted?: (props: IBeforeMountRes) => Promise<any>;
+  mounted?: (props: IBeforeMountRes) => Promise<void>;
   beforeMounted?: () => Promise<IBeforeMountRes>;
 };
 
@@ -24,7 +24,7 @@ const getDefaultConfig = (name: string, config?: Partial<LayoutConfig>): LayoutC
 export class Layout {
   readonly config: LayoutConfig;
   readonly logger: Logger;
-  mounted?: (props: IBeforeMountRes) => Promise<any>;
+  mounted?: (props: IBeforeMountRes) => Promise<void>;
   beforeMounted?: () => Promise<IBeforeMountRes>;
 
   constructor(props: LayoutProps) {
