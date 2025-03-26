@@ -28,7 +28,7 @@ const handleLoginSubmit = async (
     });
 
     if (ok) {
-      const result = data;
+      const result = data as { token: string };
       storage.setUserToken(result.token);
 
       i18next.changeLanguage(i18next.language);
@@ -44,12 +44,12 @@ const handleLoginSubmit = async (
     } else {
       const error = data;
       responseMessage.textContent = i18next.t('errorMessage', {
-        error: error.message || i18next.t('invalidCredentials'),
+        error: (error as { message?: string }).message || i18next.t('invalidCredentials'),
       });
       responseMessage.style.color = 'red';
     }
   } catch (error) {
-    logger.error(error);
+    logger.error(String(error));
     // エラー文も多様化する必要あり
     responseMessage.textContent = i18next.t('unexpectedError');
     responseMessage.style.color = 'red';

@@ -1,10 +1,15 @@
-// FIXME: このファイルのlintを修正しようとすると画面が真っ白になる
 import { logger } from '@/core/Logger';
 
-export default class EventEmitter {
-  private callbacks: { [namespace: string]: { [event: string]: Function[] } } = { base: {} };
+type EventCallback = (...args: unknown[]) => unknown;
 
-  on(names: string, callback: Function): this {
+export default class EventEmitter {
+  private callbacks: {
+    [namespace: string]: {
+      [event: string]: EventCallback[];
+    };
+  } = { base: {} };
+
+  on(names: string, callback: EventCallback): this {
     if (!names || !callback) {
       logger.warn('Invalid event name or callback');
       return this;
@@ -28,8 +33,11 @@ export default class EventEmitter {
 
     names.split(' ').forEach((name) => {
       const { namespace, value } = this.resolveName(name);
-      if (value === '' && namespace !== 'base') delete this.callbacks[namespace];
-      else if (this.callbacks[namespace]) delete this.callbacks[namespace][value];
+      if (value === '' && namespace !== 'base') {
+        delete this.callbacks[namespace];
+      } else if (this.callbacks[namespace]) {
+        delete this.callbacks[namespace][value];
+      }
     });
 
     return this;
