@@ -221,7 +221,7 @@ export default class LocalGame {
       createSinglePlayGame({
         playerScore: this.scorePaddleOne,
         cpuScore: this.scorePaddleTwo,
-        aiLevel: difficultyFactor,
+        difficultyFactor: difficultyFactor,
       });
       return;
     }
@@ -327,3 +327,16 @@ switch (selectedLevel.toUpperCase()) {
   default:
     difficultyFactor = Difficulty.EASY;
 }
+
+export const getAiLevel = (difficultyFactor: Difficulty) => {
+  switch (difficultyFactor) {
+    case Difficulty.EASY:
+      return 1;
+    case Difficulty.MEDIUM:
+      return 3;
+    case Difficulty.HARD:
+      return 5;
+    case Difficulty.ONI:
+      return 10;
+  }
+};
