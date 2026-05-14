@@ -136,6 +136,10 @@ const SinglePlayPage = new Page({
     function animate() {
       if (running) {
         experience.update();
+      } else {
+        // ポーズ中もカメラズームを有効にするため更新し続ける
+        experience.cameraClass.update();
+        experience.renderer.update();
       }
       requestAnimationFrame(animate);
     }

@@ -118,6 +118,7 @@ canvas {
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  pointer-events: none;
 }
 
 .pause-menu {
@@ -131,6 +132,7 @@ canvas {
   text-align: center;
   color: white;
   z-index: 1800;
+  pointer-events: auto;
 }
 
 .pause-menu h1 {

@@ -101,7 +101,6 @@ export default class Experience {
     }
     this.cameraClass.update();
     this.renderer.update();
-    console.log('Experience update running');
   }
 
   public destroy(): void {
