@@ -9,6 +9,7 @@ import { createParticleCustomizationPanel } from './CustomParticle';
 import Experience from './Experience';
 
 let running = true; // ゲームの状態管理
+let animationFrameId: number | null = null;
 
 const updatePageContent = (): void => {
   updateText('title', i18next.t('singlePlay.title'));
@@ -109,8 +110,8 @@ const SinglePlayPage = new Page({
     // ヘッダーと背景を非表示にする
     const header = document.querySelector('.header');
     const background = document.getElementById('background');
-    if (header) header.classList.add('none');
-    if (background) background.classList.add('none');
+    if (header) (header as HTMLElement).style.display = 'none';
+    if (background) (background as HTMLElement).style.display = 'none';
 
     const username = user.username;
     const playerNameDiv = document.getElementById('playerName');
@@ -133,11 +134,21 @@ const SinglePlayPage = new Page({
     });
     document.body.appendChild(particlePanel);
 
+    // 以前のアニメーションループが残っていればキャンセル
+    if (animationFrameId !== null) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    }
+
     function animate() {
       if (running) {
         experience.update();
+      } else {
+        // ポーズ中もカメラズームを有効にするため更新し続ける
+        experience.cameraClass.update();
+        experience.renderer.update();
       }
-      requestAnimationFrame(animate);
+      animationFrameId = requestAnimationFrame(animate);
     }
     animate();
     setupPauseMenu();

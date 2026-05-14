@@ -29,11 +29,17 @@ export class TournamentGameManager extends BaseGameManager {
 
     // セッションIDを送信して初期化を開始
     return new Promise<void>((resolve, reject) => {
+      // 両ハンドラをまとめて解除する共通クリーンアップ
+      const cleanup = () => {
+        this.wsService.removeMessageHandler('game_initialized', initHandler);
+        this.wsService.removeMessageHandler('error', errorHandler);
+      };
+
       // 初期化完了イベントを監視
       const initHandler = (data: { type: string }) => {
         if (data.type === 'game_initialized') {
           logger.info('Game initialization confirmed by server');
-          this.wsService.removeMessageHandler('game_initialized', initHandler);
+          cleanup();
           resolve();
         }
       };
@@ -42,7 +48,7 @@ export class TournamentGameManager extends BaseGameManager {
       const errorHandler = (data: { type: string; message: string }) => {
         if (data.type === 'error') {
           logger.error('Game initialization error:', data.message);
-          this.wsService.removeMessageHandler('error', errorHandler);
+          cleanup();
           reject(new Error(data.message));
         }
       };
@@ -60,8 +66,7 @@ export class TournamentGameManager extends BaseGameManager {
 
       // タイムアウト設定（10秒）
       setTimeout(() => {
-        this.wsService.removeMessageHandler('game_initialized', initHandler);
-        this.wsService.removeMessageHandler('error', errorHandler);
+        cleanup();
         reject(new Error('Game initialization timeout'));
       }, 10000);
     }).catch((error) => {

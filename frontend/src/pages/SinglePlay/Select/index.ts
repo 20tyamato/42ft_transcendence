@@ -7,6 +7,9 @@ import * as THREE from 'three';
 import Background from './Background';
 import Stars from './Stars';
 
+let selectAnimFrameId: number | null = null;
+let selectRenderer: THREE.WebGLRenderer | null = null;
+
 const updatePageContent = () => {
   updateText('title', i18next.t('levelSelection'));
   updateText('.easy-level h1', i18next.t('easyLevel'));
@@ -20,17 +23,30 @@ const SinglePlaySelectPage = new Page({
   name: 'SinglePlay/Select',
   config: { layout: CommonLayout },
   mounted: async ({ pg }): Promise<void> => {
+    // 前回のアニメーションループとレンダラーを破棄
+    if (selectAnimFrameId !== null) {
+      cancelAnimationFrame(selectAnimFrameId);
+      selectAnimFrameId = null;
+    }
+    if (selectRenderer !== null) {
+      selectRenderer.dispose();
+      selectRenderer = null;
+    }
+
     const canvas = document.getElementById('gl') as HTMLCanvasElement;
     const renderer = new THREE.WebGLRenderer({ canvas });
+    selectRenderer = renderer;
     renderer.setSize(window.innerWidth, window.innerHeight);
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
       75,
       window.innerWidth / window.innerHeight,
       0.1,
-      1000
+      5000
     );
-    camera.position.z = 5;
+    // 斜め上から見下ろしてBackgroundメッシュとStarsが見えるよう配置
+    camera.position.set(0, 300, 400);
+    camera.lookAt(0, 0, 0);
     const background = new Background(scene);
     const stars = new Stars(scene);
     const userData = (await fetchCurrentUser().catch((error) => {
@@ -99,7 +115,7 @@ const SinglePlaySelectPage = new Page({
     function animate() {
       background.update();
       stars.update();
-      requestAnimationFrame(animate);
+      selectAnimFrameId = requestAnimationFrame(animate);
       renderer.render(scene, camera);
     }
     animate();

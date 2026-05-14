@@ -20,6 +20,8 @@ export default class LocalGame {
 
   public leftKeyPressed: boolean = false;
   public rightKeyPressed: boolean = false;
+  private boundKeyDown!: (e: KeyboardEvent) => void;
+  private boundKeyUp!: (e: KeyboardEvent) => void;
   private scorePaddleOne: number = 0;
   private scorePaddleTwo: number = 0;
   private ballVelocity: { x: number; z: number } | null = null;
@@ -28,6 +30,10 @@ export default class LocalGame {
   private gameStarted: boolean = false;
 
   constructor(canvas: HTMLCanvasElement) {
+    // SPA再利用時にモジュールレベル変数をリセット
+    running = true;
+    difficultyFactor = getDifficultyFactor();
+
     /* ゲームエンジンのインスタンスを取得 */
     this.experience = Experience.getInstance(canvas);
     this.canvas = canvas;
@@ -253,14 +259,21 @@ export default class LocalGame {
   }
 
   private handleKeyboard() {
-    document.addEventListener('keydown', (e) => {
+    this.boundKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight') this.rightKeyPressed = true;
       if (e.key === 'ArrowLeft') this.leftKeyPressed = true;
-    });
-    document.addEventListener('keyup', (e) => {
+    };
+    this.boundKeyUp = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight') this.rightKeyPressed = false;
       if (e.key === 'ArrowLeft') this.leftKeyPressed = false;
-    });
+    };
+    document.addEventListener('keydown', this.boundKeyDown);
+    document.addEventListener('keyup', this.boundKeyUp);
+  }
+
+  public destroy() {
+    if (this.boundKeyDown) document.removeEventListener('keydown', this.boundKeyDown);
+    if (this.boundKeyUp) document.removeEventListener('keyup', this.boundKeyUp);
   }
   private processPlayerPaddle(deltaTime: number) {
     const paddleSpeed = 1500; // 1秒間に動くピクセル量
@@ -307,26 +320,18 @@ export enum Difficulty {
   ONI = 10,
 }
 
-const selectedLevel = localStorage.getItem('selectedLevel') || 'EASY';
-logger.log(`Selected Level: ${selectedLevel}`);
-
-let difficultyFactor: number;
-switch (selectedLevel.toUpperCase()) {
-  case 'EASY':
-    difficultyFactor = Difficulty.EASY;
-    break;
-  case 'MEDIUM':
-    difficultyFactor = Difficulty.MEDIUM;
-    break;
-  case 'HARD':
-    difficultyFactor = Difficulty.HARD;
-    break;
-  case 'ONI':
-    difficultyFactor = Difficulty.ONI;
-    break;
-  default:
-    difficultyFactor = Difficulty.EASY;
+function getDifficultyFactor(): number {
+  const selectedLevel = localStorage.getItem('selectedLevel') || 'EASY';
+  switch (selectedLevel.toUpperCase()) {
+    case 'EASY': return Difficulty.EASY;
+    case 'MEDIUM': return Difficulty.MEDIUM;
+    case 'HARD': return Difficulty.HARD;
+    case 'ONI': return Difficulty.ONI;
+    default: return Difficulty.EASY;
+  }
 }
+
+let difficultyFactor: number = getDifficultyFactor();
 
 export const getAiLevel = (difficultyFactor: Difficulty) => {
   switch (difficultyFactor) {

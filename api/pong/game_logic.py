@@ -81,6 +81,7 @@ class MultiplayerPongGame(BaseGameLogic):
             player2_name: 0,
         }
         self.score = {player1_name: 0, player2_name: 0}
+        self._scoring_in_progress = False  # 同一フレームの二重得点防止
 
     def update(self, delta_time: float) -> Dict:
         """ゲーム状態の更新処理"""
@@ -194,7 +195,10 @@ class MultiplayerPongGame(BaseGameLogic):
         return is_hit
 
     def _check_scoring(self) -> None:
+        if self._scoring_in_progress:
+            return
         if abs(self.ball.z) > self.FIELD_LENGTH / 2:
+            self._scoring_in_progress = True
             scoring_player = self.player1_name if self.ball.z < 0 else self.player2_name
             self.score[scoring_player] += 1
 
@@ -202,6 +206,7 @@ class MultiplayerPongGame(BaseGameLogic):
                 self.is_active = False
             else:
                 self._reset_ball()
+                self._scoring_in_progress = False
 
     def _reset_ball(self) -> None:
         self.ball = Vector3D(0, 30, 0)
