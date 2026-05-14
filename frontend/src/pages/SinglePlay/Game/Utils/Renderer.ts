@@ -86,7 +86,6 @@ export default class Renderer {
    */
   public dispose(): void {
     this.instance.dispose();
-    // composerやPassの破棄が必要なら追加処理を行う
-    // e.g.) this.composer.dispose()
+    Renderer.instance = null;
   }
 }

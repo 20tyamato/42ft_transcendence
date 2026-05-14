@@ -119,6 +119,8 @@ export default class Experience {
         }
       }
     });
+
+    Experience.instance = null;
   }
   public initializeRenderer(canvas: HTMLCanvasElement): void {
     this.renderer = new Renderer(canvas);
