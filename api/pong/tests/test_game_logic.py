@@ -79,16 +79,17 @@ class TestMultiplayerPongGame(unittest.TestCase):
 
     def test_paddle_collision(self):
         """パドルとの衝突が正しく処理されるかテスト"""
-        # プレイヤー1のパドルの位置とボールの位置を設定
+        # パドルはフィールド端から PADDLE_Z_OFFSET 手前に位置する
+        paddle_z = self.game.FIELD_LENGTH / 2 - self.game.PADDLE_Z_OFFSET  # 1300
+
         self.game.paddles[self.player1] = 0  # パドルを中央に
         self.game.ball.x = 0  # ボールも中央に
-        self.game.ball.z = (
-            self.game.FIELD_LENGTH / 2 - self.game.BALL_RADIUS - 1
-        )  # パドルにほぼ接触する位置
+        # パドル直前にボールを配置
+        self.game.ball.z = paddle_z - self.game.BALL_RADIUS - 1
 
-        # パドルに向かって移動するように速度を設定
-        self.game.ball_velocity.z = self.game.INITIAL_BALL_SPEED  # パドルに向かう速度
-        original_velocity_z = self.game.ball_velocity.z  # 元の速度を保存
+        # パドルに向かって移動するように速度を設定（+z方向）
+        self.game.ball_velocity.z = self.game.INITIAL_BALL_SPEED
+        original_velocity_z = self.game.ball_velocity.z
 
         # 衝突するまでアップデート
         self.game.update(0.1)
@@ -97,6 +98,9 @@ class TestMultiplayerPongGame(unittest.TestCase):
         self.assertNotEqual(
             self.game.ball_velocity.z, original_velocity_z, "ボールの速度が変化すべき"
         )
+        # 衝突後もボールはフィールド端を超えていない（スコアが入っていない）
+        self.assertEqual(self.game.score[self.player1], 0)
+        self.assertEqual(self.game.score[self.player2], 0)
 
     def test_scoring(self):
         """ボールが端を超えるとスコアが加算されるかテスト"""
