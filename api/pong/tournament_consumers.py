@@ -166,12 +166,18 @@ class TournamentGameConsumer(BaseGameConsumer):
 
     async def game_loop(self):
         """トーナメント特有のゲームループ処理"""
+        TARGET_INTERVAL = 0.016  # 約60FPS
+        last_time = time.monotonic()
         try:
             # 親クラスのゲームループ実行
             while True:
+                now = time.monotonic()
+                delta_time = min(now - last_time, TARGET_INTERVAL * 3)
+                last_time = now
+
                 if self.session_id in self.games:
                     game = self.games[self.session_id]
-                    state = game.update(delta_time=0.016)  # 約60FPS
+                    state = game.update(delta_time=delta_time)
 
                     # グループにブロードキャスト
                     await self.channel_layer.group_send(
@@ -187,7 +193,7 @@ class TournamentGameConsumer(BaseGameConsumer):
                         await self.update_tournament_progress()
                         break
 
-                await asyncio.sleep(0.016)
+                await asyncio.sleep(TARGET_INTERVAL)
 
         except asyncio.CancelledError:
             # ループのキャンセル（クリーンアップ）

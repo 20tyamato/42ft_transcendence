@@ -9,6 +9,7 @@ import { createParticleCustomizationPanel } from './CustomParticle';
 import Experience from './Experience';
 
 let running = true; // ゲームの状態管理
+let animationFrameId: number | null = null;
 
 const updatePageContent = (): void => {
   updateText('title', i18next.t('singlePlay.title'));
@@ -133,11 +134,17 @@ const SinglePlayPage = new Page({
     });
     document.body.appendChild(particlePanel);
 
+    // 以前のアニメーションループが残っていればキャンセル
+    if (animationFrameId !== null) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    }
+
     function animate() {
       if (running) {
         experience.update();
       }
-      requestAnimationFrame(animate);
+      animationFrameId = requestAnimationFrame(animate);
     }
     animate();
     setupPauseMenu();

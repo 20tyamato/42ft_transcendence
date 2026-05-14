@@ -3,6 +3,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 import json
 import asyncio
+import time
 from django.utils import timezone
 
 from .models import Game, User
@@ -89,11 +90,18 @@ class BaseGameConsumer(AsyncWebsocketConsumer):
 
     async def game_loop(self):
         """ゲーム状態更新ループの基本実装"""
+        TARGET_INTERVAL = 0.016  # 約60FPS
+        last_time = time.monotonic()
         try:
             while True:
+                now = time.monotonic()
+                # 初回フレームや長い停止でのスパイクを防ぐためキャップ
+                delta_time = min(now - last_time, TARGET_INTERVAL * 3)
+                last_time = now
+
                 if self.session_id in self.games:
                     game = self.games[self.session_id]
-                    state = game.update(delta_time=0.016)  # 約60FPS
+                    state = game.update(delta_time=delta_time)
 
                     # グループにブロードキャスト
                     await self.channel_layer.group_send(
@@ -105,7 +113,7 @@ class BaseGameConsumer(AsyncWebsocketConsumer):
                         # 終了処理はサブクラスで拡張
                         break
 
-                await asyncio.sleep(0.016)
+                await asyncio.sleep(TARGET_INTERVAL)
 
         except asyncio.CancelledError:
             # ループのキャンセル（クリーンアップ）

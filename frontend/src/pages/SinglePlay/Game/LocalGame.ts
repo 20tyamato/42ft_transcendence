@@ -28,6 +28,10 @@ export default class LocalGame {
   private gameStarted: boolean = false;
 
   constructor(canvas: HTMLCanvasElement) {
+    // SPA再利用時にモジュールレベル変数をリセット
+    running = true;
+    difficultyFactor = getDifficultyFactor();
+
     /* ゲームエンジンのインスタンスを取得 */
     this.experience = Experience.getInstance(canvas);
     this.canvas = canvas;
@@ -307,26 +311,18 @@ export enum Difficulty {
   ONI = 10,
 }
 
-const selectedLevel = localStorage.getItem('selectedLevel') || 'EASY';
-logger.log(`Selected Level: ${selectedLevel}`);
-
-let difficultyFactor: number;
-switch (selectedLevel.toUpperCase()) {
-  case 'EASY':
-    difficultyFactor = Difficulty.EASY;
-    break;
-  case 'MEDIUM':
-    difficultyFactor = Difficulty.MEDIUM;
-    break;
-  case 'HARD':
-    difficultyFactor = Difficulty.HARD;
-    break;
-  case 'ONI':
-    difficultyFactor = Difficulty.ONI;
-    break;
-  default:
-    difficultyFactor = Difficulty.EASY;
+function getDifficultyFactor(): number {
+  const selectedLevel = localStorage.getItem('selectedLevel') || 'EASY';
+  switch (selectedLevel.toUpperCase()) {
+    case 'EASY': return Difficulty.EASY;
+    case 'MEDIUM': return Difficulty.MEDIUM;
+    case 'HARD': return Difficulty.HARD;
+    case 'ONI': return Difficulty.ONI;
+    default: return Difficulty.EASY;
+  }
 }
+
+let difficultyFactor: number = getDifficultyFactor();
 
 export const getAiLevel = (difficultyFactor: Difficulty) => {
   switch (difficultyFactor) {
