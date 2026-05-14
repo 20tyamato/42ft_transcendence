@@ -52,11 +52,27 @@ elk-reload:
 # Utilities
 # ------------------------------
 
-# SSL certificate generation
+# SSL certificate generation — skip if cert already exists
 ssl-certs:
-	@echo "Generating SSL certificates..."
+	@if [ -f certs/server.crt ]; then \
+		echo "SSL certificate already exists. Skipping generation."; \
+		echo "Run 'make ssl-renew' to force regeneration."; \
+	else \
+		echo "Generating SSL certificates..."; \
+		chmod +x scripts/generate_certs.sh; \
+		./scripts/generate_certs.sh; \
+	fi
+
+# Force-regenerate SSL certificate (run after this: trust the new cert in macOS Keychain)
+ssl-renew:
+	@echo "Force-regenerating SSL certificates..."
+	@rm -f certs/server.crt certs/server.key certs/server.csr
 	@chmod +x scripts/generate_certs.sh
 	@./scripts/generate_certs.sh
+	@echo ""
+	@echo "IMPORTANT: Trust the new certificate in macOS Keychain:"
+	@echo "  sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain certs/server.crt"
+	@echo "Then restart Chrome completely (Cmd+Q and reopen)."
 
 ssl-check:
 	@echo "Checking SSL certificate..."
@@ -156,4 +172,4 @@ help:
 	@echo " make ruff"
 	@echo " make test"
 
-.PHONY: all up down re clean test makemigrations migrate ruff super_ruff lint api_in front_in db_in api_logs front_logs db_logs help submit ssl-certs ssl-check
+.PHONY: all up down re clean test makemigrations migrate ruff super_ruff lint api_in front_in db_in api_logs front_logs db_logs help submit ssl-certs ssl-check ssl-renew
