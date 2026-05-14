@@ -11,16 +11,19 @@ from .models import Game, User
 
 
 class MatchmakingConsumer(AsyncWebsocketConsumer):
-    waiting_players = []  # クラス変数として待機プレイヤーを管理
+    waiting_players: list = []
+    _lock = asyncio.Lock()
 
     async def connect(self):
+        self.username = ""
         await self.accept()
         print("Client connected to matchmaking")
 
     async def disconnect(self, close_code):
-        if self in self.waiting_players:
-            self.waiting_players.remove(self)
-        print("Client disconnected from matchmaking")
+        async with self._lock:
+            if self in self.waiting_players:
+                self.waiting_players.remove(self)
+        print(f"Client {self.username} disconnected from matchmaking")
 
     async def receive(self, text_data):
         try:
@@ -28,8 +31,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             print(f"Received message: {data}")
 
             if data.get("type") == "join_matchmaking":
-                # ユーザー名を取得
-                self.username = data.get("username")
+                self.username = data.get("username", "")
                 await self.join_matchmaking()
 
         except json.JSONDecodeError:
@@ -38,28 +40,51 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
 
     async def join_matchmaking(self):
         print(f"Player {self.username} joining matchmaking")
-        print(f"Current waiting players: {len(self.waiting_players)}")
 
-        self.waiting_players.append(self)
-        await self.send(
-            json.dumps({"type": "waiting", "message": "Waiting for opponent..."})
-        )
+        async with self._lock:
+            # 同一ユーザーの重複エントリを防ぐ
+            if any(p.username == self.username for p in self.waiting_players):
+                return
 
-        print(f"After joining: {len(self.waiting_players)} players waiting")
-        if len(self.waiting_players) >= 2:
-            player1 = self.waiting_players.pop(0)
-            player2 = self.waiting_players.pop(0)
+            self.waiting_players.append(self)
+            print(f"After joining: {len(self.waiting_players)} players waiting")
 
-            match_data = {
-                "type": "match_found",
-                "session_id": f"game_{player1.username}_{player2.username}_{int(time.time())}",
-                "player1": player1.username,
-                "player2": player2.username,
-            }
+            if len(self.waiting_players) >= 2:
+                player1 = self.waiting_players.pop(0)
+                player2 = self.waiting_players.pop(0)
+            else:
+                player1 = None
+                player2 = None
 
-            print(f"Match found! Creating game session: {match_data}")
+        # ロック外でネットワーク送信
+        if player1 is None:
+            await self.send(
+                json.dumps({"type": "waiting", "message": "Waiting for opponent..."})
+            )
+            return
+
+        match_data = {
+            "type": "match_found",
+            "session_id": f"game_{player1.username}_{player2.username}_{int(time.time())}",
+            "player1": player1.username,
+            "player2": player2.username,
+        }
+        print(f"Match found! Creating game session: {match_data}")
+
+        try:
             await player1.send(json.dumps(match_data))
+        except Exception:
+            # player1が切断済みの場合、player2を待機列に戻す
+            async with self._lock:
+                self.waiting_players.insert(0, player2)
+            return
+
+        try:
             await player2.send(json.dumps(match_data))
+        except Exception:
+            # player2が切断済みの場合、player1を待機列に戻す
+            async with self._lock:
+                self.waiting_players.insert(0, player1)
 
 
 class GameConsumer(BaseGameConsumer):

@@ -121,14 +121,13 @@ export class TournamentGameManager extends BaseGameManager {
   protected onConnectionError(): void {
     logger.error('Tournament connection error occurred');
 
-    // セッションIDから対戦相手の情報を抽出
     const sessionInfo = this.parseSessionId();
     const opponent =
       sessionInfo.player1 === this.config.username ? sessionInfo.player2 : sessionInfo.player1;
 
     const finalScore = {
-      player1: 0, // 自分が切断した場合は敗北
-      player2: 15, // 相手が勝利
+      player1: 0,
+      player2: 15,
       opponent: opponent,
       disconnected: true,
       disconnectedPlayer: this.config.username,
@@ -139,8 +138,27 @@ export class TournamentGameManager extends BaseGameManager {
     localStorage.setItem('finalScore', JSON.stringify(finalScore));
     localStorage.setItem('gameMode', 'tournament');
 
-    // 結果画面に遷移
-    window.location.href = '/result';
+    this.showConnectionErrorOverlay('Connection lost. Returning to tournament in 5 seconds...');
+    setTimeout(() => {
+      window.location.href = '/tournament';
+    }, 5000);
+  }
+
+  private showConnectionErrorOverlay(message: string): void {
+    const overlay = document.getElementById('connection-error-overlay');
+    const msgEl = document.getElementById('connection-error-message');
+    const exitBtn = document.getElementById('connection-error-exit-btn');
+
+    if (!overlay) return;
+
+    if (msgEl) msgEl.textContent = message;
+    overlay.classList.remove('hidden');
+
+    if (exitBtn) {
+      exitBtn.addEventListener('click', () => {
+        window.location.href = '/tournament';
+      });
+    }
   }
 
   protected onError(message: string): void {

@@ -77,16 +77,21 @@ const handleSocketMessage = (
   }
 };
 
+const MAX_RETRY_COUNT = 3;
+
 /**
  * WebSocket接続の初期化
  */
-const initWebSocket = (statusElement: HTMLElement | null, user: ICurrentUser): WebSocket => {
+const initWebSocket = (
+  statusElement: HTMLElement | null,
+  user: ICurrentUser,
+  retryCount = 0
+): WebSocket => {
   logger.log('Initializing WebSocket...');
   const socket = new WebSocket(`${WS_URL}/wss/matchmaking/`);
 
   socket.onopen = () => {
     logger.log('WebSocket connection established');
-    // マッチメイキング参加メッセージの送信
     socket.send(
       JSON.stringify({
         type: 'join_matchmaking',
@@ -104,10 +109,22 @@ const initWebSocket = (statusElement: HTMLElement | null, user: ICurrentUser): W
 
   socket.onclose = () => {
     logger.log('WebSocket connection closed');
-    if (statusElement) statusElement.textContent = 'Connection lost. Reconnecting...';
-    // 5秒後に再接続を試行
+    if (retryCount >= MAX_RETRY_COUNT) {
+      logger.error('Max retry count reached. Giving up.');
+      if (statusElement) {
+        statusElement.textContent = 'Failed to connect after multiple attempts.';
+        statusElement.style.color = '#e94560';
+      }
+      // 3秒後にマルチプレイトップに戻す
+      setTimeout(() => {
+        window.location.href = '/multiplay';
+      }, 3000);
+      return;
+    }
+    if (statusElement)
+      statusElement.textContent = `Connection lost. Reconnecting... (${retryCount + 1}/${MAX_RETRY_COUNT})`;
     setTimeout(() => {
-      initWebSocket(statusElement, user);
+      initWebSocket(statusElement, user, retryCount + 1);
     }, 5000);
   };
 

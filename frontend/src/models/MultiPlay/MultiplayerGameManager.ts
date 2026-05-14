@@ -69,8 +69,8 @@ export class MultiplayerGameManager extends BaseGameManager {
     const opponent = this.config.username === player1Name ? player2Name : player1Name;
 
     const finalScore = {
-      player1: 0, // 自分が切断した場合は敗北
-      player2: 15, // 相手が勝利
+      player1: 0,
+      player2: 15,
       opponent: opponent,
       disconnected: true,
       disconnectedPlayer: this.config.username,
@@ -79,8 +79,27 @@ export class MultiplayerGameManager extends BaseGameManager {
     localStorage.setItem('finalScore', JSON.stringify(finalScore));
     localStorage.setItem('gameMode', 'multiplayer');
 
-    // 結果画面に遷移
-    window.location.href = '/result';
+    this.showConnectionErrorOverlay('Connection lost. Returning to menu in 5 seconds...');
+    setTimeout(() => {
+      window.location.href = '/multiplay';
+    }, 5000);
+  }
+
+  private showConnectionErrorOverlay(message: string): void {
+    const overlay = document.getElementById('connection-error-overlay');
+    const msgEl = document.getElementById('connection-error-message');
+    const exitBtn = document.getElementById('connection-error-exit-btn');
+
+    if (!overlay) return;
+
+    if (msgEl) msgEl.textContent = message;
+    overlay.classList.remove('hidden');
+
+    if (exitBtn) {
+      exitBtn.addEventListener('click', () => {
+        window.location.href = '/multiplay';
+      });
+    }
   }
 
   protected onError(message: string): void {

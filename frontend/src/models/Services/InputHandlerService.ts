@@ -4,6 +4,8 @@ import { IMoveConfig } from '../Game/type';
 
 export type MoveCallback = (newPosition: number) => void;
 
+const INPUT_THROTTLE_MS = 50; // 最大20msg/秒
+
 export class InputHandlerService {
   private keyState: Record<string, boolean> = {
     ArrowLeft: false,
@@ -11,6 +13,7 @@ export class InputHandlerService {
   };
   private moveCallback: MoveCallback | null = null;
   private config: IMoveConfig;
+  private lastSendTime: number = 0;
 
   constructor(config: IMoveConfig) {
     this.config = config;
@@ -50,6 +53,10 @@ export class InputHandlerService {
 
   private sendMovement(): void {
     if (!this.moveCallback) return;
+
+    const now = performance.now();
+    if (now - this.lastSendTime < INPUT_THROTTLE_MS) return;
+    this.lastSendTime = now;
 
     let movement = 0;
     if (this.keyState.ArrowLeft) movement -= this.config.moveAmount;
