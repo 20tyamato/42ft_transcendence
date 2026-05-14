@@ -20,6 +20,8 @@ export default class LocalGame {
 
   public leftKeyPressed: boolean = false;
   public rightKeyPressed: boolean = false;
+  private boundKeyDown!: (e: KeyboardEvent) => void;
+  private boundKeyUp!: (e: KeyboardEvent) => void;
   private scorePaddleOne: number = 0;
   private scorePaddleTwo: number = 0;
   private ballVelocity: { x: number; z: number } | null = null;
@@ -257,14 +259,21 @@ export default class LocalGame {
   }
 
   private handleKeyboard() {
-    document.addEventListener('keydown', (e) => {
+    this.boundKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight') this.rightKeyPressed = true;
       if (e.key === 'ArrowLeft') this.leftKeyPressed = true;
-    });
-    document.addEventListener('keyup', (e) => {
+    };
+    this.boundKeyUp = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight') this.rightKeyPressed = false;
       if (e.key === 'ArrowLeft') this.leftKeyPressed = false;
-    });
+    };
+    document.addEventListener('keydown', this.boundKeyDown);
+    document.addEventListener('keyup', this.boundKeyUp);
+  }
+
+  public destroy() {
+    if (this.boundKeyDown) document.removeEventListener('keydown', this.boundKeyDown);
+    if (this.boundKeyUp) document.removeEventListener('keyup', this.boundKeyUp);
   }
   private processPlayerPaddle(deltaTime: number) {
     const paddleSpeed = 1500; // 1秒間に動くピクセル量

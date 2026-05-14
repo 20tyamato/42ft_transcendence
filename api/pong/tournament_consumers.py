@@ -87,10 +87,18 @@ class TournamentGameConsumer(BaseGameConsumer):
         """ゲームの初期化処理"""
         print(f"Initializing tournament game with session ID: {self.session_id}")
 
-        # セッションIDからプレイヤー名を抽出
-        parts = self.session_id.split("_")
-        player1_name = parts[3]
-        player2_name = parts[4]
+        # プレイヤー名を取得（アンダースコア含むユーザー名でのsplit誤判定を回避）
+        player_pair = TournamentMatchmakingConsumer.session_players.pop(self.session_id, None)
+        if player_pair:
+            player1_name, player2_name = player_pair
+        else:
+            # フォールバック: DBから取得を試みる
+            player1_name, player2_name = await self._get_player_names_from_db()
+            if not player1_name:
+                # 最終手段: セッションIDから解析（アンダースコアユーザー名では不正確）
+                parts = self.session_id.split("_")
+                player1_name = parts[3] if len(parts) > 3 else ""
+                player2_name = parts[4] if len(parts) > 4 else ""
 
         # ゲームインスタンスの作成
         if self.session_id not in self.games:
@@ -116,6 +124,18 @@ class TournamentGameConsumer(BaseGameConsumer):
         )
 
     @database_sync_to_async
+    def _get_player_names_from_db(self):
+        """DBからプレイヤー名を取得（決勝戦など事前作成済みゲーム用）"""
+        try:
+            game = Game.objects.get(session_id=self.session_id)
+            return game.player1.username, game.player2.username
+        except Game.DoesNotExist:
+            return "", ""
+        except Exception as e:
+            print(f"Error fetching player names from DB: {e}")
+            return "", ""
+
+    @database_sync_to_async
     def get_or_fetch_session_id(self):
         """セッションIDの取得またはセッション情報から生成"""
         try:
@@ -139,19 +159,20 @@ class TournamentGameConsumer(BaseGameConsumer):
     async def disconnect(self, close_code):
         """トーナメント特有の切断処理"""
         # ゲームが存在する場合、切断処理を実行
-        if self.session_id in self.games:
+        if self.session_id and self.session_id in self.games:
             game = self.games[self.session_id]
             game.handle_disconnection(self.username)
 
-            # 残ったプレイヤーに切断を通知
-            await self.channel_layer.group_send(
-                self.game_group_name,
-                {
-                    "type": "player_disconnected",
-                    "disconnected_player": self.username,
-                    "state": game.get_state(),
-                },
-            )
+            # 残ったプレイヤーに切断を通知（game_group_nameがNoneの場合はスキップ）
+            if self.game_group_name:
+                await self.channel_layer.group_send(
+                    self.game_group_name,
+                    {
+                        "type": "player_disconnected",
+                        "disconnected_player": self.username,
+                        "state": game.get_state(),
+                    },
+                )
 
             # ゲーム状態を保存
             await self.save_game_state(game)
@@ -159,8 +180,8 @@ class TournamentGameConsumer(BaseGameConsumer):
             # トーナメント進行状況を更新
             await self.update_tournament_progress(is_disconnection=True)
 
-            # ゲームインスタンスを削除
-            del self.games[self.session_id]
+            # ゲームインスタンスを削除（game_loopが先に削除した場合はスキップ）
+            self.games.pop(self.session_id, None)
 
         await super().disconnect(close_code)
 
@@ -201,9 +222,8 @@ class TournamentGameConsumer(BaseGameConsumer):
         except Exception as e:
             print(f"Error in tournament game loop: {e}")
 
-        # ゲーム終了後のクリーンアップ
-        if self.session_id in self.games:
-            del self.games[self.session_id]
+        # ゲーム終了後のクリーンアップ（disconnect側と競合する場合あり）
+        if self.games.pop(self.session_id, None) is not None:
             print(f"Game instance removed for session {self.session_id}")
 
     @database_sync_to_async
@@ -315,6 +335,12 @@ class TournamentGameConsumer(BaseGameConsumer):
             timestamp = int(timezone.now().timestamp())
             final_session_id = f"tournament_{tournament.id}_final_{finalists[0].user.username}_{finalists[1].user.username}_{timestamp}"
 
+            # プレイヤー名をsession_idとは別に保存
+            TournamentMatchmakingConsumer.session_players[final_session_id] = (
+                finalists[0].user.username,
+                finalists[1].user.username,
+            )
+
             # 決勝戦を作成
             Game.objects.create(
                 session_id=final_session_id,
@@ -364,6 +390,9 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
 
     # 現在アクティブなトーナメントのID（WAITING_PLAYERS状態のもの）
     active_tournament_id = None
+    # session_id -> (player1_username, player2_username)
+    # アンダースコアを含むユーザー名での分割エラーを回避するために使用
+    session_players: dict = {}
 
     async def connect(self):
         """WebSocket接続時の処理"""
@@ -677,6 +706,16 @@ class TournamentMatchmakingConsumer(AsyncWebsocketConsumer):
 
         # 準決勝2のセッションID
         semi2_id = f"tournament_{tournament_id}_semi2_{semifinal2_players[0]['username']}_{semifinal2_players[1]['username']}_{timestamp}"
+
+        # プレイヤー名をsession_idとは別に保存（アンダースコア含む名前でのsplit誤判定回避）
+        TournamentMatchmakingConsumer.session_players[semi1_id] = (
+            semifinal1_players[0]["username"],
+            semifinal1_players[1]["username"],
+        )
+        TournamentMatchmakingConsumer.session_players[semi2_id] = (
+            semifinal2_players[0]["username"],
+            semifinal2_players[1]["username"],
+        )
 
         return {
             "semi1": {"players": semifinal1_players, "session_id": semi1_id},

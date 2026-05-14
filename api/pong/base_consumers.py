@@ -43,8 +43,9 @@ class BaseGameConsumer(AsyncWebsocketConsumer):
 
         print(f"Player {self.username} disconnected from game {self.session_id}")
 
-        # グループからの離脱
-        await self.channel_layer.group_discard(self.game_group_name, self.channel_name)
+        # グループからの離脱（session_init前に切断した場合はgame_group_nameがNoneの場合あり）
+        if self.game_group_name:
+            await self.channel_layer.group_discard(self.game_group_name, self.channel_name)
 
     async def receive(self, text_data):
         """基本メッセージ受信処理"""
@@ -148,8 +149,11 @@ class BaseGameConsumer(AsyncWebsocketConsumer):
 
             # Also update player2's level if it's not an AI opponent
             if game.player2_name and not hasattr(game, "ai_level"):
-                player2 = User.objects.get(username=game.player2_name)
-                player2.update_level()
+                try:
+                    player2 = User.objects.get(username=game.player2_name)
+                    player2.update_level()
+                except User.DoesNotExist:
+                    pass
 
         except Game.DoesNotExist:
             print(f"Game with id {game.db_game_id} not found")

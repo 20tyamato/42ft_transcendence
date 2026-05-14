@@ -107,6 +107,7 @@ export default class Experience {
   public destroy(): void {
     this.sizes.off('resize');
     this.time.off('tick');
+    this.localGame.destroy();
 
     this.scene.traverse((child: THREE.Object3D) => {
       if (child instanceof THREE.Mesh) {
