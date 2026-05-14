@@ -110,8 +110,8 @@ const SinglePlayPage = new Page({
     // ヘッダーと背景を非表示にする
     const header = document.querySelector('.header');
     const background = document.getElementById('background');
-    if (header) header.classList.add('none');
-    if (background) background.classList.add('none');
+    if (header) (header as HTMLElement).style.display = 'none';
+    if (background) (background as HTMLElement).style.display = 'none';
 
     const username = user.username;
     const playerNameDiv = document.getElementById('playerName');
@@ -143,6 +143,10 @@ const SinglePlayPage = new Page({
     function animate() {
       if (running) {
         experience.update();
+      } else {
+        // ポーズ中もカメラズームを有効にするため更新し続ける
+        experience.cameraClass.update();
+        experience.renderer.update();
       }
       animationFrameId = requestAnimationFrame(animate);
     }

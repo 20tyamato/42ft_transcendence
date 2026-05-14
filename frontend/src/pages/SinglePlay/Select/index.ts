@@ -28,9 +28,11 @@ const SinglePlaySelectPage = new Page({
       75,
       window.innerWidth / window.innerHeight,
       0.1,
-      1000
+      5000
     );
-    camera.position.z = 5;
+    // 斜め上から見下ろしてBackgroundメッシュとStarsが見えるよう配置
+    camera.position.set(0, 300, 400);
+    camera.lookAt(0, 0, 0);
     const background = new Background(scene);
     const stars = new Stars(scene);
     const userData = (await fetchCurrentUser().catch((error) => {
