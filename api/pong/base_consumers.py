@@ -43,8 +43,9 @@ class BaseGameConsumer(AsyncWebsocketConsumer):
 
         print(f"Player {self.username} disconnected from game {self.session_id}")
 
-        # グループからの離脱
-        await self.channel_layer.group_discard(self.game_group_name, self.channel_name)
+        # グループからの離脱（session_init前に切断した場合はgame_group_nameがNoneの場合あり）
+        if self.game_group_name:
+            await self.channel_layer.group_discard(self.game_group_name, self.channel_name)
 
     async def receive(self, text_data):
         """基本メッセージ受信処理"""
@@ -90,13 +91,13 @@ class BaseGameConsumer(AsyncWebsocketConsumer):
 
     async def game_loop(self):
         """ゲーム状態更新ループの基本実装"""
-        TARGET_FPS = 60
-        TARGET_INTERVAL = 1.0 / TARGET_FPS
+        TARGET_INTERVAL = 0.016  # 約60FPS
         last_time = time.monotonic()
         try:
             while True:
                 now = time.monotonic()
-                delta_time = now - last_time
+                # 初回フレームや長い停止でのスパイクを防ぐためキャップ
+                delta_time = min(now - last_time, TARGET_INTERVAL * 3)
                 last_time = now
 
                 if self.session_id in self.games:
@@ -113,9 +114,7 @@ class BaseGameConsumer(AsyncWebsocketConsumer):
                         # 終了処理はサブクラスで拡張
                         break
 
-                elapsed = time.monotonic() - now
-                sleep_time = max(0, TARGET_INTERVAL - elapsed)
-                await asyncio.sleep(sleep_time)
+                await asyncio.sleep(TARGET_INTERVAL)
 
         except asyncio.CancelledError:
             # ループのキャンセル（クリーンアップ）
@@ -150,8 +149,11 @@ class BaseGameConsumer(AsyncWebsocketConsumer):
 
             # Also update player2's level if it's not an AI opponent
             if game.player2_name and not hasattr(game, "ai_level"):
-                player2 = User.objects.get(username=game.player2_name)
-                player2.update_level()
+                try:
+                    player2 = User.objects.get(username=game.player2_name)
+                    player2.update_level()
+                except User.DoesNotExist:
+                    pass
 
         except Game.DoesNotExist:
             print(f"Game with id {game.db_game_id} not found")

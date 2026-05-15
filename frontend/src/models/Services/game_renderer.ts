@@ -8,21 +8,21 @@ export class GameRenderer {
   private readonly FIELD_THICKNESS = 10;
   private readonly FIELD_COLOR = 0x001a33;
 
-  private readonly WALL_THICKNESS = 10;
-  private readonly WALL_Y_OFFSET = 5;
+  private readonly WALL_HEIGHT = 40;
+  private readonly WALL_THICKNESS = 20;
   private readonly WALL_COLOR = 0x00aaff;
 
   private readonly PADDLE_WIDTH = 200;
   private readonly PADDLE_HEIGHT = 30;
   private readonly PADDLE_DEPTH = 20;
-  private readonly PADDLE_COLOR = 0x00ffcc;
-  private readonly PLAYER_OFFSET = 100;
+  private readonly PADDLE_COLOR = 0x00d4ff;
+  private readonly PLAYER_OFFSET = 200;
 
   private readonly BALL_RADIUS = 30;
   private readonly BALL_SEGMENTS_WIDTH = 32;
   private readonly BALL_SEGMENTS_HEIGHT = 32;
   private readonly BALL_COLOR = 0xffffff;
-  private readonly BALL_OPACITY = 0.8;
+  private readonly BALL_OPACITY = 0.9;
   private readonly BALL_SPEED_MULTIPLIER = 1000.0;
   private readonly BALL_LAUNCH_DISTANCE = 500;
 
@@ -37,11 +37,9 @@ export class GameRenderer {
   private readonly CAMERA_DISTANCE_OFFSET = 1000;
 
   // ライティング関連定数
-  private readonly AMBIENT_LIGHT_COLOR = 0x002244;
-  private readonly AMBIENT_LIGHT_INTENSITY = 3;
-  private readonly POINT_LIGHT_COLOR = 0x00ffcc;
-  private readonly POINT_LIGHT_INTENSITY = 2;
-  private readonly POINT_LIGHT_HEIGHT = 500;
+  private readonly AMBIENT_LIGHT_INTENSITY = 1.5;
+  private readonly POINT_LIGHT_INTENSITY = 2.0;
+  private readonly POINT_LIGHT_HEIGHT = 600;
 
   // Three.js関連
   private scene: THREE.Scene;
@@ -55,6 +53,10 @@ export class GameRenderer {
   private lastRenderTime: number = 0;
   private targetBallPosition: THREE.Vector3 = new THREE.Vector3();
 
+  // removeEventListener で正しく解除するためにバインド済みハンドラを保持
+  private boundOnWindowResize: () => void;
+  private boundOnKeyDown: (event: KeyboardEvent) => void;
+
   constructor(container: HTMLElement, isPlayer1: boolean) {
     this.isPlayer1 = isPlayer1;
     this.paddles = new Map();
@@ -67,6 +69,9 @@ export class GameRenderer {
     );
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
     this.ball = new THREE.Mesh();
+
+    this.boundOnWindowResize = this.onWindowResize.bind(this);
+    this.boundOnKeyDown = this.onKeyDown.bind(this);
 
     this.initializeRenderer();
     this.initializeScene(container);
@@ -82,9 +87,6 @@ export class GameRenderer {
   // レンダラーの初期化
   private initializeRenderer() {
     this.renderer.setPixelRatio(window.devicePixelRatio);
-    this.scene.background = new THREE.Color(0x000d1a);
-    // 軽いフォグで奥行き感を演出
-    this.scene.fog = new THREE.Fog(0x000d1a, 3000, 8000);
   }
 
   // シーンとオブジェクトの初期化
@@ -94,7 +96,11 @@ export class GameRenderer {
     this.renderer.setSize(width, height);
     container.appendChild(this.renderer.domElement);
 
-    // フィールドの作成（発光マテリアル）
+    // 背景色・フォグ
+    this.scene.background = new THREE.Color(0x000d1a);
+    this.scene.fog = new THREE.Fog(0x000d1a, 3000, 8000);
+
+    // フィールドの作成
     const fieldGeometry = new THREE.BoxGeometry(
       this.FIELD_WIDTH,
       this.FIELD_THICKNESS,
@@ -108,51 +114,39 @@ export class GameRenderer {
     const field = new THREE.Mesh(fieldGeometry, fieldMaterial);
     this.scene.add(field);
 
-    // サイドウォール（長辺）
+    // 左右の側壁
     const sideWallGeometry = new THREE.BoxGeometry(
       this.WALL_THICKNESS,
-      40,
+      this.WALL_HEIGHT,
       this.FIELD_LENGTH
     );
-    const wallMaterial = new THREE.MeshStandardMaterial({
+    const sideWallMaterial = new THREE.MeshStandardMaterial({
       color: this.WALL_COLOR,
-      emissive: this.WALL_COLOR,
-      emissiveIntensity: 0.4,
+      emissive: new THREE.Color(this.WALL_COLOR),
+      emissiveIntensity: 0.3,
+      roughness: 0.4,
+      metalness: 0.6,
     });
-    const wallLeft = new THREE.Mesh(sideWallGeometry, wallMaterial);
-    wallLeft.position.set(-this.FIELD_WIDTH / 2, 20, 0);
-    const wallRight = new THREE.Mesh(sideWallGeometry, wallMaterial);
-    wallRight.position.set(this.FIELD_WIDTH / 2, 20, 0);
-    this.scene.add(wallLeft);
-    this.scene.add(wallRight);
+    const leftWall = new THREE.Mesh(sideWallGeometry, sideWallMaterial);
+    leftWall.position.set(-this.FIELD_WIDTH / 2 - this.WALL_THICKNESS / 2, this.WALL_HEIGHT / 2, 0);
+    this.scene.add(leftWall);
 
-    // エンドウォール（短辺）
-    const endWallGeometry = new THREE.BoxGeometry(
-      this.FIELD_WIDTH,
-      this.FIELD_THICKNESS,
-      this.WALL_THICKNESS
-    );
-    const wall1 = new THREE.Mesh(endWallGeometry, wallMaterial);
-    wall1.position.set(0, this.WALL_Y_OFFSET, this.FIELD_LENGTH / 2);
-    const wall2 = new THREE.Mesh(endWallGeometry, wallMaterial);
-    wall2.position.set(0, this.WALL_Y_OFFSET, -this.FIELD_LENGTH / 2);
-    this.scene.add(wall1);
-    this.scene.add(wall2);
+    const rightWall = new THREE.Mesh(sideWallGeometry, sideWallMaterial);
+    rightWall.position.set(this.FIELD_WIDTH / 2 + this.WALL_THICKNESS / 2, this.WALL_HEIGHT / 2, 0);
+    this.scene.add(rightWall);
 
     // センターライン
-    const lineGeometry = new THREE.BoxGeometry(this.FIELD_WIDTH, 2, 4);
-    const lineMaterial = new THREE.MeshStandardMaterial({
-      color: 0xffffff,
-      emissive: 0xffffff,
-      emissiveIntensity: 0.3,
-      transparent: true,
-      opacity: 0.4,
+    const centerLineGeometry = new THREE.BoxGeometry(this.FIELD_WIDTH, 2, 4);
+    const centerLineMaterial = new THREE.MeshStandardMaterial({
+      color: 0x004466,
+      emissive: new THREE.Color(0x004466),
+      emissiveIntensity: 0.5,
     });
-    const centerLine = new THREE.Mesh(lineGeometry, lineMaterial);
-    centerLine.position.set(0, 2, 0);
+    const centerLine = new THREE.Mesh(centerLineGeometry, centerLineMaterial);
+    centerLine.position.set(0, 1, 0);
     this.scene.add(centerLine);
 
-    // ボールの作成（グロー効果）
+    // ボールの作成
     const ballGeometry = new THREE.SphereGeometry(
       this.BALL_RADIUS,
       this.BALL_SEGMENTS_WIDTH,
@@ -160,9 +154,10 @@ export class GameRenderer {
     );
     const ballMaterial = new THREE.MeshStandardMaterial({
       color: this.BALL_COLOR,
-      emissive: 0x00ffcc,
-      emissiveIntensity: 0.6,
-      wireframe: false,
+      emissive: new THREE.Color(0xffffff),
+      emissiveIntensity: 0.5,
+      roughness: 0.1,
+      metalness: 0.8,
       transparent: true,
       opacity: this.BALL_OPACITY,
     });
@@ -191,25 +186,22 @@ export class GameRenderer {
 
   // ライティングの初期化
   private initializeLighting() {
-    const ambientLight = new THREE.AmbientLight(
-      this.AMBIENT_LIGHT_COLOR,
-      this.AMBIENT_LIGHT_INTENSITY
-    );
+    const ambientLight = new THREE.AmbientLight(0xffffff, this.AMBIENT_LIGHT_INTENSITY);
     this.scene.add(ambientLight);
 
-    // メインポイントライト（中央上方）
-    const pointLight = new THREE.PointLight(this.POINT_LIGHT_COLOR, this.POINT_LIGHT_INTENSITY, 4000);
+    const pointLight = new THREE.PointLight(0xffffff, this.POINT_LIGHT_INTENSITY);
     pointLight.position.set(0, this.POINT_LIGHT_HEIGHT, 0);
     this.scene.add(pointLight);
 
-    // フィールド両端のアクセントライト
-    const accentLight1 = new THREE.PointLight(0x0055ff, 1.0, 2500);
-    accentLight1.position.set(0, 200, this.FIELD_LENGTH / 2);
-    this.scene.add(accentLight1);
+    // プレイヤー1側（青系アクセントライト）
+    const player1Light = new THREE.PointLight(0x0044ff, 1.5, 2000);
+    player1Light.position.set(0, 200, this.FIELD_LENGTH / 2);
+    this.scene.add(player1Light);
 
-    const accentLight2 = new THREE.PointLight(0xff5500, 1.0, 2500);
-    accentLight2.position.set(0, 200, -this.FIELD_LENGTH / 2);
-    this.scene.add(accentLight2);
+    // プレイヤー2側（オレンジ系アクセントライト）
+    const player2Light = new THREE.PointLight(0xff6600, 1.5, 2000);
+    player2Light.position.set(0, 200, -this.FIELD_LENGTH / 2);
+    this.scene.add(player2Light);
   }
 
   // ゲーム状態の初期化
@@ -236,8 +228,8 @@ export class GameRenderer {
 
   // イベントリスナーの設定
   private initializeEventListeners() {
-    window.addEventListener('resize', this.onWindowResize.bind(this));
-    window.addEventListener('keydown', this.onKeyDown.bind(this));
+    window.addEventListener('resize', this.boundOnWindowResize);
+    window.addEventListener('keydown', this.boundOnKeyDown);
   }
 
   // プレイヤーのパドル作成または更新
@@ -249,17 +241,15 @@ export class GameRenderer {
         this.PADDLE_HEIGHT,
         this.PADDLE_DEPTH
       );
-      // プレイヤー1とプレイヤー2で色を変える
-      const isOwnPaddle = this.isPlayer1
-        ? z > 0
-        : z < 0;
-      const paddleColor = isOwnPaddle ? 0x00ffcc : 0xff6600;
+      const isOwnPaddle =
+        (this.isPlayer1 && z > 0) || (!this.isPlayer1 && z < 0);
+      const paddleColor = isOwnPaddle ? 0x00d4ff : 0xff6600;
       const paddleMaterial = new THREE.MeshStandardMaterial({
         color: paddleColor,
-        emissive: paddleColor,
-        emissiveIntensity: 0.3,
-        roughness: 0.4,
-        metalness: 0.6,
+        emissive: new THREE.Color(paddleColor),
+        emissiveIntensity: 0.4,
+        roughness: 0.3,
+        metalness: 0.7,
       });
       paddle = new THREE.Mesh(paddleGeometry, paddleMaterial);
       this.paddles.set(username, paddle);
@@ -318,7 +308,6 @@ export class GameRenderer {
 
   // 初期ボール発射の設定（ランダムな方向）
   private launchInitialBall() {
-    // ボールの位置を中心にリセット
     this.ball.position.set(0, this.ball.position.y, 0);
 
     const angle = Math.random() * 2 * Math.PI;
@@ -364,18 +353,23 @@ export class GameRenderer {
   public dispose() {
     if (this.animationFrameId !== null) {
       cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
     }
-    window.removeEventListener('resize', this.onWindowResize.bind(this));
-    window.removeEventListener('keydown', this.onKeyDown.bind(this));
-    this.renderer.dispose();
+    window.removeEventListener('resize', this.boundOnWindowResize);
+    window.removeEventListener('keydown', this.boundOnKeyDown);
+
     this.scene.traverse((object) => {
       if (object instanceof THREE.Mesh) {
         object.geometry.dispose();
-        if (object.material instanceof THREE.Material) {
+        if (Array.isArray(object.material)) {
+          object.material.forEach((m) => m.dispose());
+        } else if (object.material instanceof THREE.Material) {
           object.material.dispose();
         }
       }
     });
+    this.scene.clear();
+    this.renderer.dispose();
   }
 
   // 特定プレイヤーのパドル位置を取得する関数

@@ -1,181 +1,259 @@
-# 【ft_transcendence 進め方】
+# ft_transcendence
 
-## Getting Started
+> 42Tokyo — フルスタック リアルタイム卓球ゲームプラットフォーム
 
-.env.sample をコピーして .env を作成
-
-```bash
-make up
+```
+██████╗  ██████╗ ███╗   ██╗ ██████╗
+██╔══██╗██╔═══██╗████╗  ██║██╔════╝
+██████╔╝██║   ██║██╔██╗ ██║██║  ███╗
+██╔═══╝ ██║   ██║██║╚██╗██║██║   ██║
+██║     ╚██████╔╝██║ ╚████║╚██████╔╝
+╚═╝      ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝
 ```
 
-## 完了目安
+[![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python)](https://python.org)
+[![Django](https://img.shields.io/badge/Django-5.1-092E20?logo=django)](https://djangoproject.com)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript)](https://typescriptlang.org)
+[![Three.js](https://img.shields.io/badge/Three.js-r169-000000?logo=three.js)](https://threejs.org)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker)](https://docker.com)
 
-- 約 3 ヶ月
-  - マンダトリーのみ達成を目指す
+---
 
-## コミュニケーション方法
+## 概要
 
-- 【github】
-  - コードベースの相談はすべて issue と PR でチャットで実施する
-- 【discord】
-  - 上記以外の進め方等の質問、意見、議論はすべてこちらで実施する
+ブラウザで動くリアルタイム卓球（Pong）ゲームです。  
+シングルプレイ（対CPU）・マルチプレイ（対人 WebSocket）・トーナメント（4人）の 3 モードを提供し、  
+プロフィール・マッチ履歴・リーダーボード・フレンド機能を備えます。
 
-## ドキュメント
+---
 
-- Notion で議事録は保管する
+## 技術スタック
+
+| レイヤー | 技術 |
+|---|---|
+| フロントエンド | TypeScript + Vite + Three.js |
+| バックエンド | Django 5.1 + Django REST Framework |
+| リアルタイム通信 | Django Channels + WebSocket |
+| DB | PostgreSQL 16 |
+| キャッシュ / PubSub | Redis 7 |
+| ロギング | ELK Stack (Elasticsearch + Logstash + Kibana) |
+| 認証 | Token 認証 (DRF AuthToken) |
+| インフラ | Docker Compose + 自己署名 SSL |
+
+---
+
+## ゲームモード
+
+### シングルプレイ
+- 4段階の CPU 難易度: **EASY / MEDIUM / HARD / ONI**
+- CCD（連続衝突判定）実装でボールのすり抜けなし
+- Three.js による 3D レンダリング
+
+### マルチプレイ
+- WebSocket でリアルタイム対戦
+- マッチメイキング待機システム
+- サーバーサイドで物理演算（権威サーバー方式）
+
+### トーナメント
+- 4人参加 → 準決勝 2試合 → 決勝
+- 進行状況をリアルタイムブロードキャスト
+
+---
+
+## セットアップ
+
+### 必要環境
+
+- Docker & Docker Compose
+- macOS / Linux（WSL2 可）
+
+### 初回起動
+
+```bash
+# リポジトリをクローン
+git clone <repo-url> ft_transcendence
+cd ft_transcendence
+
+# 環境変数の設定
+cp .env.sample .env
+
+# 起動（SSL 証明書生成 + コンテナビルド込み）
+make upbuild
+```
+
+起動後、ブラウザで **SSL 証明書を承認**してください:
+
+1. `https://<HOST_IP>:8001` を開き「詳細 → 安全でないサイトへ進む」
+2. `https://localhost:3001` を同様に承認
+
+---
+
+## アクセス先
+
+| サービス | URL | 備考 |
+|---|---|---|
+| フロントエンド | `https://localhost:3001` | |
+| API | `https://<HOST_IP>:8001` | SSL 承認が必要 |
+| Django Admin | `https://<HOST_IP>:8001/admin/` | user: `sample` / pw: `password` |
+| pgweb (DB UI) | `http://localhost:5433` | |
+| Kibana (ログ) | `http://localhost:5601` | user: `elastic` / pw: `password` |
+
+### ページ一覧
+
+| パス | 説明 |
+|---|---|
+| `/` | ホーム |
+| `/login` | ログイン (sample1 / password1) |
+| `/register` | ユーザー登録 |
+| `/modes` | ゲームモード選択 |
+| `/profile` | プロフィール |
+| `/singleplay/select` | シングルプレイ 難易度選択 |
+| `/multiplay` | マルチプレイ マッチメイキング |
+| `/tournament` | トーナメント |
+| `/leaderboard` | リーダーボード |
+| `/friends` | フレンド一覧 |
+| `/settings/user` | アカウント設定 |
+
+---
+
+## make コマンド
+
+```bash
+make up          # 起動（ビルドなし）
+make upbuild     # ビルド付きで起動
+make down        # 停止
+make re          # クリーン → ビルド → 起動（証明書も再生成）
+make ssl-renew   # SSL 証明書のみ再生成
+
+make api_in      # API コンテナに入る
+make front_in    # フロントエンドコンテナに入る
+
+make migrate     # DB マイグレーション適用
+make test        # テスト実行
+make lint        # ESLint (フロントエンド)
+make ruff        # Ruff (Python)
+make submit      # 提出前チェック一式 (migrate + lint + ruff + test)
+make help        # コマンド一覧
+```
+
+---
+
+## プロジェクト構成
+
+```
+ft_transcendence/
+├── api/                          # Django バックエンド
+│   ├── core/                     # settings, urls, wsgi/asgi
+│   └── pong/                     # メインアプリ
+│       ├── modules/              # Auth, User, Game, Tournament モジュール
+│       ├── consumers.py          # WebSocket: マッチメイキング + マルチプレイ
+│       ├── tournament_consumers.py  # WebSocket: トーナメント
+│       ├── base_consumers.py     # WebSocket 共通基底クラス
+│       ├── game_logic.py         # サーバーサイド物理演算
+│       └── models.py             # Game, User, Tournament モデル
+│
+├── frontend/src/
+│   ├── pages/                    # 各画面 (SPA)
+│   │   ├── SinglePlay/           # Three.js ゲームエンジン + CPU AI
+│   │   ├── MultiPlay/            # WebSocket クライアント
+│   │   ├── Tournament/           # トーナメントブラケット UI
+│   │   ├── Profile/              # プロフィール + 3D 背景
+│   │   ├── Leaderboard/          # ランキング
+│   │   └── Friends/              # フレンド管理
+│   ├── components/               # 共有コンポーネント (Background3D など)
+│   ├── models/                   # API クライアント (User, Game リポジトリ)
+│   ├── core/                     # SPA ルーター, Page クラス, Logger
+│   └── libs/                     # 認証, localStorage ラッパー
+│
+├── docker-compose.yml
+├── docker-compose.elk.yml        # ELK Stack (別 Compose)
+├── Makefile
+└── scripts/                      # SSL 証明書生成, HOST_IP セットアップ
+```
+
+---
+
+## API エンドポイント
+
+| メソッド | パス | 説明 |
+|---|---|---|
+| POST | `/api/login/` | ログイン → Token 取得 |
+| POST | `/api/logout/` | ログアウト → Token 削除 |
+| POST | `/api/register/` | ユーザー登録 |
+| GET | `/api/users/me/` | 自分の情報取得 |
+| PATCH | `/api/users/me/` | プロフィール更新 |
+| GET | `/api/users/{id}/matches/` | マッチ履歴 |
+| GET | `/api/leaderboard/` | ランキング |
+| WS | `wss://.../ws/matchmaking/` | マッチメイキング |
+| WS | `wss://.../ws/game/{session_id}/` | マルチプレイ対戦 |
+| WS | `wss://.../ws/tournament/` | トーナメント管理 |
+| WS | `wss://.../ws/tournament/game/{session_id}/` | トーナメント試合 |
+
+> **Note:** API の `/` (ルート) は 404 を返します。REST API 専用サーバーのため意図した設計です。
+
+---
+
+## よくあるトラブル
+
+### `make re` 後にログインできない
+
+`make re` で SSL 証明書が再生成されます。ブラウザで `https://<HOST_IP>:8001` を開いて証明書を承認してください。
+
+### ログイン時に「Already logged in」エラー (403)
+
+前回セッションのトークンが DB に残っています。以下で削除できます:
+
+```bash
+docker compose exec api python manage.py shell -c \
+  "from rest_framework.authtoken.models import Token; Token.objects.all().delete(); print('Tokens cleared')"
+```
+
+### Vite HMR が効かない
+
+Docker volume mount の都合で HMR が機能しないことがあります:
+
+```bash
+docker compose restart frontend
+```
+
+---
 
 ## GitHub 運用
 
-- main : 常に動く。どこのステップかが明確
-  - yamato
-  - fukuhara
-  - akamite
-  - hrinka
+### ブランチ戦略
 
-### GitHub 具体的な方法
+- `main` : 常に動く状態を保つ
+- 作業ブランチ: `<your_name>/<prefix>-feature#issue_id`
 
-- Main
-  - GitHub 上で Issue を作成
-    - タイトル：`Add 〇〇 Feature`
-    - アサイン：メンバーの誰か
-    - ラベル：適切なのを選択
-  - ローカルのアップデート：`git checkout main; git pull origin main`
-  - データベースを最新のにする: `make migrate`
-  - ローカル環境でブランチを切る：`git checkout -b <your_name>/add-feature#issue_id`
-  - 作業
-  - コミット：`git commit -am "Add 〇〇 Feature #issue_id"`
-  - プッシュ：`git push origin <your_name>/add-feature#issue_id`
-  - Issue とコミットがリンクされているのを確認後、プルリクエストを作成
-  - 誰かのレビュー
-  - OK だったら、GitHub 上で Merge
-- 参考サイト
-  - [参考サイト ①：Issue の使い方](https://qiita.com/tkmd35/items/9612c03dc60b1c516969)
-  - [参考サイト ②：GitHub ワークフロー](https://www.atlassian.com/ja/git/tutorials/comparing-workflows/gitflow-workflow)
-  - [参考サイト ③：.gitignore テンプレート](https://github.com/github/gitignore)
+### Issue / PR プレフィックス
 
-## Basic Rules
+| Prefix | 説明 |
+|---|---|
+| ADD | 新機能追加 |
+| FIX | バグ修正 |
+| UPDATE | 既存機能の更新 |
+| REMOVE | 削除 |
+| DOCS | ドキュメント |
+| TEST | テスト |
+| REFACTOR | リファクタリング |
+| CONFIG | 設定変更 |
 
-- **One PR per issue**
-- TODO リストは issue に記入
-- PR にはテンプレートに従い、必要事項を記入
-- PR には`WIP`かそれ以外か
+### ワークフロー
 
-## Title of Issues
+```bash
+git checkout main && git pull origin main
+make migrate
+git checkout -b <your_name>/fix-something#123
+# 作業 ...
+git push origin <your_name>/fix-something#123
+# GitHub で PR 作成 → レビュー → Merge
+```
 
-| Prefix   | Description                      |
-| :------- | :------------------------------- |
-| ADD      | 新しい機能や要素の追加           |
-| FIX      | バグ修正                         |
-| UPDATE   | 既存機能や内容の更新             |
-| REMOVE   | 不要なコードや機能の削除         |
-| DOCS     | ドキュメントの追加や更新         |
-| TEST     | テストの追加や修正               |
-| REFACTOR | コードのリファクタリングや最適化 |
-| DEPLOY   | デプロイ関連の変更               |
-| CONFIG   | 設定や構成ファイルの変更         |
-| CHORE    | 軽微な作業や管理的な修正         |
-| INVALID  | 不必要な Issue                   |
+---
 
-## Issue Label
-
-- [Issue のラベル良さげ？](https://qiita.com/shun_tak/items/d363b7c5d9e8fa19dc6b)
-
-## レビュー対策
+## 参考
 
 - [42Eval](https://42evals.me/Cursus/)
-
-## 基本コマンド
-
-- `make up` : コンテナを立ち上げる
-- `make down` : コンテナを落とす
-  - `make clean` : コンテナを落として、ボリュームも削除する
-- `make re` : コンテナを再起動する
-- `make test` : API のテストを実行する
-- `make makemigrations` : マイグレーションファイルを作成する
-- `make migrate` : マイグレーションを実行する
-
-## 便利コマンド
-
-- 前提：別ターミナルで`make up`を実行しておく
-- `make api_in` : API コンテナに入る
-  - `make api_logs` : API コンテナのログを見る
-- `make front_in` : フロントコンテナに入る
-  - `make front_logs` : フロントコンテナのログを見る
-- `make db_in` : DB コンテナに入る
-  - `make db_logs` : DB コンテナのログを見る
-
-## Formatter
-
-- Frontend: `make lint`
-- Backend: `make ruff`
-
-## Access Links
-
-- [Frontend](https://127.0.0.1:3001)
-  - `https://localhost:3001/`
-    - Welcome ページ
-  - `https://localhost:3001/404`
-    - 404 ページ
-  - `https://localhost:3001/register`
-    - ユーザー登録ページ
-  - `https://localhost:3001/login`
-    - ログインページ
-    - username: `sample1`
-    - password: `password1`
-  - `https://localhost:3001/profile`
-    - ユーザープロフィールページ
-  - `https://localhost:3001/modes`
-    - ゲームモード選択ページ
-  - `https://localhost:3001/settings/game`
-    - ゲーム設定ページ
-  - `https://localhost:3001/settings/account`
-    - ユーザーアカウント設定ページ
-  - `https://localhost:3001/singleplay/select`
-    - シングルプレイヤーレベル選択ページ
-  - `https://localhost:3001/singleplay/:gameId`
-    - シングルプレイヤーゲームページ
-  - `https://localhost:3001/multiplay/:gameId`
-    - マルチプレイヤーゲームページ
-  - `https://localhost:3001/games/:gameId/results`
-    - マッチ結果ページ
-  - `https://localhost:3001/tournaments`
-    - トーナメント一覧ページ
-  - `https://localhost:3001/tournaments/:tournamentId`
-    - トーナメント詳細ページ
-  - `https://localhost:3001/leaderboard`
-    - リーダーボードページ
-- [Backend](https://127.0.0.1:8001/)
-
-  - `https://127.0.0.1:8001/admin/`
-    - username: `sample`
-    - password: `password`
-  - `https://127.0.0.1:8001/api/users/`
-  - `https://127.0.0.1:8001/api/games/`
-
-- [ELK](http://127.0.0.1:5601/)
-
-  - `http://127.0.0.1:5601/`
-    - Kibana トップページ
-  - username: `elastic`
-  - password: `password`
-
-- [DB 可視化ツール（pgweb）](http://127.0.0.1:5433/)
-  - `http://127.0.0.1:5433/`
-    - pgweb トップページ
-
-## https
-
-- `GET /users/`
-- `POST /users/`
-- `GET /users/<pk>/`
-- `PUT/PATCH /users/<pk>/`
-- `DELETE /users/<pk>/`
-- `GET /games/`
-- `POST /games/`
-- `GET /games/<pk>/`
-- `PUT/PATCH /games/<pk>/`
-- `DELETE /games/<pk>/`
-
-## 参考資料
-
-- [Icons](https://fontawesome.com/icons)
+- [Django Channels docs](https://channels.readthedocs.io/)
+- [Three.js docs](https://threejs.org/docs/)
+- [Font Awesome Icons](https://fontawesome.com/icons)

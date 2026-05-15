@@ -13,6 +13,9 @@ from .models import Game, User
 class MatchmakingConsumer(AsyncWebsocketConsumer):
     waiting_players: list = []
     _lock = asyncio.Lock()
+    # session_id -> (player1_username, player2_username)
+    # アンダースコアを含むユーザー名での分割エラーを回避するために使用
+    session_players: dict = {}
 
     async def connect(self):
         self.username = ""
@@ -63,9 +66,13 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             )
             return
 
+        session_id = f"game_{player1.username}_{player2.username}_{int(time.time())}"
+        # プレイヤー名をセッションIDとは別に保存（アンダースコア含む名前対応）
+        MatchmakingConsumer.session_players[session_id] = (player1.username, player2.username)
+
         match_data = {
             "type": "match_found",
-            "session_id": f"game_{player1.username}_{player2.username}_{int(time.time())}",
+            "session_id": session_id,
             "player1": player1.username,
             "player2": player2.username,
         }
@@ -77,6 +84,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             # player1が切断済みの場合、player2を待機列に戻す
             async with self._lock:
                 self.waiting_players.insert(0, player2)
+            MatchmakingConsumer.session_players.pop(session_id, None)
             return
 
         try:
@@ -85,6 +93,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             # player2が切断済みの場合、player1を待機列に戻す
             async with self._lock:
                 self.waiting_players.insert(0, player1)
+            MatchmakingConsumer.session_players.pop(session_id, None)
 
 
 class GameConsumer(BaseGameConsumer):
@@ -96,13 +105,17 @@ class GameConsumer(BaseGameConsumer):
 
         # セッションIDからゲームインスタンス作成
         if self.session_id not in self.games:
-            # セッションIDからプレイヤー名を抽出
-            # 想定形式: game_player1_player2_timestamp
-            parts = self.session_id.split("_")
-            if len(parts) >= 3:  # game_type + player1 + player2 + timestamp
-                player1_name = parts[1]
-                player2_name = parts[2]
+            # マッチメイキング時に保存したプレイヤー名を取得（アンダースコア対応）
+            player_pair = MatchmakingConsumer.session_players.pop(self.session_id, None)
+            if player_pair:
+                player1_name, player2_name = player_pair
+            else:
+                # フォールバック: セッションIDを分割（アンダースコアなしの名前のみ対応）
+                parts = self.session_id.split("_")
+                player1_name = parts[1] if len(parts) > 1 else ""
+                player2_name = parts[2] if len(parts) > 2 else ""
 
+            if player1_name and player2_name:
                 self.games[self.session_id] = MultiplayerPongGame(
                     session_id=self.session_id,
                     player1_name=player1_name,
@@ -110,7 +123,7 @@ class GameConsumer(BaseGameConsumer):
                 )
 
                 # DBゲーム情報を設定
-                game_instance = await self.get_or_create_game()
+                game_instance = await self.get_or_create_game(player1_name, player2_name)
                 if game_instance:
                     self.games[self.session_id].db_game_id = game_instance.id
 
@@ -153,16 +166,8 @@ class GameConsumer(BaseGameConsumer):
             print(f"Error in multiplayer game loop: {e}")
 
     @database_sync_to_async
-    def get_or_create_game(self):
+    def get_or_create_game(self, player1_name: str, player2_name: str):
         """ゲーム情報をDBから取得または作成"""
-        parts = self.session_id.split("_")
-        if len(parts) < 3:
-            print(f"Invalid session ID format: {self.session_id}")
-            return None
-
-        player1_name = parts[1]
-        player2_name = parts[2]
-
         try:
             # プレイヤー情報の取得
             player1 = User.objects.get(username=player1_name)

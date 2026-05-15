@@ -20,6 +20,8 @@ export default class LocalGame {
 
   public leftKeyPressed: boolean = false;
   public rightKeyPressed: boolean = false;
+  private boundKeyDown!: (e: KeyboardEvent) => void;
+  private boundKeyUp!: (e: KeyboardEvent) => void;
   private scorePaddleOne: number = 0;
   private scorePaddleTwo: number = 0;
   private ballVelocity: { x: number; z: number } | null = null;
@@ -28,6 +30,10 @@ export default class LocalGame {
   private gameStarted: boolean = false;
 
   constructor(canvas: HTMLCanvasElement) {
+    // SPA再利用時にモジュールレベル変数をリセット
+    running = true;
+    difficultyFactor = getDifficultyFactor();
+
     /* ゲームエンジンのインスタンスを取得 */
     this.experience = Experience.getInstance(canvas);
     this.canvas = canvas;
@@ -99,20 +105,67 @@ export default class LocalGame {
     }
   }
 
+  private readonly BALL_RADIUS = 20;
+  private readonly PADDLE_HALF_DEPTH = 5; // BoxGeometry z=10 の半分
+
   private processBallMovement() {
     if (!this.ballVelocity) this.startBallMovement();
     if (this.ballStopped) return;
+
+    const prevZ = this.ball.position.z;
 
     this.ball.position.x += this.ballVelocity?.x ?? 0;
     this.ball.position.z += this.ballVelocity?.z ?? 0;
 
     if (this.isSideCollision()) {
       this.ballVelocity!.x *= -1;
+      // 壁にめり込まないよう補正
+      this.ball.position.x =
+        Math.sign(this.ball.position.x) * (this.experience.FIELD_WIDTH / 2);
     }
-    if (this.isPaddleCollision(this.paddleOne)) this.hitBallBack(this.paddleOne);
-    if (this.isPaddleCollision(this.paddleTwo)) this.hitBallBack(this.paddleTwo);
+
+    // CCD（連続衝突判定）: 前フレームから今フレームの軌跡でパドルを通過したか判定
+    this.checkPaddleCCD(this.paddleOne, prevZ);
+    this.checkPaddleCCD(this.paddleTwo, prevZ);
+
     if (this.isPastPaddle(this.paddleOne)) this.scored('paddleTwo');
     if (this.isPastPaddle(this.paddleTwo)) this.scored('paddleOne');
+  }
+
+  private checkPaddleCCD(paddle: THREE.Mesh, prevZ: number) {
+    const paddleZ = paddle.position.z;
+    const currZ = this.ball.position.z;
+    const vz = this.ballVelocity?.z ?? 0;
+
+    // ボールがこのフレームでパドルZ位置を横断したか（高速ボールのすり抜け防止）
+    const crossed =
+      (prevZ < paddleZ && currZ >= paddleZ) || (prevZ > paddleZ && currZ <= paddleZ);
+    // または低速時: 現在すでに衝突ゾーン内か
+    const inZone = Math.abs(currZ - paddleZ) < this.PADDLE_HALF_DEPTH + this.BALL_RADIUS;
+
+    if (!crossed && !inZone) return;
+
+    // 方向ガード: パドルに向かって動いている場合のみ反射
+    const movingToward =
+      (paddle === this.paddleOne && vz > 0) || (paddle === this.paddleTwo && vz < 0);
+    if (!movingToward) return;
+
+    // X範囲チェック（パドル半幅 + ボール半径）
+    const hitX =
+      Math.abs(this.ball.position.x - paddle.position.x) <
+      this.experience.PADDLE_WIDTH / 2 + this.BALL_RADIUS;
+    if (!hitX) return;
+
+    // 反射
+    if (this.ballVelocity) {
+      this.ballVelocity.z *= -1;
+      this.ballVelocity.x = (this.ball.position.x - paddle.position.x) / 5;
+    }
+
+    // ボールをパドル手前に押し出してめり込み防止
+    const safeOffset = this.PADDLE_HALF_DEPTH + this.BALL_RADIUS + 1;
+    this.ball.position.z =
+      paddle === this.paddleOne ? paddleZ - safeOffset : paddleZ + safeOffset;
   }
 
   private isPastPaddle(paddle: THREE.Mesh): boolean {
@@ -123,19 +176,6 @@ export default class LocalGame {
 
   private isSideCollision(): boolean {
     return Math.abs(this.ball.position.x) > this.experience.FIELD_WIDTH / 2;
-  }
-
-  private isPaddleCollision(paddle: THREE.Mesh): boolean {
-    const hitX = Math.abs(this.ball.position.x - paddle.position.x) < 75; // パドル幅考慮
-    const hitZ = Math.abs(this.ball.position.z - paddle.position.z) < 10;
-    return hitX && hitZ;
-  }
-
-  private hitBallBack(paddle: THREE.Mesh) {
-    if (this.ballVelocity) {
-      this.ballVelocity.x = (this.ball.position.x - paddle.position.x) / 5;
-      this.ballVelocity.z *= -1;
-    }
   }
   public showGameOverOverlay(message: string, finalScore: string) {
     const scoreDisplay = document.getElementById('scoreDisplay');
@@ -253,14 +293,21 @@ export default class LocalGame {
   }
 
   private handleKeyboard() {
-    document.addEventListener('keydown', (e) => {
+    this.boundKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight') this.rightKeyPressed = true;
       if (e.key === 'ArrowLeft') this.leftKeyPressed = true;
-    });
-    document.addEventListener('keyup', (e) => {
+    };
+    this.boundKeyUp = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight') this.rightKeyPressed = false;
       if (e.key === 'ArrowLeft') this.leftKeyPressed = false;
-    });
+    };
+    document.addEventListener('keydown', this.boundKeyDown);
+    document.addEventListener('keyup', this.boundKeyUp);
+  }
+
+  public destroy() {
+    if (this.boundKeyDown) document.removeEventListener('keydown', this.boundKeyDown);
+    if (this.boundKeyUp) document.removeEventListener('keyup', this.boundKeyUp);
   }
   private processPlayerPaddle(deltaTime: number) {
     const paddleSpeed = 1500; // 1秒間に動くピクセル量
@@ -307,26 +354,18 @@ export enum Difficulty {
   ONI = 10,
 }
 
-const selectedLevel = localStorage.getItem('selectedLevel') || 'EASY';
-logger.log(`Selected Level: ${selectedLevel}`);
-
-let difficultyFactor: number;
-switch (selectedLevel.toUpperCase()) {
-  case 'EASY':
-    difficultyFactor = Difficulty.EASY;
-    break;
-  case 'MEDIUM':
-    difficultyFactor = Difficulty.MEDIUM;
-    break;
-  case 'HARD':
-    difficultyFactor = Difficulty.HARD;
-    break;
-  case 'ONI':
-    difficultyFactor = Difficulty.ONI;
-    break;
-  default:
-    difficultyFactor = Difficulty.EASY;
+function getDifficultyFactor(): number {
+  const selectedLevel = localStorage.getItem('selectedLevel') || 'EASY';
+  switch (selectedLevel.toUpperCase()) {
+    case 'EASY': return Difficulty.EASY;
+    case 'MEDIUM': return Difficulty.MEDIUM;
+    case 'HARD': return Difficulty.HARD;
+    case 'ONI': return Difficulty.ONI;
+    default: return Difficulty.EASY;
+  }
 }
+
+let difficultyFactor: number = getDifficultyFactor();
 
 export const getAiLevel = (difficultyFactor: Difficulty) => {
   switch (difficultyFactor) {

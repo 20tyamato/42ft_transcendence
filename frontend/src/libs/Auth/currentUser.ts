@@ -61,10 +61,12 @@ export const useCurrentUser = async (): Promise<ICurrentUser> => {
  * @returns ログイン状態
  */
 export const isLoggedIn = async (): Promise<boolean> => {
+  const token = storage.getUserToken();
+  if (!token) return false;
   try {
-    await checkAuthentication();
+    await fetchCurrentUser();
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 };

@@ -19,8 +19,6 @@ class BaseGameLogic:
     FIELD_WIDTH = 1200
     FIELD_LENGTH = 3000
     PADDLE_WIDTH = 200
-    PADDLE_DEPTH = 20         # パドルの厚さ（Z方向）
-    PADDLE_Z_OFFSET = 200     # フィールド端からパドル中心までの距離
     BALL_RADIUS = 30
     INITIAL_BALL_SPEED = 300
     # FIXME: need to adjust
@@ -83,6 +81,7 @@ class MultiplayerPongGame(BaseGameLogic):
             player2_name: 0,
         }
         self.score = {player1_name: 0, player2_name: 0}
+        self._scoring_in_progress = False  # 同一フレームの二重得点防止
 
     def update(self, delta_time: float) -> Dict:
         """ゲーム状態の更新処理"""
@@ -111,7 +110,6 @@ class MultiplayerPongGame(BaseGameLogic):
 
     def get_state(self) -> dict:
         """現在のゲーム状態を辞書形式で返す"""
-        paddle_z = self.FIELD_LENGTH / 2 - self.PADDLE_Z_OFFSET
         return {
             "ball": {
                 "position": {"x": self.ball.x, "y": self.ball.y, "z": self.ball.z},
@@ -124,11 +122,11 @@ class MultiplayerPongGame(BaseGameLogic):
             "players": {
                 self.player1_name: {
                     "x": self.paddles[self.player1_name],
-                    "z": paddle_z,
+                    "z": self.FIELD_LENGTH / 2 - self.PADDLE_Z_OFFSET,
                 },
                 self.player2_name: {
                     "x": self.paddles[self.player2_name],
-                    "z": -paddle_z,
+                    "z": -(self.FIELD_LENGTH / 2 - self.PADDLE_Z_OFFSET),
                 },
             },
             "score": self.score,
@@ -157,6 +155,9 @@ class MultiplayerPongGame(BaseGameLogic):
         # ゲームを終了状態に
         self.is_active = False
 
+    PADDLE_DEPTH = 20   # パドルの厚さ（Z方向）
+    PADDLE_Z_OFFSET = 200  # パドルを得点ラインより手前に配置するオフセット
+
     # 以下、プライベートメソッド
     def _handle_wall_collision(self) -> None:
         if abs(self.ball.x) > self.FIELD_WIDTH / 2:
@@ -164,42 +165,56 @@ class MultiplayerPongGame(BaseGameLogic):
             self.ball.x = (self.FIELD_WIDTH / 2) * (1 if self.ball.x > 0 else -1)
 
     def _handle_paddle_collision(self) -> None:
+        """CCD（連続衝突判定）でパドルとの衝突を処理"""
         paddle_z = self.FIELD_LENGTH / 2 - self.PADDLE_Z_OFFSET
-        half_depth = self.PADDLE_DEPTH / 2 + self.BALL_RADIUS
 
         for username, paddle_x in self.paddles.items():
-            pz = paddle_z if username == self.player1_name else -paddle_z
-            # 方向チェック：ボールがパドルに向かって進んでいるときのみ判定
+            is_player1 = username == self.player1_name
+            pz = paddle_z if is_player1 else -paddle_z
+
+            if not self._check_paddle_hit(paddle_x, pz):
+                continue
+
+            # 方向ガード: パドルに向かって動いている場合のみ反射
             moving_toward = (
-                (username == self.player1_name and self.ball_velocity.z > 0)
-                or (username == self.player2_name and self.ball_velocity.z < 0)
+                (is_player1 and self.ball_velocity.z > 0) or
+                (not is_player1 and self.ball_velocity.z < 0)
             )
             if not moving_toward:
                 continue
 
-            if self._check_paddle_hit(paddle_x, pz):
-                self.ball_velocity.z *= -1
-                self.ball_velocity.x += (self.ball.x - paddle_x) * 0.5
-                # ボールをパドル表面まで押し戻してトンネリングを防止
-                if username == self.player1_name:
-                    self.ball.z = pz - half_depth
-                else:
-                    self.ball.z = pz + half_depth
-                break  # 同フレームで両パドルを判定しない
+            # 反射してX成分に角度を付ける
+            self.ball_velocity.z *= -1
+            self.ball_velocity.x += (self.ball.x - paddle_x) * 0.1
+
+            # 速度X成分の上限（無限加速防止）
+            max_vx = abs(self.ball_velocity.z) * 1.5
+            self.ball_velocity.x = max(-max_vx, min(max_vx, self.ball_velocity.x))
+
+            # ボールをパドル手前に押し出してめり込み防止
+            safe_z = pz - (self.BALL_RADIUS + self.PADDLE_DEPTH / 2 + 1)
+            self.ball.z = safe_z if is_player1 else -safe_z
 
     def _check_paddle_hit(self, paddle_x: float, paddle_z: float) -> bool:
-        """パドルとボールの衝突を判定"""
-        paddle_half_width = self.PADDLE_WIDTH / 2 + self.BALL_RADIUS
-        half_depth = self.PADDLE_DEPTH / 2 + self.BALL_RADIUS
-
-        return (
-            abs(self.ball.x - paddle_x) < paddle_half_width
-            and abs(self.ball.z - paddle_z) < half_depth
+        """パドルとボールの衝突を判定（ボール半径を考慮した広めのゾーン）"""
+        # X: ボール半径を含む横幅チェック
+        hit_x = (
+            self.ball.x + self.BALL_RADIUS > paddle_x - self.PADDLE_WIDTH / 2
+            and self.ball.x - self.BALL_RADIUS < paddle_x + self.PADDLE_WIDTH / 2
         )
+        if not hit_x:
+            return False
+
+        # Z: パドル厚さの半分 + ボール半径を衝突ゾーンとする
+        half_zone = self.PADDLE_DEPTH / 2 + self.BALL_RADIUS
+        hit_z = abs(self.ball.z - paddle_z) < half_zone
+        return hit_z
 
     def _check_scoring(self) -> None:
-        # スコア判定はフィールド端（パドルより外側）
+        if self._scoring_in_progress:
+            return
         if abs(self.ball.z) > self.FIELD_LENGTH / 2:
+            self._scoring_in_progress = True
             scoring_player = self.player1_name if self.ball.z < 0 else self.player2_name
             self.score[scoring_player] += 1
 
@@ -207,6 +222,7 @@ class MultiplayerPongGame(BaseGameLogic):
                 self.is_active = False
             else:
                 self._reset_ball()
+                self._scoring_in_progress = False
 
     def _reset_ball(self) -> None:
         self.ball = Vector3D(0, 30, 0)

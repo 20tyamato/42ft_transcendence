@@ -43,15 +43,10 @@ export const fetchUser = async (username: string) => {
 };
 
 export const fetchCurrentUser = async () => {
-  try {
-    const { data } = await fetcher('/api/users/me/', {
-      method: 'GET',
-    });
-
-    return data;
-  } catch (error) {
-    logger.error('Error fetching current user:', error);
-  }
+  const { data } = await fetcher('/api/users/me/', {
+    method: 'GET',
+  });
+  return data;
 };
 
 // アバター画像の更新

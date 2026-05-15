@@ -101,11 +101,13 @@ export default class Experience {
     }
     this.cameraClass.update();
     this.renderer.update();
+    console.log('Experience update running');
   }
 
   public destroy(): void {
     this.sizes.off('resize');
     this.time.off('tick');
+    this.localGame.destroy();
 
     this.scene.traverse((child: THREE.Object3D) => {
       if (child instanceof THREE.Mesh) {
@@ -120,6 +122,7 @@ export default class Experience {
       }
     });
 
+    Renderer.dispose();
     Experience.instance = null;
   }
   public initializeRenderer(canvas: HTMLCanvasElement): void {
